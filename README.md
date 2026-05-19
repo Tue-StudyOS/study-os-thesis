@@ -1,225 +1,328 @@
 # study-os-thesis
 
-A web app that recommends theses to students through a Q&A chat with a local LLM.
-Professors and students submit thesis topics; a tool-using LLM agent searches
-them by semantic similarity (pgvector) and discusses options with the student.
+An AI-powered thesis advisor for university students. Students upload their
+transcript of records, the system analyses their course profile, and an LLM
+agent recommends fitting research chairs and generates personalised thesis
+proposals. Professors manage chairs and thesis proposals through an admin
+interface.
 
 ## Stack
 
-- **Backend**: FastAPI + async SQLAlchemy + Alembic, dependency-managed by `uv`
-- **DB**: PostgreSQL 16 + pgvector (run via Docker, on host port **5433**)
-- **LLM**: Local Ollama (`llama3.1:8b` for chat, `nomic-embed-text` for embeddings)
-- **Frontend**: React + TypeScript via Vite
+| Layer | Technology |
+|---|---|
+| **Backend** | FastAPI + async SQLAlchemy + Alembic, managed by `uv` |
+| **Database** | PostgreSQL 16 + pgvector (Docker, host port **5433**) |
+| **LLM (chat + generation)** | Ollama — `gemma4:26b` (or any model you configure) |
+| **LLM (embeddings)** | Ollama — `qwen3-embedding:4b` (2560-dim vectors) |
+| **Frontend** | React 18 + TypeScript + Vite + Tailwind CSS |
 
 Everything runs locally — no cloud accounts or API keys required.
 
+---
+
 ## Prerequisites
 
-Install these once:
+Install these once on each machine before cloning:
 
-1. **Docker Desktop** with WSL2 integration enabled
-   (Settings → Resources → WSL Integration → toggle your distro, then Apply & Restart).
-   On Linux without Docker Desktop, the regular `docker` daemon works too.
-2. **uv** (Python package manager):
-   ```bash
-   curl -LsSf https://astral.sh/uv/install.sh | sh
-   ```
-   Restart your shell or `source ~/.bashrc` afterwards so `uv` is on PATH.
-3. **Ollama**:
-   ```bash
-   curl -fsSL https://ollama.com/install.sh | sh
-   ollama pull llama3.1:8b
-   ollama pull nomic-embed-text
-   ```
-   The two models add up to ~5 GB. The first chat response in a fresh process
-   takes 30–90 seconds on CPU while the model loads into RAM; subsequent
-   responses are much faster.
-4. **Node.js** ≥ 20 (for the frontend).
+### 1. Docker
+
+Used to run PostgreSQL + pgvector.
+
+- **macOS / Windows**: Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+  On Windows, enable WSL 2 integration:
+  Settings → Resources → WSL Integration → toggle your distro → Apply & Restart.
+- **Linux**: Install the `docker` daemon and the `docker compose` plugin.
+
+### 2. uv (Python package manager)
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Restart your shell afterwards so `uv` is on PATH. Verify with `uv --version`.
+
+### 3. Node.js ≥ 20
+
+Download from [nodejs.org](https://nodejs.org/) or use a version manager such as
+`nvm`:
+
+```bash
+nvm install 20 && nvm use 20
+```
+
+### 4. Ollama
+
+Ollama must be reachable at the URL configured in `backend/.env`
+(`OLLAMA_BASE_URL`). It can run:
+
+- **Locally** on the same machine (`http://localhost:11434`)
+- **Remotely** on another machine in the network (e.g. `http://192.168.x.x:11434`)
+
+Install locally:
+
+```bash
+# macOS
+brew install ollama
+
+# Linux
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+Pull the required models (only needed on the machine running Ollama):
+
+```bash
+ollama pull gemma4:26b           # chat + proposal generation (~17 GB)
+ollama pull qwen3-embedding:4b   # embeddings (~2.5 GB)
+```
+
+> If you use a remote Ollama server, make sure the models are already pulled
+> there and set `OLLAMA_BASE_URL` in `.env` to the remote address.
+
+---
 
 ## First-time setup
 
 ```bash
 git clone <repo-url> study-os-thesis
 cd study-os-thesis
+```
 
-# 1. Database (Postgres + pgvector, listens on host port 5433)
-docker compose up -d
+### Configure the backend
 
-# 2. Backend
+```bash
 cd backend
 cp .env.example .env
-# Generate a real JWT secret:
-python -c "import secrets; print(f'JWT_SECRET={secrets.token_urlsafe(32)}')" \
-  | tee -a .env
-# (then remove the placeholder JWT_SECRET line from .env, or edit by hand)
-uv sync
-uv run alembic upgrade head
-
-# 3. Run the API
-uv run uvicorn app.main:app --reload
-# → http://localhost:8000/docs
 ```
 
-In a second terminal:
+Open `backend/.env` and edit the values:
+
+| Variable | What to set |
+|---|---|
+| `JWT_SECRET` | Generate a random secret: `python -c "import secrets; print(secrets.token_urlsafe(32))"` |
+| `OLLAMA_BASE_URL` | URL of your Ollama instance, e.g. `http://localhost:11434` or `http://192.0.2.10:11434` (remote) |
+| `OLLAMA_CHAT_MODEL` | Chat model pulled in Ollama, default `gemma4:26b` |
+| `OLLAMA_EXTRACT_MODEL` | Model used for transcript extraction. Leave empty to fall back to `OLLAMA_CHAT_MODEL` |
+| `OLLAMA_EMBED_MODEL` | Embedding model, default `qwen3-embedding:4b` |
+| `OLLAMA_EMBED_DIM` | Must match the embedding model output dimension. `qwen3-embedding:4b` = `2560` |
+
+All other values can stay as-is for local development.
+
+---
+
+## Running the project
+
+The `debug.sh` script in the repository root orchestrates everything.
+
+### Commands
+
+#### `./debug.sh up`
+
+**Start from scratch** (or after `down`).
+
+1. Starts the Docker database container and waits for it to be healthy.
+2. Installs/updates backend Python dependencies (`uv sync`).
+3. Installs/updates frontend Node dependencies (`npm install`).
+4. Runs Alembic database migrations (`alembic upgrade head`).
+5. Seeds the database with the 3 Tübingen research chairs (idempotent — skips
+   if chairs already exist).
+6. Starts the backend (uvicorn on port **8000**) and frontend (Vite on port
+   **5173**) in parallel.
 
 ```bash
-cd frontend
-npm install
-npm run dev
-# → http://localhost:5173
+./debug.sh up
 ```
 
-## Test users for trying it out
+Use this the first time, and any time after `./debug.sh down`.
 
-Once the API is running, the easiest way to populate some realistic data is to
-register two accounts and have the professor submit a few thesis topics. The
-following accounts and prompts are what we use locally — feel free to copy them.
+---
 
-| Email | Password | Role | What for |
-|---|---|---|---|
-| `prof@example.com` | `password123` | professor | Submits thesis topics |
-| `stu@example.com`  | `password123` | student   | Chats with the LLM to get recommendations |
+#### `./debug.sh` (no arguments)
 
-
-**Step 1 — register them.** Either through the React UI at
-`http://localhost:5173/register`, or via Swagger at `http://localhost:8000/docs`
-on `POST /api/auth/register`. Pick the role from the dropdown.
-
-> ⚠️ Email validation requires a real-looking domain. `prof@x` will be rejected;
-> `prof@example.com` works.
-
-**Step 2 — seed a few theses as the professor.** Log in as `prof@example.com`,
-go to **Submit thesis**, and paste any of these (each takes ~1 s to embed):
-
-<details>
-<summary>Sample thesis 1 — Graph Neural Networks</summary>
-
-- **Title**: Graph Neural Networks for Drug Discovery
-- **Abstract**: This thesis explores applying GNN architectures (GCN, GAT, MPNN)
-  to molecular property prediction and de novo drug design. We benchmark against
-  transformer baselines on QM9 and MoleculeNet.
-</details>
-
-<details>
-<summary>Sample thesis 2 — Differential Privacy</summary>
-
-- **Title**: Differential Privacy in Federated Learning
-- **Abstract**: A study of DP-SGD applied to cross-device federated learning
-  settings. We measure privacy/utility tradeoffs on CIFAR and Shakespeare
-  benchmarks with varying epsilon.
-</details>
-
-<details>
-<summary>Sample thesis 3 — Spaced Repetition</summary>
-
-- **Title**: Adaptive Spaced Repetition for University Learners
-- **Abstract**: This thesis designs a spaced-repetition scheduler driven by a
-  Bayesian item-response model, evaluating retention on a cohort of 200
-  students over one semester.
-</details>
-
-**Step 3 — chat as the student.** Log out, log in as `stu@example.com`, click
-**Chat → + New session**, and try messages like:
-
-- "I'm interested in deep learning on graphs and chemistry applications."
-- "I want to do something with privacy in machine learning."
-- "What topics combine cognitive science and AI?"
-
-The assistant should call the `search_theses` tool (visible as a collapsible
-panel in the UI) and recommend matching theses by their IDs.
-
-## Running it day-to-day
-
-After the first-time setup, the loop is:
+**Resume a running setup.** Assumes the Docker container is already healthy
+and skips container startup. Runs the same dependency, migration, and seed
+steps, then starts the servers.
 
 ```bash
-docker compose up -d                                  # DB
-cd backend && uv run uvicorn app.main:app --reload    # terminal 1
-cd frontend && npm run dev                            # terminal 2
+./debug.sh
 ```
 
-To shut down: kill the two dev servers, then `docker compose down`. Add `-v`
-(`docker compose down -v`) only if you want to wipe the database volume.
+Use this for day-to-day development after the container is already running.
+Faster than `up` because it skips the Docker healthcheck wait.
+
+---
+
+#### `./debug.sh down`
+
+**Stop the Docker containers** (database). Does not remove the data volume —
+your data is preserved.
+
+```bash
+./debug.sh down
+```
+
+To **wipe all data** and start fresh, use Docker directly:
+
+```bash
+docker compose down -v   # -v removes the named volume (deletes all DB data)
+docker compose up -d     # recreate the container
+```
+
+---
+
+### Accessing the services
+
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:5173 |
+| Backend API | http://localhost:8000 |
+| Swagger docs | http://localhost:8000/docs |
+
+---
 
 ## Project layout
 
 ```
-backend/
-  app/
-    api/             FastAPI routers: auth, theses, chat, admin
-    auth/            Password hashing + JWT
-    llm/             Ollama client, embeddings, agent (tool-calling loop)
-    models/          SQLAlchemy models
-    schemas/         Pydantic in/out models
-    tools/           search_theses (pgvector cosine search)
-  alembic/           DB migrations
-  scripts/           check_ollama, check_search
-frontend/
-  src/
-    api/             fetch wrapper + JWT handling
-    auth/            React auth context
-    pages/           Login, Register, SubmitThesis, Chat, Admin
-docker-compose.yml   Postgres + pgvector on host port 5433
+study-os-thesis/
+├── backend/
+│   ├── app/
+│   │   ├── api/            FastAPI routers (auth, theses, chat, chairs, students, proposals, admin)
+│   │   ├── auth/           JWT + password hashing
+│   │   ├── llm/            Ollama HTTP client
+│   │   ├── models/         SQLAlchemy ORM models
+│   │   ├── repositories/   Data-access layer (one per model group)
+│   │   ├── schemas/        Pydantic request/response schemas
+│   │   ├── services/       Business logic (auth, chat agent, chairs, students, theses)
+│   │   └── tools/          Hybrid thesis search (pgvector + BM25 + RRF)
+│   ├── alembic/            DB migrations (0001 → 0007)
+│   ├── scripts/
+│   │   └── seed.py         Idempotent DB seed (3 Tübingen chairs)
+│   ├── log_config.json     Uvicorn logging config
+│   ├── pyproject.toml      Python dependencies (Python ≥ 3.13)
+│   └── .env.example        Environment variable template
+├── frontend/
+│   └── src/
+│       ├── api/            Typed API clients (client, chairs, students, theses)
+│       ├── auth/           React auth context + JWT storage
+│       ├── components/     Shared UI components (SideNav, TopBar, SkillRadar, …)
+│       └── pages/          Dashboard, Chat, ChairExplorer, Proposals, Admin, Login, Register
+├── docker-compose.yml      PostgreSQL 16 + pgvector on host port 5433
+└── debug.sh                All-in-one dev launcher (up / down / no-args)
 ```
+
+---
+
+## Key features
+
+### Students
+- **Transcript upload** — Upload a PDF transcript of records. The system extracts
+  text with `pypdf`, sends it to the LLM for structured extraction (courses,
+  grades, ECTS), and computes a credit-weighted GPA.
+- **Competency profile** — Courses are mapped to skill axes (Programming,
+  Statistics, Databases, Projects, Web, Versioning) and displayed as a radar
+  chart. A course profile embedding is stored for semantic chair matching.
+- **AI chat (Find Thesis)** — Chat with the agent. It can search research chairs
+  by semantic similarity, search open thesis proposals, and — when explicitly
+  asked — generate personalised thesis proposals saved under "Meine Vorschläge".
+
+### Professors / Admins
+- **Chair management** — Create research chairs with name, description, and
+  professor. Ingest ArXiv papers by ID; the abstract is fetched, embedded, and
+  stored as a chair document for semantic search.
+- **Thesis proposals** — Submit open thesis proposals linked to a chair.
+
+---
+
+## Roles
+
+| Role | Capabilities |
+|---|---|
+| `student` | Upload transcript, chat, view proposals, receive AI-generated proposals |
+| `professor` | All student capabilities + submit thesis proposals |
+| `admin` | All capabilities + manage chairs, manage users |
+
+Register at `/register`. Admins cannot self-register — create an admin via the
+Swagger docs (`POST /api/admin/users`) or directly in the DB.
+
+> **Note:** The Swagger UI at `/docs` is enabled in development mode. Disable it
+> in production by removing the `docs_url` from the FastAPI constructor or
+> restricting access to trusted networks only.
+
+---
+
+## Environment variables reference
+
+All variables live in `backend/.env` (copied from `backend/.env.example`).
+
+| Variable | Default | Description |
+|---|---|---|
+| `DATABASE_URL` | `postgresql+asyncpg://<user>:<password>@localhost:5433/<db>` | SQLAlchemy async DB URL. Credentials must match those in `docker-compose.yml` |
+| `JWT_SECRET` | *(must be set)* | HMAC secret for signing JWTs. Generate with `python -c "import secrets; print(secrets.token_urlsafe(32))"` |
+| `JWT_ALGORITHM` | `HS256` | JWT signing algorithm |
+| `JWT_EXPIRES_MINUTES` | `60` | Token lifetime in minutes |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Base URL of the Ollama server |
+| `OLLAMA_CHAT_MODEL` | `gemma4:26b` | Model for chat and proposal generation |
+| `OLLAMA_EXTRACT_MODEL` | *(empty → falls back to chat model)* | Model for transcript extraction. Use a smaller model if you want faster parsing |
+| `OLLAMA_EMBED_MODEL` | `qwen3-embedding:4b` | Embedding model |
+| `OLLAMA_EMBED_DIM` | `2560` | Must match the embedding model output dimension |
+| `CORS_ORIGINS` | `http://localhost:5173` | Comma-separated allowed CORS origins |
+
+---
 
 ## Troubleshooting
 
-A few rough edges we ran into on first setup — keeping notes here so the next
-collaborator can fix them in seconds.
+### `[Errno 48] Address already in use` on port 8000
 
-### Docker says "command not found" inside WSL
-
-In Docker Desktop → Settings → Resources → **WSL Integration** → enable
-integration with your default distro → Apply & Restart. Then in PowerShell
-verify your distro is on WSL 2 with `wsl -l -v`.
-
-### `docker compose pull` fails with `docker-credential-desktop.exe: exec format error`
-
-Docker Desktop's credential helper is a Windows binary that can't run inside
-WSL. We only pull public images, so just clear the credsStore:
+A previous uvicorn process is still running. Kill it:
 
 ```bash
-echo '{}' > ~/.docker/config.json
+lsof -ti :8000 | xargs kill -9
 ```
 
-### `password authentication failed for user "thesis"` from the host
+### `DB container is not running/healthy` when running `./debug.sh` (no args)
 
-You already have a Postgres on port 5432. Our compose file maps the container
-to **5433** to avoid the clash — make sure `DATABASE_URL` in `backend/.env`
-ends with `:5433/thesis`, not `:5432/thesis`.
+The container is not started. Use `./debug.sh up` instead to start it first.
 
-If you previously brought the container up on 5432 with the wrong creds, wipe
-the volume and recreate:
+### Transcript upload fails with "LLM could not parse"
+
+The chat model returned non-JSON output. This can happen with smaller models.
+Try setting `OLLAMA_EXTRACT_MODEL` to a model that follows JSON instructions
+reliably (e.g. `gemma4:26b`, `qwen3.5:27b`).
+
+### Embedding dimension mismatch error on startup
+
+`OLLAMA_EMBED_DIM` in `.env` doesn't match what the model actually outputs.
+The startup log shows the actual dimension:
+```
+Ollama embed dim check passed: model=qwen3-embedding:4b dim=2560
+```
+Update `OLLAMA_EMBED_DIM` to match, then restart.
+
+### `password authentication failed for user "thesis"`
+
+A local Postgres on port 5432 may be conflicting. Our Docker container uses
+host port **5433** — verify `DATABASE_URL` in `.env` ends with `:5433/thesis`.
+
+If the container was previously started with wrong credentials, wipe the volume:
 
 ```bash
 docker compose down -v
 docker compose up -d
 ```
 
-### `ValueError: password cannot be longer than 72 bytes` during register
+### `ModuleNotFoundError: No module named 'app'` when running a script
 
-That's passlib 1.7 against bcrypt ≥ 4.1. `pyproject.toml` pins `bcrypt<4.1` —
-make sure you ran `uv sync` and not just `pip install`.
-
-### First chat message times out
-
-Llama 3.1 8B takes 30–90 s to load on CPU. We bumped the httpx timeout to
-600 s — first message will feel slow, the rest snappy. To pre-warm:
+Run scripts from the `backend/` directory with `PYTHONPATH` set:
 
 ```bash
-curl -s http://localhost:11434/api/generate \
-  -d '{"model":"llama3.1:8b","prompt":"hi","stream":false}' >/dev/null
+cd backend
+PYTHONPATH=. uv run python scripts/seed.py
 ```
 
-### `ModuleNotFoundError: No module named 'app'` running a script
+### Docker credential error in WSL (`exec format error`)
 
-Run scripts from the `backend/` directory: `uv run python scripts/<name>.py`.
-The scripts add the parent dir to `sys.path` automatically, but `cwd` must be
-`backend/`.
+Docker Desktop's credential helper is a Windows binary. Clear the credential
+store for WSL:
 
-## Out of scope (not yet implemented)
-
-- OpenAlex / external scraping
-- File upload / PDF parsing for theses
-- Password reset, email verification, refresh tokens
-- Automated tests (pytest scaffold is installed but no tests written yet)
+```bash
+echo '{}' > ~/.docker/config.json
+```

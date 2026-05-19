@@ -30,30 +30,68 @@ const N = AXES.length;
 /** Keywords that map a course name to an axis (case-insensitive). */
 const AXIS_KEYWORDS: Record<(typeof AXES)[number], string[]> = {
   Programming: [
-    "programm", "algorithm", "software", "coding", "java", "python",
-    "c++", "functional", "object", "compiler", "operating system",
-    "betriebssystem", "rechnerarchitektur", "computer architecture",
+    // English
+    "programm", "algorithm", "software", "coding", "java", "python", "c++",
+    "functional", "object", "compiler", "operating system", "computer architecture",
+    "data structure", "concurren", "parallel", "embedded", "system",
+    // German
+    "informatik", "programmier", "algorithmen", "datenstruktur", "betriebssystem",
+    "rechnerarchitektur", "compilerbau", "nebenläufig", "parallele", "eingebettete",
+    "grundlagen der", "einführung in die", "objektorientiert", "funktional",
+    "softwareentwicklung", "systemnahe", "hardwarenahe", "rechnerorganisation",
   ],
   Statistics: [
+    // English
     "statistic", "probabilit", "machine learning", "deep learning", "neural",
-    "data science", "analysis", "mathematik", "math", "linear algebra",
-    "stochastik", "wahrscheinlichkeit", "maschinelles lernen",
+    "data science", "analysis", "linear algebra", "calculus", "optimization",
+    "regression", "inference", "bayesian", "stochastic",
+    // German
+    "mathematik", "statistik", "wahrscheinlichkeit", "stochastik",
+    "maschinelles lernen", "künstliche intelligenz", "ki ", "analysis",
+    "lineare algebra", "numerik", "diskrete mathematik", "logik",
+    "optimierung", "mustererkennung", "signalverarbeitung", "algebra",
+    "differentialrechnung", "integrationsrechnung", "modellierung",
   ],
   Databases: [
-    "database", "datenbank", "sql", "nosql", "storage", "data engineer",
-    "information retrieval", "data warehouse", "cloud",
+    // English
+    "database", "sql", "nosql", "storage", "data engineer",
+    "information retrieval", "data warehouse", "cloud", "data management",
+    "query", "relational",
+    // German
+    "datenbank", "datenmanagement", "datenhaltung", "informationssystem",
+    "informationsretrieval", "wissensrepräsentation", "datenverwaltung",
+    "cloud", "big data",
   ],
   Projects: [
-    "project", "praktikum", "seminar", "thesis", "research", "lab",
-    "engineering", "systems", "verteilte", "distributed",
+    // English
+    "project", "lab", "thesis", "research", "engineering", "systems",
+    "distributed", "seminar", "workshop", "capstone", "team",
+    // German
+    "praktikum", "projekt", "seminar", "abschlussarbeit", "forschung",
+    "systemtechnik", "verteilte", "teamarbeit", "softwaretechnik",
+    "softwareprojekt", "praxisseminar", "teamprojekt", "bachelorarbeit",
+    "masterarbeit", "ingenieur", "systementwurf",
   ],
   Web: [
+    // English
     "web", "internet", "network", "http", "frontend", "backend",
-    "api", "rest", "ui", "ux", "mobile", "app",
+    "api", "rest", "ui", "ux", "mobile", "app", "fullstack",
+    "browser", "html", "css", "javascript", "react", "security",
+    // German
+    "netzwerk", "rechnernetze", "kommunikation", "protokoll",
+    "sicherheit", "kryptograph", "it-sicherheit", "datenschutz",
+    "netzwerktechnik", "telekommunikation", "internet der dinge",
   ],
   Versioning: [
+    // English
     "git", "version", "devops", "agile", "scrum", "software quality",
-    "testing", "ci", "cd", "deployment",
+    "testing", "ci", "cd", "deployment", "software engineering",
+    "software process", "requirements",
+    // German
+    "softwarequalität", "testen", "qualitätssicherung", "agile",
+    "versionierung", "softwareprozess", "anforderungsanalyse",
+    "softwareentwurf", "entwurfsmuster", "design pattern",
+    "software-engineering", "softwaremanagement",
   ],
 };
 
@@ -83,8 +121,18 @@ export function coursesToRadarData(courses: StudentCourse[]): number[] {
     });
   }
 
+  // Compute a global average score across all matched courses as fallback
+  // for axes with no keyword matches, so the chart is never completely empty.
+  const allScores = courses.map((c) => gradeToScore(c.grade));
+  const globalAvg =
+    allScores.length > 0
+      ? allScores.reduce((a, b) => a + b, 0) / allScores.length
+      : 2;
+  // Scale down global avg for unmatched axes (student likely has some exposure).
+  const fallback = Math.max(0.5, globalAvg * 0.6);
+
   return AXES.map((_, idx) =>
-    axisCounts[idx] > 0 ? axisSums[idx] / axisCounts[idx] : 0,
+    axisCounts[idx] > 0 ? axisSums[idx] / axisCounts[idx] : fallback,
   );
 }
 
