@@ -1,16 +1,20 @@
 /**
  * SVG hexagonal radar chart.
- * All data is mock — replace with API data when available.
  *
- * Axes (6): Programming, Statistics, Databases, Projects, Web, Versioning
- * Levels: Unaware (0) → Aware (1) → Working (2) → Practitioner (3) → Expert (4)
+ * Fixed 6 axes. Accepts `courses` from the student profile and maps them
+ * to axes via keyword heuristics. Falls back to zeros when no data is available.
+ *
+ * Axes: Programming, Statistics, Databases, Projects, Web, Versioning
+ * Scale: 0 (Unaware) → 4 (Expert), derived from German grades (1.0 best → 5.0 fail)
  */
+
+import type { StudentCourse } from "../api/students";
 
 const SIZE = 400;
 const CX = SIZE / 2;
 const CY = SIZE / 2;
-const LEVELS = 4; // rings
-const MAX_R = 160; // radius at outermost ring
+const LEVELS = 4;
+const MAX_R = 160;
 
 const AXES = [
   "Programming",
@@ -19,20 +23,79 @@ const AXES = [
   "Projects",
   "Web",
   "Versioning",
-];
+] as const;
+
 const N = AXES.length;
 
-// Mock data (0–4 scale, matching levels above)
-const CURRENT_DATA = [3.5, 3.8, 2.5, 2.8, 1.5, 2.2]; // red polygon
-const TARGET_DATA  = [4.0, 3.5, 3.5, 3.5, 3.0, 3.5]; // blue polygon
+/** Keywords that map a course name to an axis (case-insensitive). */
+const AXIS_KEYWORDS: Record<(typeof AXES)[number], string[]> = {
+  Programming: [
+    "programm", "algorithm", "software", "coding", "java", "python",
+    "c++", "functional", "object", "compiler", "operating system",
+    "betriebssystem", "rechnerarchitektur", "computer architecture",
+  ],
+  Statistics: [
+    "statistic", "probabilit", "machine learning", "deep learning", "neural",
+    "data science", "analysis", "mathematik", "math", "linear algebra",
+    "stochastik", "wahrscheinlichkeit", "maschinelles lernen",
+  ],
+  Databases: [
+    "database", "datenbank", "sql", "nosql", "storage", "data engineer",
+    "information retrieval", "data warehouse", "cloud",
+  ],
+  Projects: [
+    "project", "praktikum", "seminar", "thesis", "research", "lab",
+    "engineering", "systems", "verteilte", "distributed",
+  ],
+  Web: [
+    "web", "internet", "network", "http", "frontend", "backend",
+    "api", "rest", "ui", "ux", "mobile", "app",
+  ],
+  Versioning: [
+    "git", "version", "devops", "agile", "scrum", "software quality",
+    "testing", "ci", "cd", "deployment",
+  ],
+};
 
-/** Convert polar (angle, radius) to Cartesian. 0° = top. */
+/** Convert a German grade string (e.g. "1,3") to a 0-4 skill score. */
+function gradeToScore(grade: string | null): number {
+  if (!grade) return 2; // neutral default
+  const normalised = grade.replace(",", ".");
+  const val = parseFloat(normalised);
+  if (isNaN(val)) return grade.toLowerCase() === "bestanden" ? 2.5 : 1;
+  // German grade 1.0 → score 4, 5.0 → score 0
+  return Math.max(0, Math.min(4, ((5 - val) / 4) * 4));
+}
+
+/** Derive 6-axis scores from a list of student courses. */
+export function coursesToRadarData(courses: StudentCourse[]): number[] {
+  const axisSums: number[] = Array(N).fill(0);
+  const axisCounts: number[] = Array(N).fill(0);
+
+  for (const course of courses) {
+    const lower = course.course_name.toLowerCase();
+    AXES.forEach((axis, idx) => {
+      const matched = AXIS_KEYWORDS[axis].some((kw) => lower.includes(kw));
+      if (matched) {
+        axisSums[idx] += gradeToScore(course.grade);
+        axisCounts[idx] += 1;
+      }
+    });
+  }
+
+  return AXES.map((_, idx) =>
+    axisCounts[idx] > 0 ? axisSums[idx] / axisCounts[idx] : 0,
+  );
+}
+
+// Target profile (fixed — typical master thesis requirements)
+const TARGET_DATA = [3.5, 3.5, 3.0, 3.5, 2.5, 3.0];
+
 function polar(angle: number, r: number): [number, number] {
   const rad = (angle - 90) * (Math.PI / 180);
   return [CX + r * Math.cos(rad), CY + r * Math.sin(rad)];
 }
 
-/** Build a polygon points string from data array (values 0–4). */
 function buildPoints(data: number[]): string {
   return data
     .map((v, i) => {
@@ -44,7 +107,6 @@ function buildPoints(data: number[]): string {
     .join(" ");
 }
 
-/** Build ring polygon at a given level. */
 function ringPoints(level: number): string {
   const r = (level / LEVELS) * MAX_R;
   return Array.from({ length: N }, (_, i) => {
@@ -55,15 +117,18 @@ function ringPoints(level: number): string {
 
 const LEVEL_LABELS = ["Unaware", "Aware", "Working", "Practitioner", "Expert"];
 
-export default function SkillRadar() {
+interface SkillRadarProps {
+  /** Derived from student courses via coursesToRadarData(). Falls back to zeros. */
+  currentData?: number[];
+}
+
+export default function SkillRadar({ currentData }: SkillRadarProps) {
+  const current = currentData ?? Array(N).fill(0);
+
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-center">
-      {/* SVG radar */}
       <div className="w-full lg:w-2/3 aspect-square max-w-[480px] relative">
-        <svg
-          viewBox={`0 0 ${SIZE} ${SIZE}`}
-          className="w-full h-full"
-        >
+        <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="w-full h-full">
           {/* Grid rings */}
           {Array.from({ length: LEVELS }, (_, i) => i + 1).map((level) => (
             <polygon
@@ -80,15 +145,7 @@ export default function SkillRadar() {
             const angle = (360 / N) * i;
             const [x, y] = polar(angle, MAX_R);
             return (
-              <line
-                key={i}
-                x1={CX}
-                y1={CY}
-                x2={x}
-                y2={y}
-                stroke="#e3e2e6"
-                strokeWidth="1"
-              />
+              <line key={i} x1={CX} y1={CY} x2={x} y2={y} stroke="#e3e2e6" strokeWidth="1" />
             );
           })}
 
@@ -102,7 +159,7 @@ export default function SkillRadar() {
 
           {/* Current polygon (red) */}
           <polygon
-            points={buildPoints(CURRENT_DATA)}
+            points={buildPoints(current)}
             fill="rgba(186,26,26,0.15)"
             stroke="#ba1a1a"
             strokeWidth="2"
@@ -113,8 +170,7 @@ export default function SkillRadar() {
             const angle = (360 / N) * i;
             const r = MAX_R + 22;
             const [x, y] = polar(angle, r);
-            const anchor =
-              Math.abs(x - CX) < 5 ? "middle" : x > CX ? "start" : "end";
+            const anchor = Math.abs(x - CX) < 5 ? "middle" : x > CX ? "start" : "end";
             const dy = y < CY ? "-0.3em" : y > CY ? "1em" : "0.4em";
             return (
               <text
@@ -133,10 +189,10 @@ export default function SkillRadar() {
             );
           })}
 
-          {/* Level labels along the top axis */}
+          {/* Level labels along top axis */}
           {Array.from({ length: LEVELS + 1 }, (_, i) => {
             const r = (i / LEVELS) * MAX_R;
-            const [x, y] = polar(0, r); // straight up
+            const [x, y] = polar(0, r);
             if (i === 0) return null;
             return (
               <text
@@ -155,7 +211,7 @@ export default function SkillRadar() {
         </svg>
       </div>
 
-      {/* Legend + insight */}
+      {/* Legend */}
       <div className="flex-1 flex flex-col gap-6">
         <div className="flex flex-col gap-4 bg-surface-container-low p-6 rounded-lg">
           <span className="font-title-lg text-primary font-semibold">Legende</span>
@@ -182,13 +238,10 @@ export default function SkillRadar() {
         </div>
 
         <div className="bg-tertiary-container/10 border border-tertiary-container/20 p-4 rounded-lg flex items-start gap-3">
-          <span className="material-symbols-outlined text-tertiary-container mt-0.5">
-            info
-          </span>
+          <span className="material-symbols-outlined text-tertiary-container mt-0.5">info</span>
           <p className="text-body-sm text-on-tertiary-container font-medium">
-            Dein Fokus in Statistiken und Programmierung ist bereits auf
-            Experten-Niveau. Ergänze Web-Technologien, um das Zielprofil zu
-            vervollständigen.
+            Die Achsen werden aus deinen Kursnamen abgeleitet. Lade dein Transcript hoch, um dein
+            persönliches Kompetenzprofil zu sehen.
           </p>
         </div>
       </div>

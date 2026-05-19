@@ -3,7 +3,7 @@ name = "study-os-thesis-backend"
 version = "0.1.0"
 description = "FastAPI backend for the thesis recommendation app"
 readme = "../README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.30",
@@ -20,6 +20,7 @@ dependencies = [
     "email-validator>=2.2",
     "pyjwt>=2.12.1",
     "slowapi>=0.1.9",
+    "pypdf>=4.0",
 ]
 
 [dependency-groups]
@@ -32,6 +33,47 @@ dev = [
 [tool.uv]
 package = false
 
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
 [tool.ruff]
-line-length = 100
-target-version = "py311"
+line-length = 180
+indent-width = 4
+target-version = "py313"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.ruff.lint]
+select = [
+    "F",   # pyflakes
+    "E",   # pycodestyle
+    "I",   # isort
+    "ANN", # flake8 type annotations
+    "RUF", # ruff-specific rules
+]
+fixable = ["ALL"]
+
+ignore = [
+    "ANN101", # Missing type annotation for self in method
+    "ANN102", # Missing type annotation for cls in classmethod,
+    "ANN204", # Return types __init__
+    "E501",   # Line too long
+    "I001",   # Imports are incorrectly sorted.
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Ignoriere F401 (Unused import) in ALLEN __init__.py Dateien (egal in welchem Ordner)
+"__init__.py" = ["F401"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

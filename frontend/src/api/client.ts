@@ -9,7 +9,12 @@ export function setToken(t: string | null): void {
   else localStorage.setItem(TOKEN_KEY, t);
 }
 
-type FetchOpts = RequestInit & { json?: unknown; form?: Record<string, string> };
+type FetchOpts = RequestInit & {
+  json?: unknown;
+  form?: Record<string, string>;
+  /** Raw multipart FormData — do NOT set Content-Type, the browser handles it. */
+  multipart?: FormData;
+};
 
 export async function api<T = unknown>(path: string, opts: FetchOpts = {}): Promise<T> {
   const headers: Record<string, string> = {
@@ -26,6 +31,9 @@ export async function api<T = unknown>(path: string, opts: FetchOpts = {}): Prom
   } else if (opts.form !== undefined) {
     headers["Content-Type"] = "application/x-www-form-urlencoded";
     body = new URLSearchParams(opts.form).toString();
+  } else if (opts.multipart !== undefined) {
+    // Let the browser set Content-Type with the correct multipart boundary.
+    body = opts.multipart;
   }
 
   const res = await fetch(path, { ...opts, headers, body });

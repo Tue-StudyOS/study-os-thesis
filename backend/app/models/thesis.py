@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
 
-EMBEDDING_DIM = 768  # nomic-embed-text
+EMBEDDING_DIM = 2560  # qwen3-embedding:4b
 
 
 class ThesisSource(str, enum.Enum):
@@ -22,6 +22,9 @@ class Thesis(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(500), nullable=False)
     abstract: Mapped[str] = mapped_column(Text, nullable=False)
+    chair_id: Mapped[int | None] = mapped_column(
+        ForeignKey("chairs.id", ondelete="SET NULL"), nullable=True, index=True
+    )
     supervisor_id: Mapped[int | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )

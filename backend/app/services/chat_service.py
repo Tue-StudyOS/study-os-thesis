@@ -1,34 +1,73 @@
 """Business logic for chat sessions and the LLM agent loop."""
 
 import json
+import logging
 from typing import Any
 
 from app.config import Settings
 from app.exceptions import BadRequestException, ForbiddenException, NotFoundException
 from app.llm.ollama_client import OllamaClient
 from app.models import ChatMessage, ChatSession, MessageRole
+from app.repositories.chair_repository import ChairRepository
 from app.repositories.chat_repository import ChatRepository
+from app.repositories.student_repository import StudentRepository
 from app.tools.search_theses import search_theses_with_client
 
-SYSTEM_PROMPT = (
-    "You are an assistant helping a student pick a thesis topic. "
-    "You have access to a tool `search_theses(query, k)` that retrieves theses "
-    "from a local database ranked by semantic similarity. "
-    "Use it whenever the student expresses interests, methods, fields, or asks "
-    "what is available. Prefer concise queries that capture the essential keywords. "
-    "When you recommend theses, cite each one by its id and explain in one sentence "
-    "why it might fit. If retrieval returns nothing relevant, say so honestly and "
-    "ask a clarifying question."
-)
+_logger = logging.getLogger(__name__)
+
+SYSTEM_PROMPT = """\
+You are an expert academic advisor helping a student at a German university find \
+a thesis topic that fits their academic background.
+
+You have access to two tools:
+- `search_chairs(query, k)` — finds research chairs whose focus areas match the query.
+- `search_theses(query, k, chair_id)` — finds open thesis proposals, optionally filtered by chair.
+
+## Recommended workflow
+1. The student's course profile will be injected into this conversation as context.
+2. Use `search_chairs` with a query derived from the student's strongest or most \
+   relevant courses to find fitting chairs.
+3. For each promising chair, use `search_theses` with `chair_id` to find open proposals.
+4. Synthesise a personalised recommendation: explain which chair fits the student's \
+   background and why, then list the most relevant thesis proposals with their ids.
+5. If nothing fits, say so honestly and ask a clarifying question.
+
+Always cite thesis ids and chair names in your recommendations.\
+"""
 
 TOOLS_SPEC: list[dict[str, Any]] = [
     {
         "type": "function",
         "function": {
+            "name": "search_chairs",
+            "description": (
+                "Semantic search over research chair descriptions and paper abstracts. "
+                "Returns chairs whose research focus best matches the query."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "Free-text query derived from student interests or courses.",
+                    },
+                    "k": {
+                        "type": "integer",
+                        "description": "Number of results to return (1-10).",
+                        "default": 5,
+                    },
+                },
+                "required": ["query"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "search_theses",
             "description": (
-                "Semantic search over the local thesis database. "
-                "Returns up to k theses ranked by cosine similarity to the query."
+                "Semantic + keyword search over open thesis proposals. "
+                "Optionally filter by chair_id to scope results to a specific chair."
             ),
             "parameters": {
                 "type": "object",
@@ -42,11 +81,15 @@ TOOLS_SPEC: list[dict[str, Any]] = [
                         "description": "Number of results to return (1-20).",
                         "default": 5,
                     },
+                    "chair_id": {
+                        "type": "integer",
+                        "description": "If provided, restrict results to this chair's proposals.",
+                    },
                 },
                 "required": ["query"],
             },
         },
-    }
+    },
 ]
 
 MAX_TOOL_ITERATIONS = 4
@@ -72,10 +115,14 @@ class ChatService:
         chat_repo: ChatRepository,
         ollama_client: OllamaClient,
         settings: Settings,
+        student_repo: StudentRepository | None = None,
+        chair_repo: ChairRepository | None = None,
     ) -> None:
         self._chat_repo = chat_repo
         self._ollama = ollama_client
         self._settings = settings
+        self._student_repo = student_repo
+        self._chair_repo = chair_repo
 
     async def create_session(self, user_id: int) -> ChatSession:
         return await self._chat_repo.create_session(user_id)
@@ -91,6 +138,27 @@ class ChatService:
             raise ForbiddenException("You do not own this session")
         return await self._chat_repo.list_messages(session_id)
 
+    async def _build_student_context(self, user_id: int) -> str | None:
+        """Return a short text summary of the student's course profile, or None."""
+        if self._student_repo is None:
+            return None
+        try:
+            student = await self._student_repo.get_by_user_id(user_id)
+            if student is None or not student.courses:
+                return None
+            lines = [f"## Student academic profile (GPA: {student.gpa or 'N/A'})"]
+            if student.program:
+                lines.append(f"Program: {student.program}, Semester: {student.semester or 'N/A'}")
+            lines.append("Completed courses:")
+            for c in student.courses:
+                grade_str = f", grade {c.grade}" if c.grade else ""
+                credits_str = f" ({c.credits} ECTS)" if c.credits else ""
+                lines.append(f"  - {c.course_name}{credits_str}{grade_str}")
+            return "\n".join(lines)
+        except Exception as exc:
+            _logger.warning("Could not load student profile for chat context: %s", exc)
+            return None
+
     async def send_message(
         self, session_id: int, user_id: int, content: str
     ) -> list[ChatMessage]:
@@ -104,12 +172,12 @@ class ChatService:
         if chat.user_id != user_id:
             raise ForbiddenException("You do not own this session")
 
-        return await self._run_agent_turn(session_id, content)
+        return await self._run_agent_turn(session_id, content, user_id)
 
     # ---- Agent loop (moved from app/llm/agent.py) ----
 
     async def _run_agent_turn(
-        self, chat_session_id: int, user_content: str
+        self, chat_session_id: int, user_content: str, user_id: int
     ) -> list[ChatMessage]:
         history = await self._chat_repo.list_messages(chat_session_id)
         # Truncate history to avoid exceeding the model's context window.
@@ -125,8 +193,14 @@ class ChatService:
         )
         new_messages.append(user_row)
 
+        # Build system prompt, injecting student profile if available.
+        student_context = await self._build_student_context(user_id)
+        system_content = SYSTEM_PROMPT
+        if student_context:
+            system_content = system_content + "\n\n" + student_context
+
         ollama_messages: list[dict[str, Any]] = [
-            {"role": "system", "content": SYSTEM_PROMPT}
+            {"role": "system", "content": system_content}
         ]
         for row in history:
             ollama_messages.append(_db_row_to_ollama_message(row))
@@ -207,16 +281,48 @@ class ChatService:
                 arguments = json.loads(arguments)
             except json.JSONDecodeError:
                 arguments = {}
-        if name != "search_theses":
+
+        if name == "search_theses":
+            return await self._tool_search_theses(arguments)
+        elif name == "search_chairs":
+            return await self._tool_search_chairs(arguments)
+        else:
             return json.dumps({"error": f"unknown tool: {name}"})
+
+    async def _tool_search_theses(self, arguments: dict[str, Any]) -> str:
         query = str(arguments.get("query", "")).strip()
+        if not query:
+            return json.dumps({"error": "query is required"})
         try:
             k = max(1, min(20, int(arguments.get("k", 5))))
         except (TypeError, ValueError):
             k = 5
-        if not query:
-            return json.dumps({"error": "query is required"})
+        chair_id: int | None = None
+        raw_chair = arguments.get("chair_id")
+        if raw_chair is not None:
+            try:
+                chair_id = int(raw_chair)
+            except (TypeError, ValueError):
+                pass
         hits = await search_theses_with_client(
-            self._ollama, self._settings, query, k=k
+            self._ollama, self._settings, query, k=k, chair_id=chair_id
         )
         return json.dumps({"results": hits})
+
+    async def _tool_search_chairs(self, arguments: dict[str, Any]) -> str:
+        if self._chair_repo is None:
+            return json.dumps({"error": "chair search not available"})
+        query = str(arguments.get("query", "")).strip()
+        if not query:
+            return json.dumps({"error": "query is required"})
+        try:
+            k = max(1, min(10, int(arguments.get("k", 5))))
+        except (TypeError, ValueError):
+            k = 5
+        try:
+            embedding = await self._ollama.embed(self._settings.ollama_embed_model, query)
+        except Exception as exc:
+            _logger.warning("Could not embed chair search query: %s", exc)
+            return json.dumps({"error": "embedding service unavailable"})
+        results = await self._chair_repo.search_by_embedding(embedding, k=k)
+        return json.dumps({"results": results})

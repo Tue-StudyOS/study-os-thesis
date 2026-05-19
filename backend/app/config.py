@@ -13,12 +13,19 @@ class Settings(BaseSettings):
     jwt_algorithm: str = Field("HS256", alias="JWT_ALGORITHM")
     jwt_expires_minutes: int = Field(60, alias="JWT_EXPIRES_MINUTES")
 
-    ollama_host: str = Field("http://localhost:11434", alias="OLLAMA_HOST")
-    ollama_chat_model: str = Field("llama3.1:8b", alias="OLLAMA_CHAT_MODEL")
-    ollama_embed_model: str = Field("nomic-embed-text", alias="OLLAMA_EMBED_MODEL")
+    ollama_host: str = Field("http://localhost:11434", alias="OLLAMA_BASE_URL")
+    ollama_chat_model: str = Field("gemma4:26b", alias="OLLAMA_CHAT_MODEL")
+    # Model used for transcript extraction. Defaults to OLLAMA_CHAT_MODEL if not set.
+    ollama_extract_model: str = Field("", alias="OLLAMA_EXTRACT_MODEL")
+    ollama_embed_model: str = Field("qwen3-embedding:4b", alias="OLLAMA_EMBED_MODEL")
     # Must match the output dimension of OLLAMA_EMBED_MODEL.
-    # Common values: nomic-embed-text=768, mxbai-embed-large=1024, all-minilm=384
-    ollama_embed_dim: int = Field(768, alias="OLLAMA_EMBED_DIM")
+    # Common values: qwen3-embedding:4b=2560, nomic-embed-text=768, mxbai-embed-large=1024
+    ollama_embed_dim: int = Field(2560, alias="OLLAMA_EMBED_DIM")
+
+    @property
+    def effective_extract_model(self) -> str:
+        """Returns OLLAMA_EXTRACT_MODEL if set, otherwise falls back to OLLAMA_CHAT_MODEL."""
+        return self.ollama_extract_model.strip() or self.ollama_chat_model
 
     cors_origins: str = Field("http://localhost:5173", alias="CORS_ORIGINS")
 

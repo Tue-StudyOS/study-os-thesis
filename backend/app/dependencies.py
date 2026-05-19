@@ -18,12 +18,16 @@ from app.db import SessionLocal
 from app.exceptions import ForbiddenException, UnauthorizedException
 from app.llm.ollama_client import OllamaClient
 from app.models import User, UserRole
+from app.repositories.chair_repository import ChairRepository
 from app.repositories.chat_repository import ChatRepository
+from app.repositories.student_repository import StudentRepository
 from app.repositories.thesis_repository import ThesisRepository
 from app.repositories.user_repository import UserRepository
 from app.services.admin_service import AdminService
 from app.services.auth_service import AuthService
+from app.services.chair_service import ChairService
 from app.services.chat_service import ChatService
+from app.services.student_service import StudentService
 from app.services.thesis_service import ThesisService
 
 # ---------------------------------------------------------------------------
@@ -69,9 +73,19 @@ def get_chat_repository(session: SessionDep) -> ChatRepository:
     return ChatRepository(session)
 
 
+def get_student_repository(session: SessionDep) -> StudentRepository:
+    return StudentRepository(session)
+
+
+def get_chair_repository(session: SessionDep) -> ChairRepository:
+    return ChairRepository(session)
+
+
 UserRepoDep = Annotated[UserRepository, Depends(get_user_repository)]
 ThesisRepoDep = Annotated[ThesisRepository, Depends(get_thesis_repository)]
 ChatRepoDep = Annotated[ChatRepository, Depends(get_chat_repository)]
+StudentRepoDep = Annotated[StudentRepository, Depends(get_student_repository)]
+ChairRepoDep = Annotated[ChairRepository, Depends(get_chair_repository)]
 
 # ---------------------------------------------------------------------------
 # Services
@@ -95,18 +109,38 @@ def get_chat_service(
     chat_repo: ChatRepoDep,
     ollama: OllamaClientDep,
     settings: SettingsDep,
+    student_repo: StudentRepoDep,
+    chair_repo: ChairRepoDep,
 ) -> ChatService:
-    return ChatService(chat_repo, ollama, settings)
+    return ChatService(chat_repo, ollama, settings, student_repo=student_repo, chair_repo=chair_repo)
 
 
 def get_admin_service(user_repo: UserRepoDep) -> AdminService:
     return AdminService(user_repo)
 
 
+def get_student_service(
+    student_repo: StudentRepoDep,
+    ollama: OllamaClientDep,
+    settings: SettingsDep,
+) -> StudentService:
+    return StudentService(student_repo, ollama, settings)
+
+
+def get_chair_service(
+    chair_repo: ChairRepoDep,
+    ollama: OllamaClientDep,
+    settings: SettingsDep,
+) -> ChairService:
+    return ChairService(chair_repo, ollama, settings)
+
+
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 ThesisServiceDep = Annotated[ThesisService, Depends(get_thesis_service)]
 ChatServiceDep = Annotated[ChatService, Depends(get_chat_service)]
 AdminServiceDep = Annotated[AdminService, Depends(get_admin_service)]
+StudentServiceDep = Annotated[StudentService, Depends(get_student_service)]
+ChairServiceDep = Annotated[ChairService, Depends(get_chair_service)]
 
 # ---------------------------------------------------------------------------
 # Authentication dependencies

@@ -1,75 +1,120 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import TopBar from "../components/TopBar";
 import AiInsightChip from "../components/AiInsightChip";
+import { listTheses, type Thesis } from "../api/theses";
+import { listChairs, type Chair } from "../api/chairs";
 
-interface Proposal {
-  id: string;
-  title: string;
-  chair: string;
-  abstract: string;
-  date: string;
-  isAiDraft: boolean;
-  featured?: boolean;
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("de-DE", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
 
-const MOCK_PROPOSALS: Proposal[] = [
-  {
-    id: "1",
-    title:
-      "Optimierung von Transformer-Modellen für Edge-Devices durch Quantisierung",
-    chair: "Lehrstuhl für Künstliche Intelligenz (Prof. Dr. Schmidt)",
-    abstract:
-      "Dieser Vorschlag untersucht Methoden zur Reduzierung der Inferenzzeit von Large Language Models auf ressourcenbeschränkten Geräten. Der Fokus liegt auf der Entwicklung neuartiger Post-Training-Quantisierungsverfahren, die den Genauigkeitsverlust im Vergleich zu bestehenden Methoden minimieren.",
-    date: "Heute, 14:30",
-    isAiDraft: true,
-    featured: true,
-  },
-  {
-    id: "2",
-    title:
-      "Ethische Implikationen algorithmischer Entscheidungsfindung im Personalwesen",
-    chair: "Lehrstuhl für Wirtschaftsethik",
-    abstract:
-      "Eine empirische Analyse von Bias in gängigen Recruiting-Algorithmen und Entwicklung eines Rahmenwerks für auditierbare und faire KI-gestützte Auswahlprozesse.",
-    date: "Gestern",
-    isAiDraft: false,
-  },
-  {
-    id: "3",
-    title: "Nachhaltige Lieferketten durch Blockchain-Technologie",
-    chair: "Institut für Logistik",
-    abstract:
-      "Untersuchung der Implementierungsbarrieren von Smart Contracts zur Sicherstellung von Transparenz und ESG-Compliance in globalen textilen Lieferketten.",
-    date: "12. Okt 2023",
-    isAiDraft: true,
-  },
-];
+function ProposalCard({ thesis, chairName }: { thesis: Thesis; chairName?: string }) {
+  return (
+    <article className="bg-surface rounded-xl border border-outline-variant p-stack-md hover:shadow-[0px_4px_20px_rgba(26,54,93,0.08)] transition-shadow duration-300 flex flex-col h-full">
+      <div className="flex justify-between items-start mb-stack-sm">
+        <div className="flex gap-2 items-center flex-wrap">
+          {thesis.source === "openalex" ? (
+            <AiInsightChip label="OpenAlex" />
+          ) : thesis.source === "professor" ? (
+            <span className="inline-flex items-center px-2 py-1 rounded-full bg-primary-fixed/20 text-primary font-label-md text-[10px]">
+              Professor
+            </span>
+          ) : (
+            <span className="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-[10px]">
+              Student
+            </span>
+          )}
+          <span className="font-label-md text-label-md text-on-surface-variant">
+            {formatDate(thesis.created_at)}
+          </span>
+        </div>
+      </div>
+
+      <h3 className="font-title-lg text-title-lg text-on-background mb-2 line-clamp-2">
+        {thesis.title}
+      </h3>
+
+      {chairName && (
+        <div className="flex items-center gap-2 mb-stack-md">
+          <span className="material-symbols-outlined text-on-surface-variant text-[16px]">
+            account_balance
+          </span>
+          <span className="font-label-md text-label-md text-on-surface-variant truncate">
+            {chairName}
+          </span>
+        </div>
+      )}
+
+      <p className="font-body-sm text-body-sm text-on-surface-variant mb-stack-md flex-1 line-clamp-4">
+        {thesis.abstract}
+      </p>
+
+      <div className="flex gap-3 mt-auto pt-stack-sm border-t border-outline-variant/50">
+        <button className="flex-1 py-2 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors text-center">
+          Details
+        </button>
+      </div>
+    </article>
+  );
+}
 
 export default function Proposals() {
+  const [searchParams] = useSearchParams();
+  const filterChairId = searchParams.get("chair_id")
+    ? Number(searchParams.get("chair_id"))
+    : null;
+
+  const [theses, setTheses] = useState<Thesis[]>([]);
+  const [chairs, setChairs] = useState<Chair[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
-  const filtered = MOCK_PROPOSALS.filter(
-    (p) =>
-      p.title.toLowerCase().includes(search.toLowerCase()) ||
-      p.chair.toLowerCase().includes(search.toLowerCase()),
-  );
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([listTheses(), listChairs()])
+      .then(([t, c]) => { setTheses(t); setChairs(c); })
+      .catch((e) => setError(e instanceof Error ? e.message : "Fehler beim Laden"))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const featured = filtered.find((p) => p.featured);
-  const rest = filtered.filter((p) => !p.featured);
+  const chairMap = Object.fromEntries(chairs.map((c) => [c.id, c.name]));
+
+  const filtered = theses.filter((t) => {
+    const matchesChair = filterChairId == null || t.chair_id === filterChairId;
+    const lower = search.toLowerCase();
+    const matchesSearch =
+      !lower ||
+      t.title.toLowerCase().includes(lower) ||
+      t.abstract.toLowerCase().includes(lower) ||
+      (t.chair_id && chairMap[t.chair_id]?.toLowerCase().includes(lower));
+    return matchesChair && matchesSearch;
+  });
+
+  const [featured, ...rest] = filtered;
+
+  const activeChairName = filterChairId ? chairMap[filterChairId] : null;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <TopBar showSearch={false} />
 
       <main className="flex-1 px-4 md:px-margin-desktop py-stack-lg max-w-container-max mx-auto w-full">
-        {/* Page header */}
+        {/* Header */}
         <div className="mb-stack-lg flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-2">
-              Deine Forschungsvorschläge
+              Forschungsvorschläge
             </h2>
             <p className="font-body-md text-body-md text-on-surface-variant">
-              Verwalte und exportiere deine KI-generierten Exposé-Entwürfe.
+              {activeChairName
+                ? `Gefiltert nach: ${activeChairName}`
+                : "Alle verfügbaren Themenvorschläge"}
             </p>
           </div>
           <div className="flex gap-3">
@@ -80,128 +125,100 @@ export default function Proposals() {
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Vorschläge durchsuchen..."
-                className="pl-10 pr-4 py-2 rounded-lg border border-outline-variant bg-surface focus:border-primary focus:ring-1 focus:ring-primary font-body-sm text-body-sm text-on-surface w-full md:w-64 transition-all outline-none"
+                placeholder="Vorschläge durchsuchen…"
+                className="pl-10 pr-4 py-2 rounded-lg border border-outline-variant bg-surface focus:border-primary font-body-sm text-body-sm text-on-surface w-full md:w-64 transition-all outline-none"
               />
             </div>
-            <button className="p-2 rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors flex items-center justify-center">
-              <span className="material-symbols-outlined">filter_list</span>
-            </button>
           </div>
         </div>
 
-        {/* Bento grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
-          {/* Featured card — spans 2 cols */}
-          {featured && (
-            <article className="bg-surface rounded-xl border border-outline-variant p-stack-md hover:shadow-[0px_4px_20px_rgba(26,54,93,0.08)] transition-shadow duration-300 flex flex-col h-full lg:col-span-2 relative overflow-hidden">
-              {/* Decorative corner blob */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-container opacity-10 rounded-bl-full -z-10" />
+        {/* Loading */}
+        {loading && (
+          <div className="flex justify-center py-24">
+            <div className="w-10 h-10 border-2 border-outline-variant border-t-primary rounded-full animate-spin" />
+          </div>
+        )}
 
-              <div className="flex justify-between items-start mb-stack-sm">
-                <div className="flex gap-2 items-center">
-                  {featured.isAiDraft && <AiInsightChip label="KI-Entwurf" />}
-                  <span className="font-label-md text-label-md text-on-surface-variant">
-                    {featured.date}
-                  </span>
+        {/* Error */}
+        {error && (
+          <div className="bg-error-container text-on-error-container rounded-xl p-6 font-body-md mb-6">
+            {error}
+          </div>
+        )}
+
+        {/* Empty */}
+        {!loading && !error && theses.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-24 gap-4 text-on-surface-variant">
+            <span className="material-symbols-outlined text-[48px]">description</span>
+            <p className="font-body-lg">Noch keine Vorschläge verfügbar.</p>
+            <p className="font-body-sm">Professoren können Themen über die Admin-Seite einreichen.</p>
+          </div>
+        )}
+
+        {/* No results for filter */}
+        {!loading && !error && theses.length > 0 && filtered.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-24 gap-4 text-on-surface-variant">
+            <span className="material-symbols-outlined text-[48px]">search_off</span>
+            <p className="font-body-lg">Keine Vorschläge gefunden.</p>
+          </div>
+        )}
+
+        {/* Grid */}
+        {!loading && !error && filtered.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+            {/* Featured */}
+            {featured && (
+              <article className="bg-surface rounded-xl border border-outline-variant p-stack-md hover:shadow-[0px_4px_20px_rgba(26,54,93,0.08)] transition-shadow duration-300 flex flex-col h-full lg:col-span-2 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary-container opacity-10 rounded-bl-full -z-10" />
+
+                <div className="flex justify-between items-start mb-stack-sm">
+                  <div className="flex gap-2 items-center flex-wrap">
+                    {featured.source === "professor" && (
+                      <AiInsightChip label="Professor" />
+                    )}
+                    <span className="font-label-md text-label-md text-on-surface-variant">
+                      {formatDate(featured.created_at)}
+                    </span>
+                  </div>
                 </div>
-                <button className="text-on-surface-variant hover:text-primary transition-colors">
-                  <span className="material-symbols-outlined">more_vert</span>
-                </button>
-              </div>
 
-              <h3 className="font-title-lg text-title-lg text-on-background mb-2">
-                {featured.title}
-              </h3>
+                <h3 className="font-title-lg text-title-lg text-on-background mb-2">
+                  {featured.title}
+                </h3>
 
-              <div className="flex items-center gap-2 mb-stack-md">
-                <span className="material-symbols-outlined text-on-surface-variant text-[16px]">
-                  account_balance
-                </span>
-                <span className="font-label-md text-label-md text-on-surface-variant">
-                  {featured.chair}
-                </span>
-              </div>
+                {featured.chair_id && chairMap[featured.chair_id] && (
+                  <div className="flex items-center gap-2 mb-stack-md">
+                    <span className="material-symbols-outlined text-on-surface-variant text-[16px]">
+                      account_balance
+                    </span>
+                    <span className="font-label-md text-label-md text-on-surface-variant">
+                      {chairMap[featured.chair_id]}
+                    </span>
+                  </div>
+                )}
 
-              <p className="font-body-sm text-body-sm text-on-surface-variant mb-stack-md flex-1 line-clamp-3">
-                {featured.abstract}
-              </p>
+                <p className="font-body-sm text-body-sm text-on-surface-variant mb-stack-md flex-1 line-clamp-4">
+                  {featured.abstract}
+                </p>
 
-              <div className="flex gap-3 mt-auto pt-stack-sm border-t border-outline-variant/50">
-                <button className="flex-1 py-2 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors text-center">
-                  Details ansehen
-                </button>
-                <button className="py-2 px-4 rounded-lg border border-primary text-primary font-label-md text-label-md hover:bg-primary-fixed hover:text-on-primary-fixed-variant transition-colors flex items-center justify-center gap-2">
-                  <span className="material-symbols-outlined text-[18px]">download</span>
-                  PDF
-                </button>
-              </div>
-            </article>
-          )}
+                <div className="flex gap-3 mt-auto pt-stack-sm border-t border-outline-variant/50">
+                  <button className="flex-1 py-2 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors text-center">
+                    Details ansehen
+                  </button>
+                </div>
+              </article>
+            )}
 
-          {/* Standard cards */}
-          {rest.map((proposal) => (
-            <ProposalCard key={proposal.id} proposal={proposal} />
-          ))}
-
-          {/* Empty state / new proposal card */}
-          <button className="bg-surface rounded-xl border-2 border-dashed border-outline-variant p-stack-md flex flex-col items-center justify-center gap-3 hover:border-primary/50 hover:bg-surface-container-low/40 transition-all group min-h-[200px]">
-            <div className="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <span className="material-symbols-outlined text-[24px] text-primary">add</span>
-            </div>
-            <span className="font-label-md text-label-md text-on-surface-variant group-hover:text-primary transition-colors">
-              Neuen Vorschlag erstellen
-            </span>
-          </button>
-        </div>
+            {rest.map((thesis) => (
+              <ProposalCard
+                key={thesis.id}
+                thesis={thesis}
+                chairName={thesis.chair_id ? chairMap[thesis.chair_id] : undefined}
+              />
+            ))}
+          </div>
+        )}
       </main>
     </div>
-  );
-}
-
-function ProposalCard({ proposal }: { proposal: Proposal }) {
-  return (
-    <article className="bg-surface rounded-xl border border-outline-variant p-stack-md hover:shadow-[0px_4px_20px_rgba(26,54,93,0.08)] transition-shadow duration-300 flex flex-col h-full">
-      <div className="flex justify-between items-start mb-stack-sm">
-        <div className="flex gap-2 items-center">
-          {proposal.isAiDraft ? (
-            <AiInsightChip label="KI-Entwurf" />
-          ) : (
-            <span className="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-[10px]">
-              Entwurf
-            </span>
-          )}
-          <span className="font-label-md text-label-md text-on-surface-variant">
-            {proposal.date}
-          </span>
-        </div>
-      </div>
-
-      <h3 className="font-title-lg text-title-lg text-on-background mb-2 line-clamp-2">
-        {proposal.title}
-      </h3>
-
-      <div className="flex items-center gap-2 mb-stack-md">
-        <span className="material-symbols-outlined text-on-surface-variant text-[16px]">
-          account_balance
-        </span>
-        <span className="font-label-md text-label-md text-on-surface-variant truncate">
-          {proposal.chair}
-        </span>
-      </div>
-
-      <p className="font-body-sm text-body-sm text-on-surface-variant mb-stack-md flex-1 line-clamp-3">
-        {proposal.abstract}
-      </p>
-
-      <div className="flex gap-3 mt-auto pt-stack-sm border-t border-outline-variant/50">
-        <button className="flex-1 py-2 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors text-center">
-          Details
-        </button>
-        <button className="p-2 rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors flex items-center justify-center">
-          <span className="material-symbols-outlined">download</span>
-        </button>
-      </div>
-    </article>
   );
 }

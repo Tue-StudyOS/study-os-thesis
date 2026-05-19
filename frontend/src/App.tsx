@@ -37,6 +37,14 @@ function RequireAuth({ children }: { children: JSX.Element }) {
   return children;
 }
 
+/** Redirect non-admins to /dashboard. */
+function RequireAdmin({ children }: { children: JSX.Element }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user || user.role !== "admin") return <Navigate to="/dashboard" replace />;
+  return children;
+}
+
 export default function App() {
   return (
     <Routes>
@@ -59,7 +67,14 @@ export default function App() {
         <Route path="/chat" element={<Chat />} />
         <Route path="/chairs" element={<ChairExplorer />} />
         <Route path="/proposals" element={<Proposals />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route
+          path="/admin"
+          element={
+            <RequireAdmin>
+              <Admin />
+            </RequireAdmin>
+          }
+        />
       </Route>
 
       {/* Fallback */}

@@ -87,6 +87,7 @@ async def _vector_search(
     settings: Settings,
     query: str,
     fetch: int,
+    chair_id: int | None = None,
 ) -> list[tuple]:
     """Return up to `fetch` rows ordered by cosine distance (ascending).
 
@@ -98,18 +99,18 @@ async def _vector_search(
         _logger.warning("Vector search skipped — Ollama unavailable: %s", exc)
         return []
 
-    # Use a raw SQL parameter for the vector literal so asyncpg handles the
-    # type correctly without needing the ORM layer.
+    chair_filter = "AND chair_id = :chair_id" if chair_id is not None else ""
     stmt = text(
-        """
+        f"""
         SELECT id, title, abstract,
                embedding <=> CAST(:vec AS vector) AS distance
         FROM   theses
         WHERE  embedding IS NOT NULL
+        {chair_filter}
         ORDER  BY distance ASC
         LIMIT  :lim
         """
-    ).bindparams(vec=str(q_vec), lim=fetch)
+    ).bindparams(vec=str(q_vec), lim=fetch, **({"chair_id": chair_id} if chair_id is not None else {}))
 
     rows = (await session.execute(stmt)).all()
     return list(rows)
@@ -119,18 +120,21 @@ async def _bm25_search(
     session: AsyncSession,
     query: str,
     fetch: int,
+    chair_id: int | None = None,
 ) -> list[tuple]:
     """Return up to `fetch` rows ordered by ts_rank_cd (descending)."""
+    chair_filter = "AND chair_id = :chair_id" if chair_id is not None else ""
     stmt = text(
-        """
+        f"""
         SELECT id, title, abstract,
                ts_rank_cd(search_vec, plainto_tsquery('english', :q)) AS rank
         FROM   theses
         WHERE  search_vec @@ plainto_tsquery('english', :q)
+        {chair_filter}
         ORDER  BY rank DESC
         LIMIT  :lim
         """
-    ).bindparams(q=query, lim=fetch)
+    ).bindparams(q=query, lim=fetch, **({"chair_id": chair_id} if chair_id is not None else {}))
 
     rows = (await session.execute(stmt)).all()
     return list(rows)
@@ -147,6 +151,7 @@ async def search_theses_with_client(
     k: int = 5,
     *,
     session: AsyncSession | None = None,
+    chair_id: int | None = None,
 ) -> list[ThesisHit]:
     """Hybrid semantic + keyword search over the thesis database.
 
@@ -154,6 +159,7 @@ async def search_theses_with_client(
     PostgreSQL full-text search for BM25.  Results are fused with RRF.
 
     If *session* is None a new session is created from ``SessionLocal``.
+    Optionally filter results to a specific chair via *chair_id*.
     """
     from app.db import SessionLocal  # deferred to avoid circular import
 
@@ -161,8 +167,8 @@ async def search_theses_with_client(
     fetch = k * 3  # over-fetch so RRF has enough candidates from each leg
 
     async def _run(s: AsyncSession) -> list[ThesisHit]:
-        vector_task = _vector_search(s, ollama, settings, query, fetch)
-        bm25_task = _bm25_search(s, query, fetch)
+        vector_task = _vector_search(s, ollama, settings, query, fetch, chair_id=chair_id)
+        bm25_task = _bm25_search(s, query, fetch, chair_id=chair_id)
         vector_rows, bm25_rows = await asyncio.gather(vector_task, bm25_task)
 
         if not vector_rows and not bm25_rows:
