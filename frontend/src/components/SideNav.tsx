@@ -11,7 +11,7 @@ type NavItem = {
 
 const mainNavItems: NavItem[] = [
   { to: "/dashboard", icon: "dashboard", label: "Dashboard" },
-  { to: "/chat", icon: "chat_spark", label: "Find Thesis" },
+  { to: "/chat", icon: "chat", label: "Find Thesis" },
   { to: "/chairs", icon: "explore", label: "Lehrstuhl-Explorer" },
   { to: "/proposals", icon: "description", label: "My Proposals" },
 ];

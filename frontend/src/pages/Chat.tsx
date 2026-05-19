@@ -217,8 +217,8 @@ export default function Chat() {
                 {/* Welcome AI bubble if empty */}
                 {messages.length === 0 && !busy && (
                   <div className="flex gap-unit max-w-[85%]">
-                    <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0 mt-1 font-bold text-[13px]">
-                      AI
+                    <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0 mt-1">
+                      <span className="material-symbols-outlined text-[18px]">smart_toy</span>
                     </div>
                     <div className="bg-surface-container rounded-2xl rounded-tl-sm p-stack-md border border-outline-variant shadow-sm ai-glass-panel">
                       <div className="font-label-md text-label-md mb-unit ai-gradient-text-teal">
@@ -271,8 +271,8 @@ export default function Chat() {
 
                 {busy && (
                   <div className="flex gap-unit max-w-[85%]">
-                    <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0 mt-1 font-bold text-[13px]">
-                      AI
+                    <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0 mt-1">
+                      <span className="material-symbols-outlined text-[18px]">smart_toy</span>
                     </div>
                     <div className="bg-surface-container rounded-2xl rounded-tl-sm p-stack-md border border-outline-variant shadow-sm ai-glass-panel">
                       <div className="font-label-md text-label-md mb-unit ai-gradient-text-teal">
@@ -368,8 +368,8 @@ function ChatBubble({ m }: { m: Message }) {
 
   return (
     <div className="flex gap-unit max-w-[85%]">
-      <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0 mt-1 font-bold text-[13px]">
-        AI
+      <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0 mt-1">
+        <span className="material-symbols-outlined text-[18px]">smart_toy</span>
       </div>
       <div className="bg-surface-container rounded-2xl rounded-tl-sm p-stack-md border border-outline-variant shadow-sm">
         <div className="font-label-md text-label-md mb-unit ai-gradient-text-teal">
