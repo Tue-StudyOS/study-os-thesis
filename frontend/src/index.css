@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: "Inter", sans-serif;
+    background-color: #faf9fd;
+    color: #1a1c1e;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+    vertical-align: middle;
+    user-select: none;
+  }
+}
+
+@layer components {
+  .ambient-shadow {
+    box-shadow: 0px 4px 20px rgba(26, 54, 93, 0.04);
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+  .ambient-shadow:hover {
+    box-shadow: 0px 8px 30px rgba(26, 54, 93, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .ai-glass-panel {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .ai-gradient-text {
+    background: linear-gradient(135deg, #002045, #4cadab);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .ai-gradient-text-teal {
+    background: linear-gradient(to right, #4cadab, #86a0cd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .chart-bar-fill {
+    background: linear-gradient(90deg, #1a365d, #4cadab);
+  }
+
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 20px rgba(26, 54, 93, 0.08);
+  }
+
+  /* AI purple tokens (outside Tailwind theme since they're one-off design values) */
+  .ai-purple-bg {
+    background-color: #f3e8ff;
+  }
+  .ai-purple-border {
+    border-color: #e9d5ff;
+  }
+  .ai-purple-text {
+    color: #6b21a8;
+  }
+  .ai-purple-text-dark {
+    color: #4c1d95;
+  }
+}
