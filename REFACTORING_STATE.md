@@ -244,3 +244,197 @@ These files have changes **not related** to the API/Worker refactoring:
                  │  + pgvector  │     │  (chat/embed) │
                  └──────────────┘     └──────────────┘
 ```
+
+---
+
+## Gap Analysis: What Remains to Complete the Implementation Plan
+
+This section is self-contained. An agent reading only this file and the codebase
+can pick up the work and finish it without needing prior conversation context.
+
+### How to orient
+
+- `IMPLEMENTATION_PLAN.md` — the full design specification (7 phases)
+- `TEST_PLAN.md` — the TDD test specifications (173 tests)
+- `backend/tests/` — the implemented tests (run with `uv run pytest tests/ --ignore=tests/e2e/test_ws_endpoints.py -v` from `backend/`)
+- This file — current state, what's done, what's broken, what's missing
+- All source lives under `backend/app/`. The stack is FastAPI + SQLAlchemy async + Celery + Redis + PostgreSQL/pgvector.
+
+Set env vars before running tests:
+```bash
+export DATABASE_URL="postgresql+asyncpg://test:test@localhost:5433/test"
+export JWT_SECRET="test-secret-for-e2e-tests-1234567890"
+```
+
+### P0 — Must fix (blocks correct runtime behavior)
+
+#### 1. Services still embed inline — double-embedding bug
+
+**Problem:** The controllers now dispatch Celery tasks for embedding, but the
+service methods they call still perform embedding synchronously before returning.
+This means every create operation embeds twice: once inline (service), once in the
+worker (task).
+
+**Files to fix:**
+- `app/theses/service.py` — `create_thesis()` calls `self._ollama.embed(...)` on
+  line 33. The plan says: "persist thesis (embedding=None) -> dispatch task."
+  Add an `embedding: list[float] | None = None` parameter or a `skip_embedding=True`
+  flag so the controller can persist without embedding. The existing unit tests in
+  `tests/unit/test_thesis_service.py` test the current inline behavior and will need
+  updating — the `test_embeds_title_and_abstract` test should verify the service
+  *can* skip embedding when told to.
+- `app/chairs/service.py` — `create_chair()` calls `self._embed_text(...)` on line 46.
+  Same issue: the controller dispatches `embed_chair_description.delay()` but the
+  service also embeds inline. Refactor similarly.
+
+#### 2. Tasks don't update the `jobs` table
+
+**Problem:** All four Celery tasks accept a `job_id` parameter and publish Redis
+Pub/Sub events, but never call `JobService.mark_started()`, `mark_success()`, or
+`mark_failure()`. The `jobs` table rows stay in `pending` status forever.
+
+**Files to fix:** `app/theses/tasks.py`, `app/chairs/tasks.py`,
+`app/students/tasks.py`, `app/chat/tasks.py`.
+
+Each task body should:
+1. Call `job_service.mark_started(job_id)` at the top
+2. Call `job_service.mark_success(job_id, result_data={...})` on success
+3. Call `job_service.mark_failure(job_id, error=traceback_str)` on permanent failure
+4. Call `job_service.mark_retry(job_id)` before `self.retry(exc=exc)`
+
+The `_get_deps()` function already builds a `JobService` — it just isn't used.
+
+#### 3. `job_id` ordering is wrong — task doesn't know the real UUID
+
+**Problem:** The controllers call `.delay()` first, then `job_service.create_job()`
+second. The task receives `job_id="pending"` as a string literal, not the real UUID.
+
+**Fix:** Reverse the order in every controller:
+```python
+# WRONG (current):
+task_result = embed_thesis.delay(thesis_id, user_id, "pending")
+job = await job_service.create_job(..., celery_task_id=task_result.id)
+
+# CORRECT:
+job = await job_service.create_job(..., celery_task_id=None)
+task_result = embed_thesis.delay(thesis_id, user_id, str(job.id))
+# Optionally update job.celery_task_id = task_result.id
+```
+
+**Affected files:** `app/theses/controller.py`, `app/chairs/controller.py`,
+`app/students/controller.py`, `app/chat/controller.py`.
+
+#### 4. Alembic migration 0009 not generated
+
+The `Job` model exists in `app/models/job.py` but there is no migration file.
+Run from `backend/`:
+```bash
+uv run alembic revision --autogenerate -m "add_jobs_table"
+```
+Then verify the generated migration and run `uv run alembic upgrade head`.
+
+#### 5. `worker_process_init` signal handler missing
+
+The plan specifies disposing the inherited SQLAlchemy engine after Celery forks.
+Without this, `asyncpg` connections inherited across fork will cause errors.
+
+Add to `app/worker/celery_app.py`:
+```python
+from celery.signals import worker_process_init
+
+@worker_process_init.connect
+def on_worker_init(**kwargs):
+    import asyncio
+    from app.db import engine
+    asyncio.run(engine.dispose())
+```
+
+#### 6. WebSocket e2e tests hang
+
+`tests/e2e/test_ws_endpoints.py` has 2 tests that block forever. The WS controller
+accepts the connection then closes with code 4001. Starlette's sync `TestClient`
+blocks on `receive_json()` because it doesn't treat the close frame as an exception.
+
+**Recommended fix:** Have the controller send a JSON error payload *before* closing:
+```python
+await websocket.send_json({"error": "Missing token"})
+await websocket.close(code=4001)
+```
+Then the test's `receive_json()` returns the error dict and the test can assert on it
+without hanging. Update both `test_websocket_requires_auth` and
+`test_websocket_rejects_invalid_token` to assert on the received error payload.
+
+#### 7. PDF bytes storage for transcript worker
+
+`app/students/controller.py` passes `pdf_bytes_ref="inline"` — a placeholder. The
+actual PDF bytes from the upload are lost after the HTTP response. The task has no
+way to retrieve them.
+
+**Fix options (pick one):**
+- Store bytes in Redis with a TTL: `redis.set(f"pdf:{job_id}", pdf_bytes, ex=3600)`
+  and have the task `redis.get(f"pdf:{job_id}")`.
+- Write to a temp file under a known path and pass the path as `pdf_bytes_ref`.
+- Store in PostgreSQL as a `BYTEA` column on the `jobs` table's `input_data` (not
+  recommended for large files).
+
+### P1 — Should fix (code quality / correctness)
+
+#### 8. Chat controller accesses private `_chat_repo`
+
+`app/chat/controller.py` line 54: `chat_service._chat_repo.get_session(session_id)`.
+This breaks the service abstraction. Add a public method to `ChatService`:
+```python
+async def validate_session_ownership(self, session_id: int, user_id: int) -> None:
+```
+
+#### 9. Per-iteration event publishing in chat service
+
+The plan (Phase 5.1, 5.2) specifies publishing `chat_message` and `chat_tool_call`
+events after each LLM iteration so the frontend sees messages in real-time. Currently
+only `chat_turn_started` and `chat_turn_completed` bookend events are published.
+
+**Fix:** The `ChatService._run_agent_turn()` method needs to accept an optional
+callback/publisher. The `process_chat_turn` task would pass a lambda that calls
+`publish_event(...)`. After each `create_message` call inside the agent loop, invoke
+the callback.
+
+#### 10. Dead letter handling (Phase 6.3)
+
+Tasks that exhaust `max_retries` should update `job.status = failure` in the DB.
+Currently nothing catches `MaxRetriesExceededError`. Use Celery's `on_failure`
+handler or a `try/except` around `self.retry()`:
+```python
+except (ConnectionError, TimeoutError) as exc:
+    try:
+        raise self.retry(exc=exc)
+    except self.MaxRetriesExceededError:
+        run_async(job_service.mark_failure(job_id, f"Exhausted retries: {exc}"))
+        publish_event(..., event_type="task_failed", status="failure")
+        raise
+```
+
+### P2 — Follow-up PRs (not blocking backend correctness)
+
+| Item | Description |
+|---|---|
+| Frontend WebSocket client | Create `frontend/src/api/ws.ts` — connect to `/api/ws?token=...`, dispatch received events |
+| Frontend Chat.tsx streaming | Listen for `chat_message` events, render messages as they arrive instead of waiting for HTTP response |
+| Celery worker logging | Configure `--logfile=logs/celery.log` and/or integrate with `log_config.json` |
+| Flower dashboard | Add `flower` to dev deps, add launch command to `debug.sh` |
+| Integration tests | `tests/integration/` is empty. Write repository-level tests against real PostgreSQL+pgvector |
+
+### Verification: how to confirm everything works
+
+After completing all P0 items, run:
+```bash
+cd backend
+
+# All unit + e2e tests should pass (173 total, 0 hanging)
+uv run pytest tests/ -v
+
+# Start infra and verify end-to-end manually
+cd .. && ./debug.sh up
+# In another terminal:
+curl -X POST http://localhost:8000/api/auth/login -d '{"email":"...","password":"..."}'
+# Use the token to create a thesis, check /api/jobs/{id}, connect to ws://localhost:8000/api/ws?token=...
+```
