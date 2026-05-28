@@ -38,7 +38,26 @@ against real Postgres + Redis + a live Celery worker:
 
 Dead-letter handling (P1 #10) is also done: exhausted retries mark the job `failure`.
 Remaining open items: P1 #8 (chat controller private `_chat_repo` access), P1 #9
-(per-iteration chat streaming), and the P2 follow-ups (frontend WS client, integration tests).
+(per-iteration chat streaming), and the P2 follow-ups (full frontend WS client, integration tests).
+
+## Manual Testing Notes (2026-05-28, local)
+
+Tested end-to-end via `./debug.sh up` on a RAM-constrained dev box (WSL2, ~7.7 GiB).
+See [[local-runtime-constraints]] (memory) for the environment limits.
+
+- **Chat — working.** `frontend/src/pages/Chat.tsx` was updated for the async flow:
+  `POST .../messages` returns `{job_id}`, the UI polls `GET /api/jobs/{id}` (up to ~5 min)
+  and then refetches the conversation. This is an **interim** fix; the intended live
+  WebSocket streaming (P2: `frontend/src/api/ws.ts`) is still a follow-up.
+- **Transcript upload — failing on this machine (environment, not a code defect).**
+  PDF text extraction succeeds, but the LLM extraction step exceeds the task's
+  `soft_time_limit` (300s) because the local chat model (`gemma4:e2b`, after the
+  `e4b` downgrade) is very slow under memory pressure. The task is killed with
+  `SoftTimeLimitExceeded` and the job is correctly marked `failure`. It should work
+  on a machine with more RAM (or a smaller/faster extraction model).
+  - Minor polish opportunity: `SoftTimeLimitExceeded` is currently caught by the
+    generic handler in `app/worker/task_runner.py`; it could be handled explicitly so
+    the job `error` reads "timeout" rather than a traceback (TEST_PLAN Phase 6.2 #7).
 
 ---
 
