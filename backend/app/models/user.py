@@ -9,7 +9,6 @@ from app.db import Base
 
 class UserRole(str, enum.Enum):
     student = "student"
-    professor = "professor"
     admin = "admin"
 
 

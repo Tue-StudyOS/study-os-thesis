@@ -24,9 +24,9 @@ Extract ALL course rows and return a single JSON object with this exact schema:
   "gpa": <credit-weighted average German grade as float, lower is better, null if not computable>,
   "courses": [
     {
-      "course_name": "<full course name>",
+      "course_name": "<full course name only, no IDs or other metadata>",
       "credits": <ECTS credits as float or null>,
-      "grade": "<grade as string, e.g. '1,3' or 'bestanden' or null>",
+      "grade": "<ONLY the grade value as string, e.g. '1,3' or '2,0' or 'bestanden' or null — never a course ID or other text>",
       "semester_taken": "<e.g. 'WS 2023/24' or null>"
     }
   ]
@@ -34,8 +34,11 @@ Extract ALL course rows and return a single JSON object with this exact schema:
 
 Rules:
 - Include every course row, including failed ones.
+- "course_name" must contain ONLY the human-readable course name (e.g. "Self-Driving Cars"), never IDs, codes, or metadata.
+- "grade" must contain ONLY the grade value (e.g. "1,3", "2,0", "bestanden", "nicht bestanden"). Never put a course ID, semester string, or any other text in the grade field.
 - Preserve the original grade string (comma decimal: '1,3' not '1.3').
 - If a course has no numeric grade (e.g. "bestanden"), keep it as-is.
+- Omit any extra fields not listed in the schema above (e.g. course_id, credits_weight_value).
 - Compute gpa as sum(grade * credits) / sum(credits) for all rows with a parseable numeric grade. Use period decimal for the float result.
 - Do NOT include any explanation or markdown. Output ONLY the raw JSON object.
 
@@ -175,10 +178,29 @@ class StudentService:
         try:
             return TranscriptParseResult.model_validate(data)
         except Exception as exc:
-            _logger.error("Transcript parse result failed validation: %s", data)
+            _logger.warning(
+                "Strict validation failed (%s), attempting per-course fallback: %s",
+                exc, data,
+            )
+        # Fallback: validate each course individually, skip invalid ones
+        valid_courses: list[StudentCourseItem] = []
+        raw_courses = data.get("courses", []) if isinstance(data, dict) else []
+        for raw in raw_courses:
+            try:
+                valid_courses.append(StudentCourseItem.model_validate(raw))
+            except Exception as course_exc:
+                _logger.warning("Skipping invalid course row (%s): %s", course_exc, raw)
+        if not valid_courses:
+            _logger.error("No valid courses could be extracted from: %s", data)
             raise BadRequestException(
-                f"Transcript parse result had unexpected structure: {exc}"
-            ) from exc
+                "The LLM could not produce any valid course rows from the transcript."
+            )
+        gpa_raw = data.get("gpa") if isinstance(data, dict) else None
+        try:
+            gpa_val = float(gpa_raw) if gpa_raw is not None else None
+        except (TypeError, ValueError):
+            gpa_val = None
+        return TranscriptParseResult(gpa=gpa_val, courses=valid_courses)
 
     async def _embed_course_profile(
         self, courses: list[StudentCourseItem]

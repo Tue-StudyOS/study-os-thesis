@@ -25,10 +25,10 @@ class ThesisService:
     async def create_thesis(self, data: ThesisCreate, user: User) -> Thesis:
         if data.supervisor_id is not None:
             supervisor = await self._user_repo.get_by_id(data.supervisor_id)
-            if not supervisor or supervisor.role != UserRole.professor:
-                raise BadRequestException("supervisor_id must reference a professor")
+            if not supervisor or supervisor.role != UserRole.admin:
+                raise BadRequestException("supervisor_id must reference an admin")
 
-        source = ThesisSource.professor if user.role == UserRole.professor else ThesisSource.student
+        source = ThesisSource.professor if user.role == UserRole.admin else ThesisSource.student
 
         embedding = await self._ollama.embed(
             self._settings.ollama_embed_model,

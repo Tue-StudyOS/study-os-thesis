@@ -14,7 +14,9 @@ from app.admin import controller as admin_router
 from app.auth import controller as auth_router
 from app.chairs import controller as chairs_router
 from app.chat import controller as chat_router
+from app.jobs import controller as jobs_router
 from app.proposals import controller as proposals_router
+from app.ws import controller as ws_router
 from app.students import controller as students_router
 from app.theses import controller as theses_router
 from app.config import Settings, get_settings
@@ -99,7 +101,11 @@ async def _check_embed_dim(ollama_client: OllamaClient, settings: Settings) -> N
 @asynccontextmanager
 async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Startup / shutdown lifecycle."""
+    import asyncio
+
     from app.db import engine
+    from app.ws.listener import redis_listener
+    from app.ws.manager import ConnectionManager
 
     _validate_settings()
     settings = get_settings()
@@ -110,6 +116,12 @@ async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.llm_chat_client = chat_client
     app.state.llm_embed_client = embed_client
 
+    # WebSocket connection manager + Redis Pub/Sub listener
+    app.state.ws_manager = ConnectionManager()
+    listener_task = asyncio.create_task(
+        redis_listener(app.state.ws_manager, settings.redis_url)
+    )
+
     # Keep a reference to the embed client as OllamaClient for the dim check
     # (only applicable when the embed provider is Ollama).
     if isinstance(embed_client, OllamaClient):
@@ -117,7 +129,13 @@ async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     yield
 
-    # Graceful shutdown: close HTTP connection pools and DB engine.
+    # Graceful shutdown
+    listener_task.cancel()
+    try:
+        await listener_task
+    except asyncio.CancelledError:
+        pass
+
     if hasattr(chat_client, "aclose"):
         await chat_client.aclose()
     if embed_client is not chat_client and hasattr(embed_client, "aclose"):
@@ -171,6 +189,8 @@ def create_app() -> FastAPI:
     app.include_router(students_router.router)
     app.include_router(chairs_router.router)
     app.include_router(proposals_router.router)
+    app.include_router(jobs_router.router)
+    app.include_router(ws_router.router)
 
     @app.get("/api/health", tags=["meta"])
     async def health() -> dict[str, str]:

@@ -5,7 +5,9 @@ from fastapi import APIRouter, Depends, status
 from app.auth.deps import CurrentUserDep, require_role
 from app.chairs.deps import ChairServiceDep
 from app.chairs.schemas import ArxivIngestRequest, ChairCreate, ChairDocumentOut, ChairOut, ChairPatch
+from app.jobs.deps import JobServiceDep
 from app.models import User, UserRole
+from app.models.job import JobType
 
 router = APIRouter(prefix="/api/chairs", tags=["chairs"])
 
@@ -16,7 +18,7 @@ AdminDep = Annotated[User, Depends(require_role(UserRole.admin))]
 async def list_chairs(
     _user: CurrentUserDep,
     chair_service: ChairServiceDep,
-) -> list[ChairOut]:
+) -> list:
     return await chair_service.list_chairs()
 
 
@@ -25,17 +27,32 @@ async def get_chair(
     chair_id: int,
     _user: CurrentUserDep,
     chair_service: ChairServiceDep,
-) -> ChairOut:
+) -> object:
     return await chair_service.get_chair(chair_id)
 
 
-@router.post("", response_model=ChairOut, status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def create_chair(
     body: ChairCreate,
     _admin: AdminDep,
     chair_service: ChairServiceDep,
-) -> ChairOut:
-    return await chair_service.create_chair(body)
+    job_service: JobServiceDep,
+) -> dict:
+    """Create a chair and dispatch description embedding to a background worker."""
+    from app.chairs.tasks import embed_chair_description
+
+    chair = await chair_service.create_chair(body)
+
+    task_result = embed_chair_description.delay(chair.id, _admin.id, "pending")
+    job = await job_service.create_job(
+        type=JobType.embed_chair,
+        user_id=_admin.id,
+        input_data={"chair_id": chair.id},
+        celery_task_id=task_result.id,
+    )
+
+    out = ChairOut.model_validate(chair)
+    return {**out.model_dump(mode="json"), "job_id": str(job.id)}
 
 
 @router.patch("/{chair_id}", response_model=ChairOut)
@@ -44,7 +61,7 @@ async def update_chair(
     body: ChairPatch,
     _admin: AdminDep,
     chair_service: ChairServiceDep,
-) -> ChairOut:
+) -> object:
     return await chair_service.update_chair(chair_id, body)
 
 
@@ -59,17 +76,30 @@ async def delete_chair(
 
 @router.post(
     "/{chair_id}/documents/arxiv",
-    response_model=ChairDocumentOut,
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_202_ACCEPTED,
 )
 async def ingest_arxiv_paper(
     chair_id: int,
     body: ArxivIngestRequest,
     _admin: AdminDep,
     chair_service: ChairServiceDep,
-) -> ChairDocumentOut:
-    """Fetch a paper from ArXiv by ID, embed its abstract, and attach it to the chair."""
-    return await chair_service.ingest_arxiv_paper(chair_id, body)
+    job_service: JobServiceDep,
+) -> dict:
+    """Dispatch ArXiv paper ingestion to a background worker."""
+    from app.chairs.tasks import ingest_arxiv_paper as ingest_task
+
+    # Validate chair exists before dispatching
+    await chair_service.get_chair(chair_id)
+
+    task_result = ingest_task.delay(chair_id, body.arxiv_id, _admin.id, "pending")
+    job = await job_service.create_job(
+        type=JobType.ingest_arxiv,
+        user_id=_admin.id,
+        input_data={"chair_id": chair_id, "arxiv_id": body.arxiv_id},
+        celery_task_id=task_result.id,
+    )
+
+    return {"job_id": str(job.id), "chair_id": chair_id, "arxiv_id": body.arxiv_id}
 
 
 @router.delete("/{chair_id}/documents/{doc_id}", status_code=status.HTTP_204_NO_CONTENT)
