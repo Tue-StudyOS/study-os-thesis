@@ -594,8 +594,12 @@ Non-retryable errors (fail immediately):
 | `embed_thesis` | 120s | 180s |
 | `embed_chair_description` | 120s | 180s |
 | `ingest_arxiv` | 120s | 180s |
-| `parse_transcript` | 300s | 360s |
+| `parse_transcript` | 1800s* | 1860s* |
 | `process_chat_turn` | 600s | 660s |
+
+\* `parse_transcript` limits are env-configurable via `TRANSCRIPT_SOFT_TIME_LIMIT` /
+`TRANSCRIPT_HARD_TIME_LIMIT` (defaults shown). Raised from the original 300s/360s
+because local extraction models are slow under memory pressure (keep HARD > SOFT).
 
 ### 6.3 Dead Letter Handling
 

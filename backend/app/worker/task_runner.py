@@ -65,8 +65,7 @@ def execute_task(
             redis_url,
             job_id,
             user_id,
-            "Processing timed out before it finished. Try a faster model "
-            "or raise the task time limit.",
+            "Processing timed out before it finished. Try a faster model or raise the task time limit.",
         )
         raise
     except permanent_exceptions as exc:

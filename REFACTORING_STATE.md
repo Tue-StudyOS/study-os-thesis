@@ -1,6 +1,6 @@
 # Refactoring State: API/Worker Separation
 
-Last updated: 2026-05-28 (P0 items resolved — see "P0 Resolution" below)
+Last updated: 2026-06-02 (transcript upload frontend↔backend flow fixed — see "Manual Testing Notes")
 
 ## Overall Status
 
@@ -49,15 +49,24 @@ See [[local-runtime-constraints]] (memory) for the environment limits.
   `POST .../messages` returns `{job_id}`, the UI polls `GET /api/jobs/{id}` (up to ~5 min)
   and then refetches the conversation. This is an **interim** fix; the intended live
   WebSocket streaming (P2: `frontend/src/api/ws.ts`) is still a follow-up.
-- **Transcript upload — failing on this machine (environment, not a code defect).**
-  PDF text extraction succeeds, but the LLM extraction step exceeds the task's
-  `soft_time_limit` (300s) because the local chat model (`gemma4:e2b`, after the
-  `e4b` downgrade) is very slow under memory pressure. The task is killed with
-  `SoftTimeLimitExceeded` and the job is correctly marked `failure`. It should work
-  on a machine with more RAM (or a smaller/faster extraction model).
-  - Minor polish opportunity: `SoftTimeLimitExceeded` is currently caught by the
-    generic handler in `app/worker/task_runner.py`; it could be handled explicitly so
-    the job `error` reads "timeout" rather than a traceback (TEST_PLAN Phase 6.2 #7).
+- **Transcript upload — working (fixed 2026-06-02).** Two issues were resolved:
+  1. **Frontend↔backend contract mismatch.** `POST /me/transcript` returns
+     `202 {job_id}`, but `frontend/src/api/students.ts` still declared
+     `Promise<StudentProfile>` and `Dashboard.tsx` stored the `{job_id}` as the
+     profile. Now a reusable poll helper (`frontend/src/api/jobs.ts` —
+     `getJob`/`pollJob`) drives the "poll the job, then refetch
+     `GET /api/students/me`" flow, mirroring the Chat.tsx pattern.
+  2. **Timeout on slow local models.** The local extraction model is slow under
+     memory pressure and exceeded the old 300s `soft_time_limit`. The limits are
+     now env-configurable (`TRANSCRIPT_SOFT_TIME_LIMIT` / `TRANSCRIPT_HARD_TIME_LIMIT`,
+     defaulting to **1800s / 1860s**) in `app/students/tasks.py`, and the frontend
+     poll budget was widened to 2400s (5s × 480) to outlast the hard limit.
+  - `SoftTimeLimitExceeded` is now handled explicitly (first `except` clause in
+    `app/worker/task_runner.py`) so the job `error` reads a clean timeout message
+    ("Processing timed out before it finished. Try a faster model or raise the task
+    time limit.") instead of a truncated traceback (closes TEST_PLAN Phase 6.2 #7).
+  - Note: if 1800s still isn't enough, raise the two env vars in `backend/.env`
+    (no code change needed) or use a smaller/faster `OLLAMA_EXTRACT_MODEL`.
 
 ---
 

@@ -446,8 +446,8 @@ specification for the retry and timeout contracts.
 |---|---|---|---|---|
 | 1 | `test_embed_thesis_soft_time_limit` | `embed_thesis` | `soft_time_limit == 120` | unit |
 | 2 | `test_embed_thesis_hard_time_limit` | `embed_thesis` | `time_limit == 180` | unit |
-| 3 | `test_parse_transcript_soft_time_limit` | `parse_transcript` | `soft_time_limit == 300` | unit |
-| 4 | `test_parse_transcript_hard_time_limit` | `parse_transcript` | `time_limit == 360` | unit |
+| 3 | `test_parse_transcript_soft_time_limit` | `parse_transcript` | `soft_time_limit == 1800` (default; env-overridable via `TRANSCRIPT_SOFT_TIME_LIMIT`) | unit |
+| 4 | `test_parse_transcript_hard_time_limit` | `parse_transcript` | `time_limit == 1860` (default; env-overridable via `TRANSCRIPT_HARD_TIME_LIMIT`) | unit |
 | 5 | `test_chat_turn_soft_time_limit` | `process_chat_turn` | `soft_time_limit == 600` | unit |
 | 6 | `test_chat_turn_hard_time_limit` | `process_chat_turn` | `time_limit == 660` | unit |
 | 7 | `test_soft_timeout_marks_job_failure` | any | `SoftTimeLimitExceeded` → `job.status == failure`, `error` mentions "timeout" | unit |
