@@ -21,16 +21,21 @@ export function getStudentProfile(): Promise<StudentProfile> {
   return api<StudentProfile>("/api/students/me");
 }
 
+/**
+ * Upload a transcript PDF. Processing runs in a background worker, so this
+ * returns a job id immediately (HTTP 202). Poll the job (see `pollJob` in
+ * `./jobs`) and refetch the profile with `getStudentProfile` once it succeeds.
+ */
 export function uploadTranscript(
   file: File,
   program?: string,
   semester?: number,
-): Promise<StudentProfile> {
+): Promise<{ job_id: string }> {
   const fd = new FormData();
   fd.append("file", file);
   if (program) fd.append("program", program);
   if (semester != null) fd.append("semester", String(semester));
-  return api<StudentProfile>("/api/students/me/transcript", {
+  return api<{ job_id: string }>("/api/students/me/transcript", {
     method: "POST",
     multipart: fd,
   });

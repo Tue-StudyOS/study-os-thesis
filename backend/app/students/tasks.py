@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from typing import Any
 
 from app.exceptions import BadRequestException, NotFoundException
@@ -10,6 +11,14 @@ from app.worker.celery_app import celery_app
 from app.worker.task_runner import execute_task
 
 logger = logging.getLogger(__name__)
+
+# Transcript extraction runs a large LLM and can be slow on local/CPU setups.
+# Limits are read from the environment so they can be raised on slow machines.
+# The soft limit is the effective ceiling: the task is interrupted with
+# SoftTimeLimitExceeded and the job is marked `failure` cleanly (see task_runner).
+# Keep the frontend poll budget (Dashboard) >= the hard limit below.
+_SOFT_TIME_LIMIT = int(os.getenv("TRANSCRIPT_SOFT_TIME_LIMIT", "1800"))
+_HARD_TIME_LIMIT = int(os.getenv("TRANSCRIPT_HARD_TIME_LIMIT", "1860"))
 
 
 async def _parse_transcript_work(
@@ -48,8 +57,8 @@ async def _parse_transcript_work(
     name="app.students.tasks.parse_transcript",
     max_retries=3,
     default_retry_delay=120,
-    soft_time_limit=300,
-    time_limit=360,
+    soft_time_limit=_SOFT_TIME_LIMIT,
+    time_limit=_HARD_TIME_LIMIT,
 )
 def parse_transcript(
     self: Any,

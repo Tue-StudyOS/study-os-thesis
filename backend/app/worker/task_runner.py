@@ -12,7 +12,7 @@ import traceback
 from collections.abc import Awaitable, Callable
 from typing import Any
 
-from celery.exceptions import MaxRetriesExceededError
+from celery.exceptions import MaxRetriesExceededError, SoftTimeLimitExceeded
 
 from app.exceptions import NotFoundException
 from app.worker.job_status import mark_failure, mark_retry, mark_started, mark_success
@@ -57,6 +57,18 @@ def execute_task(
 
     try:
         result = run_async(work())
+    except SoftTimeLimitExceeded:
+        # The task hit its soft time limit (e.g. a slow local LLM). Record a
+        # clean, human-readable reason instead of a truncated traceback so the
+        # frontend can surface it directly.
+        _fail(
+            redis_url,
+            job_id,
+            user_id,
+            "Processing timed out before it finished. Try a faster model "
+            "or raise the task time limit.",
+        )
+        raise
     except permanent_exceptions as exc:
         _fail(redis_url, job_id, user_id, str(exc))
         raise

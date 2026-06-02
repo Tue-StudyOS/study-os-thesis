@@ -45,12 +45,14 @@ class TestTimeoutConfig:
     def test_parse_transcript_soft_time_limit(self):
         from app.students.tasks import parse_transcript
 
-        assert parse_transcript.soft_time_limit == 300
+        # Default (env-overridable via TRANSCRIPT_SOFT_TIME_LIMIT).
+        assert parse_transcript.soft_time_limit == 1800
 
     def test_parse_transcript_hard_time_limit(self):
         from app.students.tasks import parse_transcript
 
-        assert parse_transcript.time_limit == 360
+        # Default (env-overridable via TRANSCRIPT_HARD_TIME_LIMIT).
+        assert parse_transcript.time_limit == 1860
 
     def test_chat_turn_soft_time_limit(self):
         from app.chat.tasks import process_chat_turn

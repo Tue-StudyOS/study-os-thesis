@@ -5,6 +5,7 @@ import SkillBar from "../components/SkillBar";
 import SkillRadar, { coursesToRadarData } from "../components/SkillRadar";
 import { useAuth } from "../auth/AuthContext";
 import { getStudentProfile, uploadTranscript, type StudentProfile } from "../api/students";
+import { pollJob } from "../api/jobs";
 
 // Fixed skill-bar labels mapped from radar axes
 const SKILL_BAR_AXES = [
@@ -44,8 +45,30 @@ export default function Dashboard() {
     setUploading(true);
     setUploadError(null);
     try {
-      const updated = await uploadTranscript(file, profile?.program ?? undefined, profile?.semester ?? undefined);
-      setProfile(updated);
+      // Parsing runs in a background worker: the POST returns a job id, we poll
+      // it to completion, then refetch the freshly parsed profile.
+      const { job_id } = await uploadTranscript(
+        file,
+        profile?.program ?? undefined,
+        profile?.semester ?? undefined,
+      );
+      // Poll long enough to outlast the worker's hard time limit
+      // (TRANSCRIPT_HARD_TIME_LIMIT, default 1860s) so we always observe the
+      // terminal status rather than giving up early on a slow run. The cap
+      // below (5s × 480 = 2400s) is a safety net against a dead worker; keep
+      // it above the configured hard limit.
+      const job = await pollJob(job_id, { intervalMs: 5000, maxPolls: 480 });
+      if (job.status === "success") {
+        setProfile(await getStudentProfile());
+      } else if (job.status === "failure") {
+        setUploadError(
+          (typeof job.error === "string" && job.error) ||
+            "Transcript konnte nicht verarbeitet werden. Bitte erneut versuchen.",
+        );
+      } else {
+        // Polling timed out — the worker is still processing.
+        setUploadError("Verarbeitung dauert noch an. Bitte später neu laden.");
+      }
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "Upload fehlgeschlagen.");
     } finally {
