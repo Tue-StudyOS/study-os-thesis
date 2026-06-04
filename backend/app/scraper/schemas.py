@@ -8,8 +8,8 @@ from pydantic import BaseModel, Field
 class ScrapeChairRequest(BaseModel):
     """Optional overrides for a chair scrape run."""
 
-    since_days: int = Field(365, ge=30, le=3650, description="How far back to search for papers")
-    max_results: int = Field(20, ge=1, le=100, description="Max papers per researcher")
+    since_days: int = Field(3650, ge=30, le=3650, description="How far back to search for papers")
+    max_results: int = Field(250, ge=1, le=500, description="Max papers per researcher")
 
 
 class ScrapeRunResponse(BaseModel):

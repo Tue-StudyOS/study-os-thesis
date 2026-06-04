@@ -135,30 +135,32 @@ class ScholarPlaywrightScraper(PaperSourceClient):
         await page.goto(url, wait_until="domcontentloaded", timeout=30_000)
         await asyncio.sleep(self._delay)
 
-        papers: list[PaperCandidate] = []
-
-        for _ in range(self._max_pages):
-            rows = page.locator("tr.gsc_a_tr")
-            count = await rows.count()
-            for i in range(count):
-                row = rows.nth(i)
-                try:
-                    candidate = await self._parse_profile_row(row)
-                    if candidate:
-                        papers.append(candidate)
-                except Exception as exc:
-                    _logger.debug("Profile row parse error: %s", exc)
-
-                if len(papers) >= max_results:
-                    return papers
-
-            # Click "Show more" if available
+        # Keep clicking "Show more" until all rows are loaded or max_results reached.
+        # Scholar loads 20 rows at a time; the button disappears when exhausted.
+        while True:
             show_more = page.locator("button#gsc_bpf_more")
-            if await show_more.count() > 0 and await show_more.is_enabled():
-                await show_more.click()
-                await asyncio.sleep(self._delay)
-            else:
+            # Stop if we already have enough rows in the DOM
+            current_count = await page.locator("tr.gsc_a_tr").count()
+            if current_count >= max_results:
                 break
+            if await show_more.count() == 0 or not await show_more.is_enabled():
+                break
+            await show_more.click()
+            # Wait for new rows to appear — Scholar adds them asynchronously
+            await page.wait_for_load_state("networkidle", timeout=10_000)
+            await asyncio.sleep(self._delay)
+
+        # Parse all rows now visible in the DOM
+        rows = page.locator("tr.gsc_a_tr")
+        total = min(await rows.count(), max_results)
+        papers: list[PaperCandidate] = []
+        for i in range(total):
+            try:
+                candidate = await self._parse_profile_row(rows.nth(i))
+                if candidate:
+                    papers.append(candidate)
+            except Exception as exc:
+                _logger.debug("Profile row parse error: %s", exc)
 
         return papers
 

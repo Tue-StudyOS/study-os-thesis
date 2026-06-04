@@ -69,8 +69,8 @@ class Settings(BaseSettings):
     scraper_scholar_max_pages: int = Field(3, alias="SCRAPER_SCHOLAR_MAX_PAGES")
     scraper_scholar_headless: bool = Field(True, alias="SCRAPER_SCHOLAR_HEADLESS")
     scraper_arxiv_delay: float = Field(1.0, alias="SCRAPER_ARXIV_DELAY")
-    scraper_max_results: int = Field(20, alias="SCRAPER_MAX_RESULTS")
-    scraper_since_days: int = Field(365, alias="SCRAPER_SINCE_DAYS")
+    scraper_max_results: int = Field(250, alias="SCRAPER_MAX_RESULTS")
+    scraper_since_days: int = Field(3650, alias="SCRAPER_SINCE_DAYS")
     scraper_recency_half_life: int = Field(180, alias="SCRAPER_RECENCY_HALF_LIFE")
 
     # Dedicated LLM model for paper enrichment (can differ from the chat model)
