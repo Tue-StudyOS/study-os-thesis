@@ -5,8 +5,13 @@ on:
   pull_request:
     paths:
       - "**/*.py"
+      - "backend/pyproject.toml"
+      - "backend/uv.lock"
+      - ".github/workflows/qa.yml"
 
-# The Python project lives in backend/ (pyproject.toml + uv.lock there).
+# The Python project lives in backend/:
+# - backend/pyproject.toml
+# - backend/uv.lock
 defaults:
   run:
     working-directory: backend
@@ -17,7 +22,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -28,25 +34,26 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
-      - name: Ruff Lint
+      - name: Ruff lint
         run: uv run ruff check .
 
-      - name: Ruff Format Check
+      - name: Ruff format check
         run: uv run ruff format --check .
 
   test:
     name: Test (pytest)
     runs-on: ubuntu-latest
 
-    # The test suite mocks all I/O (DB, Redis, LLM), so no service containers are
-    # needed. These values only satisfy required settings at import time.
+    # The test suite mocks all I/O, but these values satisfy required settings
+    # at import time.
     env:
       DATABASE_URL: "postgresql+asyncpg://ci:ci@127.0.0.1:5432/ci"
       JWT_SECRET: "ci-placeholder-secret-not-for-production-1234567890"
       REDIS_URL: "redis://127.0.0.1:6379/0"
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -56,6 +63,9 @@ jobs:
 
       - name: Install dependencies
         run: uv sync
+
+      - name: Install Playwright Chromium
+        run: uv run playwright install chromium --with-deps
 
       - name: Run tests
         run: uv run pytest --maxfail=1 --disable-warnings -q
