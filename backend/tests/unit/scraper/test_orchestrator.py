@@ -281,8 +281,8 @@ class TestScrapeForResearcher:
 
 @pytest.mark.unit
 class TestConcurrency:
-    async def test_all_candidates_processed_via_gather(self):
-        """asyncio.gather fires all candidates; verify all arXiv calls were made."""
+    async def test_all_candidates_processed(self):
+        """Verify all candidates still pass through arXiv enrichment."""
         o = _build_orchestrator()
         n = 10
         candidates = [_candidate(f"Paper {i}") for i in range(n)]
@@ -292,11 +292,8 @@ class TestConcurrency:
 
         assert o._arxiv.enrich.await_count == n
 
-    async def test_arxiv_semaphore_limits_concurrent_inflight(self):
-        """Verify that at most _ARXIV_CONCURRENCY arXiv enrichments run at once.
-
-        We do this by recording the 'depth' (concurrent count) inside enrich().
-        """
+    async def test_arxiv_enrichment_is_parallel_but_bounded(self):
+        """Network enrichment may overlap, up to the configured cap."""
         o = _build_orchestrator()
         n = _ARXIV_CONCURRENCY * 3
         candidates = [_candidate(f"P{i}") for i in range(n)]
@@ -309,7 +306,7 @@ class TestConcurrency:
             nonlocal max_concurrent, current
             current += 1
             max_concurrent = max(max_concurrent, current)
-            await asyncio.sleep(0)  # yield to allow other coroutines to enter
+            await asyncio.sleep(0)
             current -= 1
             return paper
 
@@ -318,10 +315,10 @@ class TestConcurrency:
         await o.scrape_for_researcher(1)
 
         assert max_concurrent <= _ARXIV_CONCURRENCY
-        assert max_concurrent > 1  # confirms actual concurrency happened
+        assert max_concurrent > 1
 
-    async def test_llm_semaphore_is_one_so_calls_are_sequential(self):
-        """LLM calls must never overlap (Semaphore(1))."""
+    async def test_llm_calls_are_sequential(self):
+        """LLM calls must never overlap."""
         o = _build_orchestrator()
         n = 5
         candidates = [_candidate(f"P{i}", abstract=f"Abstract {i}") for i in range(n)]
@@ -345,8 +342,34 @@ class TestConcurrency:
 
         assert max_concurrent_llm == _LLM_CONCURRENCY  # always exactly 1
 
-    async def test_n_papers_all_stored_despite_concurrency(self):
-        """Correctness check: gathering 8 papers stores exactly 8."""
+    async def test_db_creates_are_sequential(self):
+        """Repository writes must not overlap on the shared AsyncSession."""
+        o = _build_orchestrator()
+        n = 8
+        candidates = [_candidate(f"P{i}", abstract=None) for i in range(n)]
+        o._source.fetch_papers.return_value = candidates
+
+        max_concurrent_create = 0
+        current_create = 0
+        ids = iter(range(1, n + 1))
+
+        async def counting_create(**kwargs):
+            nonlocal max_concurrent_create, current_create
+            current_create += 1
+            max_concurrent_create = max(max_concurrent_create, current_create)
+            await asyncio.sleep(0)
+            current_create -= 1
+            return _paper_row(id_=next(ids))
+
+        o._paper_repo.create.side_effect = counting_create
+
+        result = await o.scrape_for_researcher(1)
+
+        assert result["stored"] == n
+        assert max_concurrent_create == 1
+
+    async def test_n_papers_all_stored(self):
+        """Correctness check: processing 8 papers stores exactly 8."""
         o = _build_orchestrator()
         n = 8
         candidates = [_candidate(f"P{i}") for i in range(n)]
@@ -359,7 +382,7 @@ class TestConcurrency:
         assert result["stored"] == n
         assert o._paper_repo.create.await_count == n
 
-    async def test_errors_do_not_cancel_other_concurrent_candidates(self):
+    async def test_errors_do_not_cancel_later_candidates(self):
         """One failing candidate must not prevent others from completing."""
         o = _build_orchestrator()
         n = 6

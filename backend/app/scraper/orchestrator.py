@@ -19,12 +19,9 @@ from app.papers.repository import PaperRepository, TagRepository
 from app.researchers.repository import ResearcherRepository
 from app.scraper.interfaces import LLMEnricher, PaperMetadataEnricher, PaperRanker, PaperSourceClient
 
-# Max concurrent arXiv fetches. The per-request 3s delay in ArxivMetadataEnricher
-# already enforces politeness; this caps how many are in-flight simultaneously.
+# Network/LLM enrichment can run in parallel, but DB writes must stay sequential
+# because SQLAlchemy AsyncSession is not safe for concurrent flushes.
 _ARXIV_CONCURRENCY = 5
-
-# Local Ollama processes one request at a time anyway — no benefit in parallelism,
-# and flooding it causes timeouts. Keep LLM calls sequential.
 _LLM_CONCURRENCY = 1
 
 _logger = logging.getLogger(__name__)
@@ -93,21 +90,38 @@ class ScraperOrchestrator:
         arxiv_sem = asyncio.Semaphore(_ARXIV_CONCURRENCY)
         llm_sem = asyncio.Semaphore(_LLM_CONCURRENCY)
 
-        results = await asyncio.gather(
-            *[self._process_candidate(candidate, researcher_id, arxiv_sem, llm_sem) for candidate in candidates],
+        enriched_results = await asyncio.gather(
+            *[self._enrich_candidate(candidate, arxiv_sem, llm_sem) for candidate in candidates],
             return_exceptions=True,
         )
 
+        enriched_candidates = []
+        errors = 0
+        for result in enriched_results:
+            if isinstance(result, BaseException):
+                errors += 1
+                _logger.warning("scraper.candidate_error %s", result, exc_info=result)
+            else:
+                enriched_candidates.append(result)
+
         stored = 0
         skipped = 0
-        errors = 0
-        for r in results:
-            if isinstance(r, BaseException):
+        for candidate, summary, tags, enriched_at, recency in enriched_candidates:
+            try:
+                candidate_stored, candidate_skipped = await self._persist_candidate(
+                    candidate,
+                    researcher_id,
+                    summary,
+                    tags,
+                    enriched_at,
+                    recency,
+                )
+            except Exception as exc:
                 errors += 1
-                _logger.warning("scraper.candidate_error %s", r, exc_info=r)
+                _logger.warning("scraper.candidate_error %s", exc, exc_info=exc)
             else:
-                stored += r[0]
-                skipped += r[1]
+                stored += candidate_stored
+                skipped += candidate_skipped
 
         await self._paper_repo.commit()
         await self._researcher_repo.commit()
@@ -123,30 +137,17 @@ class ScraperOrchestrator:
         _logger.info("scraper.complete %s", result)
         return result
 
-    async def _process_candidate(
+    async def _enrich_candidate(
         self,
         candidate: PaperCandidate,
-        researcher_id: int,
         arxiv_sem: asyncio.Semaphore,
         llm_sem: asyncio.Semaphore,
-    ) -> tuple[int, int]:
-        """Process a single candidate. Returns (stored, skipped) counts."""
+    ) -> tuple[PaperCandidate, str | None, list[str], datetime | None, float]:
+        """Run network-bound enrichment without touching the DB session."""
 
         # Stage 3: ArXiv metadata enrichment (bounded concurrency)
         async with arxiv_sem:
             candidate = await self._arxiv.enrich(candidate)
-
-        # Stage 5a: Dedup check
-        existing = await self._dedup.find_duplicate(candidate)
-        if existing is not None:
-            await self._dedup.merge_metadata(existing, candidate)
-            await self._researcher_repo.link_paper(researcher_id, existing.id)
-            _logger.debug(
-                "scraper.paper_skipped title=%r (duplicate paper_id=%d)",
-                candidate.title[:60],
-                existing.id,
-            )
-            return 0, 1
 
         # Stage 4: LLM enrichment (sequential — Ollama handles one at a time)
         summary: str | None = None
@@ -161,6 +162,30 @@ class ScraperOrchestrator:
 
         # Stage 5b: Compute scores
         recency = self._ranker.compute_recency_score(candidate.publication_date)
+        return candidate, summary, tags, enriched_at, recency
+
+    async def _persist_candidate(
+        self,
+        candidate: PaperCandidate,
+        researcher_id: int,
+        summary: str | None,
+        tags: list[str],
+        enriched_at: datetime | None,
+        recency: float,
+    ) -> tuple[int, int]:
+        """Persist a single enriched candidate. Returns (stored, skipped)."""
+
+        # Stage 5a: Dedup check
+        existing = await self._dedup.find_duplicate(candidate)
+        if existing is not None:
+            await self._dedup.merge_metadata(existing, candidate)
+            await self._researcher_repo.link_paper(researcher_id, existing.id)
+            _logger.debug(
+                "scraper.paper_skipped title=%r (duplicate paper_id=%d)",
+                candidate.title[:60],
+                existing.id,
+            )
+            return 0, 1
 
         # Stage 5c: Persist paper
         paper = await self._paper_repo.create(
