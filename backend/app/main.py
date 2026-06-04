@@ -14,7 +14,10 @@ from app.auth import controller as auth_router
 from app.chairs import controller as chairs_router
 from app.chat import controller as chat_router
 from app.jobs import controller as jobs_router
+from app.papers import controller as papers_router
 from app.proposals import controller as proposals_router
+from app.researchers import controller as researchers_router
+from app.scraper import controller as scraper_router
 from app.ws import controller as ws_router
 from app.students import controller as students_router
 from app.theses import controller as theses_router
@@ -178,6 +181,9 @@ def create_app() -> FastAPI:
     app.include_router(chairs_router.router)
     app.include_router(proposals_router.router)
     app.include_router(jobs_router.router)
+    app.include_router(papers_router.router)
+    app.include_router(researchers_router.router)
+    app.include_router(scraper_router.router)
     app.include_router(ws_router.router)
 
     @app.get("/api/health", tags=["meta"])

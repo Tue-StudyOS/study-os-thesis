@@ -11,6 +11,7 @@ celery_app.autodiscover_tasks(
         "app.chairs",
         "app.students",
         "app.chat",
+        "app.scraper",
     ]
 )
 
