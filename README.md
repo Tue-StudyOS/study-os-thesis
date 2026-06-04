@@ -1,5 +1,6 @@
 # study-os-thesis
 [![Code Quality](https://github.com/ValentinJSchmidt/study-os-thesis/actions/workflows/qa.yml/badge.svg?branch=main)](https://github.com/ValentinJSchmidt/study-os-thesis/actions/workflows/qa.yml)
+
 An AI-powered thesis advisor for university students. Students upload their
 transcript of records, the system analyses their course profile, and an LLM
 agent recommends fitting research chairs and generates personalised thesis
