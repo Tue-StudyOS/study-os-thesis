@@ -87,7 +87,10 @@ export function useJobSocket() {
       destroyed = true;
       connectedRef.current = false;
       wsRef.current = null;
-      if (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN) {
+      // Only close OPEN sockets. Closing a CONNECTING socket triggers a
+      // browser console error ("WebSocket closed before connection established")
+      // which is harmless but noisy — let onopen handle the close instead.
+      if (ws.readyState === WebSocket.OPEN) {
         ws.close();
       }
     };
