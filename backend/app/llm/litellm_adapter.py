@@ -99,9 +99,7 @@ def _to_openai_messages(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 call_id = tc.get("id") or f"call_{counter}"
                 counter += 1
                 pending_ids.append(call_id)
-                converted.append(
-                    {"id": call_id, "type": "function", "function": {"name": fn.get("name", ""), "arguments": args}}
-                )
+                converted.append({"id": call_id, "type": "function", "function": {"name": fn.get("name", ""), "arguments": args}})
             new_msg = dict(msg)
             new_msg["tool_calls"] = converted
             out.append(new_msg)
