@@ -14,6 +14,7 @@ import datetime
 import textwrap
 
 import pytest
+import pytest_asyncio
 from pytest_httpserver import HTTPServer
 
 from app.papers.domain import ResearcherInfo
@@ -134,13 +135,13 @@ def _author_search_page(profile_id: str | None = None, name: str = "Georg Martiu
 # ---------------------------------------------------------------------------
 
 
-@pytest.fixture
-def scraper():
+@pytest_asyncio.fixture
+async def scraper():
     s = ScholarPlaywrightScraper(headless=True, request_delay=0.1, max_pages=5)
-    yield s
-    import asyncio
-
-    asyncio.get_event_loop().run_until_complete(s.close())
+    try:
+        yield s
+    finally:
+        await s.close()
 
 
 # ---------------------------------------------------------------------------
