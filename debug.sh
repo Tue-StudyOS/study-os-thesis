@@ -196,6 +196,12 @@ run_app() {
   kill_port 8000
   kill_port 5173
 
+  # Purge any stale Celery tasks left in the queue from previous sessions.
+  # This prevents old parse_transcript tasks (whose PDFs have already expired
+  # from Redis) from being re-executed on worker restart.
+  info "Purging stale Celery task queue..."
+  (cd "$BACKEND_DIR" && uv run celery -A app.worker.celery_app purge -f 2>/dev/null) || true
+
   mkdir -p "$BACKEND_DIR/logs"
 
   info "Starting Celery worker..."
