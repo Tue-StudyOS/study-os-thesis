@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import TopBar from "../components/TopBar";
+import { useAuth } from "../auth/AuthContext";
 import { getChair, type Chair } from "../api/chairs";
-import { listPapers, type Paper } from "../api/papers";
+import { listPapers, triggerScrape, type Paper } from "../api/papers";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -102,11 +103,17 @@ export default function ChairPapers() {
   const { id } = useParams<{ id: string }>();
   const chairId = Number(id);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [chair, setChair] = useState<Chair | null>(null);
   const [papers, setPapers] = useState<Paper[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Sync button state
+  type SyncState = "idle" | "running" | "done" | "error";
+  const [syncState, setSyncState] = useState<SyncState>("idle");
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   const [sortKey, setSortKey] = useState<SortKey>("relevance_score");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -125,6 +132,27 @@ export default function ChairPapers() {
       .catch((e) => setError(e instanceof Error ? e.message : "Error loading papers"))
       .finally(() => setLoading(false));
   }, [chairId]);
+
+  async function handleSync() {
+    if (!chairId || syncState === "running") return;
+    setSyncState("running");
+    setSyncError(null);
+    try {
+      const job = await triggerScrape(chairId);
+      if (job.status === "success") {
+        // Reload papers after successful scrape
+        const fresh = await listPapers({ chair_id: chairId, limit: 200 });
+        setPapers(fresh);
+        setSyncState("done");
+      } else {
+        setSyncError(job.error ?? "Scrape job failed");
+        setSyncState("error");
+      }
+    } catch (e) {
+      setSyncError(e instanceof Error ? e.message : "Unknown error");
+      setSyncState("error");
+    }
+  }
 
   // Collect all unique tags from loaded papers
   const allTags = useMemo(() => {
@@ -196,24 +224,47 @@ export default function ChairPapers() {
         <div className="max-w-container-max mx-auto space-y-stack-md">
 
           {/* Back + header */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/chairs")}
-              className="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant"
-            >
-              <span className="material-symbols-outlined">arrow_back</span>
-            </button>
-            <div>
-              <h2 className="font-headline-md text-headline-md text-on-surface">
-                {chair?.name ?? "Lehrstuhl"}
-              </h2>
-              {chair && (
-                <p className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
-                  <span className="material-symbols-outlined text-[14px]">person</span>
-                  {chair.professor_name}
-                </p>
-              )}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate("/chairs")}
+                className="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant"
+              >
+                <span className="material-symbols-outlined">arrow_back</span>
+              </button>
+              <div>
+                <h2 className="font-headline-md text-headline-md text-on-surface">
+                  {chair?.name ?? "Lehrstuhl"}
+                </h2>
+                {chair && (
+                  <p className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+                    <span className="material-symbols-outlined text-[14px]">person</span>
+                    {chair.professor_name}
+                  </p>
+                )}
+              </div>
             </div>
+
+            {/* Sync button — admin only */}
+            {user?.role === "admin" && (
+              <div className="flex flex-col items-end gap-1">
+                <button
+                  onClick={handleSync}
+                  disabled={syncState === "running"}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <span
+                    className={`material-symbols-outlined text-[18px] ${syncState === "running" ? "animate-spin" : ""}`}
+                  >
+                    {syncState === "done" ? "check_circle" : "sync"}
+                  </span>
+                  {syncState === "running" ? "Syncing…" : syncState === "done" ? "Synced" : "Sync papers"}
+                </button>
+                {syncState === "error" && syncError && (
+                  <p className="font-label-md text-[11px] text-error max-w-xs text-right">{syncError}</p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Loading */}

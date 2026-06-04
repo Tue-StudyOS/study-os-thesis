@@ -1,4 +1,5 @@
 import { api } from "./client";
+import { pollJob, type Job } from "./jobs";
 
 export interface Paper {
   id: number;
@@ -30,4 +31,15 @@ export function listPapers(params: {
   if (params.limit !== undefined) q.set("limit", String(params.limit));
   if (params.offset !== undefined) q.set("offset", String(params.offset));
   return api<Paper[]>(`/api/papers?${q}`);
+}
+
+export async function triggerScrape(
+  chairId: number,
+  opts: { since_days?: number; max_results?: number } = {},
+): Promise<Job> {
+  const { job_id } = await api<{ job_id: string }>(`/api/scraper/run/${chairId}`, {
+    method: "POST",
+    json: { since_days: opts.since_days ?? 365, max_results: opts.max_results ?? 20 },
+  });
+  return pollJob(job_id);
 }
