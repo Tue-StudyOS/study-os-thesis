@@ -10,6 +10,7 @@ from app.config import Settings
 from app.exceptions import BadRequestException, ForbiddenException, NotFoundException
 from app.llm.port import LLMPort
 from app.models import ChatMessage, ChatSession, MessageRole, Thesis, ThesisSource
+from app.skills.repository import SkillRepository
 from app.students.repository import StudentRepository
 from app.theses.repository import ThesisRepository
 from app.theses.schemas import GeneratedProposalItem
@@ -195,6 +196,7 @@ class ChatService:
         student_repo: StudentRepository | None = None,
         chair_repo: ChairRepository | None = None,
         thesis_repo: ThesisRepository | None = None,
+        skill_repo: SkillRepository | None = None,
     ) -> None:
         self._chat_repo = chat_repo
         self._ollama = chat_client
@@ -203,6 +205,7 @@ class ChatService:
         self._student_repo = student_repo
         self._chair_repo = chair_repo
         self._thesis_repo = thesis_repo
+        self._skill_repo = skill_repo
 
     async def create_session(self, user_id: int) -> ChatSession:
         return await self._chat_repo.create_session(user_id)
@@ -219,7 +222,7 @@ class ChatService:
         return await self._chat_repo.list_messages(session_id)
 
     async def _build_student_context(self, user_id: int) -> str | None:
-        """Return a short text summary of the student's course profile, or None."""
+        """Return a text summary of the student's academic profile and computed skills."""
         if self._student_repo is None:
             return None
         try:
@@ -234,6 +237,20 @@ class ChatService:
                 grade_str = f", grade {c.grade}" if c.grade else ""
                 credits_str = f" ({c.credits} ECTS)" if c.credits else ""
                 lines.append(f"  - {c.course_name}{credits_str}{grade_str}")
+
+            # Append computed skill profile when available.
+            if self._skill_repo is not None:
+                try:
+                    skills = await self._skill_repo.get_user_skills(user_id, limit=15)
+                    if skills:
+                        lines.append("\n## Computed skill profile (score 0.0-1.0, higher is stronger)")
+                        for s in skills:
+                            lines.append(
+                                f"  - {s.skill_tag.name} ({s.skill_tag.category or 'other'}): {float(s.score):.0%}"
+                            )
+                except Exception as exc:
+                    _logger.debug("Could not load skill profile for chat context: %s", exc)
+
             return "\n".join(lines)
         except Exception as exc:
             _logger.warning("Could not load student profile for chat context: %s", exc)

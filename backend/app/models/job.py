@@ -18,6 +18,8 @@ class JobType(str, enum.Enum):
     parse_transcript = "parse_transcript"
     chat_turn = "chat_turn"
     generate_proposal = "generate_proposal"
+    compute_skills = "compute_skills"
+    ingest_handbook = "ingest_handbook"
 
 
 class JobStatus(str, enum.Enum):

@@ -29,7 +29,10 @@ async def _parse_transcript_work(
     semester: int | None,
 ) -> dict:
     from app.db import SessionLocal
+    from app.jobs.repository import JobRepository
+    from app.jobs.service import JobService
     from app.llm.factory import build_chat_client, build_embed_client
+    from app.models.job import JobType
     from app.students.pdf_store import delete_pdf, fetch_pdf
     from app.students.repository import StudentRepository
     from app.students.service import StudentService
@@ -46,9 +49,45 @@ async def _parse_transcript_work(
         student = await svc.upload_transcript(user_id, pdf_bytes, program=program, semester=semester)
 
     await delete_pdf(settings.redis_url, job_id)
+
+    courses_count = len(student.courses) if student.courses else 0
+
+    # Chain: automatically compute skill scores after the transcript is persisted.
+    try:
+        from app.skills.tasks import compute_skills as _compute_skills_task
+
+        async with SessionLocal() as session:
+            job_svc = JobService(JobRepository(session))
+            skill_job = await job_svc.create_job(
+                type=JobType.compute_skills,
+                user_id=user_id,
+                input_data={"triggered_by_job": job_id},
+            )
+            await session.commit()
+
+        task_result = _compute_skills_task.delay(
+            user_id=user_id,
+            job_id=str(skill_job.id),
+        )
+        async with SessionLocal() as session:
+            job_svc = JobService(JobRepository(session))
+            await job_svc.set_celery_task_id(skill_job.id, task_result.id)
+            await session.commit()
+
+        logger.info(
+            "parse_transcript: chained compute_skills skill_job_id=%s celery_id=%s",
+            skill_job.id,
+            task_result.id,
+        )
+        skill_job_id = str(skill_job.id)
+    except Exception as exc:
+        logger.warning("parse_transcript: failed to chain compute_skills: %s", exc)
+        skill_job_id = None
+
     return {
         "user_id": user_id,
-        "courses": len(student.courses) if student.courses else 0,
+        "courses": courses_count,
+        "skill_job_id": skill_job_id,
     }
 
 

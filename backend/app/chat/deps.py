@@ -6,6 +6,7 @@ from app.auth.deps import LLMChatClientDep, LLMEmbedClientDep, SessionDep, Setti
 from app.chairs.deps import ChairRepoDep
 from app.chat.repository import ChatRepository
 from app.chat.service import ChatService
+from app.skills.deps import SkillRepoDep
 from app.students.deps import StudentRepoDep
 from app.theses.deps import ThesisRepoDep
 
@@ -25,6 +26,7 @@ def get_chat_service(
     student_repo: StudentRepoDep,
     chair_repo: ChairRepoDep,
     thesis_repo: ThesisRepoDep,
+    skill_repo: SkillRepoDep,
 ) -> ChatService:
     return ChatService(
         chat_repo,
@@ -34,6 +36,7 @@ def get_chat_service(
         student_repo=student_repo,
         chair_repo=chair_repo,
         thesis_repo=thesis_repo,
+        skill_repo=skill_repo,
     )
 
 

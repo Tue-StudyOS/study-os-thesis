@@ -13,11 +13,13 @@ from app.admin import controller as admin_router
 from app.auth import controller as auth_router
 from app.chairs import controller as chairs_router
 from app.chat import controller as chat_router
+from app.handbook import controller as handbook_router
 from app.jobs import controller as jobs_router
 from app.proposals import controller as proposals_router
-from app.ws import controller as ws_router
+from app.skills import controller as skills_router
 from app.students import controller as students_router
 from app.theses import controller as theses_router
+from app.ws import controller as ws_router
 from app.config import Settings, get_settings
 from app.exceptions import (
     AlreadyExistsException,
@@ -177,6 +179,8 @@ def create_app() -> FastAPI:
     app.include_router(students_router.router)
     app.include_router(chairs_router.router)
     app.include_router(proposals_router.router)
+    app.include_router(skills_router.router)
+    app.include_router(handbook_router.router)
     app.include_router(jobs_router.router)
     app.include_router(ws_router.router)
 

@@ -13,7 +13,7 @@ class TestJobEnums:
     def test_job_type_enum_has_all_values(self):
         from app.models.job import JobType
 
-        expected = {"embed_thesis", "embed_chair", "ingest_arxiv", "parse_transcript", "chat_turn", "generate_proposal"}
+        expected = {"embed_thesis", "embed_chair", "ingest_arxiv", "parse_transcript", "chat_turn", "generate_proposal", "compute_skills", "ingest_handbook"}
         actual = {e.value for e in JobType}
         assert expected == actual
 

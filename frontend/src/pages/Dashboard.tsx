@@ -2,27 +2,20 @@ import { useEffect, useRef, useState } from "react";
 import TopBar from "../components/TopBar";
 import StatCard from "../components/StatCard";
 import SkillBar from "../components/SkillBar";
-import SkillRadar, { coursesToRadarData } from "../components/SkillRadar";
+import SkillRadar from "../components/SkillRadar";
 import { useAuth } from "../auth/AuthContext";
 import { getStudentProfile, uploadTranscript, type StudentProfile } from "../api/students";
-import { pollJob } from "../api/jobs";
-
-// Fixed skill-bar labels mapped from radar axes
-const SKILL_BAR_AXES = [
-  "Programming",
-  "Statistics",
-  "Databases",
-  "Projects",
-  "Web",
-  "Versioning",
-] as const;
+import { getUserSkills, type UserSkillProfile } from "../api/skills";
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const isStudent = user?.role === "student";
   const firstName = user?.email?.split("@")[0] ?? "User";
 
   const [profile, setProfile] = useState<StudentProfile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(isStudent);
+  const [skillProfile, setSkillProfile] = useState<UserSkillProfile | null>(null);
+  const [skillsLoading, setSkillsLoading] = useState(isStudent);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -30,12 +23,22 @@ export default function Dashboard() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (!isStudent) return;
     setProfileLoading(true);
     getStudentProfile()
       .then(setProfile)
-      .catch(() => setProfile(null)) // 404 = no profile yet
+      .catch(() => setProfile(null))
       .finally(() => setProfileLoading(false));
-  }, []);
+  }, [isStudent]);
+
+  useEffect(() => {
+    if (!isStudent) return;
+    setSkillsLoading(true);
+    getUserSkills()
+      .then(setSkillProfile)
+      .catch(() => setSkillProfile(null))
+      .finally(() => setSkillsLoading(false));
+  }, [isStudent]);
 
   async function handleFile(file: File) {
     if (!file.name.toLowerCase().endsWith(".pdf")) {
@@ -45,30 +48,16 @@ export default function Dashboard() {
     setUploading(true);
     setUploadError(null);
     try {
-      // Parsing runs in a background worker: the POST returns a job id, we poll
-      // it to completion, then refetch the freshly parsed profile.
-      const { job_id } = await uploadTranscript(
-        file,
-        profile?.program ?? undefined,
-        profile?.semester ?? undefined,
-      );
-      // Poll long enough to outlast the worker's hard time limit
-      // (TRANSCRIPT_HARD_TIME_LIMIT, default 1860s) so we always observe the
-      // terminal status rather than giving up early on a slow run. The cap
-      // below (5s × 480 = 2400s) is a safety net against a dead worker; keep
-      // it above the configured hard limit.
-      const job = await pollJob(job_id, { intervalMs: 5000, maxPolls: 480 });
-      if (job.status === "success") {
-        setProfile(await getStudentProfile());
-      } else if (job.status === "failure") {
-        setUploadError(
-          (typeof job.error === "string" && job.error) ||
-            "Transcript konnte nicht verarbeitet werden. Bitte erneut versuchen.",
-        );
-      } else {
-        // Polling timed out — the worker is still processing.
-        setUploadError("Verarbeitung dauert noch an. Bitte später neu laden.");
-      }
+      const updated = await uploadTranscript(file, profile?.program ?? undefined, profile?.semester ?? undefined);
+      setProfile(updated);
+      // Reload skills after a brief delay to allow the Celery chain to start.
+      // The WebSocket "skills_computed" event is the proper trigger; this is a
+      // graceful fallback for clients without WebSocket support.
+      setTimeout(() => {
+        getUserSkills()
+          .then(setSkillProfile)
+          .catch(() => {});
+      }, 3000);
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "Upload fehlgeschlagen.");
     } finally {
@@ -89,16 +78,22 @@ export default function Dashboard() {
   }
 
   const hasProfile = profile !== null && !profileLoading;
-  const radarData = hasProfile ? coursesToRadarData(profile.courses) : undefined;
+  const hasSkills = skillProfile !== null && skillProfile.skills.length > 0;
   const totalCredits = hasProfile
     ? profile.courses.reduce((s, c) => s + (c.credits ?? 0), 0)
     : null;
 
-  // Derive skill bars from radar data (same axes, percent = score/4 * 100)
-  const skillBars = radarData
-    ? SKILL_BAR_AXES.map((label, i) => ({
-        label,
-        percent: Math.round((radarData[i] / 4) * 100),
+  // Top 6 skills for radar chart
+  const topSkills = skillProfile?.skills.slice(0, 6) ?? [];
+
+  // Skill bars: top 6 skills as percentage
+  const skillBars = hasSkills
+    ? topSkills.map((s) => ({
+        label: s.skill
+          .split(/[\s_-]+/)
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" "),
+        percent: Math.round(s.score * 100),
       }))
     : null;
 
@@ -130,7 +125,8 @@ export default function Dashboard() {
           </div>
 
           {/* Bento Grid: upload + stats */}
-          <div className="grid grid-cols-12 gap-gutter mb-8">
+          {isStudent && (
+            <div className="grid grid-cols-12 gap-gutter mb-8">
               {/* Upload Area */}
               <div className="col-span-12 md:col-span-8 flex flex-col">
                 <input
@@ -255,6 +251,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
+          )}
 
           {/* Skill Analysis */}
           <div className="mb-8">
@@ -271,7 +268,7 @@ export default function Dashboard() {
 
             <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 ambient-shadow relative">
               {/* Lock overlay — shown before any profile */}
-              {!hasProfile && !profileLoading && (
+              {isStudent && !hasProfile && !profileLoading && (
                 <div className="absolute inset-0 glass-panel z-20 flex flex-col items-center justify-center rounded-xl">
                   <span className="material-symbols-outlined text-[48px] text-primary/40 mb-4">lock</span>
                   <h4 className="font-headline-md text-headline-md text-primary mb-2 text-center">
@@ -284,15 +281,53 @@ export default function Dashboard() {
                 </div>
               )}
 
-              <div className={!hasProfile && !profileLoading ? "opacity-40 pointer-events-none" : ""}>
-                <SkillRadar currentData={radarData} />
-
-                {skillBars && (
-                  <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {skillBars.map((s) => (
-                      <SkillBar key={s.label} label={s.label} percent={s.percent} />
-                    ))}
+              <div className={isStudent && !hasProfile && !profileLoading ? "opacity-40 pointer-events-none" : ""}>
+                {skillsLoading ? (
+                  <div className="flex items-center justify-center h-48">
+                    <div className="w-8 h-8 border-2 border-outline-variant border-t-primary rounded-full animate-spin" />
                   </div>
+                ) : (
+                  <>
+                    <SkillRadar skills={topSkills} />
+
+                    {skillBars && (
+                      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {skillBars.map((s) => (
+                          <SkillBar key={s.label} label={s.label} percent={s.percent} />
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Warnings / unmatched courses */}
+                    {skillProfile && (skillProfile.warnings.length > 0 || skillProfile.unmatched_courses.length > 0) && (
+                      <div className="mt-6 bg-surface-container border border-outline-variant/50 rounded-lg p-4">
+                        {skillProfile.unmatched_courses.length > 0 && (
+                          <details className="text-body-sm text-on-surface-variant">
+                            <summary className="cursor-pointer font-label-md text-on-surface mb-1">
+                              {skillProfile.unmatched_courses.length} Kurs(e) ohne Handbuch-Match
+                            </summary>
+                            <ul className="mt-2 list-disc list-inside space-y-0.5">
+                              {skillProfile.unmatched_courses.map((c) => (
+                                <li key={c}>{c}</li>
+                              ))}
+                            </ul>
+                          </details>
+                        )}
+                        {skillProfile.warnings.length > 0 && (
+                          <details className="text-body-sm text-on-surface-variant mt-2">
+                            <summary className="cursor-pointer font-label-md text-on-surface mb-1">
+                              {skillProfile.warnings.length} Hinweis(e)
+                            </summary>
+                            <ul className="mt-2 list-disc list-inside space-y-0.5">
+                              {skillProfile.warnings.map((w, i) => (
+                                <li key={i}>{w}</li>
+                              ))}
+                            </ul>
+                          </details>
+                        )}
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {hasProfile && profile.courses.length > 0 && (

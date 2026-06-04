@@ -35,6 +35,13 @@ class TestParseTranscriptWork:
         svc.upload_transcript.return_value = SimpleNamespace(courses=[1, 2, 3])
         settings = SimpleNamespace(redis_url="redis://x", ollama_embed_model="m")
 
+        mock_skill_job = SimpleNamespace(id="skill-job-id")
+        mock_job_svc = AsyncMock()
+        mock_job_svc.create_job = AsyncMock(return_value=mock_skill_job)
+        mock_job_svc.set_celery_task_id = AsyncMock()
+        mock_skill_task = MagicMock()
+        mock_skill_task.delay.return_value = MagicMock(id="celery-skill-id")
+
         with (
             patch("app.students.pdf_store.fetch_pdf", AsyncMock(return_value=b"PDFBYTES")) as fetch,
             patch("app.students.pdf_store.delete_pdf", AsyncMock()) as delete,
@@ -43,13 +50,18 @@ class TestParseTranscriptWork:
             patch("app.students.service.StudentService", return_value=svc),
             patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
             patch("app.llm.factory.build_embed_client", return_value=AsyncMock()),
+            patch("app.jobs.repository.JobRepository", return_value=AsyncMock()),
+            patch("app.jobs.service.JobService", return_value=mock_job_svc),
+            patch("app.skills.tasks.compute_skills", mock_skill_task),
         ):
             result = await _parse_transcript_work(1, "job-1", settings, "CS", 4)
 
         fetch.assert_awaited_once_with("redis://x", "job-1")
         svc.upload_transcript.assert_awaited_once_with(1, b"PDFBYTES", program="CS", semester=4)
         delete.assert_awaited_once_with("redis://x", "job-1")
-        assert result == {"user_id": 1, "courses": 3}
+        assert result["user_id"] == 1
+        assert result["courses"] == 3
+        assert "skill_job_id" in result
 
     async def test_missing_pdf_raises_bad_request(self):
         settings = SimpleNamespace(redis_url="redis://x", ollama_embed_model="m")

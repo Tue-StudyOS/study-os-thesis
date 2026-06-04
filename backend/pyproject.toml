@@ -23,6 +23,8 @@ dependencies = [
     "litellm==1.86.0",
     "celery[redis]>=5.4",
     "redis>=5.0",
+    "docling>=2.97",
+    "rapidfuzz>=3.0",
 ]
 
 [dependency-groups]
