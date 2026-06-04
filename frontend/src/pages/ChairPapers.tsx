@@ -245,8 +245,8 @@ export default function ChairPapers() {
               </div>
             </div>
 
-            {/* Sync button — admin only */}
-            {user?.role === "admin" && (
+            {/* Sync button */}
+            {user && (
               <div className="flex flex-col items-end gap-1">
                 <button
                   onClick={handleSync}

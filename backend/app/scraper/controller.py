@@ -6,7 +6,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
-from app.auth.deps import require_role
+from app.auth.deps import CurrentUserDep, require_role
 from app.exceptions import NotFoundException
 from app.jobs.deps import JobServiceDep
 from app.models import User, UserRole
@@ -27,13 +27,14 @@ AdminDep = Annotated[User, Depends(require_role(UserRole.admin))]
 async def run_chair_scrape(
     chair_id: int,
     body: ScrapeChairRequest,
-    _admin: AdminDep,
+    current_user: CurrentUserDep,
     chair_repo: ChairRepoDep,
     job_service: JobServiceDep,
 ) -> dict:
     """Trigger a full paper scrape for all researchers of a chair.
 
-    Returns immediately with a job_id; poll GET /api/jobs/{job_id} for status.
+    Available to all authenticated users. Returns immediately with a job_id;
+    poll GET /api/jobs/{job_id} for status.
     """
     from app.scraper.tasks import scrape_chair_papers
 
@@ -44,14 +45,14 @@ async def run_chair_scrape(
 
     job = await job_service.create_job(
         type=JobType.scrape_chair,
-        user_id=_admin.id,
+        user_id=current_user.id,
         input_data={
             "chair_id": chair_id,
             "since_days": body.since_days,
             "max_results": body.max_results,
         },
     )
-    task_result = scrape_chair_papers.delay(chair_id, _admin.id, str(job.id))
+    task_result = scrape_chair_papers.delay(chair_id, current_user.id, str(job.id))
     await job_service.set_celery_task_id(job.id, task_result.id)
 
     return {
