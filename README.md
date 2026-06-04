@@ -170,6 +170,25 @@ docker compose up -d     # recreate the container
 
 ---
 
+#### Restarting the Celery worker
+
+The backend (uvicorn) runs with `--reload` and picks up Python changes
+automatically. The **Celery worker does not auto-reload** — after editing any
+code it runs (tasks, the chat service, the LLM adapters), you must restart it
+for the change to take effect.
+
+The easy way — just restart `debug.sh`, which manages the worker for you:
+
+1. Press **Ctrl-C** in the `debug.sh` terminal (stops worker, backend, and
+   frontend together — Docker containers stay up).
+2. Re-run `./debug.sh`.
+
+That's all you normally need. If you'd rather run the worker on its own (e.g.
+in a separate terminal), you can also start it directly with
+`uv run celery -A app.worker.celery_app worker` from the `backend` directory.
+
+---
+
 ### Accessing the services
 
 | Service | URL |

@@ -62,6 +62,9 @@ def build_chat_client(settings: Settings) -> LLMPort:
                 chat_kwargs={
                     "api_key": settings.deepseek_api_key,
                     "api_base": settings.deepseek_base_url,
+                    # Enable DeepSeek reasoning ("thinking") mode.
+                    "reasoning_effort": "high",
+                    "extra_body": {"thinking": {"type": "enabled"}},
                 },
             )
 
