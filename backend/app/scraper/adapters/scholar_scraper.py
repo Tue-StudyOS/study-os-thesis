@@ -30,6 +30,15 @@ _SCHOLAR_SEARCH = "https://scholar.google.com/scholar?q={query}&as_ylo={year}"
 _SCHOLAR_PROFILE = "https://scholar.google.com/citations?user={user_id}&sortby=pubdate"
 
 
+def _strip_leading_titles_for_search(name: str) -> str:
+    """Return a canonical name for Scholar search (strip leading academic titles)."""
+
+    import re
+
+    s = (name or "").strip()
+    return re.sub(r"^\s*(?:(?:Professor|Prof)\.?\s*|Dr(?:\.-Ing\.)?\.?\s*)+", "", s, flags=re.IGNORECASE).strip()
+
+
 def _year_cutoff(since_days: int) -> int:
     return datetime.now(timezone.utc).year - (since_days // 365)
 
@@ -231,7 +240,10 @@ class ScholarPlaywrightScraper(PaperSourceClient):
         since_days: int,
         max_results: int,
     ) -> list[PaperCandidate]:
-        query = quote_plus(f'author:"{name}"')
+        search_name = _strip_leading_titles_for_search(name)
+        if search_name and search_name != name:
+            _logger.info("Scholar search: stripped titles %r -> %r", name, search_name)
+        query = quote_plus(f'author:"{search_name or name}"')
         year_cutoff = _year_cutoff(since_days)
         url = _SCHOLAR_SEARCH.format(query=query, year=year_cutoff)
 

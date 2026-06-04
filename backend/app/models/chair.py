@@ -31,6 +31,9 @@ class Chair(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     short_description: Mapped[str] = mapped_column(Text, nullable=False)
+    # Academic title(s), e.g. "Prof. Dr." (optional).
+    professor_title: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # Canonical name used for matching/scraping (no titles).
     professor_name: Mapped[str] = mapped_column(String(255), nullable=False)
     # Optional link to a registered professor account.
     professor_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)

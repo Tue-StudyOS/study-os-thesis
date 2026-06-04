@@ -96,6 +96,7 @@ def _mock_chair_service():
         id=1,
         name="Chair",
         short_description="Desc",
+        professor_title="Prof.",
         professor_name="Prof",
         professor_user_id=None,
         website_url=None,

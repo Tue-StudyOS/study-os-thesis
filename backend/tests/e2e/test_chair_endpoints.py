@@ -41,6 +41,7 @@ class TestCreateChair:
             json={
                 "name": "Test Chair",
                 "short_description": "A research chair focused on machine learning and AI applications.",
+                "professor_title": "Prof.",
                 "professor_name": "Prof. Test",
             },
         )

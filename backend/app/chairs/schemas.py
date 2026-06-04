@@ -23,6 +23,7 @@ class ChairOut(BaseModel):
     id: int
     name: str
     short_description: str
+    professor_title: str | None
     professor_name: str
     professor_user_id: int | None
     website_url: str | None
@@ -33,6 +34,7 @@ class ChairOut(BaseModel):
 class ChairCreate(BaseModel):
     name: str = Field(min_length=2, max_length=255)
     short_description: str = Field(min_length=10)
+    professor_title: str | None = Field(default=None, min_length=2, max_length=255)
     professor_name: str = Field(min_length=2, max_length=255)
     professor_user_id: int | None = None
     website_url: str | None = Field(default=None, max_length=500)
@@ -41,6 +43,7 @@ class ChairCreate(BaseModel):
 class ChairPatch(BaseModel):
     name: str | None = Field(default=None, min_length=2, max_length=255)
     short_description: str | None = Field(default=None, min_length=10)
+    professor_title: str | None = Field(default=None, min_length=2, max_length=255)
     professor_name: str | None = Field(default=None, min_length=2, max_length=255)
     professor_user_id: int | None = None
     website_url: str | None = Field(default=None, max_length=500)

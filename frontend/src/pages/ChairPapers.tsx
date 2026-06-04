@@ -239,7 +239,7 @@ export default function ChairPapers() {
                 {chair && (
                   <p className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
                     <span className="material-symbols-outlined text-[14px]">person</span>
-                    {chair.professor_name}
+                    {(chair.professor_title ? `${chair.professor_title} ` : "") + chair.professor_name}
                   </p>
                 )}
               </div>

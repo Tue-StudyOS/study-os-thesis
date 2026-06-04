@@ -110,7 +110,9 @@ function ChairDetailPanel({
             {/* Meta */}
             <div className="flex items-center gap-2 text-on-surface-variant">
               <span className="material-symbols-outlined text-[18px]">person</span>
-              <span className="font-body-md text-body-md">{chair.professor_name}</span>
+              <span className="font-body-md text-body-md">
+                {(chair.professor_title ? `${chair.professor_title} ` : "") + chair.professor_name}
+              </span>
             </div>
             {chair.website_url && (
               <a
@@ -225,7 +227,7 @@ export default function ChairExplorer() {
   const filtered = chairs.filter(
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.professor_name.toLowerCase().includes(search.toLowerCase()) ||
+      ((c.professor_title ? `${c.professor_title} ` : "") + c.professor_name).toLowerCase().includes(search.toLowerCase()) ||
       c.short_description.toLowerCase().includes(search.toLowerCase()),
   );
 
@@ -325,7 +327,7 @@ export default function ChairExplorer() {
                       </h3>
                       <p className="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
                         <span className="material-symbols-outlined text-sm">person</span>
-                        {featured.professor_name}
+                        {(featured.professor_title ? `${featured.professor_title} ` : "") + featured.professor_name}
                       </p>
                     </div>
                     <MatchCircle score={Math.min(99, featured.documents.length * 10 + 60)} />
@@ -366,7 +368,7 @@ export default function ChairExplorer() {
                       </h3>
                       <p className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
                         <span className="material-symbols-outlined text-xs">person</span>
-                        {chair.professor_name}
+                        {(chair.professor_title ? `${chair.professor_title} ` : "") + chair.professor_name}
                       </p>
                     </div>
                     <button

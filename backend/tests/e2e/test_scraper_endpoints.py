@@ -89,6 +89,7 @@ class TestRunChairScrape:
             id=1,
             name="Distributed Intelligence",
             short_description="",
+            professor_title="Prof. Dr.",
             professor_name="Georg Martius",
             website_url=None,
             created_at=datetime(2024, 1, 1, tzinfo=timezone.utc),

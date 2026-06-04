@@ -10,6 +10,7 @@ import pytest
 from app.scraper.adapters.scholar_scraper import (
     _parse_authors_from_meta,
     _parse_year_from_meta,
+    _strip_leading_titles_for_search,
     _year_cutoff,
 )
 
@@ -106,3 +107,18 @@ class TestYearCutoff:
         # 400 days // 365 = 1
         current = datetime.datetime.now().year
         assert _year_cutoff(400) == current - 1
+
+
+@pytest.mark.unit
+class TestStripTitlesForSearch:
+    @pytest.mark.parametrize(
+        "raw,expected",
+        [
+            ("Prof. Dr. Georg Martius", "Georg Martius"),
+            ("Professor Dr.-Ing. Alice Smith", "Alice Smith"),
+            ("Dr. Bob", "Bob"),
+            ("Georg Martius", "Georg Martius"),
+        ],
+    )
+    def test_strips_only_leading_titles(self, raw, expected):
+        assert _strip_leading_titles_for_search(raw) == expected

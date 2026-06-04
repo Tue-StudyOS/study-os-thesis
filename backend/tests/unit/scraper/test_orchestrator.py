@@ -99,7 +99,7 @@ class TestEnsureResearchers:
         r2 = SimpleNamespace(id=2, name="Dr B")
         o._researcher_repo.list_by_chair.return_value = [r1, r2]
 
-        ids = await o.ensure_researchers_for_chair(chair_id=1, professor_name="Prof A")
+        ids = await o.ensure_researchers_for_chair(chair_id=1, professor_name="A")
 
         assert ids == [1, 2]
         o._researcher_repo.create.assert_not_awaited()
