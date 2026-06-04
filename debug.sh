@@ -175,9 +175,26 @@ setup() {
 
 }
 
+# Kill any process already occupying a port (best-effort, no-op if nothing listening).
+kill_port() {
+  local port="$1"
+  local pid
+  pid=$(lsof -ti tcp:"$port" 2>/dev/null | head -1)
+  if [[ -n "$pid" ]]; then
+    warn "Port $port already in use by PID $pid — killing it."
+    kill -9 "$pid" 2>/dev/null || true
+    sleep 0.5
+  fi
+}
+
 # Launch backend + frontend and wait.
 run_app() {
   trap cleanup SIGINT SIGTERM EXIT
+
+  # Free ports before binding so stale processes from other branches/sessions
+  # don't cause "[Errno 48] Address already in use" on startup.
+  kill_port 8000
+  kill_port 5173
 
   mkdir -p "$BACKEND_DIR/logs"
 
@@ -266,22 +283,34 @@ cmd_down() {
   info "Containers stopped. (Volumes preserved.)"
 }
 
+# ./debug.sh stop — kill any stale app processes on port 8000 and 5173.
+cmd_stop() {
+  info "Killing any processes on port 8000 and 5173..."
+  kill_port 8000
+  kill_port 5173
+  # Also kill any stale celery workers for this project.
+  pkill -f "celery.*study_os_thesis" 2>/dev/null || true
+  info "Done."
+}
+
 # --------------------------------------------------------------------------- #
 # Entrypoint
 # --------------------------------------------------------------------------- #
 
 usage() {
-  echo "Usage: $0 [up|down]"
+  echo "Usage: $0 [up|down|stop]"
   echo ""
   echo "  (none)  Start the app (containers must already be running)"
   echo "  up      Start containers, then start the app"
   echo "  down    Stop Docker containers (volumes preserved)"
+  echo "  stop    Kill stale app processes on ports 8000 and 5173"
   exit 1
 }
 
 case "${1:-}" in
-  "")   cmd_start ;;
-  up)   cmd_up    ;;
-  down) cmd_down  ;;
-  *)    usage     ;;
+  "")     cmd_start ;;
+  up)     cmd_up    ;;
+  down)   cmd_down  ;;
+  stop)   cmd_stop  ;;
+  *)      usage     ;;
 esac

@@ -48,6 +48,9 @@ export function useJobSocket() {
     const url = buildWsUrl();
     if (!url || !("WebSocket" in window)) return;
 
+    // Guard against React StrictMode's double-invoke: if this cleanup runs
+    // before the socket opens, we mark it destroyed and skip all callbacks.
+    let destroyed = false;
     let ws: WebSocket;
     try {
       ws = new WebSocket(url);
@@ -57,10 +60,12 @@ export function useJobSocket() {
     wsRef.current = ws;
 
     ws.onopen = () => {
+      if (destroyed) { ws.close(); return; }
       connectedRef.current = true;
     };
 
     ws.onmessage = (ev) => {
+      if (destroyed) return;
       let event: JobEvent;
       try {
         event = JSON.parse(ev.data as string) as JobEvent;
@@ -79,9 +84,12 @@ export function useJobSocket() {
     ws.onclose = () => { connectedRef.current = false; wsRef.current = null; };
 
     return () => {
-      ws.close();
-      wsRef.current = null;
+      destroyed = true;
       connectedRef.current = false;
+      wsRef.current = null;
+      if (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
     };
   }, []);
 

@@ -190,6 +190,25 @@ class StudentService:
         valid_courses: list[StudentCourseItem] = []
         raw_courses = data.get("courses", []) if isinstance(data, dict) else []
         for raw in raw_courses:
+            if isinstance(raw, dict) and "course_name" not in raw:
+                # LLM sometimes uses alternative key names for the course name
+                # (e.g. "course_<tr>_id", "name", "module_name").
+                # Normalise to "course_name" before validation.
+                for alias in ("name", "module_name", "module", "title"):
+                    if alias in raw:
+                        raw = {**raw, "course_name": raw[alias]}
+                        break
+                else:
+                    # Last resort: try any key whose value looks like a course name
+                    for k, v in raw.items():
+                        if isinstance(v, str) and len(v) > 3 and not any(
+                            c.isdigit() for c in v[:4]
+                        ):
+                            raw = {**raw, "course_name": v}
+                            _logger.debug(
+                                "Inferred course_name from key %r: %r", k, v
+                            )
+                            break
             try:
                 valid_courses.append(StudentCourseItem.model_validate(raw))
             except Exception as course_exc:
