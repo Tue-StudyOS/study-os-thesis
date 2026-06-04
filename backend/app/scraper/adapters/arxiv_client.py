@@ -1,11 +1,10 @@
 """ArXiv metadata enricher.
 
 Fetches full title, abstract, exact publication date, and author list from the
-arXiv Atom API for papers whose arxiv_id was discovered via Google Scholar.
+arXiv Atom API for papers whose arxiv_id was discovered by a paper source.
 
 Rate-limit policy (arXiv asks for no more than 1 req/3s from automated clients):
 - A Redis-backed global limiter reserves a slot BEFORE every request.
-- Google Scholar findings are enriched in arXiv ID batches.
 - On 429 we read the Retry-After header (or fall back to 10 s) and wait before
   retrying once. A second 429 returns papers unenriched so the pipeline can
   continue rather than stalling indefinitely.
@@ -108,6 +107,46 @@ def _chunks(items: list[str], size: int) -> list[list[str]]:
     return [items[i : i + size] for i in range(0, len(items), size)]
 
 
+def _entry_arxiv_id(entry: ET.Element) -> str | None:
+    id_el = entry.find(f"{{{_ARXIV_NS}}}id")
+    if id_el is None or not id_el.text:
+        return None
+    return extract_arxiv_id_from_url(id_el.text)
+
+
+def _entry_to_candidate(entry: ET.Element) -> PaperCandidate | None:
+    arxiv_id = _entry_arxiv_id(entry)
+    if arxiv_id is None:
+        return None
+
+    title_el = entry.find(f"{{{_ARXIV_NS}}}title")
+    title = (title_el.text or "").strip().replace("\n", " ") if title_el is not None else ""
+    if not title:
+        return None
+
+    summary_el = entry.find(f"{{{_ARXIV_NS}}}summary")
+    abstract = summary_el.text.strip() if summary_el is not None and summary_el.text else None
+    authors = [(name_el.text or "").strip() for author in entry.findall(f"{{{_ARXIV_NS}}}author") for name_el in author.findall(f"{{{_ARXIV_NS}}}name") if name_el.text]
+
+    published_at = None
+    published_el = entry.find(f"{{{_ARXIV_NS}}}published")
+    if published_el is not None and published_el.text:
+        try:
+            published_at = datetime.fromisoformat(published_el.text.rstrip("Z")).replace(tzinfo=timezone.utc)
+        except ValueError:
+            pass
+
+    return PaperCandidate(
+        title=title,
+        abstract=abstract,
+        authors=authors,
+        publication_date=published_at,
+        source="arxiv",
+        source_url=f"https://arxiv.org/abs/{arxiv_id}",
+        arxiv_id=arxiv_id,
+    )
+
+
 class ArxivMetadataEnricher(PaperMetadataEnricher):
     """Fetches full paper metadata from the arXiv Atom API.
 
@@ -193,10 +232,7 @@ class ArxivMetadataEnricher(PaperMetadataEnricher):
 
         entries: dict[str, ET.Element] = {}
         for entry in root.findall(f"{{{_ARXIV_NS}}}entry"):
-            id_el = entry.find(f"{{{_ARXIV_NS}}}id")
-            if id_el is None or not id_el.text:
-                continue
-            arxiv_id = extract_arxiv_id_from_url(id_el.text)
+            arxiv_id = _entry_arxiv_id(entry)
             if arxiv_id:
                 entries[arxiv_id] = entry
 
@@ -209,24 +245,13 @@ class ArxivMetadataEnricher(PaperMetadataEnricher):
         if paper.arxiv_id:
             paper.arxiv_id = normalize_arxiv_id(paper.arxiv_id)
 
-        title_el = entry.find(f"{{{_ARXIV_NS}}}title")
-        if title_el is not None and title_el.text:
-            paper.title = title_el.text.strip().replace("\n", " ")
-
-        summary_el = entry.find(f"{{{_ARXIV_NS}}}summary")
-        if summary_el is not None and summary_el.text:
-            paper.abstract = summary_el.text.strip()
-
-        published_el = entry.find(f"{{{_ARXIV_NS}}}published")
-        if published_el is not None and published_el.text:
-            try:
-                paper.publication_date = datetime.fromisoformat(published_el.text.rstrip("Z")).replace(tzinfo=timezone.utc)
-            except ValueError:
-                pass
-
-        arxiv_authors = [(name_el.text or "").strip() for author in entry.findall(f"{{{_ARXIV_NS}}}author") for name_el in author.findall(f"{{{_ARXIV_NS}}}name") if name_el.text]
-        if arxiv_authors:
-            paper.authors = arxiv_authors
+        candidate = _entry_to_candidate(entry)
+        if candidate is not None:
+            paper.title = candidate.title
+            paper.abstract = candidate.abstract or paper.abstract
+            paper.publication_date = candidate.publication_date or paper.publication_date
+            if candidate.authors:
+                paper.authors = candidate.authors
 
         if paper.arxiv_id:
             paper.source_url = f"https://arxiv.org/abs/{paper.arxiv_id}"

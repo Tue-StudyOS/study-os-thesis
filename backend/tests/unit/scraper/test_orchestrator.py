@@ -31,13 +31,13 @@ def _researcher(id_=1, name="Georg Martius", chair_id=1, scholar_id="ABC123"):
     )
 
 
-def _candidate(title="Paper A", arxiv_id=None, abstract="Abstract text", year=2023):
+def _candidate(title="Paper A", arxiv_id=None, abstract="Abstract text", year=2023, source="google_scholar"):
     return PaperCandidate(
         title=title,
         abstract=abstract,
         authors=["Alice", "Bob"],
         publication_date=datetime(year, 6, 1, tzinfo=timezone.utc),
-        source="google_scholar",
+        source=source,
         source_url="https://scholar.google.com/test",
         arxiv_id=arxiv_id,
     )
@@ -52,7 +52,6 @@ def _paper_row(id_=99, **kwargs):
 def _build_orchestrator(**overrides):
     defaults = dict(
         source=AsyncMock(),
-        arxiv_enricher=AsyncMock(),
         llm_enricher=AsyncMock(),
         ranker=MagicMock(),
         dedup=AsyncMock(),
@@ -69,11 +68,6 @@ def _build_orchestrator(**overrides):
     # Sensible defaults
     o._source.fetch_papers.return_value = []
 
-    async def _identity(p):
-        return p
-
-    o._arxiv.enrich.side_effect = _identity
-    o._arxiv.enrich_many.side_effect = lambda papers: papers
     o._llm.summarize.return_value = "A short summary."
     o._llm.generate_tags.return_value = ["machine learning"]
     o._ranker.compute_recency_score.return_value = 0.8
@@ -199,6 +193,18 @@ class TestScrapeForResearcher:
         assert create_kwargs["summary"] == "A short summary."
         assert create_kwargs["enriched_at"] is not None
 
+    async def test_openalex_candidate_skips_llm_even_with_abstract(self):
+        o = _build_orchestrator()
+        o._source.fetch_papers.return_value = [_candidate(abstract="OpenAlex abstract", source="openalex")]
+
+        await o.scrape_for_researcher(1)
+
+        o._llm.summarize.assert_not_awaited()
+        o._llm.generate_tags.assert_not_awaited()
+        create_kwargs = o._paper_repo.create.call_args.kwargs
+        assert create_kwargs["summary"] is None
+        assert create_kwargs["enriched_at"] is None
+
     async def test_tags_stored_for_each_tag(self):
         o = _build_orchestrator()
         o._source.fetch_papers.return_value = [_candidate()]
@@ -259,6 +265,29 @@ class TestScrapeForResearcher:
         assert result["researcher_name"] == "Georg Martius"
         assert result["total"] == 0
 
+    async def test_discovered_google_scholar_id_is_persisted(self):
+        o = _build_orchestrator()
+        o._researcher_repo.get_by_id.return_value = _researcher(scholar_id=None)
+
+        async def fetch_side_effect(researcher, **kwargs):
+            researcher.google_scholar_id = "DISCOVERED"
+            return []
+
+        o._source.fetch_papers.side_effect = fetch_side_effect
+
+        await o.scrape_for_researcher(1)
+
+        o._researcher_repo.update_google_scholar_id.assert_awaited_once_with(1, "DISCOVERED")
+
+    async def test_existing_google_scholar_id_is_not_rewritten(self):
+        o = _build_orchestrator()
+        o._researcher_repo.get_by_id.return_value = _researcher(scholar_id="EXISTING")
+        o._source.fetch_papers.return_value = []
+
+        await o.scrape_for_researcher(1)
+
+        o._researcher_repo.update_google_scholar_id.assert_not_awaited()
+
     async def test_empty_candidate_list_returns_zeros(self):
         o = _build_orchestrator()
         o._source.fetch_papers.return_value = []
@@ -282,17 +311,6 @@ class TestScrapeForResearcher:
 
 @pytest.mark.unit
 class TestConcurrency:
-    async def test_arxiv_batch_enrichment_called_once(self):
-        """Verify all candidates pass through one batched arXiv enrichment call."""
-        o = _build_orchestrator()
-        n = 10
-        candidates = [_candidate(f"Paper {i}") for i in range(n)]
-        o._source.fetch_papers.return_value = candidates
-
-        await o.scrape_for_researcher(1)
-
-        o._arxiv.enrich_many.assert_awaited_once_with(candidates)
-
     async def test_llm_calls_are_sequential(self):
         """LLM calls must never overlap."""
         o = _build_orchestrator()

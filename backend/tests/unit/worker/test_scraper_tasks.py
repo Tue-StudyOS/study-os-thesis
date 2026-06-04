@@ -14,6 +14,7 @@ from app.exceptions import NotFoundException
 from app.scraper.tasks import (
     _enrich_paper_work,
     _ingest_single_paper_work,
+    _scrape_researcher_work,
     enrich_paper,
     ingest_single_paper,
     scrape_all_chairs,
@@ -119,6 +120,29 @@ class TestIngestSinglePaperWiring:
         with patch("app.scraper.tasks.execute_task") as ex:
             ingest_single_paper(arxiv_id="2301.07041", researcher_id=None, user_id=5, job_id="j")
         assert ex.call_args.kwargs["success_event"] == "ingest_paper_complete"
+
+
+@pytest.mark.unit
+class TestScrapeResearcherWork:
+    async def test_uses_openalex_source(self):
+        session = AsyncMock()
+        source = AsyncMock()
+        orchestrator = AsyncMock()
+        orchestrator.scrape_for_researcher.return_value = {"stored": 0}
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.scraper.adapters.openalex_client.OpenAlexSourceClient", return_value=source) as source_cls,
+            patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
+            patch("app.scraper.orchestrator.ScraperOrchestrator", return_value=orchestrator) as orchestrator_cls,
+        ):
+            result = await _scrape_researcher_work(7, _fake_settings(), max_results=250, since_days=3650)
+
+        source_cls.assert_called_once_with()
+        assert orchestrator_cls.call_args.kwargs["source"] is source
+        orchestrator.scrape_for_researcher.assert_awaited_once_with(7)
+        source.close.assert_awaited_once()
+        assert result == {"stored": 0}
 
 
 # ---------------------------------------------------------------------------

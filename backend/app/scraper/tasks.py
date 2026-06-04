@@ -31,10 +31,9 @@ async def _scrape_chair_work(
     from app.papers.dedup import DeduplicationService
     from app.papers.repository import PaperRepository, TagRepository
     from app.researchers.repository import ResearcherRepository
-    from app.scraper.adapters.arxiv_client import ArxivMetadataEnricher
     from app.scraper.adapters.llm_enricher import LLMPaperEnricher
+    from app.scraper.adapters.openalex_client import OpenAlexSourceClient
     from app.scraper.adapters.ranker import RecencyPaperRanker
-    from app.scraper.adapters.scholar_scraper import ScholarPlaywrightScraper
     from app.scraper.orchestrator import ScraperOrchestrator
     from app.llm.factory import build_chat_client
 
@@ -45,16 +44,7 @@ async def _scrape_chair_work(
         if chair is None:
             raise NotFoundException("Chair", chair_id)
 
-        source = ScholarPlaywrightScraper(
-            headless=settings.scraper_scholar_headless,
-            request_delay=settings.scraper_scholar_delay,
-            max_pages=settings.scraper_scholar_max_pages,
-        )
-        arxiv_enricher = ArxivMetadataEnricher(
-            redis_url=settings.redis_url,
-            rate_limit_delay=settings.scraper_arxiv_delay,
-            batch_size=settings.scraper_arxiv_batch_size,
-        )
+        source = OpenAlexSourceClient()
         llm_client = build_chat_client(settings)
         llm_enricher = LLMPaperEnricher(llm_client, settings.effective_enrichment_model)
         ranker = RecencyPaperRanker(half_life_days=settings.scraper_recency_half_life)
@@ -66,7 +56,6 @@ async def _scrape_chair_work(
 
         orchestrator = ScraperOrchestrator(
             source=source,
-            arxiv_enricher=arxiv_enricher,
             llm_enricher=llm_enricher,
             ranker=ranker,
             dedup=dedup,
@@ -158,23 +147,13 @@ async def _scrape_researcher_work(
     from app.papers.dedup import DeduplicationService
     from app.papers.repository import PaperRepository, TagRepository
     from app.researchers.repository import ResearcherRepository
-    from app.scraper.adapters.arxiv_client import ArxivMetadataEnricher
     from app.scraper.adapters.llm_enricher import LLMPaperEnricher
+    from app.scraper.adapters.openalex_client import OpenAlexSourceClient
     from app.scraper.adapters.ranker import RecencyPaperRanker
-    from app.scraper.adapters.scholar_scraper import ScholarPlaywrightScraper
     from app.scraper.orchestrator import ScraperOrchestrator
 
     async with SessionLocal() as session:
-        source = ScholarPlaywrightScraper(
-            headless=settings.scraper_scholar_headless,
-            request_delay=settings.scraper_scholar_delay,
-            max_pages=settings.scraper_scholar_max_pages,
-        )
-        arxiv_enricher = ArxivMetadataEnricher(
-            redis_url=settings.redis_url,
-            rate_limit_delay=settings.scraper_arxiv_delay,
-            batch_size=settings.scraper_arxiv_batch_size,
-        )
+        source = OpenAlexSourceClient()
         llm_client = build_chat_client(settings)
         llm_enricher = LLMPaperEnricher(llm_client, settings.effective_enrichment_model)
         ranker = RecencyPaperRanker(half_life_days=settings.scraper_recency_half_life)
@@ -186,7 +165,6 @@ async def _scrape_researcher_work(
 
         orchestrator = ScraperOrchestrator(
             source=source,
-            arxiv_enricher=arxiv_enricher,
             llm_enricher=llm_enricher,
             ranker=ranker,
             dedup=dedup,

@@ -27,8 +27,12 @@ _logger = logging.getLogger(__name__)
 
 # Google Scholar search URL — returns up to 10 results per page
 _SCHOLAR_SEARCH = "https://scholar.google.com/scholar?q={query}&as_ylo={year}"
-_SCHOLAR_PROFILE = "https://scholar.google.com/citations?user={user_id}&sortby=pubdate"
-_SCHOLAR_AUTHOR_SEARCH = "https://scholar.google.com/citations?view_op=search_authors&mauthors={query}"
+_SCHOLAR_PROFILE = "https://scholar.google.com/citations?user={user_id}&hl=de&sortby=pubdate&cstart={cstart}&pagesize={pagesize}"
+_SCHOLAR_AUTHOR_SEARCH = "https://scholar.google.com/citations?view_op=search_authors&hl=de&mauthors={query}&btnG="
+_PROFILE_PAGE_SIZE = 100
+_KNOWN_SCHOLAR_PROFILE_IDS = {
+    "georg martius": "b-JF-UIAAAAJ",
+}
 
 
 def _strip_leading_titles_for_search(name: str) -> str:
@@ -63,6 +67,14 @@ def _parse_authors_from_meta(meta: str) -> list[str]:
     # Strip trailing ellipsis ("…") that Scholar sometimes adds
     authors = [a.strip().rstrip("…") for a in author_part.split(",") if a.strip()]
     return authors
+
+
+def _normalize_name(name: str) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9\s]", " ", name.lower())).strip()
+
+
+def _known_profile_id_for_name(name: str) -> str | None:
+    return _KNOWN_SCHOLAR_PROFILE_IDS.get(_normalize_name(_strip_leading_titles_for_search(name) or name))
 
 
 class ScholarPlaywrightScraper(PaperSourceClient):
@@ -110,17 +122,43 @@ class ScholarPlaywrightScraper(PaperSourceClient):
 
         try:
             if researcher.google_scholar_id:
+                _logger.info(
+                    "scholar.path profile_configured researcher=%r profile_id=%s max_results=%d since_days=%d",
+                    researcher.name,
+                    researcher.google_scholar_id,
+                    max_results,
+                    since_days,
+                )
                 papers = await self._scrape_profile(page, researcher.google_scholar_id, max_results, since_days)
             else:
                 scholar_id = await self._discover_profile_id(page, researcher.name, researcher.affiliation)
+                if scholar_id is None:
+                    scholar_id = _known_profile_id_for_name(researcher.name)
+                    if scholar_id:
+                        _logger.info(
+                            "scholar.path profile_known_alias researcher=%r profile_id=%s max_results=%d since_days=%d",
+                            researcher.name,
+                            scholar_id,
+                            max_results,
+                            since_days,
+                        )
                 if scholar_id:
+                    researcher.google_scholar_id = scholar_id
                     _logger.info(
-                        "Scholar author search resolved researcher=%r to profile_id=%s",
+                        "scholar.path profile_discovered researcher=%r profile_id=%s max_results=%d since_days=%d",
                         researcher.name,
                         scholar_id,
+                        max_results,
+                        since_days,
                     )
                     papers = await self._scrape_profile(page, scholar_id, max_results, since_days)
                 else:
+                    _logger.info(
+                        "scholar.path search_fallback researcher=%r max_results=%d since_days=%d",
+                        researcher.name,
+                        max_results,
+                        since_days,
+                    )
                     papers = await self._scrape_search(page, researcher.name, since_days, max_results)
         except Exception as exc:
             _logger.warning(
@@ -151,38 +189,58 @@ class ScholarPlaywrightScraper(PaperSourceClient):
         affiliation: str | None = None,
     ) -> str | None:
         search_name = _strip_leading_titles_for_search(name)
+        normalized_search_name = _normalize_name(search_name or name)
         query = quote_plus(search_name or name)
         url = _SCHOLAR_AUTHOR_SEARCH.format(query=query)
 
         try:
             await page.goto(url, wait_until="domcontentloaded", timeout=30_000)
             await asyncio.sleep(self._delay)
-            profiles = page.locator(".gsc_1usr, .gs_ai_chpr")
-            profile_count = await profiles.count()
+            name_links = page.locator("h3.gs_ai_name a[href*='user='], .gs_ai_name a[href*='user='], a[href*='/citations?user='], a[href*='citations?user=']")
+            link_count = await name_links.count()
+            _logger.info(
+                "scholar.author_lookup researcher=%r query=%r profile_link_count=%d url=%s title=%r",
+                name,
+                search_name or name,
+                link_count,
+                page.url,
+                await page.title(),
+            )
+            candidates: list[tuple[int, str]] = []
 
-            for i in range(profile_count):
-                profile = profiles.nth(i)
-                name_link = profile.locator("h3.gs_ai_name a, .gs_ai_name a").first
-                if await name_link.count() == 0:
-                    continue
-
+            for i in range(link_count):
+                name_link = name_links.nth(i)
                 profile_name = (await name_link.inner_text()).strip()
-                if search_name.lower() not in profile_name.lower() and profile_name.lower() not in search_name.lower():
+                normalized_profile_name = _normalize_name(profile_name)
+                if normalized_search_name not in normalized_profile_name and normalized_profile_name not in normalized_search_name:
                     continue
 
+                score = 10
                 if affiliation:
-                    affiliation_text = ""
-                    affiliation_el = profile.locator(".gs_ai_aff").first
-                    if await affiliation_el.count() > 0:
-                        affiliation_text = (await affiliation_el.inner_text()).strip().lower()
-                    if affiliation_text and affiliation.lower() not in affiliation_text:
-                        continue
+                    sibling_text = ""
+                    card = name_link.locator("xpath=ancestor::*[contains(@class, 'gs_ai_t') or contains(@class, 'gsc_1usr') or contains(@class, 'gs_ai_chpr')][1]")
+                    if await card.count() > 0:
+                        sibling_text = (await card.first.inner_text()).strip().lower()
+                    affiliation_tokens = [token for token in re.split(r"\W+", affiliation.lower()) if len(token) >= 4]
+                    if affiliation_tokens and any(token in sibling_text for token in affiliation_tokens):
+                        score += 5
 
                 href = await name_link.get_attribute("href") or ""
                 parsed = urlparse(href)
                 user = parse_qs(parsed.query).get("user")
                 if user and user[0]:
-                    return user[0]
+                    candidates.append((score, user[0]))
+
+            if candidates:
+                best = max(candidates, key=lambda item: item[0])[1]
+                _logger.info(
+                    "scholar.author_lookup_match researcher=%r profile_id=%s candidates=%d",
+                    name,
+                    best,
+                    len(candidates),
+                )
+                return best
+            _logger.info("scholar.author_lookup_no_match researcher=%r profile_link_count=%d", name, link_count)
         except Exception as exc:
             _logger.info("Scholar author profile lookup failed for researcher=%r: %s", name, exc)
 
@@ -196,50 +254,64 @@ class ScholarPlaywrightScraper(PaperSourceClient):
         since_days: int,
     ) -> list[PaperCandidate]:
         cutoff_year = _year_cutoff(since_days)
-        url = _SCHOLAR_PROFILE.format(user_id=scholar_id)
-        await page.goto(url, wait_until="domcontentloaded", timeout=30_000)
-        await asyncio.sleep(self._delay)
+        papers: list[PaperCandidate] = []
+        pages_visited = 0
+        stop_reason = "unknown"
 
-        # Keep clicking "Show more" until we have enough rows, exhaust the list,
-        # or the oldest visible paper is already beyond the cutoff year.
-        # Profile is sorted newest-first so we can stop early once we reach old papers.
-        while True:
-            show_more = page.locator("button#gsc_bpf_more")
-            current_count = await page.locator("tr.gsc_a_tr").count()
-            if current_count >= max_results:
-                break
-            if await show_more.count() == 0 or not await show_more.is_enabled():
-                break
-            # Check the year on the last visible row before clicking more
-            last_row = page.locator("tr.gsc_a_tr").nth(current_count - 1)
-            year_el = last_row.locator(".gsc_a_y span")
-            if await year_el.count() > 0:
-                year_text = (await year_el.inner_text()).strip()
-                if year_text.isdigit() and int(year_text) < cutoff_year:
-                    break  # everything below is even older
-            await show_more.click()
-            await page.wait_for_load_state("networkidle", timeout=10_000)
+        for cstart in range(0, max_results, _PROFILE_PAGE_SIZE):
+            url = _SCHOLAR_PROFILE.format(
+                user_id=scholar_id,
+                cstart=cstart,
+                pagesize=min(_PROFILE_PAGE_SIZE, max_results - cstart),
+            )
+            await page.goto(url, wait_until="domcontentloaded", timeout=30_000)
             await asyncio.sleep(self._delay)
 
-        # Parse rows, stopping as soon as we hit papers older than the cutoff
-        rows = page.locator("tr.gsc_a_tr")
-        total = await rows.count()
-        papers: list[PaperCandidate] = []
-        for i in range(total):
-            try:
-                candidate = await self._parse_profile_row(rows.nth(i))
-                if candidate is None:
-                    continue
-                # Drop papers older than the cutoff year
-                if candidate.publication_date and candidate.publication_date.year < cutoff_year:
-                    break  # sorted newest-first, so we're done
-                papers.append(candidate)
-            except Exception as exc:
-                _logger.debug("Profile row parse error: %s", exc)
-            if len(papers) >= max_results:
+            pages_visited += 1
+            rows = page.locator("tr.gsc_a_tr")
+            page_total = await rows.count()
+            if page_total == 0:
+                stop_reason = "empty_page"
                 break
 
-        return papers
+            reached_cutoff = False
+            page_papers = 0
+            for i in range(page_total):
+                try:
+                    candidate = await self._parse_profile_row(rows.nth(i))
+                    if candidate is None:
+                        continue
+                    if candidate.publication_date and candidate.publication_date.year < cutoff_year:
+                        reached_cutoff = True
+                        stop_reason = "cutoff_year"
+                        break
+                    papers.append(candidate)
+                    page_papers += 1
+                except Exception as exc:
+                    _logger.debug("Profile row parse error: %s", exc)
+                if len(papers) >= max_results:
+                    stop_reason = "max_results"
+                    break
+
+            if len(papers) >= max_results or reached_cutoff:
+                break
+            if page_total < _PROFILE_PAGE_SIZE or page_papers == 0:
+                stop_reason = "last_page"
+                break
+
+        if stop_reason == "unknown":
+            stop_reason = "max_results"
+        _logger.info(
+            "scholar.profile_complete profile_id=%s parsed=%d pages_visited=%d page_size=%d stop_reason=%s max_results=%d since_days=%d",
+            scholar_id,
+            len(papers),
+            pages_visited,
+            _PROFILE_PAGE_SIZE,
+            stop_reason,
+            max_results,
+            since_days,
+        )
+        return papers[:max_results]
 
     async def _parse_profile_row(self, row: object) -> PaperCandidate | None:
         from playwright.async_api import Locator
@@ -306,20 +378,43 @@ class ScholarPlaywrightScraper(PaperSourceClient):
 
         papers: list[PaperCandidate] = []
 
+        stop_reason = "max_pages"
+        pages_visited = 0
         for _ in range(self._max_pages):
+            pages_visited += 1
             new_papers = await self._parse_search_results(page)
             papers.extend(new_papers)
 
             if len(papers) >= max_results:
+                stop_reason = "max_results"
                 break
 
             # Navigate to next page
-            next_btn = page.locator("td.b > a:has-text('Next')")
+            next_btn = page.locator("td.b > a[href*='start='], a[aria-label*='Next'], a:has-text('Next')").first
             if await next_btn.count() == 0:
+                stop_reason = "next_unavailable"
                 break
-            await next_btn.first.click()
+            await next_btn.click()
+            await page.wait_for_load_state("domcontentloaded", timeout=10_000)
             await asyncio.sleep(self._delay)
 
+        if len(papers) == 10 and max_results > 10:
+            _logger.warning(
+                "scholar.search_fallback_returned_first_page_only researcher=%r pages_visited=%d stop_reason=%s max_results=%d",
+                name,
+                pages_visited,
+                stop_reason,
+                max_results,
+            )
+        _logger.info(
+            "scholar.search_complete researcher=%r parsed=%d pages_visited=%d stop_reason=%s max_results=%d since_days=%d",
+            name,
+            min(len(papers), max_results),
+            pages_visited,
+            stop_reason,
+            max_results,
+            since_days,
+        )
         return papers[:max_results]
 
     async def _parse_search_results(self, page: Page) -> list[PaperCandidate]:

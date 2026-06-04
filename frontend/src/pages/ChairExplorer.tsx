@@ -7,6 +7,9 @@ import { listTheses, type Thesis } from "../api/theses";
 
 type SyncState = "idle" | "running" | "done" | "error";
 
+const latestPublicationLimit = 15;
+const tagColors = ["bg-sky-500", "bg-emerald-500", "bg-orange-400", "bg-amber-500", "bg-slate-500"];
+
 const fallbackTopicHints = [
   ["computer vision", ["vision", "scene", "image", "3d", "reconstruction", "segmentation"]],
   ["autonomous systems", ["autonomous", "driving", "robot", "vehicle", "control"]],
@@ -21,16 +24,6 @@ function titleCase(value: string) {
   return value.replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function topicDescription(topic: string) {
-  if (topic.includes("vision")) return "Visual perception, reconstruction, and scene understanding.";
-  if (topic.includes("autonomous")) return "Methods for autonomous perception and control.";
-  if (topic.includes("generative")) return "Generative modelling and synthetic data methods.";
-  if (topic.includes("self-supervised")) return "Learning from limited or unannotated data.";
-  if (topic.includes("robot")) return "Robotic perception, planning, and interaction.";
-  if (topic.includes("data")) return "Datasets, data generation, and benchmarks.";
-  return "Chair-specific research area inferred from papers.";
-}
-
 function inferTopicsFromText(text: string) {
   const normalized = text.toLowerCase();
   return fallbackTopicHints
@@ -41,6 +34,130 @@ function inferTopicsFromText(text: string) {
 function formatPaperYear(publicationDate: string | null) {
   if (!publicationDate) return "n.d.";
   return new Date(publicationDate).getFullYear().toString();
+}
+
+function formatPublicationDate(iso: string | null): string {
+  if (!iso) return "Unknown";
+  return new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(new Date(iso));
+}
+
+function formatAuthors(authors: string[], source: string) {
+  if (authors.length === 0) return source;
+  const shown = authors.slice(0, 3).join(", ");
+  const more = authors.length > 3 ? ` +${authors.length - 3}` : "";
+  return `${shown}${more}`;
+}
+
+function scoreCount(score: number): number {
+  return Math.max(0, Math.min(5, Math.round(score * 5)));
+}
+
+function ScoreMeter({ score }: { score: number }) {
+  const count = scoreCount(score);
+
+  return (
+    <div className="min-w-[92px]">
+      <div className="flex items-end justify-between gap-3">
+        <span className="font-label-md text-[14px] font-semibold text-on-surface">{count}</span>
+        <span className="font-body-sm text-[12px] text-on-surface-variant">{count}/5</span>
+      </div>
+      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-surface-container-high">
+        <div className="h-full rounded-full bg-primary" style={{ width: `${(count / 5) * 100}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function PaperTags({ tags }: { tags: string[] }) {
+  const shown = tags.length > 0 ? tags.slice(0, 3) : ["Causal AI", "Machine Learning"];
+
+  return (
+    <div className="flex flex-wrap gap-1">
+      {shown.map((tag, index) => (
+        <span
+          key={`${tag}-${index}`}
+          className={`${tagColors[index % tagColors.length]} rounded-full px-2 py-0.5 font-label-md text-[10px] text-white`}
+        >
+          {tag}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function PaperDetail({ paper, onBack }: { paper: Paper; onBack: () => void }) {
+  const abstract = paper.abstract ?? paper.summary ?? "No abstract is available for this paper yet.";
+
+  return (
+    <section className="space-y-4">
+      <button
+        type="button"
+        onClick={onBack}
+        className="inline-flex items-center gap-2 rounded-[4px] border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-label-md text-[12px] text-on-surface hover:bg-surface-container"
+      >
+        <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+        Back to Chair
+      </button>
+
+      <div className="grid grid-cols-1 gap-4 rounded-[6px] border border-outline-variant bg-surface-container-lowest p-5 shadow-sm md:grid-cols-[1fr_160px]">
+        <div>
+          <h1 className="max-w-4xl font-headline-lg text-[30px] font-semibold leading-[1.08] text-on-surface md:text-[34px]">
+            {paper.title}
+          </h1>
+          <p className="mt-3 font-body-sm text-[13px] text-on-surface">
+            {formatAuthors(paper.authors, paper.source)}
+          </p>
+        </div>
+        <div>
+          <p className="font-label-md text-[12px] text-on-surface">Score</p>
+          <div className="mt-2">
+            <ScoreMeter score={paper.relevance_score} />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <section className="rounded-[6px] border border-outline-variant bg-surface-container-lowest p-5 shadow-sm">
+          <h2 className="font-title-lg text-[20px] font-semibold text-on-surface">Abstract</h2>
+          <div className="mt-3 space-y-4 font-body-sm text-[14px] leading-relaxed text-on-surface">
+            {abstract.split(/\n{2,}/).map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </div>
+
+          <h2 className="mt-6 font-title-lg text-[18px] font-semibold text-on-surface">Keywords</h2>
+          <div className="mt-3">
+            <PaperTags tags={paper.tags} />
+          </div>
+        </section>
+
+        <aside className="h-fit rounded-[6px] border border-outline-variant bg-surface-container-lowest p-5 shadow-sm">
+          <dl className="space-y-4 font-body-sm text-[14px] text-on-surface">
+            <div>
+              <dt className="font-semibold">Publication Date</dt>
+              <dd>{formatPublicationDate(paper.publication_date)}</dd>
+            </div>
+            <div>
+              <dt className="font-semibold">Journal/Conference</dt>
+              <dd>{paper.source}</dd>
+            </div>
+            <div>
+              <dt className="font-semibold">Digital Object Identifier (DOI)</dt>
+              <dd>{paper.doi ?? paper.arxiv_id ?? "Not available"}</dd>
+            </div>
+          </dl>
+          <a
+            href={paper.source_url || (paper.arxiv_id ? `https://arxiv.org/pdf/${paper.arxiv_id}` : "#")}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-5 flex w-full items-center justify-center rounded-[4px] bg-primary px-4 py-2.5 font-label-md text-[13px] text-on-primary hover:bg-primary-container hover:text-on-primary-container"
+          >
+            Open Paper
+          </a>
+        </aside>
+      </div>
+    </section>
+  );
 }
 
 function professorName(chair: Chair) {
@@ -165,6 +282,9 @@ export default function ChairExplorer() {
   const [syncState, setSyncState] = useState<SyncState>("idle");
   const [syncError, setSyncError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [latestSearch, setLatestSearch] = useState("");
+  const [latestPage, setLatestPage] = useState(1);
+  const [selectedPaper, setSelectedPaper] = useState<Paper | null>(null);
   const [selectedChairId, setSelectedChairId] = useState<number | null>(null);
   const navigate = useNavigate();
   const routeChairId = chairParam?.startsWith("chairID=")
@@ -189,7 +309,7 @@ export default function ChairExplorer() {
 
     Promise.all(
       chairs.map((chair) =>
-        listPapers({ chair_id: chair.id, limit: 200 })
+        listPapers({ chair_id: chair.id, limit: 100 })
           .then((chairPapers) => [chair.id, chairPapers.length] as const)
           .catch(() => [chair.id, chair.documents.filter((doc) => doc.kind === "paper").length] as const),
       ),
@@ -227,55 +347,47 @@ export default function ChairExplorer() {
       setPapers([]);
       return;
     }
-    listPapers({ chair_id: featured.id, limit: 200 })
+    setLatestSearch("");
+    setLatestPage(1);
+    setSelectedPaper(null);
+    listPapers({ chair_id: featured.id, limit: 100 })
       .then(setPapers)
       .catch((e) => setError(e instanceof Error ? e.message : "Fehler beim Laden der Papers"));
   }, [featured]);
-
-  const topicCards = useMemo(
-    () => {
-      const counts = new Map<string, number>();
-
-      visiblePapers.forEach((paper) => {
-        paper.tags.forEach((tag) => {
-          counts.set(tag, (counts.get(tag) ?? 0) + 1);
-        });
-      });
-
-      chairDocumentPapers.forEach((doc) => {
-        const inferred = inferTopicsFromText(`${doc.title ?? ""} ${doc.content}`);
-        inferred.forEach((topic) => {
-          counts.set(topic, Math.max(counts.get(topic) ?? 0, 1));
-        });
-      });
-
-      if (counts.size === 0 && featured) {
-        inferTopicsFromText(featured.short_description).forEach((topic) => {
-          counts.set(topic, 0);
-        });
-      }
-
-      return Array.from(counts.entries())
-        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-        .slice(0, 5)
-        .map(([topic, count]) => ({
-          title: titleCase(topic),
-          description: topicDescription(topic),
-          tags: [`#${titleCase(topic).replace(/\s+/g, "")}`],
-          papers: count,
-        }));
-    },
-    [chairDocumentPapers, featured, visiblePapers],
-  );
 
   const newestPapers = useMemo(
     () =>
       visiblePapers
         .slice()
-        .sort((a, b) => (b.publication_date ?? "").localeCompare(a.publication_date ?? ""))
-        .slice(0, 10),
+        .sort(
+          (a, b) =>
+            (b.publication_date ?? "").localeCompare(a.publication_date ?? "") ||
+            b.id - a.id,
+        ),
     [visiblePapers],
   );
+
+  const filteredLatestPapers = useMemo(() => {
+    const query = latestSearch.trim().toLowerCase();
+    if (!query) return newestPapers;
+    return newestPapers.filter(
+      (paper) =>
+        paper.title.toLowerCase().includes(query) ||
+        paper.source.toLowerCase().includes(query) ||
+        paper.authors.some((author) => author.toLowerCase().includes(query)) ||
+        paper.tags.some((tag) => tag.toLowerCase().includes(query)),
+    );
+  }, [latestSearch, newestPapers]);
+  const latestPageCount = Math.max(1, Math.ceil(filteredLatestPapers.length / latestPublicationLimit));
+  const safeLatestPage = Math.min(latestPage, latestPageCount);
+  const visibleLatestPapers = filteredLatestPapers.slice(
+    (safeLatestPage - 1) * latestPublicationLimit,
+    safeLatestPage * latestPublicationLimit,
+  );
+
+  useEffect(() => {
+    setLatestPage(1);
+  }, [latestSearch]);
 
   const newestDocumentPapers = useMemo(
     () =>
@@ -297,7 +409,7 @@ export default function ChairExplorer() {
     try {
       const job = await triggerScrape(featured.id);
       if (job.status === "success") {
-        const fresh = await listPapers({ chair_id: featured.id, limit: 200 });
+        const fresh = await listPapers({ chair_id: featured.id, limit: 100 });
         setPapers(fresh);
         setSyncState("done");
       } else {
@@ -330,7 +442,7 @@ export default function ChairExplorer() {
           }}
           onPapers={(id) => {
             setSelectedChairId(null);
-            navigate(`/chairs/${id}/papers`);
+            navigate(`/chairs/chairID=${id}`);
           }}
         />
       )}
@@ -440,7 +552,7 @@ export default function ChairExplorer() {
                             <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                           </button>
                           <button
-                            onClick={() => navigate(`/chairs/${chair.id}/papers`)}
+                            onClick={() => navigate(`/chairs/chairID=${chair.id}`)}
                             className="flex flex-1 items-center justify-center gap-2 rounded-[4px] border border-outline-variant px-3 py-2.5 font-label-md text-[12px] text-on-surface hover:bg-surface-container"
                           >
                             Papers
@@ -463,17 +575,21 @@ export default function ChairExplorer() {
 
           {!loading && !error && featured && (
             <>
-              <section className="space-y-6">
+              {selectedPaper ? (
+                <PaperDetail paper={selectedPaper} onBack={() => setSelectedPaper(null)} />
+              ) : (
+                <>
+              <section className="space-y-4">
                 <button
                   onClick={() => navigate("/chairs")}
-                  className="inline-flex items-center gap-2 rounded-[4px] border border-outline-variant bg-surface-container-lowest px-3 py-2 font-label-md text-[12px] text-on-surface hover:bg-surface-container"
+                  className="inline-flex items-center gap-2 rounded-[4px] border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-label-md text-[12px] text-on-surface hover:bg-surface-container"
                 >
                   <span className="material-symbols-outlined text-[18px]">arrow_back</span>
                   Back to Chairs
                 </button>
 
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                  <h1 className="max-w-[920px] font-serif text-[40px] font-bold leading-[1] tracking-normal text-on-surface md:text-[52px] xl:text-[60px]">
+                  <h1 className="max-w-[760px] font-serif text-[34px] font-bold leading-[1.02] tracking-normal text-on-surface md:text-[44px] xl:text-[50px]">
                     {featured.name}
                   </h1>
                   <div className="flex shrink-0 flex-col items-start gap-2 lg:items-end">
@@ -497,10 +613,10 @@ export default function ChairExplorer() {
                   </div>
                 </div>
 
-                <div className="grid gap-8 xl:grid-cols-[minmax(0,1.7fr)_minmax(430px,0.9fr)] xl:items-stretch">
+                <div className="grid gap-6 xl:grid-cols-[minmax(0,1.55fr)_minmax(380px,0.85fr)] xl:items-stretch">
                   <div className="max-w-none">
-                    <h2 className="font-title-lg text-[18px] font-semibold text-on-surface">About</h2>
-                    <p className="mt-1 max-w-[920px] font-body-md text-[17px] font-semibold leading-snug text-on-surface">
+                    <h2 className="font-title-lg text-[16px] font-semibold text-on-surface">About</h2>
+                    <p className="mt-1 max-w-[860px] font-body-md text-[15px] font-semibold leading-snug text-on-surface">
                       {featured.short_description}
                     </p>
                   </div>
@@ -515,55 +631,17 @@ export default function ChairExplorer() {
                       <div
                         key={label}
                         className={[
-                          "flex min-h-[118px] flex-col items-center justify-center px-5 py-4",
+                          "flex min-h-[94px] flex-col items-center justify-center px-5 py-3",
                           index % 2 === 1 ? "border-l border-outline-variant" : "",
                           index > 1 ? "border-t border-outline-variant" : "",
                         ].join(" ")}
                       >
-                        <p className="font-title-lg text-[36px] leading-none text-on-surface">{value}</p>
-                        <p className="mt-2 font-label-md text-[13px] text-on-surface-variant">{label}</p>
+                        <p className="font-title-lg text-[30px] leading-none text-on-surface">{value}</p>
+                        <p className="mt-2 font-label-md text-[12px] text-on-surface-variant">{label}</p>
                       </div>
                     ))}
                   </div>
                 </div>
-              </section>
-
-              <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
-                {topicCards.map((topic) => (
-                  <article
-                    key={topic.title}
-                    className="flex min-h-[178px] flex-col rounded-[6px] border border-outline-variant bg-surface-container-lowest p-5 shadow-sm"
-                  >
-                    <h3 className="font-title-lg text-[18px] font-semibold leading-tight text-on-surface">
-                      {topic.title}
-                    </h3>
-                    <p className="mt-2 flex-1 font-body-sm text-[14px] font-semibold leading-snug text-on-surface">
-                      {topic.description}
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-1">
-                      {topic.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-[4px] bg-surface-container-high px-1.5 py-0.5 font-label-md text-[10px] text-on-surface"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="mt-3 flex items-center justify-between gap-2">
-                      <span className="font-body-sm text-[12px] text-on-surface-variant">
-                        {topic.papers} Papers
-                      </span>
-                      <button
-                        onClick={() => navigate(`/chairs/${featured.id}/papers`)}
-                        className="rounded-[4px] border border-outline-variant px-2 py-1 font-label-md text-[11px] text-on-surface hover:bg-surface-container"
-                      >
-                        View Repository
-                        <span className="material-symbols-outlined ml-1 text-[12px]">arrow_forward</span>
-                      </button>
-                    </div>
-                  </article>
-                ))}
               </section>
 
               <section>
@@ -571,41 +649,88 @@ export default function ChairExplorer() {
                   <h2 className="font-headline-md text-[26px] font-semibold text-on-surface">
                     Latest Publications
                   </h2>
-                  <button
-                    onClick={() => navigate(`/chairs/${featured.id}/papers`)}
-                    className="rounded-[4px] border border-outline-variant px-3 py-1.5 font-label-md text-[12px] text-on-surface hover:bg-surface-container"
-                  >
-                    View Repository
-                    <span className="material-symbols-outlined ml-1 text-[14px]">arrow_forward</span>
-                  </button>
                 </div>
 
-                <div className="overflow-hidden rounded-[6px] border border-outline-variant bg-surface-container-lowest shadow-sm">
-                  {newestPapers.length > 0 && newestPapers.map((paper) => (
-                    <button
-                      key={paper.id}
-                      onClick={() => navigate(`/chairs/${featured.id}/papers`)}
-                      className="grid w-full gap-2 border-b border-outline-variant px-4 py-3 text-left last:border-b-0 md:grid-cols-[minmax(0,1fr)_80px_150px]"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate font-body-sm text-[14px] font-semibold text-on-surface">
-                          {paper.title}
-                        </p>
-                        <p className="truncate font-body-sm text-[12px] text-on-surface-variant">
-                          {paper.authors.slice(0, 3).join(", ") || paper.source}
-                        </p>
-                      </div>
-                      <p className="font-body-sm text-[13px] text-on-surface">{formatPaperYear(paper.publication_date)}</p>
-                      <p className="font-body-sm text-[12px] text-on-surface-variant md:text-right">
-                        {paper.source}
-                      </p>
-                    </button>
-                  ))}
+                {newestPapers.length > 0 && (
+                  <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <label className="relative block w-full md:max-w-[420px]">
+                      <span className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant">
+                        search
+                      </span>
+                      <input
+                        value={latestSearch}
+                        onChange={(event) => setLatestSearch(event.target.value)}
+                        placeholder="Search publications, authors, tags..."
+                        className="h-10 w-full rounded-[6px] border border-outline-variant bg-surface-container-lowest pl-10 pr-3 font-body-sm text-[13px] text-on-surface outline-none focus:border-primary"
+                      />
+                    </label>
+                    <span className="font-body-sm text-[12px] text-on-surface-variant">
+                      {filteredLatestPapers.length} result{filteredLatestPapers.length === 1 ? "" : "s"}
+                    </span>
+                  </div>
+                )}
+
+                <div className="overflow-x-auto">
+                  {newestPapers.length > 0 && (
+                    <div className="grid min-w-[900px] grid-cols-[minmax(300px,1fr)_210px_70px_220px_120px] gap-4 px-4 pb-2">
+                      <span className="font-label-md text-[11px] uppercase tracking-[0.04em] text-on-surface-variant">
+                        Title
+                      </span>
+                      <span className="font-label-md text-[11px] uppercase tracking-[0.04em] text-on-surface-variant">
+                        Authors
+                      </span>
+                      <span className="font-label-md text-[11px] uppercase tracking-[0.04em] text-on-surface-variant">
+                        Year
+                      </span>
+                      <span className="font-label-md text-[11px] uppercase tracking-[0.04em] text-on-surface-variant">
+                        Tags
+                      </span>
+                      <span className="flex items-center gap-1 font-label-md text-[11px] uppercase tracking-[0.04em] text-on-surface-variant">
+                        Score
+                        <span className="material-symbols-outlined text-[18px]">arrow_downward</span>
+                      </span>
+                    </div>
+                  )}
+
+                  {newestPapers.length > 0 && filteredLatestPapers.length > 0 && (
+                    <div className="min-w-[900px] space-y-1">
+                      {visibleLatestPapers.map((paper) => (
+                        <button
+                          key={paper.id}
+                          onClick={() => setSelectedPaper(paper)}
+                          className="grid min-h-[78px] w-full grid-cols-[minmax(300px,1fr)_210px_70px_220px_120px] items-center gap-4 rounded-[4px] border border-outline-variant bg-surface-container-lowest px-4 py-2.5 text-left shadow-sm transition hover:shadow-md"
+                        >
+                          <div className="min-w-0">
+                            <p className="truncate font-body-sm text-[14px] font-semibold text-on-surface">
+                              {paper.title}
+                            </p>
+                            <p className="truncate font-body-sm text-[12px] text-on-surface">
+                              {formatAuthors(paper.authors, paper.source)}
+                            </p>
+                          </div>
+                          <p className="truncate font-body-sm text-[12px] text-on-surface-variant">
+                            {paper.authors.slice(0, 2).join(", ") || "-"}
+                          </p>
+                          <p className="font-body-sm text-[14px] text-on-surface">
+                            {formatPaperYear(paper.publication_date)}
+                          </p>
+                          <PaperTags tags={paper.tags} />
+                          <ScoreMeter score={paper.relevance_score} />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {newestPapers.length > 0 && filteredLatestPapers.length === 0 && (
+                    <div className="min-w-[900px] rounded-[4px] border border-outline-variant bg-surface-container-lowest px-4 py-4 font-body-sm text-[13px] text-on-surface-variant">
+                      No publications match your search.
+                    </div>
+                  )}
 
                   {newestPapers.length === 0 && newestDocumentPapers.map((doc) => (
                     <button
                       key={doc.id}
-                      onClick={() => navigate(`/chairs/${featured.id}/papers`)}
+                      onClick={() => setSelectedPaper(null)}
                       className="grid w-full gap-2 border-b border-outline-variant px-4 py-3 text-left last:border-b-0 md:grid-cols-[minmax(0,1fr)_80px_150px]"
                     >
                       <div className="min-w-0">
@@ -629,7 +754,41 @@ export default function ChairExplorer() {
                     </div>
                   )}
                 </div>
+
+                {newestPapers.length > 0 && filteredLatestPapers.length > 0 && (
+                  <div className="mt-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <span className="font-body-sm text-[12px] text-on-surface-variant">
+                      Showing {(safeLatestPage - 1) * latestPublicationLimit + 1}-
+                      {Math.min(safeLatestPage * latestPublicationLimit, filteredLatestPapers.length)} of{" "}
+                      {filteredLatestPapers.length}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setLatestPage((page) => Math.max(1, page - 1))}
+                        disabled={safeLatestPage === 1}
+                        className="inline-flex items-center gap-1 rounded-[4px] border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-label-md text-[12px] text-on-surface hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-45"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">chevron_left</span>
+                        Previous
+                      </button>
+                      <span className="min-w-[72px] text-center font-label-md text-[12px] text-on-surface-variant">
+                        {safeLatestPage} / {latestPageCount}
+                      </span>
+                      <button
+                        onClick={() => setLatestPage((page) => Math.min(latestPageCount, page + 1))}
+                        disabled={safeLatestPage === latestPageCount}
+                        className="inline-flex items-center gap-1 rounded-[4px] border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-label-md text-[12px] text-on-surface hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-45"
+                      >
+                        Next
+                        <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </section>
+
+                </>
+              )}
 
             </>
           )}

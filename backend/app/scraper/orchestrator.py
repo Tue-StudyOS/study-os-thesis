@@ -1,10 +1,9 @@
 """ScraperOrchestrator: wires the five pipeline stages together.
 
 Stage 1 - Resolve researcher from DB (auto-create from chair if needed)
-Stage 2 - Discover paper candidates via PaperSourceClient (Google Scholar)
-Stage 3 - Enrich metadata from arXiv (fills abstract, exact date, authors)
-Stage 4 - LLM enrichment (summary + tags)
-Stage 5 - Score, deduplicate, and persist
+Stage 2 - Discover paper candidates via PaperSourceClient (OpenAlex)
+Stage 3 - LLM enrichment (summary + tags)
+Stage 4 - Score, deduplicate, and persist
 """
 
 from __future__ import annotations
@@ -17,7 +16,7 @@ from app.papers.dedup import DeduplicationService
 from app.papers.domain import PaperCandidate, ResearcherInfo
 from app.papers.repository import PaperRepository, TagRepository
 from app.researchers.repository import ResearcherRepository
-from app.scraper.interfaces import LLMEnricher, PaperMetadataEnricher, PaperRanker, PaperSourceClient
+from app.scraper.interfaces import LLMEnricher, PaperRanker, PaperSourceClient
 
 # LLM enrichment can run in parallel, but DB writes must stay sequential because
 # SQLAlchemy AsyncSession is not safe for concurrent flushes.
@@ -32,7 +31,6 @@ class ScraperOrchestrator:
     def __init__(
         self,
         source: PaperSourceClient,
-        arxiv_enricher: PaperMetadataEnricher,
         llm_enricher: LLMEnricher,
         ranker: PaperRanker,
         dedup: DeduplicationService,
@@ -43,7 +41,6 @@ class ScraperOrchestrator:
         since_days: int = 365,
     ) -> None:
         self._source = source
-        self._arxiv = arxiv_enricher
         self._llm = llm_enricher
         self._ranker = ranker
         self._dedup = dedup
@@ -80,16 +77,14 @@ class ScraperOrchestrator:
             max_results=self._max_results,
             since_days=self._since_days,
         )
-        _logger.info(
-            "scraper.scholar_results count=%d researcher=%r",
-            len(candidates),
-            researcher.name,
-        )
-
-        try:
-            candidates = await self._arxiv.enrich_many(candidates)
-        except Exception as exc:
-            _logger.warning("scraper.arxiv_batch_error %s", exc, exc_info=exc)
+        if researcher.google_scholar_id and researcher.google_scholar_id != researcher_row.google_scholar_id:
+            await self._researcher_repo.update_google_scholar_id(researcher_id, researcher.google_scholar_id)
+            _logger.info(
+                "scraper.persisted_google_scholar_id researcher_id=%d profile_id=%s",
+                researcher_id,
+                researcher.google_scholar_id,
+            )
+        _logger.info("scraper.source_results count=%d researcher=%r", len(candidates), researcher.name)
 
         llm_sem = asyncio.Semaphore(_LLM_CONCURRENCY)
 
@@ -147,12 +142,13 @@ class ScraperOrchestrator:
     ) -> tuple[PaperCandidate, str | None, list[str], datetime | None, float]:
         """Run LLM enrichment and ranking without touching the DB session."""
 
-        # Stage 4: LLM enrichment (sequential — Ollama handles one at a time)
+        # OpenAlex already provides usable metadata/abstracts; avoid hundreds of
+        # synchronous local LLM calls during chair sync.
         summary: str | None = None
         tags: list[str] = []
         enriched_at: datetime | None = None
 
-        if candidate.abstract:
+        if candidate.abstract and candidate.source != "openalex":
             async with llm_sem:
                 summary = await self._llm.summarize(candidate.title, candidate.abstract)
                 tags = await self._llm.generate_tags(candidate.title, candidate.abstract)
