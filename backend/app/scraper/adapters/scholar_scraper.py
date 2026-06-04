@@ -100,7 +100,7 @@ class ScholarPlaywrightScraper(PaperSourceClient):
 
         try:
             if researcher.google_scholar_id:
-                papers = await self._scrape_profile(page, researcher.google_scholar_id, max_results)
+                papers = await self._scrape_profile(page, researcher.google_scholar_id, max_results, since_days)
             else:
                 papers = await self._scrape_search(page, researcher.name, since_days, max_results)
         except Exception as exc:
@@ -130,37 +130,51 @@ class ScholarPlaywrightScraper(PaperSourceClient):
         page: Page,
         scholar_id: str,
         max_results: int,
+        since_days: int,
     ) -> list[PaperCandidate]:
+        cutoff_year = _year_cutoff(since_days)
         url = _SCHOLAR_PROFILE.format(user_id=scholar_id)
         await page.goto(url, wait_until="domcontentloaded", timeout=30_000)
         await asyncio.sleep(self._delay)
 
-        # Keep clicking "Show more" until all rows are loaded or max_results reached.
-        # Scholar loads 20 rows at a time; the button disappears when exhausted.
+        # Keep clicking "Show more" until we have enough rows, exhaust the list,
+        # or the oldest visible paper is already beyond the cutoff year.
+        # Profile is sorted newest-first so we can stop early once we reach old papers.
         while True:
             show_more = page.locator("button#gsc_bpf_more")
-            # Stop if we already have enough rows in the DOM
             current_count = await page.locator("tr.gsc_a_tr").count()
             if current_count >= max_results:
                 break
             if await show_more.count() == 0 or not await show_more.is_enabled():
                 break
+            # Check the year on the last visible row before clicking more
+            last_row = page.locator("tr.gsc_a_tr").nth(current_count - 1)
+            year_el = last_row.locator(".gsc_a_y span")
+            if await year_el.count() > 0:
+                year_text = (await year_el.inner_text()).strip()
+                if year_text.isdigit() and int(year_text) < cutoff_year:
+                    break  # everything below is even older
             await show_more.click()
-            # Wait for new rows to appear — Scholar adds them asynchronously
             await page.wait_for_load_state("networkidle", timeout=10_000)
             await asyncio.sleep(self._delay)
 
-        # Parse all rows now visible in the DOM
+        # Parse rows, stopping as soon as we hit papers older than the cutoff
         rows = page.locator("tr.gsc_a_tr")
-        total = min(await rows.count(), max_results)
+        total = await rows.count()
         papers: list[PaperCandidate] = []
         for i in range(total):
             try:
                 candidate = await self._parse_profile_row(rows.nth(i))
-                if candidate:
-                    papers.append(candidate)
+                if candidate is None:
+                    continue
+                # Drop papers older than the cutoff year
+                if candidate.publication_date and candidate.publication_date.year < cutoff_year:
+                    break  # sorted newest-first, so we're done
+                papers.append(candidate)
             except Exception as exc:
                 _logger.debug("Profile row parse error: %s", exc)
+            if len(papers) >= max_results:
+                break
 
         return papers
 
