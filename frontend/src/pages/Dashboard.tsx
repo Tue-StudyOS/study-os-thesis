@@ -6,22 +6,32 @@ import SkillRadar from "../components/SkillRadar";
 import { useAuth } from "../auth/AuthContext";
 import { getStudentProfile, uploadTranscript, type StudentProfile } from "../api/students";
 import { getUserSkills, type UserSkillProfile } from "../api/skills";
-import { pollJob } from "../api/jobs";
+import { useJobSocket } from "../hooks/useJobSocket";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const isStudent = user?.role === "student";
   const firstName = user?.email?.split("@")[0] ?? "User";
+  const { waitForJob } = useJobSocket();
 
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(isStudent);
   const [skillProfile, setSkillProfile] = useState<UserSkillProfile | null>(null);
   const [skillsLoading, setSkillsLoading] = useState(isStudent);
   const [uploading, setUploading] = useState(false);
+  const [uploadElapsed, setUploadElapsed] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Tick a seconds counter while the upload is processing so the user can
+  // see that progress is happening rather than looking at a frozen spinner.
+  useEffect(() => {
+    if (!uploading) { setUploadElapsed(0); return; }
+    const interval = setInterval(() => setUploadElapsed((s) => s + 1), 1000);
+    return () => clearInterval(interval);
+  }, [uploading]);
 
   useEffect(() => {
     if (!isStudent) return;
@@ -52,8 +62,8 @@ export default function Dashboard() {
       // Upload returns a job id immediately (202 Accepted).
       const { job_id } = await uploadTranscript(file, profile?.program ?? undefined, profile?.semester ?? undefined);
 
-      // Poll until parse_transcript job succeeds or fails.
-      const job = await pollJob(job_id);
+      // Wait for the Celery task via WebSocket (falls back to REST polling).
+      const job = await waitForJob(job_id);
       if (job.status === "failure") {
         setUploadError(job.error ?? "Transcript-Verarbeitung fehlgeschlagen.");
         return;
@@ -167,9 +177,16 @@ export default function Dashboard() {
                       </div>
                       <h3 className="font-title-lg text-title-lg text-on-surface font-semibold mb-2 relative z-10">
                         Analysiere Transcript…
+                        <span className="text-on-surface-variant font-normal ml-2 tabular-nums">
+                          {uploadElapsed}s
+                        </span>
                       </h3>
                       <p className="font-body-sm text-body-sm text-on-surface-variant max-w-md relative z-10">
-                        Die KI extrahiert deine Kurse und berechnet dein Kompetenzprofil.
+                        {uploadElapsed < 5
+                          ? "PDF wird hochgeladen…"
+                          : uploadElapsed < 15
+                          ? "Text wird extrahiert…"
+                          : "KI analysiert Kurse und berechnet Kompetenzprofil – das dauert bei großen Modellen 1-3 Minuten."}
                       </p>
                     </>
                   ) : hasProfile ? (

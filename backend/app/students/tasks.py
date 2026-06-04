@@ -118,5 +118,7 @@ def parse_transcript(
         user_id=user_id,
         redis_url=settings.redis_url,
         work=lambda: _parse_transcript_work(user_id, job_id, settings, program, semester),
+        started_event="transcript_parsing",
+        success_event="transcript_parsed",
         permanent_exceptions=(NotFoundException, BadRequestException),
     )
