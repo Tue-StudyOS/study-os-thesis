@@ -16,26 +16,28 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
-async def _scrape_chair_work(chair_id: int, settings: Any) -> dict:
+async def _scrape_chair_work(chair_id: int, user_id: int, settings: Any) -> dict:
     from app.chairs.repository import ChairRepository
     from app.db import SessionLocal
     from app.exceptions import NotFoundException
-    from app.scraper.tasks import scrape_researcher_papers
+    from app.jobs.repository import JobRepository
+    from app.models.job import JobType
+    from app.papers.dedup import DeduplicationService
+    from app.papers.repository import PaperRepository, TagRepository
+    from app.researchers.repository import ResearcherRepository
+    from app.scraper.adapters.arxiv_client import ArxivMetadataEnricher
+    from app.scraper.adapters.llm_enricher import LLMPaperEnricher
+    from app.scraper.adapters.ranker import RecencyPaperRanker
+    from app.scraper.adapters.scholar_scraper import ScholarPlaywrightScraper
+    from app.scraper.orchestrator import ScraperOrchestrator
+    from app.llm.factory import build_chat_client
 
+    # Step 1: resolve researcher IDs (auto-creates from professor_name if table is empty)
     async with SessionLocal() as session:
         chair_repo = ChairRepository(session)
         chair = await chair_repo.get_by_id(chair_id)
         if chair is None:
             raise NotFoundException("Chair", chair_id)
-
-        from app.papers.dedup import DeduplicationService
-        from app.papers.repository import PaperRepository, TagRepository
-        from app.researchers.repository import ResearcherRepository
-        from app.scraper.adapters.arxiv_client import ArxivMetadataEnricher
-        from app.scraper.adapters.llm_enricher import LLMPaperEnricher
-        from app.scraper.adapters.ranker import RecencyPaperRanker
-        from app.scraper.adapters.scholar_scraper import ScholarPlaywrightScraper
-        from app.scraper.orchestrator import ScraperOrchestrator
 
         source = ScholarPlaywrightScraper(
             headless=settings.scraper_scholar_headless,
@@ -43,9 +45,6 @@ async def _scrape_chair_work(chair_id: int, settings: Any) -> dict:
             max_pages=settings.scraper_scholar_max_pages,
         )
         arxiv_enricher = ArxivMetadataEnricher(rate_limit_delay=settings.scraper_arxiv_delay)
-
-        from app.llm.factory import build_chat_client
-
         llm_client = build_chat_client(settings)
         llm_enricher = LLMPaperEnricher(llm_client, settings.effective_enrichment_model)
         ranker = RecencyPaperRanker(half_life_days=settings.scraper_recency_half_life)
@@ -70,12 +69,33 @@ async def _scrape_chair_work(chair_id: int, settings: Any) -> dict:
 
         researcher_ids = await orchestrator.ensure_researchers_for_chair(chair_id, chair.professor_name)
 
-    # Fan-out: dispatch one task per researcher
+    # Step 2: fan-out — create a Job row for each researcher task so it is
+    # trackable via GET /api/jobs, then dispatch the Celery task.
     dispatched = []
-    for rid in researcher_ids:
-        task_result = scrape_researcher_papers.delay(rid, chair_id, str(chair_id))
-        dispatched.append({"researcher_id": rid, "celery_task_id": task_result.id})
-        logger.info("scrape_chair: dispatched scrape_researcher for researcher_id=%d", rid)
+    async with SessionLocal() as session:
+        job_repo = JobRepository(session)
+        for rid in researcher_ids:
+            job = await job_repo.create(
+                type=JobType.scrape_researcher,
+                user_id=user_id,
+                input_data={"researcher_id": rid, "chair_id": chair_id},
+            )
+            await session.commit()
+
+            task_result = scrape_researcher_papers.delay(rid, user_id, str(job.id))
+
+            # Back-patch the celery task ID onto the job row
+            job = await job_repo.get_by_id(job.id)
+            if job is not None:
+                job.celery_task_id = task_result.id
+                await session.commit()
+
+            dispatched.append({"researcher_id": rid, "job_id": str(job.id), "celery_task_id": task_result.id})
+            logger.info(
+                "scrape_chair: dispatched scrape_researcher researcher_id=%d job_id=%s",
+                rid,
+                job.id,
+            )
 
     return {"chair_id": chair_id, "dispatched": dispatched}
 
@@ -100,7 +120,7 @@ def scrape_chair_papers(self: Any, chair_id: int, user_id: int, job_id: str) -> 
         job_id=job_id,
         user_id=user_id,
         redis_url=settings.redis_url,
-        work=lambda: _scrape_chair_work(chair_id, settings),
+        work=lambda: _scrape_chair_work(chair_id, user_id, settings),
         success_event="scrape_chair_complete",
     )
 
@@ -230,6 +250,83 @@ async def _enrich_paper_work(paper_id: int, force: bool, settings: Any) -> dict:
         await paper_repo.commit()
         logger.info("enrich_paper: paper_id=%d done tags=%s", paper_id, tags)
         return {"paper_id": paper_id, "tag_count": len(tags), "summary_len": len(summary)}
+
+
+# ---------------------------------------------------------------------------
+# Task: scrape_all_chairs  (Celery Beat periodic trigger)
+# ---------------------------------------------------------------------------
+
+
+async def _scrape_all_chairs_work() -> dict:
+    """Dispatch scrape_chair_papers for every chair in the DB.
+
+    Used by Celery Beat for scheduled runs. Creates Job rows attributed to the
+    first admin user found in the DB (the system actor for automated runs).
+    """
+    from app.chairs.repository import ChairRepository
+    from app.db import SessionLocal
+    from app.jobs.repository import JobRepository
+    from app.models.job import JobType
+    from app.models.user import UserRole
+    from sqlalchemy import select
+    from app.models.user import User
+
+    async with SessionLocal() as session:
+        # Find a system actor — first admin user, falling back to user id=1
+        admin = await session.scalar(select(User).where(User.role == UserRole.admin).limit(1))
+        system_user_id: int = admin.id if admin is not None else 1
+
+        chair_repo = ChairRepository(session)
+        chairs = await chair_repo.list()
+
+        if not chairs:
+            logger.info("scrape_all_chairs: no chairs found — nothing to do")
+            return {"dispatched": 0}
+
+        job_repo = JobRepository(session)
+        dispatched = 0
+        for chair in chairs:
+            job = await job_repo.create(
+                type=JobType.scrape_chair,
+                user_id=system_user_id,
+                input_data={"chair_id": chair.id, "triggered_by": "beat"},
+            )
+            await session.commit()
+
+            task_result = scrape_chair_papers.delay(chair.id, system_user_id, str(job.id))
+
+            job = await job_repo.get_by_id(job.id)
+            if job is not None:
+                job.celery_task_id = task_result.id
+                await session.commit()
+
+            dispatched += 1
+            logger.info(
+                "scrape_all_chairs: dispatched chair_id=%d job_id=%s celery_task_id=%s",
+                chair.id,
+                job.id,
+                task_result.id,
+            )
+
+    return {"dispatched": dispatched}
+
+
+@celery_app.task(
+    name="app.scraper.tasks.scrape_all_chairs",
+    # No retries — Beat will re-run on the next schedule if this fails
+    max_retries=0,
+    soft_time_limit=120,
+    time_limit=180,
+)
+def scrape_all_chairs() -> dict:
+    """Celery Beat entry point: kick off paper scraping for every chair.
+
+    Configured in celery_config.py beat_schedule. Runs weekly by default.
+    """
+    from app.worker.utils import run_async
+
+    logger.info("scrape_all_chairs: periodic trigger fired")
+    return run_async(_scrape_all_chairs_work())
 
 
 @celery_app.task(
