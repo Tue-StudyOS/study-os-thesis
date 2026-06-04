@@ -246,7 +246,13 @@ class ChatService:
             _logger.warning("Could not load student profile for chat context: %s", exc)
             return None
 
-    async def send_message(self, session_id: int, user_id: int, content: str) -> list[ChatMessage]:
+    async def send_message(
+        self,
+        session_id: int,
+        user_id: int,
+        content: str,
+        on_message_created: Any = None,
+    ) -> list[ChatMessage]:
         content = content.strip()
         if not content:
             raise BadRequestException("Empty message")
@@ -257,11 +263,17 @@ class ChatService:
         if chat.user_id != user_id:
             raise ForbiddenException("You do not own this session")
 
-        return await self._run_agent_turn(session_id, content, user_id)
+        return await self._run_agent_turn(session_id, content, user_id, on_message_created=on_message_created)
 
     # ---- Agent loop ----
 
-    async def _run_agent_turn(self, chat_session_id: int, user_content: str, user_id: int) -> list[ChatMessage]:
+    async def _run_agent_turn(
+        self,
+        chat_session_id: int,
+        user_content: str,
+        user_id: int,
+        on_message_created: Any = None,
+    ) -> list[ChatMessage]:
         history = await self._chat_repo.list_messages(chat_session_id)
         history = history[-MAX_HISTORY_MESSAGES:]
 
@@ -274,6 +286,8 @@ class ChatService:
             flush_only=True,
         )
         new_messages.append(user_row)
+        if on_message_created:
+            await on_message_created(user_row)
 
         student_context = await self._build_student_context(user_id)
         system_content = SYSTEM_PROMPT
@@ -304,6 +318,8 @@ class ChatService:
                     flush_only=True,
                 )
                 new_messages.append(assistant_row)
+                if on_message_created:
+                    await on_message_created(assistant_row)
                 llm_messages.append(
                     {
                         "role": "assistant",
@@ -325,6 +341,8 @@ class ChatService:
                         flush_only=True,
                     )
                     new_messages.append(tool_row)
+                    if on_message_created:
+                        await on_message_created(tool_row)
                     llm_messages.append({"role": "tool", "content": tool_result, "name": name})
                 continue
 
@@ -335,6 +353,8 @@ class ChatService:
                 flush_only=True,
             )
             new_messages.append(assistant_row)
+            if on_message_created:
+                await on_message_created(assistant_row)
             break
         else:
             assistant_row = await self._chat_repo.create_message(
@@ -344,6 +364,8 @@ class ChatService:
                 flush_only=True,
             )
             new_messages.append(assistant_row)
+            if on_message_created:
+                await on_message_created(assistant_row)
 
         await self._chat_repo.commit()
         for row in new_messages:

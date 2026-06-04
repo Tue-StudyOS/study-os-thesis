@@ -44,8 +44,21 @@ class TestProcessChatTurnWork:
             patch("app.chat.service.ChatService", return_value=svc),
             patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
             patch("app.llm.factory.build_embed_client", return_value=AsyncMock()),
+            patch("app.worker.publisher.publish_event", return_value=None),
         ):
-            result = await _process_chat_turn_work(2, 1, "Hello", settings)
+            result = await _process_chat_turn_work(
+                session_id=2,
+                user_id=1,
+                content="Hello",
+                job_id="job-123",
+                redis_url="redis://localhost:6379/0",
+                settings=settings,
+            )
 
-        svc.send_message.assert_awaited_once_with(2, 1, "Hello")
+        # Check that send_message was called with the callback parameter
+        assert svc.send_message.await_count == 1
+        call_args = svc.send_message.call_args
+        assert call_args.args == (2, 1, "Hello")
+        assert "on_message_created" in call_args.kwargs
+        assert call_args.kwargs["on_message_created"] is not None
         assert result == {"session_id": 2, "message_count": 3}

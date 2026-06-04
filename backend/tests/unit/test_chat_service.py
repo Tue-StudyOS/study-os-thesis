@@ -186,6 +186,73 @@ class TestSendMessage:
         with pytest.raises(ForbiddenException):
             await chat_service.send_message(session_id=1, user_id=1, content="Hello")
 
+    async def test_on_message_created_callback(self, chat_service, mock_chat_repo, mock_llm_chat):
+        """Verify that on_message_created callback is invoked for each message."""
+        mock_llm_chat.chat.return_value = _llm_response("Response")
+        callback = AsyncMock()
+
+        # Configure mock to return different messages for each call
+        mock_chat_repo.create_message.side_effect = [
+            _make_message(msg_id=1, role=MessageRole.user, content="Hello"),
+            _make_message(msg_id=2, role=MessageRole.assistant, content="Response"),
+        ]
+
+        await chat_service.send_message(
+            session_id=1,
+            user_id=1,
+            content="Hello",
+            on_message_created=callback,
+        )
+
+        # Should be called once for user message, once for assistant response
+        assert callback.call_count == 2
+        # First call is user message
+        first_msg = callback.call_args_list[0][0][0]
+        assert first_msg.role == MessageRole.user
+        # Second call is assistant response
+        second_msg = callback.call_args_list[1][0][0]
+        assert second_msg.role == MessageRole.assistant
+
+    async def test_on_message_created_with_tool_calls(self, chat_service, mock_chat_repo, mock_llm_chat, monkeypatch):
+        """Verify callback is called for assistant, tool, and final response messages."""
+        mock_llm_chat.chat.side_effect = [
+            _llm_response(
+                "Let me search.",
+                tool_calls=[_tool_call("search_theses", {"query": "ML"})],
+            ),
+            _llm_response("Here are the results."),
+        ]
+
+        monkeypatch.setattr(
+            "app.chat.service.search_theses_with_client",
+            AsyncMock(return_value=[{"id": 1, "title": "Thesis"}]),
+        )
+        callback = AsyncMock()
+
+        # Configure mock to return different messages
+        mock_chat_repo.create_message.side_effect = [
+            _make_message(msg_id=1, role=MessageRole.user, content="Find ML theses"),
+            _make_message(msg_id=2, role=MessageRole.assistant, content="Let me search.", tool_calls=[_tool_call("search_theses", {"query": "ML"})]),
+            _make_message(msg_id=3, role=MessageRole.tool, content="tool result", tool_name="search_theses"),
+            _make_message(msg_id=4, role=MessageRole.assistant, content="Here are the results."),
+        ]
+
+        await chat_service.send_message(
+            session_id=1,
+            user_id=1,
+            content="Find ML theses",
+            on_message_created=callback,
+        )
+
+        # Should be called for:
+        # 1. user message
+        # 2. assistant message with tool_calls
+        # 3. tool result message
+        # 4. final assistant response
+        assert callback.call_count == 4
+        roles = [call[0][0].role for call in callback.call_args_list]
+        assert roles == [MessageRole.user, MessageRole.assistant, MessageRole.tool, MessageRole.assistant]
+
 
 @pytest.mark.unit
 class TestBuildStudentContext:
