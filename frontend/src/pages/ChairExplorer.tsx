@@ -50,10 +50,12 @@ function ChairDetailPanel({
   chairId,
   onClose,
   onProposals,
+  onPapers,
 }: {
   chairId: number;
   onClose: () => void;
   onProposals: (id: number) => void;
+  onPapers: (id: number) => void;
 }) {
   const [chair, setChair] = useState<Chair | null>(null);
   const [loading, setLoading] = useState(true);
@@ -149,7 +151,14 @@ function ChairDetailPanel({
 
         {/* Footer */}
         {chair && (
-          <div className="p-6 border-t border-outline-variant">
+          <div className="p-6 border-t border-outline-variant flex flex-col gap-2">
+            <button
+              onClick={() => onPapers(chair.id)}
+              className="w-full bg-secondary-container text-on-secondary-container py-3 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+            >
+              <span className="material-symbols-outlined text-sm">article</span>
+              Alle Papers ansehen
+            </button>
             <button
               onClick={() => onProposals(chair.id)}
               className="w-full bg-primary text-on-primary py-3 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary-container hover:text-on-primary-container transition-colors"
@@ -235,6 +244,7 @@ export default function ChairExplorer() {
           chairId={selectedChairId}
           onClose={() => setSelectedChairId(null)}
           onProposals={(id) => { setSelectedChairId(null); goToProposals(id); }}
+          onPapers={(id) => { setSelectedChairId(null); navigate(`/chairs/${id}/papers`); }}
         />
       )}
 
@@ -302,9 +312,12 @@ export default function ChairExplorer() {
                       <div className="flex items-center gap-2 mb-2">
                         <AiInsightChip label="Featured" />
                         {featured.documents.filter((d) => d.kind === "paper").length > 0 && (
-                          <span className="px-2 py-0.5 rounded-md bg-secondary-container text-on-secondary-fixed-variant font-label-md text-[10px] uppercase tracking-wider">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); navigate(`/chairs/${featured.id}/papers`); }}
+                            className="px-2 py-0.5 rounded-md bg-secondary-container text-on-secondary-fixed-variant font-label-md text-[10px] uppercase tracking-wider hover:opacity-80 transition-opacity"
+                          >
                             {featured.documents.filter((d) => d.kind === "paper").length} Papers
-                          </span>
+                          </button>
                         )}
                       </div>
                       <h3 className="font-headline-md text-headline-md text-on-surface mb-1">
@@ -356,12 +369,15 @@ export default function ChairExplorer() {
                         {chair.professor_name}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1 bg-surface-container px-2 py-1 rounded-md shrink-0">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); navigate(`/chairs/${chair.id}/papers`); }}
+                      className="flex items-center gap-1 bg-surface-container px-2 py-1 rounded-md shrink-0 hover:bg-surface-container-high transition-colors"
+                    >
                       <span className="material-symbols-outlined text-primary text-sm">article</span>
                       <span className="font-label-md text-label-md text-on-surface">
                         {chair.documents.filter((d) => d.kind === "paper").length}
                       </span>
-                    </div>
+                    </button>
                   </div>
 
                   <p className="font-body-sm text-body-sm text-on-surface-variant mb-4 line-clamp-3 flex-1">

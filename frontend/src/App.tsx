@@ -7,6 +7,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import Dashboard from "./pages/Dashboard";
 import Chat from "./pages/Chat";
 import ChairExplorer from "./pages/ChairExplorer";
+import ChairPapers from "./pages/ChairPapers";
 import Proposals from "./pages/Proposals";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -69,6 +70,7 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/chairs" element={<ChairExplorer />} />
+          <Route path="/chairs/:id/papers" element={<ChairPapers />} />
           <Route path="/proposals" element={<Proposals />} />
           <Route
             path="/admin"
