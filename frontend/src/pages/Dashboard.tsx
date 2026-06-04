@@ -6,6 +6,7 @@ import SkillRadar from "../components/SkillRadar";
 import { useAuth } from "../auth/AuthContext";
 import { getStudentProfile, uploadTranscript, type StudentProfile } from "../api/students";
 import { getUserSkills, type UserSkillProfile } from "../api/skills";
+import { pollJob } from "../api/jobs";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -48,16 +49,27 @@ export default function Dashboard() {
     setUploading(true);
     setUploadError(null);
     try {
-      const updated = await uploadTranscript(file, profile?.program ?? undefined, profile?.semester ?? undefined);
+      // Upload returns a job id immediately (202 Accepted).
+      const { job_id } = await uploadTranscript(file, profile?.program ?? undefined, profile?.semester ?? undefined);
+
+      // Poll until parse_transcript job succeeds or fails.
+      const job = await pollJob(job_id);
+      if (job.status === "failure") {
+        setUploadError(job.error ?? "Transcript-Verarbeitung fehlgeschlagen.");
+        return;
+      }
+
+      // Refetch the student profile now that courses are in the DB.
+      const updated = await getStudentProfile();
       setProfile(updated);
-      // Reload skills after a brief delay to allow the Celery chain to start.
-      // The WebSocket "skills_computed" event is the proper trigger; this is a
-      // graceful fallback for clients without WebSocket support.
+
+      // Reload skills after a short delay to let the chained compute_skills
+      // task get started (it is dispatched at the end of parse_transcript).
       setTimeout(() => {
         getUserSkills()
           .then(setSkillProfile)
           .catch(() => {});
-      }, 3000);
+      }, 2000);
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "Upload fehlgeschlagen.");
     } finally {
@@ -80,7 +92,7 @@ export default function Dashboard() {
   const hasProfile = profile !== null && !profileLoading;
   const hasSkills = skillProfile !== null && skillProfile.skills.length > 0;
   const totalCredits = hasProfile
-    ? profile.courses.reduce((s, c) => s + (c.credits ?? 0), 0)
+    ? (profile.courses ?? []).reduce((s, c) => s + (c.credits ?? 0), 0)
     : null;
 
   // Top 6 skills for radar chart
@@ -236,7 +248,7 @@ export default function Dashboard() {
                       </div>
                       <div className="text-right">
                         <span className="block font-headline-md text-headline-md text-on-surface font-semibold">
-                          {profileLoading ? "…" : profile ? profile.courses.length : "–"}
+                          {profileLoading ? "…" : profile ? (profile.courses ?? []).length : "–"}
                         </span>
                         <span className="font-body-sm text-body-sm text-on-surface-variant">Kurse</span>
                       </div>
@@ -330,14 +342,14 @@ export default function Dashboard() {
                   </>
                 )}
 
-                {hasProfile && profile.courses.length > 0 && (
+                {hasProfile && (profile.courses ?? []).length > 0 && (
                   <div className="mt-6 bg-surface-container border border-outline-variant/50 rounded-lg p-6">
                     <h4 className="font-title-lg text-title-lg text-primary mb-4 flex items-center gap-2">
                       <span className="material-symbols-outlined text-tertiary-container">lightbulb</span>
                       Kurse aus deinem Transcript
                     </h4>
                     <div className="max-h-48 overflow-y-auto space-y-1">
-                      {profile.courses.map((c) => (
+                      {(profile.courses ?? []).map((c) => (
                         <div key={c.id} className="flex items-center justify-between py-1 border-b border-outline-variant/20 last:border-0">
                           <span className="font-body-sm text-body-sm text-on-surface">{c.course_name}</span>
                           <div className="flex items-center gap-3 shrink-0 ml-4">
