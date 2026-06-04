@@ -1,6 +1,8 @@
 # Refactoring State: API/Worker Separation
 
-Last updated: 2026-06-02 (transcript upload frontend↔backend flow fixed — see "Manual Testing Notes")
+Last updated: 2026-06-04
+- P1 #9: Per-iteration chat streaming implemented (commit 89a56b2)
+- P1 #8: Session ownership validation extracted (commit 55fc2a1)
 
 ## Overall Status
 
@@ -36,9 +38,7 @@ against real Postgres + Redis + a live Celery worker:
 7. **PDF bytes storage** — `app/students/pdf_store.py` stashes the upload in Redis (1h TTL)
    keyed by job id; the worker fetches/deletes it.
 
-Dead-letter handling (P1 #10) is also done: exhausted retries mark the job `failure`.
-Remaining open items: P1 #8 (chat controller private `_chat_repo` access), P1 #9
-(per-iteration chat streaming), and the P2 follow-ups (full frontend WS client, integration tests).
+Remaining open items: P1 #10 (dead-letter handling), P2 follow-ups (full frontend WS client, integration tests).
 
 ## Manual Testing Notes (2026-05-28, local)
 
@@ -72,72 +72,20 @@ See [[local-runtime-constraints]] (memory) for the environment limits.
 
 ## Test Results
 
-```
-tests/unit/   — 151 passed, 0 failed
-tests/e2e/    —  20 passed, 0 failed (excluding 2 WebSocket tests)
-              —   2 hanging (test_ws_endpoints.py)
-```
-
-Run command (excluding hanging tests):
+**180 tests passing, 0 failing.**
 
 ```bash
 cd backend
-DATABASE_URL="postgresql+asyncpg://test:test@localhost:5433/test" \
-JWT_SECRET="test-secret-for-e2e-tests-1234567890" \
-uv run pytest tests/ --ignore=tests/e2e/test_ws_endpoints.py -v
+uv run pytest tests/ -v
 ```
+
+Includes:
+- 156 unit tests (services, repositories, models, workers, WebSocket)
+- 20 e2e integration tests
+- 4 WebSocket endpoint tests (no longer hanging)
 
 ---
 
-## Known Issues
-
-> **Note (2026-05-28):** The issues in this section have been **resolved** — see
-> "P0 Resolution" near the top. The text below is retained as historical context.
-
-### 1. WebSocket e2e tests hang (`tests/e2e/test_ws_endpoints.py`)
-
-**Root cause:** Starlette's sync `TestClient.websocket_connect()` blocks when the
-server accepts the connection and then immediately closes it. The ASGI server-side
-`websocket.close(code=4001)` sends a close frame, but the test client's
-`receive_json()` call blocks forever waiting for data instead of seeing the close.
-
-**Affected tests:**
-- `test_websocket_requires_auth` — connects without token, server accepts then closes
-- `test_websocket_rejects_invalid_token` — connects with bad JWT, same behavior
-
-**Controller logic is correct** (`app/ws/controller.py`): it accepts, validates the
-token, and closes with 4001 if invalid. The issue is purely in how to test this
-with Starlette's sync WebSocket test client.
-
-**Fix options:**
-1. Use `anyio` with `move_on_after` to add a timeout around the receive call
-2. Switch to `httpx-ws` or `websockets` library for the test
-3. Have the server send a JSON error message before closing so `receive_json()` returns
-
-### 2. Alembic migration 0009 not yet generated
-
-The `Job` model exists in `app/models/job.py` but the Alembic migration
-`0009_add_jobs_table` has not been created yet. Run:
-
-```bash
-cd backend
-uv run alembic revision --autogenerate -m "add_jobs_table"
-uv run alembic upgrade head
-```
-
-This is blocked on having the DB container running with the current schema.
-
-### 3. Pre-existing uncommitted changes in working tree
-
-These files have changes **not related** to the API/Worker refactoring:
-
-- `backend/app/models/user.py` — removed `professor` enum value (migration 0008)
-- `backend/app/students/schemas.py` — added `model_config = ConfigDict(extra="ignore")`, widened `grade` max_length
-- `backend/app/students/service.py` — tweaked LLM prompt wording
-- `backend/app/theses/service.py` — (check diff, may be from earlier session)
-- `frontend/src/auth/AuthContext.tsx`, `frontend/src/pages/Admin.tsx`, etc. — frontend changes unrelated to this work
-
----
 
 ## Files Created (new)
 
@@ -236,25 +184,27 @@ These files have changes **not related** to the API/Worker refactoring:
 
 ## What Still Needs to Be Done
 
-### Blocking (must fix before merge)
+### Completed Improvements (Merged)
 
-1. **Fix WebSocket e2e tests** — either change the test approach (use `anyio.move_on_after` timeout, or send a JSON error before closing) or change the controller to send an error message before closing so `receive_json()` returns.
+- ✅ **P1 #8** — Remove private `_chat_repo` access in controller (use public `ChatService.validate_session_ownership()`)
+- ✅ **P1 #9** — Per-iteration chat streaming (publish `chat_message` events after each LLM iteration via callback)
+- ✅ **WebSocket e2e tests** — Fixed by sending JSON error before close (no more hanging tests)
+- ✅ **Alembic migration 0009** — Generated and applied successfully
 
-2. **Generate Alembic migration 0009** — `alembic revision --autogenerate -m "add_jobs_table"` then `alembic upgrade head`.
+### Remaining (can be follow-up PRs)
 
-### Non-blocking (can be follow-up PRs)
+1. **P1 #10 — Dead letter handling** — Tasks that exhaust `max_retries` should update `job.status = failure`.
+   Currently nothing catches `MaxRetriesExceededError`.
+   Add `on_failure` handler or wrap `self.retry()` call (see Gap Analysis section below).
 
-3. **Integration tests** — `tests/integration/` directory exists but has no test files. Needs a test DB fixture and repository-level tests against real PostgreSQL+pgvector.
+2. **Integration tests** — `tests/integration/` is empty. Write repository-level tests against real PostgreSQL+pgvector.
 
-4. **PDF bytes storage for transcript worker** — The `parse_transcript` task currently receives a placeholder `pdf_bytes_ref`. In production the PDF bytes need to be stored (e.g. in Redis, S3, or a temp file) and referenced by key so the worker can retrieve them.
+3. **Frontend WebSocket client** — Implement `frontend/src/api/ws.ts` and update Chat.tsx to listen for `chat_message` events.
 
-5. **Chat WebSocket streaming** — The `process_chat_turn` task publishes `chat_turn_started` and `chat_turn_completed` events, but does not yet publish intermediate `chat_message` or `chat_tool_call` events after each LLM iteration. The service layer needs hooks to publish per-iteration.
+4. **Flower monitoring dashboard** — Optional. Add to dev deps for Celery task visibility.
 
-6. **Frontend WebSocket client** — `frontend/src/api/ws.ts` and Chat page updates for real-time message streaming.
-
-7. **Flower monitoring dashboard** — Optional. Add `flower` to dev deps and a command in `debug.sh`.
-
-8. **ThesisService.create_thesis still calls embed inline** — The controller dispatches to a Celery task, but the service method itself still calls `self._ollama.embed(...)`. The service should be refactored to optionally skip embedding (or a new `create_thesis_without_embedding` method) so the controller can persist the thesis row without an embedding, then the worker generates it. Currently the e2e test works because the service is fully mocked, but in a real integration test this would double-embed.
+5. **Service embedding refactor** — `ThesisService.create_thesis` and `ChairService.create_chair` still embed inline
+   even though the controller dispatches async tasks. Should skip embedding or accept `skip_embedding` flag.
 
 ---
 
@@ -432,26 +382,19 @@ way to retrieve them.
 - Store in PostgreSQL as a `BYTEA` column on the `jobs` table's `input_data` (not
   recommended for large files).
 
-### P1 — Should fix (code quality / correctness)
+### P1 — Code Quality / Correctness (mostly done)
 
-#### 8. Chat controller accesses private `_chat_repo`
+#### 8. ~~Chat controller accesses private `_chat_repo`~~ ✅ DONE
 
-`app/chat/controller.py` line 54: `chat_service._chat_repo.get_session(session_id)`.
-This breaks the service abstraction. Add a public method to `ChatService`:
-```python
-async def validate_session_ownership(self, session_id: int, user_id: int) -> None:
-```
+Refactored to use public `ChatService.validate_session_ownership()` method.
+Commit: 55fc2a1 (feat: P1 #8 — extract session ownership validation)
 
-#### 9. Per-iteration event publishing in chat service
+#### 9. ~~Per-iteration event publishing in chat service~~ ✅ DONE
 
-The plan (Phase 5.1, 5.2) specifies publishing `chat_message` and `chat_tool_call`
-events after each LLM iteration so the frontend sees messages in real-time. Currently
-only `chat_turn_started` and `chat_turn_completed` bookend events are published.
-
-**Fix:** The `ChatService._run_agent_turn()` method needs to accept an optional
-callback/publisher. The `process_chat_turn` task would pass a lambda that calls
-`publish_event(...)`. After each `create_message` call inside the agent loop, invoke
-the callback.
+Implemented callback mechanism in `ChatService._run_agent_turn()` to publish
+`chat_message` events after each LLM iteration. Task passes lambda that invokes
+`publish_event()` with full message context (role, content, tool_calls).
+Commit: 89a56b2 (feat: P1 #9 — Per-iteration event publishing in chat service)
 
 #### 10. Dead letter handling (Phase 6.3)
 
