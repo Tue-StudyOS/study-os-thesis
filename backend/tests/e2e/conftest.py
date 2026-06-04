@@ -184,6 +184,35 @@ def _app():
     return app
 
 
+def _mock_paper_service():
+    svc = AsyncMock()
+    svc.list_papers.return_value = []
+    svc.get_paper.return_value = SimpleNamespace(
+        id=1, title="Paper", abstract=None, summary=None, authors=[],
+        publication_date=None, source="arxiv", source_url="https://arxiv.org/abs/x",
+        arxiv_id=None, doi=None, recency_score=0.5, relevance_score=0.5,
+        enriched_at=None, created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
+        tags=[],
+    )
+    return svc
+
+
+def _mock_researcher_service():
+    svc = AsyncMock()
+    svc.list_by_chair.return_value = []
+    svc.get_researcher.return_value = SimpleNamespace(
+        id=1, name="Georg Martius", chair_id=1, google_scholar_id="ABC",
+        orcid=None, affiliation=None, is_professor=True,
+        created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
+    )
+    svc.create_researcher.return_value = SimpleNamespace(
+        id=1, name="New Researcher", chair_id=1, google_scholar_id=None,
+        orcid=None, affiliation=None, is_professor=False,
+        created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
+    )
+    return svc
+
+
 @pytest.fixture(autouse=True)
 def _override_deps(_app):
     """Override DI for each test so we get fresh mocks."""
@@ -193,6 +222,8 @@ def _override_deps(_app):
     from app.students.deps import get_student_service
     from app.chat.deps import get_chat_service
     from app.jobs.deps import get_job_service
+    from app.papers.deps import get_paper_service
+    from app.researchers.deps import get_researcher_service
 
     _app.dependency_overrides[get_current_user] = lambda: _student_user
     _app.dependency_overrides[get_thesis_service] = _mock_thesis_service
@@ -200,6 +231,8 @@ def _override_deps(_app):
     _app.dependency_overrides[get_student_service] = _mock_student_service
     _app.dependency_overrides[get_chat_service] = _mock_chat_service
     _app.dependency_overrides[get_job_service] = _mock_job_service
+    _app.dependency_overrides[get_paper_service] = _mock_paper_service
+    _app.dependency_overrides[get_researcher_service] = _mock_researcher_service
 
     yield
 

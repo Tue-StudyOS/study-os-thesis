@@ -33,6 +33,7 @@ dev = [
     "pytest-asyncio>=0.24",
     "pytest-cov>=6.0",
     "respx>=0.22",
+    "pytest-httpserver>=1.0",
     "ruff>=0.6",
 ]
 
