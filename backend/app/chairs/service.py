@@ -36,7 +36,7 @@ def _split_professor_title_and_name(title: str | None, name: str) -> tuple[str |
     parsed_title = m.group(1).strip() if m else None
     parsed_name = s[m.end() :].strip() if m else s
 
-    out_title = (title or parsed_title)
+    out_title = title or parsed_title
     if out_title is not None:
         out_title = out_title.strip() or None
     return out_title, parsed_name
