@@ -16,7 +16,7 @@ Last updated: 2026-06-04
 | 6 | Retry policies & timeouts | **Done** (incl. dead-letter on exhausted retries) | passing |
 | 7 | Regression tests (existing service logic) | **Done** | passing |
 
-**Total: 178 tests, all passing (including the 2 previously-hanging WebSocket e2e tests).**
+**Total: 180 tests, all passing.**
 
 ## P0 Resolution (2026-05-28)
 
@@ -160,7 +160,7 @@ Includes:
 | `tests/e2e/test_chair_endpoints.py` | 4 tests | All passing |
 | `tests/e2e/test_student_endpoints.py` | 3 tests | All passing |
 | `tests/e2e/test_chat_endpoints.py` | 5 tests | All passing |
-| `tests/e2e/test_ws_endpoints.py` | 2 tests | **Hanging** |
+| `tests/e2e/test_ws_endpoints.py` | 2 tests | **All passing** |
 
 ---
 
@@ -261,7 +261,7 @@ can pick up the work and finish it without needing prior conversation context.
 
 - `IMPLEMENTATION_PLAN.md` — the full design specification (7 phases)
 - `TEST_PLAN.md` — the TDD test specifications (173 tests)
-- `backend/tests/` — the implemented tests (run with `uv run pytest tests/ --ignore=tests/e2e/test_ws_endpoints.py -v` from `backend/`)
+- `backend/tests/` — the implemented tests (run with `uv run pytest tests/ -v` from `backend/`)
 - This file — current state, what's done, what's broken, what's missing
 - All source lives under `backend/app/`. The stack is FastAPI + SQLAlchemy async + Celery + Redis + PostgreSQL/pgvector.
 
@@ -271,9 +271,9 @@ export DATABASE_URL="postgresql+asyncpg://test:test@localhost:5433/test"
 export JWT_SECRET="test-secret-for-e2e-tests-1234567890"
 ```
 
-### P0 — Must fix (blocks correct runtime behavior)
+### P0 — ✅ All resolved (see P0 Resolution section above)
 
-#### 1. Services still embed inline — double-embedding bug
+#### ~~1. Services still embed inline — double-embedding bug~~ ✅ DONE
 
 **Problem:** The controllers now dispatch Celery tasks for embedding, but the
 service methods they call still perform embedding synchronously before returning.
@@ -292,7 +292,7 @@ worker (task).
   Same issue: the controller dispatches `embed_chair_description.delay()` but the
   service also embeds inline. Refactor similarly.
 
-#### 2. Tasks don't update the `jobs` table
+#### ~~2. Tasks don't update the `jobs` table~~ ✅ DONE
 
 **Problem:** All four Celery tasks accept a `job_id` parameter and publish Redis
 Pub/Sub events, but never call `JobService.mark_started()`, `mark_success()`, or
@@ -309,7 +309,7 @@ Each task body should:
 
 The `_get_deps()` function already builds a `JobService` — it just isn't used.
 
-#### 3. `job_id` ordering is wrong — task doesn't know the real UUID
+#### ~~3. `job_id` ordering is wrong — task doesn't know the real UUID~~ ✅ DONE
 
 **Problem:** The controllers call `.delay()` first, then `job_service.create_job()`
 second. The task receives `job_id="pending"` as a string literal, not the real UUID.
@@ -329,7 +329,7 @@ task_result = embed_thesis.delay(thesis_id, user_id, str(job.id))
 **Affected files:** `app/theses/controller.py`, `app/chairs/controller.py`,
 `app/students/controller.py`, `app/chat/controller.py`.
 
-#### 4. Alembic migration 0009 not generated
+#### ~~4. Alembic migration 0009 not generated~~ ✅ DONE
 
 The `Job` model exists in `app/models/job.py` but there is no migration file.
 Run from `backend/`:
@@ -338,7 +338,7 @@ uv run alembic revision --autogenerate -m "add_jobs_table"
 ```
 Then verify the generated migration and run `uv run alembic upgrade head`.
 
-#### 5. `worker_process_init` signal handler missing
+#### ~~5. `worker_process_init` signal handler missing~~ ✅ DONE
 
 The plan specifies disposing the inherited SQLAlchemy engine after Celery forks.
 Without this, `asyncpg` connections inherited across fork will cause errors.
@@ -354,7 +354,7 @@ def on_worker_init(**kwargs):
     asyncio.run(engine.dispose())
 ```
 
-#### 6. WebSocket e2e tests hang
+#### ~~6. WebSocket e2e tests hang~~ ✅ DONE
 
 `tests/e2e/test_ws_endpoints.py` has 2 tests that block forever. The WS controller
 accepts the connection then closes with code 4001. Starlette's sync `TestClient`
@@ -369,7 +369,7 @@ Then the test's `receive_json()` returns the error dict and the test can assert 
 without hanging. Update both `test_websocket_requires_auth` and
 `test_websocket_rejects_invalid_token` to assert on the received error payload.
 
-#### 7. PDF bytes storage for transcript worker
+#### ~~7. PDF bytes storage for transcript worker~~ ✅ DONE
 
 `app/students/controller.py` passes `pdf_bytes_ref="inline"` — a placeholder. The
 actual PDF bytes from the upload are lost after the HTTP response. The task has no
@@ -423,11 +423,11 @@ except (ConnectionError, TimeoutError) as exc:
 
 ### Verification: how to confirm everything works
 
-After completing all P0 items, run:
+All P0 items are resolved. Verify with:
 ```bash
 cd backend
 
-# All unit + e2e tests should pass (173 total, 0 hanging)
+# All unit + e2e tests pass (180 total)
 uv run pytest tests/ -v
 
 # Start infra and verify end-to-end manually

@@ -61,6 +61,46 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
+## 5. Issues & Pull Requests
+
+**One issue = one focused change. One PR = one reviewable story.**
+
+### Issues
+- **Title:** short, imperative, prefixed with an area when useful (`UI:`, `RAG:`, `backend:`). e.g. "UI: add a favicon".
+- **Body:** what's wrong / what's wanted, and why. Even one or two sentences beats an empty `-`. Add reproduction steps for bugs and a rough acceptance criterion ("done when …").
+- **Labels:** tag the kind (`bug`, `feature`, `docs`, `chore`) so the board is scannable.
+
+### Branches & commits
+- Branch off `main`: `feat/…`, `fix/…`, `docs/…`, `ci/…`, `chore/…`.
+- Conventional-commit subjects: `feat:`, `fix:`, `ci:`, `docs:`, `chore:` — imperative, lowercase, no trailing period.
+- Body explains **what and why**, not line-by-line how. Wrap at ~72 chars.
+
+### Pull requests
+Scale the template to the change — a one-liner fix needs Summary + Closes; a big refactor uses all of it. **PR #12 is the gold standard.**
+
+```markdown
+## Summary
+What this PR does, in 1–3 sentences.
+
+## Motivation        (omit for trivial changes)
+Why — the problem it solves.
+
+## What Changed
+- Grouped bullets, or a before/after table for multi-endpoint changes.
+
+## Known Issues / Not Yet Done   (only if applicable)
+- Honest list of gaps, with a pointer to any tracking doc.
+
+## How to Run / Test  (when reviewers need it)
+Exact commands.
+```
+
+Rules:
+- Link the issue with `Closes #N` so it auto-closes on merge.
+- Keep PRs small and single-purpose; split unrelated work.
+- **CI must be green before requesting review** — use `gh pr checks` and iterate until it passes (see §4).
+- Be honest about what's incomplete (the "Known Issues" section in PR #12 is a good model).
+
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
