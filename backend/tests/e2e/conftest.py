@@ -188,10 +188,20 @@ def _mock_paper_service():
     svc = AsyncMock()
     svc.list_papers.return_value = []
     svc.get_paper.return_value = SimpleNamespace(
-        id=1, title="Paper", abstract=None, summary=None, authors=[],
-        publication_date=None, source="arxiv", source_url="https://arxiv.org/abs/x",
-        arxiv_id=None, doi=None, recency_score=0.5, relevance_score=0.5,
-        enriched_at=None, created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
+        id=1,
+        title="Paper",
+        abstract=None,
+        summary=None,
+        authors=[],
+        publication_date=None,
+        source="arxiv",
+        source_url="https://arxiv.org/abs/x",
+        arxiv_id=None,
+        doi=None,
+        recency_score=0.5,
+        relevance_score=0.5,
+        enriched_at=None,
+        created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
         tags=[],
     )
     return svc
@@ -201,13 +211,23 @@ def _mock_researcher_service():
     svc = AsyncMock()
     svc.list_by_chair.return_value = []
     svc.get_researcher.return_value = SimpleNamespace(
-        id=1, name="Georg Martius", chair_id=1, google_scholar_id="ABC",
-        orcid=None, affiliation=None, is_professor=True,
+        id=1,
+        name="Georg Martius",
+        chair_id=1,
+        google_scholar_id="ABC",
+        orcid=None,
+        affiliation=None,
+        is_professor=True,
         created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
     )
     svc.create_researcher.return_value = SimpleNamespace(
-        id=1, name="New Researcher", chair_id=1, google_scholar_id=None,
-        orcid=None, affiliation=None, is_professor=False,
+        id=1,
+        name="New Researcher",
+        chair_id=1,
+        google_scholar_id=None,
+        orcid=None,
+        affiliation=None,
+        is_professor=False,
         created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
     )
     return svc

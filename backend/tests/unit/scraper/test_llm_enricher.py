@@ -4,8 +4,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from app.scraper.adapters.llm_enricher import LLMPaperEnricher, _FUZZY_THRESHOLD
-from app.scraper.tags import CANONICAL_TAGS
+from app.scraper.adapters.llm_enricher import LLMPaperEnricher
 
 
 def _make_llm(content: str = "result") -> AsyncMock:
@@ -141,7 +140,7 @@ class TestGenerateTags:
 
     async def test_very_long_llm_response_doesnt_crash(self):
         # LLM returns a huge JSON-like string
-        llm = _make_llm('["robotics"] and here is a very long explanation ' + 'x' * 2000)
+        llm = _make_llm('["robotics"] and here is a very long explanation ' + "x" * 2000)
         enricher = LLMPaperEnricher(llm, "model")
         tags = await enricher.generate_tags("T", "A")
         assert isinstance(tags, list)

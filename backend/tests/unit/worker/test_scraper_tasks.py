@@ -169,7 +169,9 @@ class TestEnrichPaperWork:
 
     async def test_skips_if_already_enriched_and_no_force(self):
         paper = SimpleNamespace(
-            id=1, title="T", abstract="A",
+            id=1,
+            title="T",
+            abstract="A",
             enriched_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
         )
         session, paper_repo, tag_repo = self._setup_session(paper)
@@ -187,7 +189,9 @@ class TestEnrichPaperWork:
 
     async def test_force_overrides_enriched_at_guard(self):
         paper = SimpleNamespace(
-            id=1, title="T", abstract="Existing abstract",
+            id=1,
+            title="T",
+            abstract="Existing abstract",
             enriched_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
         )
         session, paper_repo, tag_repo = self._setup_session(paper)

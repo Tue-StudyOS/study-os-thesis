@@ -7,11 +7,11 @@ recording call ordering and counts, not by timing.
 import asyncio
 from datetime import datetime, timezone
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock, call, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from app.papers.domain import PaperCandidate, ResearcherInfo
+from app.papers.domain import PaperCandidate
 from app.scraper.orchestrator import ScraperOrchestrator, _ARXIV_CONCURRENCY, _LLM_CONCURRENCY
 
 
@@ -22,8 +22,12 @@ from app.scraper.orchestrator import ScraperOrchestrator, _ARXIV_CONCURRENCY, _L
 
 def _researcher(id_=1, name="Georg Martius", chair_id=1, scholar_id="ABC123"):
     return SimpleNamespace(
-        id=id_, name=name, chair_id=chair_id,
-        google_scholar_id=scholar_id, orcid=None, affiliation=None,
+        id=id_,
+        name=name,
+        chair_id=chair_id,
+        google_scholar_id=scholar_id,
+        orcid=None,
+        affiliation=None,
     )
 
 

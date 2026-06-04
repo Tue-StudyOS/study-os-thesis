@@ -86,9 +86,12 @@ class TestRunChairScrape:
         from app.scraper.deps import get_chair_repository
 
         fake_chair = SimpleNamespace(
-            id=1, name="Distributed Intelligence",
-            short_description="", professor_name="Georg Martius",
-            website_url=None, created_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
+            id=1,
+            name="Distributed Intelligence",
+            short_description="",
+            professor_name="Georg Martius",
+            website_url=None,
+            created_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
             documents=[],
         )
         chair_repo = AsyncMock()
@@ -106,9 +109,7 @@ class TestRunChairScrape:
                 "app.scraper.tasks.scrape_chair_papers.delay",
                 return_value=_mock_celery_result(),
             ):
-                resp = await client.post(
-                    "/api/scraper/run/1", json={"since_days": 365, "max_results": 20}
-                )
+                resp = await client.post("/api/scraper/run/1", json={"since_days": 365, "max_results": 20})
         finally:
             _app.dependency_overrides.pop(get_chair_repository, None)
             _app.dependency_overrides.pop(get_job_service, None)
@@ -126,9 +127,7 @@ class TestRunChairScrape:
 
         _app.dependency_overrides[get_chair_repository] = lambda: chair_repo
         try:
-            resp = await client.post(
-                "/api/scraper/run/999", json={"since_days": 365, "max_results": 20}
-            )
+            resp = await client.post("/api/scraper/run/999", json={"since_days": 365, "max_results": 20})
         finally:
             _app.dependency_overrides.pop(get_chair_repository, None)
 
@@ -138,16 +137,16 @@ class TestRunChairScrape:
         from httpx import ASGITransport, AsyncClient
         from app.auth.deps import get_current_user
 
+        orig_override = _app.dependency_overrides.get(get_current_user)
         # Remove the auth override so FastAPI evaluates the real OAuth2 scheme
         _app.dependency_overrides.pop(get_current_user, None)
         try:
             transport = ASGITransport(app=_app)
             async with AsyncClient(transport=transport, base_url="http://test") as anon:
-                resp = await anon.post(
-                    "/api/scraper/run/1", json={"since_days": 365, "max_results": 20}
-                )
+                resp = await anon.post("/api/scraper/run/1", json={"since_days": 365, "max_results": 20})
         finally:
-            _app.dependency_overrides[get_current_user] = lambda: _student_user
+            if orig_override is not None:
+                _app.dependency_overrides[get_current_user] = orig_override
         assert resp.status_code == 401
 
 
@@ -179,9 +178,7 @@ class TestIngestPaper:
         assert resp.json()["arxiv_id"] == "2301.07041"
 
     async def test_student_cannot_ingest_paper(self, client):
-        resp = await client.post(
-            "/api/scraper/paper", json={"arxiv_id": "2301.07041"}
-        )
+        resp = await client.post("/api/scraper/paper", json={"arxiv_id": "2301.07041"})
         assert resp.status_code == 403
 
     async def test_missing_arxiv_id_returns_422(self, admin_client):
@@ -252,12 +249,21 @@ class TestListPapers:
         with patch(
             "app.papers.controller.PaperOut.from_orm_with_tags",
             return_value=PaperOut(
-                id=1, title="Deep Learning Paper", abstract=None,
-                summary=None, authors=["Georg Martius"], publication_date=None,
-                source="google_scholar", source_url="https://example.com",
-                arxiv_id="2301.07041", doi=None, recency_score=0.8,
-                relevance_score=0.8, enriched_at=None,
-                created_at=datetime(2023, 7, 1, tzinfo=timezone.utc), tags=[],
+                id=1,
+                title="Deep Learning Paper",
+                abstract=None,
+                summary=None,
+                authors=["Georg Martius"],
+                publication_date=None,
+                source="google_scholar",
+                source_url="https://example.com",
+                arxiv_id="2301.07041",
+                doi=None,
+                recency_score=0.8,
+                relevance_score=0.8,
+                enriched_at=None,
+                created_at=datetime(2023, 7, 1, tzinfo=timezone.utc),
+                tags=[],
             ),
         ):
             try:
@@ -303,13 +309,15 @@ class TestListPapers:
         from httpx import ASGITransport, AsyncClient
         from app.auth.deps import get_current_user
 
+        orig_override = _app.dependency_overrides.get(get_current_user)
         _app.dependency_overrides.pop(get_current_user, None)
         try:
             transport = ASGITransport(app=_app)
             async with AsyncClient(transport=transport, base_url="http://test") as anon:
                 resp = await anon.get("/api/papers")
         finally:
-            _app.dependency_overrides[get_current_user] = lambda: _student_user
+            if orig_override is not None:
+                _app.dependency_overrides[get_current_user] = orig_override
         assert resp.status_code == 401
 
 
@@ -327,12 +335,21 @@ class TestGetPaper:
         with patch(
             "app.papers.controller.PaperOut.from_orm_with_tags",
             return_value=PaperOut(
-                id=42, title="T", abstract=None, summary=None, authors=[],
-                publication_date=None, source="arxiv",
+                id=42,
+                title="T",
+                abstract=None,
+                summary=None,
+                authors=[],
+                publication_date=None,
+                source="arxiv",
                 source_url="https://arxiv.org/abs/2301.07041",
-                arxiv_id="2301.07041", doi=None, recency_score=0.5,
-                relevance_score=0.5, enriched_at=None,
-                created_at=datetime(2023, 1, 1, tzinfo=timezone.utc), tags=[],
+                arxiv_id="2301.07041",
+                doi=None,
+                recency_score=0.5,
+                relevance_score=0.5,
+                enriched_at=None,
+                created_at=datetime(2023, 1, 1, tzinfo=timezone.utc),
+                tags=[],
             ),
         ):
             try:
@@ -389,13 +406,15 @@ class TestListResearchers:
         from httpx import ASGITransport, AsyncClient
         from app.auth.deps import get_current_user
 
+        orig_override = _app.dependency_overrides.get(get_current_user)
         _app.dependency_overrides.pop(get_current_user, None)
         try:
             transport = ASGITransport(app=_app)
             async with AsyncClient(transport=transport, base_url="http://test") as anon:
                 resp = await anon.get("/api/researchers?chair_id=1")
         finally:
-            _app.dependency_overrides[get_current_user] = lambda: _student_user
+            if orig_override is not None:
+                _app.dependency_overrides[get_current_user] = orig_override
         assert resp.status_code == 401
 
 

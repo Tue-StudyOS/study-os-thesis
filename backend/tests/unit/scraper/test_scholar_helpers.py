@@ -16,23 +16,26 @@ from app.scraper.adapters.scholar_scraper import (
 
 @pytest.mark.unit
 class TestParseYearFromMeta:
-    @pytest.mark.parametrize("meta,expected", [
-        # Standard Scholar meta line
-        ("A Author, B Author - Nature, 2023 - Publisher", 2023),
-        # Year at end without publisher
-        ("Alice Smith - Journal of ML, 2021", 2021),
-        # Year only (minimal)
-        ("2019", 2019),
-        # Older paper
-        ("G Martius - Old Journal, 1998 - Publisher", 1998),
-        # No year at all
-        ("A Author - Journal without year", None),
-        ("", None),
-        # Multiple years — should return first
-        ("2020 work extended in 2023", 2020),
-        # Year embedded in a DOI-like string — must still work
-        ("A Author - Proc. ICML 2022, pages 100", 2022),
-    ])
+    @pytest.mark.parametrize(
+        "meta,expected",
+        [
+            # Standard Scholar meta line
+            ("A Author, B Author - Nature, 2023 - Publisher", 2023),
+            # Year at end without publisher
+            ("Alice Smith - Journal of ML, 2021", 2021),
+            # Year only (minimal)
+            ("2019", 2019),
+            # Older paper
+            ("G Martius - Old Journal, 1998 - Publisher", 1998),
+            # No year at all
+            ("A Author - Journal without year", None),
+            ("", None),
+            # Multiple years — should return first
+            ("2020 work extended in 2023", 2020),
+            # Year embedded in a DOI-like string — must still work
+            ("A Author - Proc. ICML 2022, pages 100", 2022),
+        ],
+    )
     def test_parse_year(self, meta, expected):
         assert _parse_year_from_meta(meta) == expected
 
@@ -48,23 +51,21 @@ class TestParseYearFromMeta:
 
 @pytest.mark.unit
 class TestParseAuthorsFromMeta:
-    @pytest.mark.parametrize("meta,expected", [
-        # Standard case
-        ("Alice Smith, Bob Jones - Nature, 2023 - Publisher",
-         ["Alice Smith", "Bob Jones"]),
-        # Single author
-        ("Georg Martius - ICML, 2022",
-         ["Georg Martius"]),
-        # No dash at all — entire string treated as author part
-        ("Alice Smith, Bob Jones",
-         ["Alice Smith", "Bob Jones"]),
-        # Trailing ellipsis from Scholar abbreviation
-        ("A Author, B Author… - Journal, 2023",
-         ["A Author", "B Author"]),
-        # Three authors
-        ("X One, Y Two, Z Three - Venue, 2020",
-         ["X One", "Y Two", "Z Three"]),
-    ])
+    @pytest.mark.parametrize(
+        "meta,expected",
+        [
+            # Standard case
+            ("Alice Smith, Bob Jones - Nature, 2023 - Publisher", ["Alice Smith", "Bob Jones"]),
+            # Single author
+            ("Georg Martius - ICML, 2022", ["Georg Martius"]),
+            # No dash at all — entire string treated as author part
+            ("Alice Smith, Bob Jones", ["Alice Smith", "Bob Jones"]),
+            # Trailing ellipsis from Scholar abbreviation
+            ("A Author, B Author… - Journal, 2023", ["A Author", "B Author"]),
+            # Three authors
+            ("X One, Y Two, Z Three - Venue, 2020", ["X One", "Y Two", "Z Three"]),
+        ],
+    )
     def test_parse_authors(self, meta, expected):
         assert _parse_authors_from_meta(meta) == expected
 

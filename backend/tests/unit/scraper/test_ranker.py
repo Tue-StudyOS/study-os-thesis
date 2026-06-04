@@ -1,7 +1,7 @@
 """Unit tests for RecencyPaperRanker."""
 
-import math
 from datetime import datetime, timedelta, timezone
+from itertools import pairwise
 from types import SimpleNamespace
 
 import pytest
@@ -53,7 +53,7 @@ class TestRecencyScore:
     def test_score_is_monotonically_decreasing_with_age(self):
         dates = [datetime.now(timezone.utc) - timedelta(days=d) for d in [0, 30, 90, 180, 365, 730]]
         scores = [self.ranker.compute_recency_score(d) for d in dates]
-        for earlier, later in zip(scores, scores[1:]):
+        for earlier, later in pairwise(scores):
             assert earlier > later
 
     def test_custom_half_life_respected(self):

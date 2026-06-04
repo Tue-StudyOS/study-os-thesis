@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -42,15 +42,18 @@ def _make_candidate(**kwargs):
 
 @pytest.mark.unit
 class TestNormalizeTitle:
-    @pytest.mark.parametrize("raw,expected", [
-        ("  Hello, World!  ", "hello world"),
-        ("UPPER CASE", "upper case"),
-        ("multiple   spaces", "multiple spaces"),
-        ("Punctuation: (test) [here]", "punctuation test here"),
-        ("A Learning-Based Approach", "a learningbased approach"),
-        ("", ""),
-        ("already normalized", "already normalized"),
-    ])
+    @pytest.mark.parametrize(
+        "raw,expected",
+        [
+            ("  Hello, World!  ", "hello world"),
+            ("UPPER CASE", "upper case"),
+            ("multiple   spaces", "multiple spaces"),
+            ("Punctuation: (test) [here]", "punctuation test here"),
+            ("A Learning-Based Approach", "a learningbased approach"),
+            ("", ""),
+            ("already normalized", "already normalized"),
+        ],
+    )
     def test_normalize(self, raw, expected):
         assert DeduplicationService.normalize_title(raw) == expected
 
@@ -144,9 +147,7 @@ class TestFindDuplicate:
         self.repo.get_by_arxiv_id.return_value = None
         self.repo.get_by_doi.return_value = None
         self.repo.get_by_title_author.return_value = None
-        candidate = _make_candidate(
-            arxiv_id="0000.00000", doi="10.0000/x", authors=["Author A"]
-        )
+        candidate = _make_candidate(arxiv_id="0000.00000", doi="10.0000/x", authors=["Author A"])
 
         result = await self.svc.find_duplicate(candidate)
 
@@ -252,9 +253,7 @@ class TestMergeMetadata:
     async def test_multiple_fields_filled_in_single_update_call(self):
         existing = _make_paper(arxiv_id=None, doi=None, abstract=None)
         self.repo.update.return_value = existing
-        candidate = _make_candidate(
-            arxiv_id="2301.07041", doi="10.1234/x", abstract="Abstract text"
-        )
+        candidate = _make_candidate(arxiv_id="2301.07041", doi="10.1234/x", abstract="Abstract text")
 
         await self.svc.merge_metadata(existing, candidate)
 

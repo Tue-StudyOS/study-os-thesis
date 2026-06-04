@@ -40,18 +40,21 @@ def _candidate(**kwargs) -> PaperCandidate:
 
 @pytest.mark.unit
 class TestExtractArxivIdFromUrl:
-    @pytest.mark.parametrize("url,expected", [
-        ("https://arxiv.org/abs/2301.07041", "2301.07041"),
-        ("http://arxiv.org/abs/2301.07041", "2301.07041"),
-        ("https://arxiv.org/pdf/2301.07041v2", "2301.07041"),   # version stripped
-        ("https://arxiv.org/pdf/2301.07041v10", "2301.07041"),  # multi-digit version
-        ("https://arxiv.org/html/2301.07041v3", "2301.07041"),
-        ("https://arxiv.org/abs/1234.56789", "1234.56789"),     # 5-digit ID
-        ("https://example.com/paper", None),
-        ("https://google.com", None),
-        ("", None),
-        ("not a url at all", None),
-    ])
+    @pytest.mark.parametrize(
+        "url,expected",
+        [
+            ("https://arxiv.org/abs/2301.07041", "2301.07041"),
+            ("http://arxiv.org/abs/2301.07041", "2301.07041"),
+            ("https://arxiv.org/pdf/2301.07041v2", "2301.07041"),  # version stripped
+            ("https://arxiv.org/pdf/2301.07041v10", "2301.07041"),  # multi-digit version
+            ("https://arxiv.org/html/2301.07041v3", "2301.07041"),
+            ("https://arxiv.org/abs/1234.56789", "1234.56789"),  # 5-digit ID
+            ("https://example.com/paper", None),
+            ("https://google.com", None),
+            ("", None),
+            ("not a url at all", None),
+        ],
+    )
     def test_extract(self, url, expected):
         assert extract_arxiv_id_from_url(url) == expected
 
@@ -71,9 +74,7 @@ class TestArxivEnricher:
 
     @respx.mock
     async def test_happy_path_populates_all_fields(self):
-        respx.get("https://export.arxiv.org/api/query").mock(
-            return_value=httpx.Response(200, text=_VALID_XML)
-        )
+        respx.get("https://export.arxiv.org/api/query").mock(return_value=httpx.Response(200, text=_VALID_XML))
         with patch("asyncio.sleep"):
             paper = await self._enricher().enrich(_candidate(arxiv_id="2301.07041"))
 
@@ -86,22 +87,16 @@ class TestArxivEnricher:
 
     @respx.mock
     async def test_extracts_arxiv_id_from_source_url_when_not_set(self):
-        respx.get("https://export.arxiv.org/api/query").mock(
-            return_value=httpx.Response(200, text=_VALID_XML)
-        )
+        respx.get("https://export.arxiv.org/api/query").mock(return_value=httpx.Response(200, text=_VALID_XML))
         with patch("asyncio.sleep"):
-            paper = await self._enricher().enrich(
-                _candidate(arxiv_id=None, source_url="https://arxiv.org/abs/2301.07041")
-            )
+            paper = await self._enricher().enrich(_candidate(arxiv_id=None, source_url="https://arxiv.org/abs/2301.07041"))
 
         assert paper.arxiv_id == "2301.07041"
         assert paper.title != "Original Title"  # was populated from arXiv
 
     @respx.mock
     async def test_request_uses_correct_arxiv_api_url(self):
-        route = respx.get("https://export.arxiv.org/api/query").mock(
-            return_value=httpx.Response(200, text=_VALID_XML)
-        )
+        route = respx.get("https://export.arxiv.org/api/query").mock(return_value=httpx.Response(200, text=_VALID_XML))
         with patch("asyncio.sleep"):
             await self._enricher().enrich(_candidate(arxiv_id="2301.07041"))
 
@@ -110,9 +105,7 @@ class TestArxivEnricher:
 
     @respx.mock
     async def test_delay_applied_before_request(self):
-        respx.get("https://export.arxiv.org/api/query").mock(
-            return_value=httpx.Response(200, text=_VALID_XML)
-        )
+        respx.get("https://export.arxiv.org/api/query").mock(return_value=httpx.Response(200, text=_VALID_XML))
         sleep_calls = []
         with patch("asyncio.sleep", new=AsyncMock(side_effect=lambda s: sleep_calls.append(s))):
             await ArxivMetadataEnricher(rate_limit_delay=1.5).enrich(_candidate(arxiv_id="2301.07041"))
@@ -160,9 +153,7 @@ class TestArxivEnricher:
 
     @respx.mock
     async def test_429_twice_returns_unenriched_paper(self):
-        respx.get("https://export.arxiv.org/api/query").mock(
-            return_value=httpx.Response(429, headers={"Retry-After": "1"})
-        )
+        respx.get("https://export.arxiv.org/api/query").mock(return_value=httpx.Response(429, headers={"Retry-After": "1"}))
         with patch("asyncio.sleep"):
             paper = await self._enricher().enrich(_candidate(arxiv_id="2301.07041"))
 
@@ -187,18 +178,14 @@ class TestArxivEnricher:
 
     @respx.mock
     async def test_500_returns_unchanged(self):
-        respx.get("https://export.arxiv.org/api/query").mock(
-            return_value=httpx.Response(500)
-        )
+        respx.get("https://export.arxiv.org/api/query").mock(return_value=httpx.Response(500))
         with patch("asyncio.sleep"):
             paper = await self._enricher().enrich(_candidate(arxiv_id="2301.07041"))
         assert paper.title == "Original Title"
 
     @respx.mock
     async def test_network_error_returns_unchanged(self):
-        respx.get("https://export.arxiv.org/api/query").mock(
-            side_effect=httpx.ConnectError("connection refused")
-        )
+        respx.get("https://export.arxiv.org/api/query").mock(side_effect=httpx.ConnectError("connection refused"))
         with patch("asyncio.sleep"):
             paper = await self._enricher().enrich(_candidate(arxiv_id="2301.07041"))
         assert paper.title == "Original Title"
@@ -209,27 +196,21 @@ class TestArxivEnricher:
 
     @respx.mock
     async def test_malformed_xml_returns_unchanged(self):
-        respx.get("https://export.arxiv.org/api/query").mock(
-            return_value=httpx.Response(200, text="<this is not valid xml<<<")
-        )
+        respx.get("https://export.arxiv.org/api/query").mock(return_value=httpx.Response(200, text="<this is not valid xml<<<"))
         with patch("asyncio.sleep"):
             paper = await self._enricher().enrich(_candidate(arxiv_id="2301.07041"))
         assert paper.title == "Original Title"
 
     @respx.mock
     async def test_missing_entry_element_returns_unchanged(self):
-        respx.get("https://export.arxiv.org/api/query").mock(
-            return_value=httpx.Response(200, text=_NO_ENTRY_XML)
-        )
+        respx.get("https://export.arxiv.org/api/query").mock(return_value=httpx.Response(200, text=_NO_ENTRY_XML))
         with patch("asyncio.sleep"):
             paper = await self._enricher().enrich(_candidate(arxiv_id="2301.07041"))
         assert paper.title == "Original Title"
 
     @respx.mock
     async def test_entry_missing_summary_keeps_original_abstract(self):
-        respx.get("https://export.arxiv.org/api/query").mock(
-            return_value=httpx.Response(200, text=_MINIMAL_ENTRY_XML)
-        )
+        respx.get("https://export.arxiv.org/api/query").mock(return_value=httpx.Response(200, text=_MINIMAL_ENTRY_XML))
         paper = _candidate(arxiv_id="2301.07041", abstract="original abstract")
         with patch("asyncio.sleep"):
             result = await self._enricher().enrich(paper)
@@ -239,9 +220,7 @@ class TestArxivEnricher:
 
     @respx.mock
     async def test_canonical_source_url_always_set_on_success(self):
-        respx.get("https://export.arxiv.org/api/query").mock(
-            return_value=httpx.Response(200, text=_VALID_XML)
-        )
+        respx.get("https://export.arxiv.org/api/query").mock(return_value=httpx.Response(200, text=_VALID_XML))
         paper = _candidate(arxiv_id="2301.07041", source_url="https://scholar.google.com/old")
         with patch("asyncio.sleep"):
             result = await self._enricher().enrich(paper)
