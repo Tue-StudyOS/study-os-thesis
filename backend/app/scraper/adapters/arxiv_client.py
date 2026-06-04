@@ -130,12 +130,7 @@ class ArxivMetadataEnricher(PaperMetadataEnricher):
             except ValueError:
                 pass
 
-        arxiv_authors = [
-            (name_el.text or "").strip()
-            for author in entry.findall(f"{{{_ARXIV_NS}}}author")
-            for name_el in author.findall(f"{{{_ARXIV_NS}}}name")
-            if name_el.text
-        ]
+        arxiv_authors = [(name_el.text or "").strip() for author in entry.findall(f"{{{_ARXIV_NS}}}author") for name_el in author.findall(f"{{{_ARXIV_NS}}}name") if name_el.text]
         if arxiv_authors:
             paper.authors = arxiv_authors
 

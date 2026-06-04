@@ -94,10 +94,7 @@ class ScraperOrchestrator:
         llm_sem = asyncio.Semaphore(_LLM_CONCURRENCY)
 
         results = await asyncio.gather(
-            *[
-                self._process_candidate(candidate, researcher_id, arxiv_sem, llm_sem)
-                for candidate in candidates
-            ],
+            *[self._process_candidate(candidate, researcher_id, arxiv_sem, llm_sem) for candidate in candidates],
             return_exceptions=True,
         )
 
