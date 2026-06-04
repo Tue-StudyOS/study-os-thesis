@@ -9,6 +9,7 @@ Stage 5 - Score, deduplicate, and persist
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import datetime, timezone
 
@@ -17,6 +18,14 @@ from app.papers.domain import PaperCandidate, ResearcherInfo
 from app.papers.repository import PaperRepository, TagRepository
 from app.researchers.repository import ResearcherRepository
 from app.scraper.interfaces import LLMEnricher, PaperMetadataEnricher, PaperRanker, PaperSourceClient
+
+# Max concurrent arXiv fetches. The per-request 3s delay in ArxivMetadataEnricher
+# already enforces politeness; this caps how many are in-flight simultaneously.
+_ARXIV_CONCURRENCY = 5
+
+# Local Ollama processes one request at a time anyway — no benefit in parallelism,
+# and flooding it causes timeouts. Keep LLM calls sequential.
+_LLM_CONCURRENCY = 1
 
 _logger = logging.getLogger(__name__)
 
@@ -81,23 +90,27 @@ class ScraperOrchestrator:
             researcher.name,
         )
 
+        arxiv_sem = asyncio.Semaphore(_ARXIV_CONCURRENCY)
+        llm_sem = asyncio.Semaphore(_LLM_CONCURRENCY)
+
+        results = await asyncio.gather(
+            *[
+                self._process_candidate(candidate, researcher_id, arxiv_sem, llm_sem)
+                for candidate in candidates
+            ],
+            return_exceptions=True,
+        )
+
         stored = 0
         skipped = 0
         errors = 0
-
-        for candidate in candidates:
-            try:
-                stored_one, skipped_one = await self._process_candidate(candidate, researcher_id)
-                stored += stored_one
-                skipped += skipped_one
-            except Exception as exc:
+        for r in results:
+            if isinstance(r, BaseException):
                 errors += 1
-                _logger.warning(
-                    "scraper.candidate_error title=%r error=%s",
-                    candidate.title[:80],
-                    exc,
-                    exc_info=True,
-                )
+                _logger.warning("scraper.candidate_error %s", r, exc_info=r)
+            else:
+                stored += r[0]
+                skipped += r[1]
 
         await self._paper_repo.commit()
         await self._researcher_repo.commit()
@@ -113,18 +126,23 @@ class ScraperOrchestrator:
         _logger.info("scraper.complete %s", result)
         return result
 
-    async def _process_candidate(self, candidate: PaperCandidate, researcher_id: int) -> tuple[int, int]:
+    async def _process_candidate(
+        self,
+        candidate: PaperCandidate,
+        researcher_id: int,
+        arxiv_sem: asyncio.Semaphore,
+        llm_sem: asyncio.Semaphore,
+    ) -> tuple[int, int]:
         """Process a single candidate. Returns (stored, skipped) counts."""
 
-        # Stage 3: ArXiv metadata enrichment
-        candidate = await self._arxiv.enrich(candidate)
+        # Stage 3: ArXiv metadata enrichment (bounded concurrency)
+        async with arxiv_sem:
+            candidate = await self._arxiv.enrich(candidate)
 
         # Stage 5a: Dedup check
         existing = await self._dedup.find_duplicate(candidate)
         if existing is not None:
-            # Merge any new fields we now know
             await self._dedup.merge_metadata(existing, candidate)
-            # Ensure this researcher is linked even if the paper existed before
             await self._researcher_repo.link_paper(researcher_id, existing.id)
             _logger.debug(
                 "scraper.paper_skipped title=%r (duplicate paper_id=%d)",
@@ -133,14 +151,15 @@ class ScraperOrchestrator:
             )
             return 0, 1
 
-        # Stage 4: LLM enrichment (only possible with an abstract)
+        # Stage 4: LLM enrichment (sequential — Ollama handles one at a time)
         summary: str | None = None
         tags: list[str] = []
         enriched_at: datetime | None = None
 
         if candidate.abstract:
-            summary = await self._llm.summarize(candidate.title, candidate.abstract)
-            tags = await self._llm.generate_tags(candidate.title, candidate.abstract)
+            async with llm_sem:
+                summary = await self._llm.summarize(candidate.title, candidate.abstract)
+                tags = await self._llm.generate_tags(candidate.title, candidate.abstract)
             enriched_at = datetime.now(timezone.utc)
 
         # Stage 5b: Compute scores
