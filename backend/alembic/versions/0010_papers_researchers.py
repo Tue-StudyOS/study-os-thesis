@@ -133,6 +133,7 @@ def upgrade() -> None:
     op.execute("ALTER TYPE job_type ADD VALUE IF NOT EXISTS 'scrape_chair'")
     op.execute("ALTER TYPE job_type ADD VALUE IF NOT EXISTS 'scrape_researcher'")
     op.execute("ALTER TYPE job_type ADD VALUE IF NOT EXISTS 'enrich_paper'")
+    op.execute("ALTER TYPE job_type ADD VALUE IF NOT EXISTS 'ingest_single_paper'")
 
 
 def downgrade() -> None:

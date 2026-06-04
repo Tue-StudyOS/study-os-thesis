@@ -12,7 +12,7 @@ from app.jobs.deps import JobServiceDep
 from app.models import User, UserRole
 from app.models.job import JobType
 from app.scraper.deps import ChairRepoDep
-from app.scraper.schemas import ScrapeChairRequest, ScrapeRunResponse
+from app.scraper.schemas import IngestPaperRequest, ScrapeChairRequest, ScrapeRunResponse
 
 router = APIRouter(prefix="/api/scraper", tags=["scraper"])
 
@@ -59,6 +59,37 @@ async def run_chair_scrape(
         "chair_id": chair_id,
         "message": f"Scrape job dispatched for chair '{chair.name}'",
     }
+
+
+@router.post(
+    "/paper",
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def ingest_paper(
+    body: IngestPaperRequest,
+    _admin: AdminDep,
+    job_service: JobServiceDep,
+) -> dict:
+    """Fetch, enrich, and store a single paper by arXiv ID.
+
+    Accepts an arXiv ID (e.g. "2301.07041") and optionally links the paper
+    to a researcher. Returns immediately with a job_id; the actual fetch and
+    LLM enrichment run in the background worker.
+
+    If the paper already exists it is returned without re-enriching it
+    (use POST /api/scraper/enrich/{paper_id}?force=true to force re-enrichment).
+    """
+    from app.scraper.tasks import ingest_single_paper
+
+    job = await job_service.create_job(
+        type=JobType.ingest_single_paper,
+        user_id=_admin.id,
+        input_data={"arxiv_id": body.arxiv_id, "researcher_id": body.researcher_id},
+    )
+    task_result = ingest_single_paper.delay(body.arxiv_id, body.researcher_id, _admin.id, str(job.id))
+    await job_service.set_celery_task_id(job.id, task_result.id)
+
+    return {"job_id": str(job.id), "arxiv_id": body.arxiv_id}
 
 
 @router.post(

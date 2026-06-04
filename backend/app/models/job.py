@@ -21,6 +21,7 @@ class JobType(str, enum.Enum):
     scrape_chair = "scrape_chair"
     scrape_researcher = "scrape_researcher"
     enrich_paper = "enrich_paper"
+    ingest_single_paper = "ingest_single_paper"
 
 
 class JobStatus(str, enum.Enum):

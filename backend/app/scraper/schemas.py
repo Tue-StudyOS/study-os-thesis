@@ -16,3 +16,13 @@ class ScrapeRunResponse(BaseModel):
     job_id: str
     chair_id: int
     message: str
+
+
+class IngestPaperRequest(BaseModel):
+    """Ingest a single paper by arXiv ID."""
+
+    arxiv_id: str = Field(..., description="arXiv paper ID, e.g. '2301.07041'")
+    researcher_id: int | None = Field(
+        None,
+        description="Link the paper to this researcher. If omitted the paper is stored without a researcher association.",
+    )
