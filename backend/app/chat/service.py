@@ -210,6 +210,13 @@ class ChatService:
     async def list_sessions(self, user_id: int) -> list[ChatSession]:
         return await self._chat_repo.list_sessions(user_id)
 
+    async def validate_session_ownership(self, session_id: int, user_id: int) -> None:
+        chat = await self._chat_repo.get_session(session_id)
+        if not chat:
+            raise NotFoundException("Session", session_id)
+        if chat.user_id != user_id:
+            raise ForbiddenException("You do not own this session")
+
     async def get_messages(self, session_id: int, user_id: int) -> list[ChatMessage]:
         chat = await self._chat_repo.get_session(session_id)
         if not chat:

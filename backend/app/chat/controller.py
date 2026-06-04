@@ -49,13 +49,8 @@ async def send_message(
     """Accept a user message and dispatch the agent loop to a background worker."""
     from app.chat.tasks import process_chat_turn
 
-    # Validate session ownership and persist user message eagerly
-    # (The service will validate ownership)
-    chat = await chat_service._chat_repo.get_session(session_id)
-    if not chat or chat.user_id != user.id:
-        from app.exceptions import NotFoundException
-
-        raise NotFoundException("Session", session_id)
+    # Validate session ownership before dispatching the agent loop.
+    await chat_service.validate_session_ownership(session_id, user.id)
 
     job = await job_service.create_job(
         type=JobType.chat_turn,
