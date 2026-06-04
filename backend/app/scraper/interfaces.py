@@ -40,6 +40,11 @@ class PaperMetadataEnricher(ABC):
         """Return the candidate with abstract, exact date, canonical IDs filled in."""
         ...
 
+    @abstractmethod
+    async def enrich_many(self, papers: list[PaperCandidate]) -> list[PaperCandidate]:
+        """Return candidates with metadata filled in where available."""
+        ...
+
 
 class ResearcherDiscoveryClient(ABC):
     """Discovers team members / researchers from a chair website. (Phase 2)"""

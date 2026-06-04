@@ -44,7 +44,11 @@ async def _scrape_chair_work(chair_id: int, user_id: int, settings: Any) -> dict
             request_delay=settings.scraper_scholar_delay,
             max_pages=settings.scraper_scholar_max_pages,
         )
-        arxiv_enricher = ArxivMetadataEnricher(rate_limit_delay=settings.scraper_arxiv_delay)
+        arxiv_enricher = ArxivMetadataEnricher(
+            redis_url=settings.redis_url,
+            rate_limit_delay=settings.scraper_arxiv_delay,
+            batch_size=settings.scraper_arxiv_batch_size,
+        )
         llm_client = build_chat_client(settings)
         llm_enricher = LLMPaperEnricher(llm_client, settings.effective_enrichment_model)
         ranker = RecencyPaperRanker(half_life_days=settings.scraper_recency_half_life)
@@ -148,7 +152,11 @@ async def _scrape_researcher_work(researcher_id: int, settings: Any) -> dict:
             request_delay=settings.scraper_scholar_delay,
             max_pages=settings.scraper_scholar_max_pages,
         )
-        arxiv_enricher = ArxivMetadataEnricher(rate_limit_delay=settings.scraper_arxiv_delay)
+        arxiv_enricher = ArxivMetadataEnricher(
+            redis_url=settings.redis_url,
+            rate_limit_delay=settings.scraper_arxiv_delay,
+            batch_size=settings.scraper_arxiv_batch_size,
+        )
         llm_client = build_chat_client(settings)
         llm_enricher = LLMPaperEnricher(llm_client, settings.effective_enrichment_model)
         ranker = RecencyPaperRanker(half_life_days=settings.scraper_recency_half_life)
@@ -377,7 +385,11 @@ async def _ingest_single_paper_work(
     from app.scraper.adapters.llm_enricher import LLMPaperEnricher
     from app.scraper.adapters.ranker import RecencyPaperRanker
 
-    arxiv_enricher = ArxivMetadataEnricher(rate_limit_delay=0.0)
+    arxiv_enricher = ArxivMetadataEnricher(
+        redis_url=settings.redis_url,
+        rate_limit_delay=settings.scraper_arxiv_delay,
+        batch_size=settings.scraper_arxiv_batch_size,
+    )
     ranker = RecencyPaperRanker(half_life_days=settings.scraper_recency_half_life)
 
     # Seed a minimal candidate so the arXiv enricher has an ID to work with

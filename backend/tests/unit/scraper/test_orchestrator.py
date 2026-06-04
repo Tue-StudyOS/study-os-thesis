@@ -12,7 +12,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from app.papers.domain import PaperCandidate
-from app.scraper.orchestrator import ScraperOrchestrator, _ARXIV_CONCURRENCY, _LLM_CONCURRENCY
+from app.scraper.orchestrator import ScraperOrchestrator, _LLM_CONCURRENCY
 
 
 # ---------------------------------------------------------------------------
@@ -73,6 +73,7 @@ def _build_orchestrator(**overrides):
         return p
 
     o._arxiv.enrich.side_effect = _identity
+    o._arxiv.enrich_many.side_effect = lambda papers: papers
     o._llm.summarize.return_value = "A short summary."
     o._llm.generate_tags.return_value = ["machine learning"]
     o._ranker.compute_recency_score.return_value = 0.8
@@ -214,17 +215,17 @@ class TestScrapeForResearcher:
     async def test_candidate_exception_counted_as_error(self):
         o = _build_orchestrator()
         o._source.fetch_papers.return_value = [_candidate("Bad"), _candidate("Good")]
-        # First enrich raises, second succeeds
+        # First LLM call raises, second succeeds
         call_count = 0
 
-        async def enrich_side_effect(paper):
+        async def summarize_side_effect(title, abstract):
             nonlocal call_count
             call_count += 1
             if call_count == 1:
-                raise RuntimeError("arXiv down")
-            return paper
+                raise RuntimeError("LLM down")
+            return "summary"
 
-        o._arxiv.enrich.side_effect = enrich_side_effect
+        o._llm.summarize.side_effect = summarize_side_effect
 
         result = await o.scrape_for_researcher(1)
 
@@ -281,8 +282,8 @@ class TestScrapeForResearcher:
 
 @pytest.mark.unit
 class TestConcurrency:
-    async def test_all_candidates_processed(self):
-        """Verify all candidates still pass through arXiv enrichment."""
+    async def test_arxiv_batch_enrichment_called_once(self):
+        """Verify all candidates pass through one batched arXiv enrichment call."""
         o = _build_orchestrator()
         n = 10
         candidates = [_candidate(f"Paper {i}") for i in range(n)]
@@ -290,32 +291,7 @@ class TestConcurrency:
 
         await o.scrape_for_researcher(1)
 
-        assert o._arxiv.enrich.await_count == n
-
-    async def test_arxiv_enrichment_is_parallel_but_bounded(self):
-        """Network enrichment may overlap, up to the configured cap."""
-        o = _build_orchestrator()
-        n = _ARXIV_CONCURRENCY * 3
-        candidates = [_candidate(f"P{i}") for i in range(n)]
-        o._source.fetch_papers.return_value = candidates
-
-        max_concurrent = 0
-        current = 0
-
-        async def counting_enrich(paper):
-            nonlocal max_concurrent, current
-            current += 1
-            max_concurrent = max(max_concurrent, current)
-            await asyncio.sleep(0)
-            current -= 1
-            return paper
-
-        o._arxiv.enrich.side_effect = counting_enrich
-
-        await o.scrape_for_researcher(1)
-
-        assert max_concurrent <= _ARXIV_CONCURRENCY
-        assert max_concurrent > 1
+        o._arxiv.enrich_many.assert_awaited_once_with(candidates)
 
     async def test_llm_calls_are_sequential(self):
         """LLM calls must never overlap."""
@@ -391,14 +367,14 @@ class TestConcurrency:
 
         call_count = 0
 
-        async def sometimes_fail(paper):
+        async def sometimes_fail(title, abstract):
             nonlocal call_count
             call_count += 1
             if call_count % 3 == 0:  # fail every 3rd paper
                 raise ConnectionError("timeout")
-            return paper
+            return "summary"
 
-        o._arxiv.enrich.side_effect = sometimes_fail
+        o._llm.summarize.side_effect = sometimes_fail
 
         result = await o.scrape_for_researcher(1)
 

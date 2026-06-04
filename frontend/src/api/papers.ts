@@ -1,5 +1,6 @@
 import { api } from "./client";
-import { pollJob, type Job, type PollJobOptions } from "./jobs";
+import { waitForJobTree } from "./jobEvents";
+import type { Job } from "./jobs";
 
 export interface Paper {
   id: number;
@@ -33,22 +34,6 @@ export function listPapers(params: {
   return api<Paper[]>(`/api/papers?${q}`);
 }
 
-interface DispatchedScrapeJob {
-  job_id: string;
-}
-
-function dispatchedScrapeJobs(job: Job): DispatchedScrapeJob[] {
-  const dispatched = job.result_data?.dispatched;
-  if (!Array.isArray(dispatched)) return [];
-  return dispatched.filter(
-    (item): item is DispatchedScrapeJob =>
-      typeof item === "object" &&
-      item !== null &&
-      "job_id" in item &&
-      typeof item.job_id === "string",
-  );
-}
-
 export async function triggerScrape(
   chairId: number,
   opts: { since_days?: number; max_results?: number } = {},
@@ -57,14 +42,5 @@ export async function triggerScrape(
     method: "POST",
     json: { since_days: opts.since_days ?? 365, max_results: opts.max_results ?? 20 },
   });
-  const pollOptions: PollJobOptions = { intervalMs: 2000, maxPolls: 300 };
-  const parent = await pollJob(job_id, pollOptions);
-  if (parent.status !== "success") return parent;
-
-  const childJobs = dispatchedScrapeJobs(parent);
-  if (childJobs.length === 0) return parent;
-
-  const children = await Promise.all(childJobs.map((job) => pollJob(job.job_id, pollOptions)));
-  const failedChild = children.find((job) => job.status === "failure");
-  return failedChild ?? parent;
+  return waitForJobTree(job_id);
 }

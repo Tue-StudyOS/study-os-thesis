@@ -39,6 +39,7 @@ def _fake_settings():
         scraper_scholar_delay=0.0,
         scraper_scholar_max_pages=1,
         scraper_arxiv_delay=0.0,
+        scraper_arxiv_batch_size=50,
         scraper_max_results=5,
         scraper_since_days=365,
         scraper_recency_half_life=180,
@@ -302,11 +303,12 @@ class TestIngestSinglePaperWork:
             patch("app.papers.repository.TagRepository", return_value=tag_repo),
             patch("app.researchers.repository.ResearcherRepository", return_value=researcher_repo),
             patch("app.papers.dedup.DeduplicationService", return_value=dedup),
-            patch("app.scraper.adapters.arxiv_client.ArxivMetadataEnricher", return_value=arxiv_enricher),
+            patch("app.scraper.adapters.arxiv_client.ArxivMetadataEnricher", return_value=arxiv_enricher) as arxiv_cls,
             patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
         ):
             result = await _ingest_single_paper_work("2301.07041", None, _fake_settings())
 
+        arxiv_cls.assert_called_once_with(redis_url="redis://localhost:6379/0", rate_limit_delay=0.0, batch_size=50)
         assert result["created"] is False
         assert result["paper_id"] == 42
         paper_repo.create.assert_not_awaited()

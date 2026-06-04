@@ -19,9 +19,8 @@ from app.papers.repository import PaperRepository, TagRepository
 from app.researchers.repository import ResearcherRepository
 from app.scraper.interfaces import LLMEnricher, PaperMetadataEnricher, PaperRanker, PaperSourceClient
 
-# Network/LLM enrichment can run in parallel, but DB writes must stay sequential
-# because SQLAlchemy AsyncSession is not safe for concurrent flushes.
-_ARXIV_CONCURRENCY = 5
+# LLM enrichment can run in parallel, but DB writes must stay sequential because
+# SQLAlchemy AsyncSession is not safe for concurrent flushes.
 _LLM_CONCURRENCY = 1
 
 _logger = logging.getLogger(__name__)
@@ -87,11 +86,15 @@ class ScraperOrchestrator:
             researcher.name,
         )
 
-        arxiv_sem = asyncio.Semaphore(_ARXIV_CONCURRENCY)
+        try:
+            candidates = await self._arxiv.enrich_many(candidates)
+        except Exception as exc:
+            _logger.warning("scraper.arxiv_batch_error %s", exc, exc_info=exc)
+
         llm_sem = asyncio.Semaphore(_LLM_CONCURRENCY)
 
         enriched_results = await asyncio.gather(
-            *[self._enrich_candidate(candidate, arxiv_sem, llm_sem) for candidate in candidates],
+            *[self._enrich_candidate(candidate, llm_sem) for candidate in candidates],
             return_exceptions=True,
         )
 
@@ -140,14 +143,9 @@ class ScraperOrchestrator:
     async def _enrich_candidate(
         self,
         candidate: PaperCandidate,
-        arxiv_sem: asyncio.Semaphore,
         llm_sem: asyncio.Semaphore,
     ) -> tuple[PaperCandidate, str | None, list[str], datetime | None, float]:
-        """Run network-bound enrichment without touching the DB session."""
-
-        # Stage 3: ArXiv metadata enrichment (bounded concurrency)
-        async with arxiv_sem:
-            candidate = await self._arxiv.enrich(candidate)
+        """Run LLM enrichment and ranking without touching the DB session."""
 
         # Stage 4: LLM enrichment (sequential — Ollama handles one at a time)
         summary: str | None = None
