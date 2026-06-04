@@ -16,7 +16,13 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
-async def _scrape_chair_work(chair_id: int, user_id: int, settings: Any) -> dict:
+async def _scrape_chair_work(
+    chair_id: int,
+    user_id: int,
+    settings: Any,
+    max_results: int | None = None,
+    since_days: int | None = None,
+) -> dict:
     from app.chairs.repository import ChairRepository
     from app.db import SessionLocal
     from app.exceptions import NotFoundException
@@ -67,8 +73,8 @@ async def _scrape_chair_work(chair_id: int, user_id: int, settings: Any) -> dict
             paper_repo=paper_repo,
             tag_repo=tag_repo,
             researcher_repo=researcher_repo,
-            max_results=settings.scraper_max_results,
-            since_days=settings.scraper_since_days,
+            max_results=max_results or settings.scraper_max_results,
+            since_days=since_days or settings.scraper_since_days,
         )
 
         researcher_ids = await orchestrator.ensure_researchers_for_chair(chair_id, chair.professor_name)
@@ -86,7 +92,7 @@ async def _scrape_chair_work(chair_id: int, user_id: int, settings: Any) -> dict
             )
             await session.commit()
 
-            task_result = scrape_researcher_papers.delay(rid, user_id, str(job.id))
+            task_result = scrape_researcher_papers.delay(rid, user_id, str(job.id), max_results, since_days)
 
             # Back-patch the celery task ID onto the job row
             job = await job_repo.get_by_id(job.id)
@@ -112,7 +118,14 @@ async def _scrape_chair_work(chair_id: int, user_id: int, settings: Any) -> dict
     soft_time_limit=120,
     time_limit=180,
 )
-def scrape_chair_papers(self: Any, chair_id: int, user_id: int, job_id: str) -> dict:
+def scrape_chair_papers(
+    self: Any,
+    chair_id: int,
+    user_id: int,
+    job_id: str,
+    max_results: int | None = None,
+    since_days: int | None = None,
+) -> dict:
     """Resolve researchers for a chair and fan-out scraper tasks."""
     from app.config import get_settings
 
@@ -124,7 +137,7 @@ def scrape_chair_papers(self: Any, chair_id: int, user_id: int, job_id: str) -> 
         job_id=job_id,
         user_id=user_id,
         redis_url=settings.redis_url,
-        work=lambda: _scrape_chair_work(chair_id, user_id, settings),
+        work=lambda: _scrape_chair_work(chair_id, user_id, settings, max_results, since_days),
         success_event="scrape_chair_complete",
     )
 
@@ -134,7 +147,12 @@ def scrape_chair_papers(self: Any, chair_id: int, user_id: int, job_id: str) -> 
 # ---------------------------------------------------------------------------
 
 
-async def _scrape_researcher_work(researcher_id: int, settings: Any) -> dict:
+async def _scrape_researcher_work(
+    researcher_id: int,
+    settings: Any,
+    max_results: int | None = None,
+    since_days: int | None = None,
+) -> dict:
     from app.db import SessionLocal
     from app.llm.factory import build_chat_client
     from app.papers.dedup import DeduplicationService
@@ -175,8 +193,8 @@ async def _scrape_researcher_work(researcher_id: int, settings: Any) -> dict:
             paper_repo=paper_repo,
             tag_repo=tag_repo,
             researcher_repo=researcher_repo,
-            max_results=settings.scraper_max_results,
-            since_days=settings.scraper_since_days,
+            max_results=max_results or settings.scraper_max_results,
+            since_days=since_days or settings.scraper_since_days,
         )
 
         result = await orchestrator.scrape_for_researcher(researcher_id)
@@ -192,7 +210,14 @@ async def _scrape_researcher_work(researcher_id: int, settings: Any) -> dict:
     soft_time_limit=600,
     time_limit=660,
 )
-def scrape_researcher_papers(self: Any, researcher_id: int, user_id: int, job_id: str) -> dict:
+def scrape_researcher_papers(
+    self: Any,
+    researcher_id: int,
+    user_id: int,
+    job_id: str,
+    max_results: int | None = None,
+    since_days: int | None = None,
+) -> dict:
     """Run the full scrape + enrich + store pipeline for one researcher."""
     from app.config import get_settings
 
@@ -204,7 +229,7 @@ def scrape_researcher_papers(self: Any, researcher_id: int, user_id: int, job_id
         job_id=job_id,
         user_id=user_id,
         redis_url=settings.redis_url,
-        work=lambda: _scrape_researcher_work(researcher_id, settings),
+        work=lambda: _scrape_researcher_work(researcher_id, settings, max_results, since_days),
         success_event="scrape_researcher_complete",
     )
 

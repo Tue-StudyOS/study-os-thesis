@@ -52,7 +52,7 @@ async def run_chair_scrape(
             "max_results": body.max_results,
         },
     )
-    task_result = scrape_chair_papers.delay(chair_id, current_user.id, str(job.id))
+    task_result = scrape_chair_papers.delay(chair_id, current_user.id, str(job.id), body.max_results, body.since_days)
     await job_service.set_celery_task_id(job.id, task_result.id)
 
     return {

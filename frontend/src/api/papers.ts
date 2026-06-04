@@ -38,9 +38,13 @@ export async function triggerScrape(
   chairId: number,
   opts: { since_days?: number; max_results?: number } = {},
 ): Promise<Job> {
+  const body: { since_days?: number; max_results?: number } = {};
+  if (opts.since_days !== undefined) body.since_days = opts.since_days;
+  if (opts.max_results !== undefined) body.max_results = opts.max_results;
+
   const { job_id } = await api<{ job_id: string }>(`/api/scraper/run/${chairId}`, {
     method: "POST",
-    json: { since_days: opts.since_days ?? 365, max_results: opts.max_results ?? 20 },
+    json: body,
   });
   return waitForJobTree(job_id);
 }

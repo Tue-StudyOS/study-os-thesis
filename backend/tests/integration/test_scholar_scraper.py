@@ -108,6 +108,27 @@ def _search_entry(title: str, authors: str, venue: str, year: int, url: str = ""
         </div>""")
 
 
+def _author_search_page(profile_id: str | None = None, name: str = "Georg Martius") -> str:
+    profile = (
+        textwrap.dedent(f"""\
+            <div class="gsc_1usr gs_scl">
+              <div class="gs_ai_t">
+                <h3 class="gs_ai_name"><a href="/citations?user={profile_id}&hl=en">{name}</a></h3>
+                <div class="gs_ai_aff">University</div>
+              </div>
+            </div>""")
+        if profile_id
+        else ""
+    )
+    return textwrap.dedent(f"""\
+        <!DOCTYPE html>
+        <html>
+        <body>
+        {profile}
+        </body>
+        </html>""")
+
+
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -291,19 +312,49 @@ class TestSearchFallback:
         entry = _search_entry("A Nice Paper", "G Martius, Co Author", "ICML", CURRENT_YEAR)
         page_html = _search_results_page(entry, has_next=False)
 
+        httpserver.expect_request("/citations").respond_with_data(_author_search_page(), content_type="text/html")
         httpserver.expect_request("/scholar").respond_with_data(page_html, content_type="text/html")
 
         import app.scraper.adapters.scholar_scraper as mod
 
         orig = mod._SCHOLAR_SEARCH
+        orig_author_search = mod._SCHOLAR_AUTHOR_SEARCH
         mod._SCHOLAR_SEARCH = f"http://localhost:{httpserver.port}/scholar?q={{query}}&as_ylo={{year}}"
+        mod._SCHOLAR_AUTHOR_SEARCH = f"http://localhost:{httpserver.port}/citations?view_op=search_authors&mauthors={{query}}"
         try:
             papers = await scraper.fetch_papers(self._researcher(), max_results=10, since_days=365)
         finally:
             mod._SCHOLAR_SEARCH = orig
+            mod._SCHOLAR_AUTHOR_SEARCH = orig_author_search
 
         assert len(papers) == 1
         assert papers[0].title == "A Nice Paper"
+
+    async def test_discovers_profile_id_then_scrapes_profile(self, httpserver: HTTPServer, scraper):
+        profile_rows = "\n".join([_paper_row(f"Profile Paper {i}", "G Martius", "ICML", CURRENT_YEAR) for i in range(12)])
+        httpserver.expect_request("/citations", query_string="view_op=search_authors&mauthors=Georg+Martius").respond_with_data(
+            _author_search_page("DISCOVERED", "Georg Martius"),
+            content_type="text/html",
+        )
+        httpserver.expect_request("/citations", query_string="user=DISCOVERED&sortby=pubdate").respond_with_data(
+            _profile_page(profile_rows, show_more=False),
+            content_type="text/html",
+        )
+
+        import app.scraper.adapters.scholar_scraper as mod
+
+        orig_profile = mod._SCHOLAR_PROFILE
+        orig_author_search = mod._SCHOLAR_AUTHOR_SEARCH
+        mod._SCHOLAR_PROFILE = f"http://localhost:{httpserver.port}/citations?user={{user_id}}&sortby=pubdate"
+        mod._SCHOLAR_AUTHOR_SEARCH = f"http://localhost:{httpserver.port}/citations?view_op=search_authors&mauthors={{query}}"
+        try:
+            papers = await scraper.fetch_papers(self._researcher(), max_results=50, since_days=3650)
+        finally:
+            mod._SCHOLAR_PROFILE = orig_profile
+            mod._SCHOLAR_AUTHOR_SEARCH = orig_author_search
+
+        assert len(papers) == 12
+        assert papers[0].title == "Profile Paper 0"
 
     async def test_search_result_authors_parsed(self, httpserver: HTTPServer, scraper):
         entry = _search_entry(
@@ -313,16 +364,20 @@ class TestSearchFallback:
             CURRENT_YEAR,
         )
         page_html = _search_results_page(entry)
+        httpserver.expect_request("/citations").respond_with_data(_author_search_page(), content_type="text/html")
         httpserver.expect_request("/scholar").respond_with_data(page_html, content_type="text/html")
 
         import app.scraper.adapters.scholar_scraper as mod
 
         orig = mod._SCHOLAR_SEARCH
+        orig_author_search = mod._SCHOLAR_AUTHOR_SEARCH
         mod._SCHOLAR_SEARCH = f"http://localhost:{httpserver.port}/scholar?q={{query}}&as_ylo={{year}}"
+        mod._SCHOLAR_AUTHOR_SEARCH = f"http://localhost:{httpserver.port}/citations?view_op=search_authors&mauthors={{query}}"
         try:
             papers = await scraper.fetch_papers(self._researcher(), max_results=5, since_days=365)
         finally:
             mod._SCHOLAR_SEARCH = orig
+            mod._SCHOLAR_AUTHOR_SEARCH = orig_author_search
 
         assert "Alice Smith" in papers[0].authors
         assert "Bob Jones" in papers[0].authors
@@ -334,11 +389,14 @@ class TestSearchFallback:
         import app.scraper.adapters.scholar_scraper as mod
 
         orig = mod._SCHOLAR_SEARCH
+        orig_author_search = mod._SCHOLAR_AUTHOR_SEARCH
         # Point at a port that's definitely not listening
         mod._SCHOLAR_SEARCH = "http://localhost:19999/scholar?q={query}&as_ylo={year}"
+        mod._SCHOLAR_AUTHOR_SEARCH = "http://localhost:19999/citations?view_op=search_authors&mauthors={query}"
         try:
             papers = await scraper.fetch_papers(researcher, max_results=5, since_days=365)
         finally:
             mod._SCHOLAR_SEARCH = orig
+            mod._SCHOLAR_AUTHOR_SEARCH = orig_author_search
 
         assert papers == []

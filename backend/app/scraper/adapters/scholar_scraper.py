@@ -15,7 +15,7 @@ import asyncio
 import logging
 import re
 from datetime import datetime, timezone
-from urllib.parse import quote_plus
+from urllib.parse import parse_qs, quote_plus, urlparse
 
 from playwright.async_api import Browser, Page, async_playwright
 
@@ -28,6 +28,7 @@ _logger = logging.getLogger(__name__)
 # Google Scholar search URL — returns up to 10 results per page
 _SCHOLAR_SEARCH = "https://scholar.google.com/scholar?q={query}&as_ylo={year}"
 _SCHOLAR_PROFILE = "https://scholar.google.com/citations?user={user_id}&sortby=pubdate"
+_SCHOLAR_AUTHOR_SEARCH = "https://scholar.google.com/citations?view_op=search_authors&mauthors={query}"
 
 
 def _strip_leading_titles_for_search(name: str) -> str:
@@ -111,7 +112,16 @@ class ScholarPlaywrightScraper(PaperSourceClient):
             if researcher.google_scholar_id:
                 papers = await self._scrape_profile(page, researcher.google_scholar_id, max_results, since_days)
             else:
-                papers = await self._scrape_search(page, researcher.name, since_days, max_results)
+                scholar_id = await self._discover_profile_id(page, researcher.name, researcher.affiliation)
+                if scholar_id:
+                    _logger.info(
+                        "Scholar author search resolved researcher=%r to profile_id=%s",
+                        researcher.name,
+                        scholar_id,
+                    )
+                    papers = await self._scrape_profile(page, scholar_id, max_results, since_days)
+                else:
+                    papers = await self._scrape_search(page, researcher.name, since_days, max_results)
         except Exception as exc:
             _logger.warning(
                 "Scholar scrape failed for researcher=%r: %s",
@@ -133,6 +143,50 @@ class ScholarPlaywrightScraper(PaperSourceClient):
     # ------------------------------------------------------------------
     # Profile-based scraping (preferred — sorted by publication date)
     # ------------------------------------------------------------------
+
+    async def _discover_profile_id(
+        self,
+        page: Page,
+        name: str,
+        affiliation: str | None = None,
+    ) -> str | None:
+        search_name = _strip_leading_titles_for_search(name)
+        query = quote_plus(search_name or name)
+        url = _SCHOLAR_AUTHOR_SEARCH.format(query=query)
+
+        try:
+            await page.goto(url, wait_until="domcontentloaded", timeout=30_000)
+            await asyncio.sleep(self._delay)
+            profiles = page.locator(".gsc_1usr, .gs_ai_chpr")
+            profile_count = await profiles.count()
+
+            for i in range(profile_count):
+                profile = profiles.nth(i)
+                name_link = profile.locator("h3.gs_ai_name a, .gs_ai_name a").first
+                if await name_link.count() == 0:
+                    continue
+
+                profile_name = (await name_link.inner_text()).strip()
+                if search_name.lower() not in profile_name.lower() and profile_name.lower() not in search_name.lower():
+                    continue
+
+                if affiliation:
+                    affiliation_text = ""
+                    affiliation_el = profile.locator(".gs_ai_aff").first
+                    if await affiliation_el.count() > 0:
+                        affiliation_text = (await affiliation_el.inner_text()).strip().lower()
+                    if affiliation_text and affiliation.lower() not in affiliation_text:
+                        continue
+
+                href = await name_link.get_attribute("href") or ""
+                parsed = urlparse(href)
+                user = parse_qs(parsed.query).get("user")
+                if user and user[0]:
+                    return user[0]
+        except Exception as exc:
+            _logger.info("Scholar author profile lookup failed for researcher=%r: %s", name, exc)
+
+        return None
 
     async def _scrape_profile(
         self,

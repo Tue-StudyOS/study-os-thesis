@@ -70,6 +70,7 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/chairs" element={<ChairExplorer />} />
+          <Route path="/chairs/:chairParam" element={<ChairExplorer />} />
           <Route path="/chairs/:id/papers" element={<ChairPapers />} />
           <Route path="/proposals" element={<Proposals />} />
           <Route
