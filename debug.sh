@@ -151,6 +151,16 @@ setup() {
     info "Frontend dependencies up to date — skipping."
   fi
 
+  # -- Playwright browser --------------------------------------------------- #
+  local pw_marker="$BACKEND_DIR/.venv/.playwright-installed"
+  if [[ ! -f "$pw_marker" ]]; then
+    info "Installing Playwright Chromium browser..."
+    (cd "$BACKEND_DIR" && uv run playwright install chromium)
+    touch "$pw_marker"
+  else
+    info "Playwright Chromium up to date — skipping."
+  fi
+
   # -- Database migrations -------------------------------------------------- #
   local alembic_marker="$BACKEND_DIR/.venv/.alembic-ran"
   local migrations_dir="$BACKEND_DIR/alembic/versions"

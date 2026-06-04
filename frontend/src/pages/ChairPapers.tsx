@@ -247,17 +247,20 @@ export default function ChairPapers() {
 
             {/* Sync button */}
             {user && (
-              <div className="flex flex-col items-end gap-1">
+              <div className="flex flex-col items-end gap-1.5">
                 <button
                   onClick={handleSync}
                   disabled={syncState === "running"}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors disabled:opacity-70 disabled:cursor-not-allowed min-w-[130px] justify-center"
                 >
-                  <span
-                    className={`material-symbols-outlined text-[18px] ${syncState === "running" ? "animate-spin" : ""}`}
-                  >
-                    {syncState === "done" ? "check_circle" : "sync"}
-                  </span>
+                  {syncState === "running" ? (
+                    // Real CSS spinner — works regardless of icon font rendering
+                    <span className="w-4 h-4 rounded-full border-2 border-on-primary/30 border-t-on-primary animate-spin shrink-0" />
+                  ) : syncState === "done" ? (
+                    <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                  ) : (
+                    <span className="material-symbols-outlined text-[18px]">sync</span>
+                  )}
                   {syncState === "running" ? "Syncing…" : syncState === "done" ? "Synced" : "Sync papers"}
                 </button>
                 {syncState === "error" && syncError && (
@@ -266,6 +269,14 @@ export default function ChairPapers() {
               </div>
             )}
           </div>
+
+          {/* Sync progress banner */}
+          {syncState === "running" && (
+            <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-secondary-container text-on-secondary-container font-body-sm text-body-sm">
+              <span className="w-4 h-4 rounded-full border-2 border-on-secondary-container/30 border-t-on-secondary-container animate-spin shrink-0" />
+              Fetching papers from Google Scholar and arXiv — this can take a few minutes…
+            </div>
+          )}
 
           {/* Loading */}
           {loading && (
