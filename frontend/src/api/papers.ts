@@ -19,18 +19,25 @@ export interface Paper {
   tags: string[];
 }
 
+export interface PaginatedPapers {
+  items: Paper[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
 export function listPapers(params: {
   chair_id?: number;
   tag?: string;
   limit?: number;
   offset?: number;
-}): Promise<Paper[]> {
+}): Promise<PaginatedPapers> {
   const q = new URLSearchParams();
   if (params.chair_id !== undefined) q.set("chair_id", String(params.chair_id));
   if (params.tag) q.set("tag", params.tag);
   if (params.limit !== undefined) q.set("limit", String(params.limit));
   if (params.offset !== undefined) q.set("offset", String(params.offset));
-  return api<Paper[]>(`/api/papers?${q}`);
+  return api<PaginatedPapers>(`/api/papers?${q}`);
 }
 
 export async function triggerScrape(

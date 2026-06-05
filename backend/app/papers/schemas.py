@@ -56,3 +56,10 @@ class PaperOut(BaseModel):
             "tags": tag_names,
         }
         return cls.model_validate(data)
+
+
+class PaginatedPapersOut(BaseModel):
+    items: list[PaperOut]
+    total: int
+    limit: int
+    offset: int

@@ -275,6 +275,7 @@ export default function ChairExplorer() {
   const { chairParam } = useParams<{ chairParam: string }>();
   const [chairs, setChairs] = useState<Chair[]>([]);
   const [papers, setPapers] = useState<Paper[]>([]);
+  const [paperTotal, setPaperTotal] = useState(0);
   const [paperCountsByChair, setPaperCountsByChair] = useState<Record<number, number>>({});
   const [theses, setTheses] = useState<Thesis[]>([]);
   const [loading, setLoading] = useState(true);
@@ -309,8 +310,8 @@ export default function ChairExplorer() {
 
     Promise.all(
       chairs.map((chair) =>
-        listPapers({ chair_id: chair.id, limit: 100 })
-          .then((chairPapers) => [chair.id, chairPapers.length] as const)
+        listPapers({ chair_id: chair.id, limit: 1 })
+          .then((chairPapers) => [chair.id, chairPapers.total] as const)
           .catch(() => [chair.id, 0] as const),
       ),
     ).then((counts) => {
@@ -331,7 +332,7 @@ export default function ChairExplorer() {
 
   const featured = routeChairId ? chairs.find((chair) => chair.id === routeChairId) ?? null : null;
   const visiblePapers = papers.length > 0 ? papers : [];
-  const publicationCount = visiblePapers.length;
+  const publicationCount = paperTotal;
   const activeProjects = featured ? theses.filter((thesis) => thesis.chair_id === featured.id).length : 0;
   // TODO: Replace this hard-coded fallback when chair team-member scraping lands.
   const teamMembers = 25;
@@ -341,15 +342,27 @@ export default function ChairExplorer() {
   useEffect(() => {
     if (!featured) {
       setPapers([]);
+      setPaperTotal(0);
       return;
     }
     setLatestSearch("");
     setLatestPage(1);
     setSelectedPaper(null);
-    listPapers({ chair_id: featured.id, limit: 100 })
-      .then(setPapers)
-      .catch((e) => setError(e instanceof Error ? e.message : "Fehler beim Laden der Papers"));
   }, [featured]);
+
+  useEffect(() => {
+    if (!featured) return;
+    listPapers({
+      chair_id: featured.id,
+      limit: latestPublicationLimit,
+      offset: (latestPage - 1) * latestPublicationLimit,
+    })
+      .then((result) => {
+        setPapers(result.items);
+        setPaperTotal(result.total);
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : "Fehler beim Laden der Papers"));
+  }, [featured, latestPage]);
 
   const newestPapers = useMemo(
     () =>
@@ -374,12 +387,12 @@ export default function ChairExplorer() {
         paper.tags.some((tag) => tag.toLowerCase().includes(query)),
     );
   }, [latestSearch, newestPapers]);
-  const latestPageCount = Math.max(1, Math.ceil(filteredLatestPapers.length / latestPublicationLimit));
+  const latestPageCount = Math.max(1, Math.ceil(paperTotal / latestPublicationLimit));
   const safeLatestPage = Math.min(latestPage, latestPageCount);
-  const visibleLatestPapers = filteredLatestPapers.slice(
-    (safeLatestPage - 1) * latestPublicationLimit,
-    safeLatestPage * latestPublicationLimit,
-  );
+  const visibleLatestPapers = filteredLatestPapers;
+  const latestSearchActive = latestSearch.trim().length > 0;
+  const currentPageStart = paperTotal === 0 ? 0 : (safeLatestPage - 1) * latestPublicationLimit + 1;
+  const currentPageEnd = Math.min(safeLatestPage * latestPublicationLimit, paperTotal);
 
   useEffect(() => {
     setLatestPage(1);
@@ -396,8 +409,13 @@ export default function ChairExplorer() {
     try {
       const job = await triggerScrape(featured.id);
       if (job.status === "success") {
-        const fresh = await listPapers({ chair_id: featured.id, limit: 100 });
-        setPapers(fresh);
+        const fresh = await listPapers({
+          chair_id: featured.id,
+          limit: latestPublicationLimit,
+          offset: (safeLatestPage - 1) * latestPublicationLimit,
+        });
+        setPapers(fresh.items);
+        setPaperTotal(fresh.total);
         setSyncState("done");
       } else {
         setSyncError(job.error ?? "Scrape job failed");
@@ -651,7 +669,9 @@ export default function ChairExplorer() {
                       />
                     </label>
                     <span className="font-body-sm text-[12px] text-on-surface-variant">
-                      {filteredLatestPapers.length} result{filteredLatestPapers.length === 1 ? "" : "s"}
+                      {latestSearchActive
+                        ? `${filteredLatestPapers.length} result${filteredLatestPapers.length === 1 ? "" : "s"} on this page`
+                        : `${paperTotal} result${paperTotal === 1 ? "" : "s"}`}
                     </span>
                   </div>
                 )}
@@ -720,12 +740,12 @@ export default function ChairExplorer() {
                   )}
                 </div>
 
-                {newestPapers.length > 0 && filteredLatestPapers.length > 0 && (
+                {newestPapers.length > 0 && (
                   <div className="mt-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                     <span className="font-body-sm text-[12px] text-on-surface-variant">
-                      Showing {(safeLatestPage - 1) * latestPublicationLimit + 1}-
-                      {Math.min(safeLatestPage * latestPublicationLimit, filteredLatestPapers.length)} of{" "}
-                      {filteredLatestPapers.length}
+                      {latestSearchActive
+                        ? `Showing ${filteredLatestPapers.length} page-local match${filteredLatestPapers.length === 1 ? "" : "es"} from ${currentPageStart}-${currentPageEnd} of ${paperTotal}`
+                        : `Showing ${currentPageStart}-${currentPageEnd} of ${paperTotal}`}
                     </span>
                     <div className="flex items-center gap-2">
                       <button

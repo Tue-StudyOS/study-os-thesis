@@ -177,8 +177,10 @@ def _app():
 
 
 def _mock_paper_service():
+    from app.papers.service import PaginatedPapers
+
     svc = AsyncMock()
-    svc.list_papers.return_value = []
+    svc.list_papers.return_value = PaginatedPapers(items=[], total=0, limit=50, offset=0)
     svc.get_paper.return_value = SimpleNamespace(
         id=1,
         title="Paper",

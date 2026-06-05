@@ -220,9 +220,10 @@ class TestEnrichPaper:
 class TestListPapers:
     async def test_authenticated_user_gets_200(self, client, _app):
         from app.papers.deps import get_paper_service
+        from app.papers.service import PaginatedPapers
 
         paper_svc = AsyncMock()
-        paper_svc.list_papers.return_value = []
+        paper_svc.list_papers.return_value = PaginatedPapers(items=[], total=0, limit=50, offset=0)
         _app.dependency_overrides[get_paper_service] = lambda: paper_svc
         try:
             resp = await client.get("/api/papers")
@@ -230,15 +231,16 @@ class TestListPapers:
             _app.dependency_overrides.pop(get_paper_service, None)
 
         assert resp.status_code == 200
-        assert resp.json() == []
+        assert resp.json() == {"items": [], "total": 0, "limit": 50, "offset": 0}
 
     async def test_returns_papers_from_service(self, client, _app):
         from app.papers.deps import get_paper_service
         from app.papers.schemas import PaperOut
+        from app.papers.service import PaginatedPapers
 
         paper = _make_paper()
         paper_svc = AsyncMock()
-        paper_svc.list_papers.return_value = [paper]
+        paper_svc.list_papers.return_value = PaginatedPapers(items=[paper], total=7, limit=1, offset=2)
         _app.dependency_overrides[get_paper_service] = lambda: paper_svc
 
         # PaperOut.from_orm_with_tags reads paper.tags as list of PaperTag objects
@@ -263,20 +265,24 @@ class TestListPapers:
             ),
         ):
             try:
-                resp = await client.get("/api/papers")
+                resp = await client.get("/api/papers?limit=1&offset=2")
             finally:
                 _app.dependency_overrides.pop(get_paper_service, None)
 
         assert resp.status_code == 200
-        papers = resp.json()
-        assert len(papers) == 1
-        assert papers[0]["source"] == "openalex"
+        data = resp.json()
+        assert data["total"] == 7
+        assert data["limit"] == 1
+        assert data["offset"] == 2
+        assert len(data["items"]) == 1
+        assert data["items"][0]["source"] == "openalex"
 
     async def test_chair_id_filter_forwarded_to_service(self, client, _app):
         from app.papers.deps import get_paper_service
+        from app.papers.service import PaginatedPapers
 
         paper_svc = AsyncMock()
-        paper_svc.list_papers.return_value = []
+        paper_svc.list_papers.return_value = PaginatedPapers(items=[], total=0, limit=50, offset=0)
         _app.dependency_overrides[get_paper_service] = lambda: paper_svc
         try:
             resp = await client.get("/api/papers?chair_id=1")
@@ -289,9 +295,10 @@ class TestListPapers:
 
     async def test_tag_filter_forwarded_to_service(self, client, _app):
         from app.papers.deps import get_paper_service
+        from app.papers.service import PaginatedPapers
 
         paper_svc = AsyncMock()
-        paper_svc.list_papers.return_value = []
+        paper_svc.list_papers.return_value = PaginatedPapers(items=[], total=0, limit=50, offset=0)
         _app.dependency_overrides[get_paper_service] = lambda: paper_svc
         try:
             resp = await client.get("/api/papers?tag=robotics")
@@ -300,6 +307,22 @@ class TestListPapers:
 
         assert resp.status_code == 200
         assert paper_svc.list_papers.call_args.kwargs.get("tag_name") == "robotics"
+
+    async def test_pagination_forwarded_to_service(self, client, _app):
+        from app.papers.deps import get_paper_service
+        from app.papers.service import PaginatedPapers
+
+        paper_svc = AsyncMock()
+        paper_svc.list_papers.return_value = PaginatedPapers(items=[], total=0, limit=15, offset=30)
+        _app.dependency_overrides[get_paper_service] = lambda: paper_svc
+        try:
+            resp = await client.get("/api/papers?limit=15&offset=30")
+        finally:
+            _app.dependency_overrides.pop(get_paper_service, None)
+
+        assert resp.status_code == 200
+        assert paper_svc.list_papers.call_args.kwargs.get("limit") == 15
+        assert paper_svc.list_papers.call_args.kwargs.get("offset") == 30
 
     async def test_unauthenticated_returns_401(self, _app):
         from httpx import ASGITransport, AsyncClient
