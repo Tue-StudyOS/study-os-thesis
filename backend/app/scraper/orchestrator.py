@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 from datetime import datetime, timezone
 
 from app.papers.dedup import DeduplicationService
@@ -225,14 +226,22 @@ class ScraperOrchestrator:
         if researchers:
             return [r.id for r in researchers]
 
-        # MVP: bootstrap with the chair's professor as the sole researcher
+        # MVP: bootstrap with the chair's professor as the sole researcher.
+        # Strip leading academic titles so the stored name matches Scholar profiles.
+        clean_name = re.sub(
+            r"^\s*(?:(?:Professor|Prof)\.?\s*|Dr(?:\.-Ing\.)?\.?\s*)+",
+            "",
+            professor_name,
+            flags=re.IGNORECASE,
+        ).strip() or professor_name
         _logger.info(
-            "No researchers found for chair_id=%d — auto-creating from professor_name=%r",
+            "No researchers found for chair_id=%d — auto-creating from professor_name=%r (clean=%r)",
             chair_id,
             professor_name,
+            clean_name,
         )
         researcher = await self._researcher_repo.create(
-            name=professor_name,
+            name=clean_name,
             chair_id=chair_id,
             is_professor=True,
         )

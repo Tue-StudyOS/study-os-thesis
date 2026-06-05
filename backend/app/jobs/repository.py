@@ -65,5 +65,16 @@ class JobRepository:
         rows = await self._session.scalars(stmt)
         return list(rows)
 
+    async def get_active_scrape_for_chair(self, chair_id: int) -> Job | None:
+        """Return a pending/started scrape_chair job for *chair_id*, or None."""
+        stmt = (
+            select(Job)
+            .where(Job.type == JobType.scrape_chair)
+            .where(Job.status.in_([JobStatus.pending, JobStatus.started]))
+            .where(Job.input_data["chair_id"].astext == str(chair_id))
+            .limit(1)
+        )
+        return (await self._session.scalars(stmt)).first()
+
     async def commit(self) -> None:
         await self._session.commit()

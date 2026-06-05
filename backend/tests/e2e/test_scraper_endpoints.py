@@ -100,6 +100,7 @@ class TestRunChairScrape:
 
         job = _make_job(id=uuid.uuid4())
         job_svc = AsyncMock()
+        job_svc.find_active_chair_scrape.return_value = None
         job_svc.create_job.return_value = job
         job_svc.set_celery_task_id.return_value = job
 
@@ -133,6 +134,38 @@ class TestRunChairScrape:
             _app.dependency_overrides.pop(get_chair_repository, None)
 
         assert resp.status_code == 404
+
+    async def test_active_job_returns_409(self, client, _app):
+        from app.jobs.deps import get_job_service
+        from app.scraper.deps import get_chair_repository
+
+        fake_chair = SimpleNamespace(
+            id=1,
+            name="Distributed Intelligence",
+            short_description="",
+            professor_title="Prof. Dr.",
+            professor_name="Georg Martius",
+            website_url=None,
+            created_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
+            documents=[],
+        )
+        chair_repo = AsyncMock()
+        chair_repo.get_by_id.return_value = fake_chair
+
+        existing_job = _make_job(id=uuid.uuid4())
+        job_svc = AsyncMock()
+        job_svc.find_active_chair_scrape.return_value = existing_job
+
+        _app.dependency_overrides[get_chair_repository] = lambda: chair_repo
+        _app.dependency_overrides[get_job_service] = lambda: job_svc
+        try:
+            resp = await client.post("/api/scraper/run/1", json={"since_days": 365, "max_results": 20})
+        finally:
+            _app.dependency_overrides.pop(get_chair_repository, None)
+            _app.dependency_overrides.pop(get_job_service, None)
+
+        assert resp.status_code == 409
+        assert str(existing_job.id) in resp.json()["detail"]["job_id"]
 
     async def test_unauthenticated_returns_401(self, _app):
         from httpx import ASGITransport, AsyncClient

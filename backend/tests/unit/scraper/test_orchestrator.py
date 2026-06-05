@@ -123,6 +123,27 @@ class TestEnsureResearchers:
 
         o._researcher_repo.commit.assert_awaited()
 
+    @pytest.mark.parametrize(
+        "raw_name,expected_clean",
+        [
+            ("Prof. Dr. Georg Martius", "Georg Martius"),
+            ("Prof Dr Georg Martius", "Georg Martius"),
+            ("Professor Georg Martius", "Georg Martius"),
+            ("Dr.-Ing. Hans Müller", "Hans Müller"),
+            ("Dr. Anna Schmidt", "Anna Schmidt"),
+            ("Georg Martius", "Georg Martius"),  # no title — unchanged
+        ],
+    )
+    async def test_strips_leading_titles_from_professor_name(self, raw_name, expected_clean):
+        o = _build_orchestrator()
+        o._researcher_repo.list_by_chair.return_value = []
+        o._researcher_repo.create.return_value = SimpleNamespace(id=42, name=expected_clean)
+
+        await o.ensure_researchers_for_chair(chair_id=1, professor_name=raw_name)
+
+        call_kwargs = o._researcher_repo.create.call_args.kwargs
+        assert call_kwargs["name"] == expected_clean
+
 
 # ---------------------------------------------------------------------------
 # scrape_for_researcher — core pipeline

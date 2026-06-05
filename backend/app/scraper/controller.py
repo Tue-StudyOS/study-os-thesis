@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.auth.deps import CurrentUserDep, require_role
 from app.exceptions import NotFoundException
@@ -42,6 +42,13 @@ async def run_chair_scrape(
     chair = await chair_repo.get_by_id(chair_id)
     if chair is None:
         raise NotFoundException("Chair", chair_id)
+
+    active = await job_service.find_active_chair_scrape(chair_id)
+    if active is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={"job_id": str(active.id), "message": "A scrape job is already active for this chair."},
+        )
 
     job = await job_service.create_job(
         type=JobType.scrape_chair,

@@ -23,7 +23,9 @@ def upgrade() -> None:
     # portion as professor_name. This avoids losing the title while still
     # providing a canonical name for scraping.
     # Note: PostgreSQL uses POSIX regex; avoid PCRE-only constructs like (?:...).
-    title_re = r"^\\s*((Professor|Prof)\\.?\\s*|Dr(\\.-Ing\\.)?\\.?\\s*)+"
+    # Single backslashes in the raw string produce \s / \. for PostgreSQL's regex
+    # engine, which supports \s as a whitespace shorthand (Perl extension).
+    title_re = r"^\s*((Professor|Prof)\.?\s*|Dr(\.-Ing\.)?\.?\s*)+"
     op.execute(
         sa.text(
             """

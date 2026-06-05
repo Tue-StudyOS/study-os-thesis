@@ -79,15 +79,8 @@ async def _scrape_chair_work(
                 user_id=user_id,
                 input_data={"researcher_id": rid, "chair_id": chair_id},
             )
-            await session.commit()
-
             task_result = scrape_researcher_papers.delay(rid, user_id, str(job.id), max_results, since_days)
-
-            # Back-patch the celery task ID onto the job row
-            job = await job_repo.get_by_id(job.id)
-            if job is not None:
-                job.celery_task_id = task_result.id
-                await session.commit()
+            job = await job_repo.update(job, celery_task_id=task_result.id)
 
             dispatched.append({"researcher_id": rid, "job_id": str(job.id), "celery_task_id": task_result.id})
             logger.info(
