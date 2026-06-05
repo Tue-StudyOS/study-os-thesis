@@ -7,10 +7,9 @@ chat model, allowing a smaller/faster model for this batch workload.
 
 from __future__ import annotations
 
-import json
 import logging
-import re
 
+from pydantic import BaseModel, Field
 from thefuzz import process as fuzz_process  # type: ignore[import-untyped]
 
 from app.llm.port import LLMPort
@@ -22,6 +21,14 @@ _logger = logging.getLogger(__name__)
 # Fuzzy-match threshold: a returned tag must have this similarity to a
 # canonical tag to be accepted (0-100 scale).
 _FUZZY_THRESHOLD = 80
+
+
+class PaperTagSelection(BaseModel):
+    tags: list[str] = Field(default_factory=list, min_length=0, max_length=5)
+
+
+class PaperSummaryOutput(BaseModel):
+    summary: str = Field(min_length=1, max_length=1800)
 
 
 class LLMPaperEnricher(LLMEnricher):
@@ -40,16 +47,17 @@ class LLMPaperEnricher(LLMEnricher):
         prompt = (
             "Summarize this research paper in 2-3 sentences for a graduate student. "
             "Focus on the main contribution and methodology. "
-            "Be concise and avoid jargon where possible.\n\n"
+            'Be concise and avoid jargon where possible. Return ONLY a valid JSON object like {"summary": "..."}.\n\n'
             f"Title: {title}\n\nAbstract: {abstract}"
         )
         try:
-            resp = await self._llm.chat(
+            result = await self._llm.chat_structured(
                 self._model,
                 [{"role": "user", "content": prompt}],
+                output_schema=PaperSummaryOutput,
                 options={"temperature": 0.3, "num_predict": 250},
             )
-            return resp["message"]["content"].strip()
+            return result.summary.strip()
         except Exception as exc:
             _logger.warning("LLM summarize failed for %r: %s", title[:60], exc)
             return ""
@@ -58,45 +66,26 @@ class LLMPaperEnricher(LLMEnricher):
         tag_list = ", ".join(f'"{t}"' for t in sorted(CANONICAL_TAGS))
         prompt = (
             "Given this research paper, select 2 to 5 topic tags from the list below. "
-            "Return ONLY a valid JSON array of strings — no explanation, no markdown. "
-            'Example output: ["machine learning", "optimization"]\n\n'
+            'Return ONLY a valid JSON object like {"tags": ["machine learning", "optimization"]} — no explanation, no markdown. '
             f"Available tags: [{tag_list}]\n\n"
             f"Title: {title}\n\nAbstract: {abstract}"
         )
         try:
-            resp = await self._llm.chat(
+            result = await self._llm.chat_structured(
                 self._model,
                 [{"role": "user", "content": prompt}],
+                output_schema=PaperTagSelection,
                 options={"temperature": 0.1, "num_predict": 150},
             )
-            raw = resp["message"]["content"].strip()
         except Exception as exc:
             _logger.warning("LLM tag generation failed for %r: %s", title[:60], exc)
             return []
 
-        return self._parse_and_normalize(raw, title)
+        return self._normalize(result.tags, title)
 
-    def _parse_and_normalize(self, raw: str, title: str) -> list[str]:
-        # Extract JSON array (may be wrapped in markdown code fences)
-        raw = re.sub(r"```(?:json)?", "", raw).strip()
-        json_match = re.search(r"\[.*?\]", raw, re.DOTALL)
-        if json_match:
-            raw = json_match.group(0)
-
-        try:
-            tags: list[str] = json.loads(raw)
-        except json.JSONDecodeError:
-            # Fallback: pull any quoted strings from the response
-            tags = re.findall(r'"([^"]+)"', raw)
-
-        if not isinstance(tags, list):
-            _logger.warning("LLM returned non-list tags for %r: %r", title[:60], raw[:200])
-            return []
-
+    def _normalize(self, tags: list[str], title: str) -> list[str]:
         normalized: list[str] = []
         for tag in tags:
-            if not isinstance(tag, str):
-                continue
             tag_lower = tag.strip().lower()
             if tag_lower in CANONICAL_TAGS:
                 normalized.append(tag_lower)

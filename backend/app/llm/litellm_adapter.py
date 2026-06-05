@@ -20,10 +20,14 @@ correct model names and provider-specific kwargs.
 
 import json
 import logging
-from typing import Any
+from typing import Any, TypeVar
 
 import litellm
+from pydantic import BaseModel
 
+from app.llm.structured import parse_structured_content
+
+T = TypeVar("T", bound=BaseModel)
 _logger = logging.getLogger(__name__)
 
 # Suppress litellm's verbose internal logging by default.
@@ -221,3 +225,14 @@ class LiteLLMAdapter:
     async def aclose(self) -> None:
         """No-op — LiteLLM manages its own connection lifecycle."""
         pass
+
+    async def chat_structured(
+        self,
+        model: str,
+        messages: list[dict[str, Any]],
+        output_schema: type[T],
+        options: dict[str, Any] | None = None,
+    ) -> T:
+        response = await self.chat(model=model, messages=messages, options=options, format="json")
+        content = (response.get("message", {}) or {}).get("content", "") or ""
+        return parse_structured_content(content, output_schema)

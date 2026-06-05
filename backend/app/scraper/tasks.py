@@ -28,14 +28,7 @@ async def _scrape_chair_work(
     from app.exceptions import NotFoundException
     from app.jobs.repository import JobRepository
     from app.models.job import JobType
-    from app.papers.dedup import DeduplicationService
-    from app.papers.repository import PaperRepository, TagRepository
-    from app.researchers.repository import ResearcherRepository
-    from app.scraper.adapters.llm_enricher import LLMPaperEnricher
-    from app.scraper.adapters.openalex_client import OpenAlexSourceClient
-    from app.scraper.adapters.ranker import RecencyPaperRanker
-    from app.scraper.orchestrator import ScraperOrchestrator
-    from app.llm.factory import build_chat_client
+    from app.scraper.pipeline import build_scraper_pipeline
 
     # Step 1: resolve researcher IDs (auto-creates from professor_name if table is empty)
     async with SessionLocal() as session:
@@ -44,29 +37,16 @@ async def _scrape_chair_work(
         if chair is None:
             raise NotFoundException("Chair", chair_id)
 
-        source = OpenAlexSourceClient()
-        llm_client = build_chat_client(settings)
-        llm_enricher = LLMPaperEnricher(llm_client, settings.effective_enrichment_model)
-        ranker = RecencyPaperRanker(half_life_days=settings.scraper_recency_half_life)
-
-        paper_repo = PaperRepository(session)
-        tag_repo = TagRepository(session)
-        researcher_repo = ResearcherRepository(session)
-        dedup = DeduplicationService(paper_repo)
-
-        orchestrator = ScraperOrchestrator(
-            source=source,
-            llm_enricher=llm_enricher,
-            ranker=ranker,
-            dedup=dedup,
-            paper_repo=paper_repo,
-            tag_repo=tag_repo,
-            researcher_repo=researcher_repo,
+        pipeline = build_scraper_pipeline(
+            session,
+            settings,
             max_results=max_results or settings.scraper_max_results,
             since_days=since_days or settings.scraper_since_days,
         )
-
-        researcher_ids = await orchestrator.ensure_researchers_for_chair(chair_id, chair.professor_name)
+        try:
+            researcher_ids = await pipeline.orchestrator.ensure_researchers_for_chair(chair_id, chair.professor_name)
+        finally:
+            await pipeline.source.close()
 
     # Step 2: fan-out — create a Job row for each researcher task so it is
     # trackable via GET /api/jobs, then dispatch the Celery task.
@@ -136,41 +116,19 @@ async def _scrape_researcher_work(
     since_days: int | None = None,
 ) -> dict:
     from app.db import SessionLocal
-    from app.llm.factory import build_chat_client
-    from app.papers.dedup import DeduplicationService
-    from app.papers.repository import PaperRepository, TagRepository
-    from app.researchers.repository import ResearcherRepository
-    from app.scraper.adapters.llm_enricher import LLMPaperEnricher
-    from app.scraper.adapters.openalex_client import OpenAlexSourceClient
-    from app.scraper.adapters.ranker import RecencyPaperRanker
-    from app.scraper.orchestrator import ScraperOrchestrator
+    from app.scraper.pipeline import build_scraper_pipeline
 
     async with SessionLocal() as session:
-        source = OpenAlexSourceClient()
-        llm_client = build_chat_client(settings)
-        llm_enricher = LLMPaperEnricher(llm_client, settings.effective_enrichment_model)
-        ranker = RecencyPaperRanker(half_life_days=settings.scraper_recency_half_life)
-
-        paper_repo = PaperRepository(session)
-        tag_repo = TagRepository(session)
-        researcher_repo = ResearcherRepository(session)
-        dedup = DeduplicationService(paper_repo)
-
-        orchestrator = ScraperOrchestrator(
-            source=source,
-            llm_enricher=llm_enricher,
-            ranker=ranker,
-            dedup=dedup,
-            paper_repo=paper_repo,
-            tag_repo=tag_repo,
-            researcher_repo=researcher_repo,
+        pipeline = build_scraper_pipeline(
+            session,
+            settings,
             max_results=max_results or settings.scraper_max_results,
             since_days=since_days or settings.scraper_since_days,
         )
-
-        result = await orchestrator.scrape_for_researcher(researcher_id)
-        await source.close()
-        return result
+        try:
+            return await pipeline.orchestrator.scrape_for_researcher(researcher_id)
+        finally:
+            await pipeline.source.close()
 
 
 @celery_app.task(

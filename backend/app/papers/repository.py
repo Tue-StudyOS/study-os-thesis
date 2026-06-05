@@ -65,6 +65,7 @@ class PaperRepository:
         return await self._session.scalar(
             select(Paper).where(
                 Paper.title_normalized == title_normalized,
+                Paper.authors[0].astext == first_author,
                 Paper.doi.is_(None),
             )
         )

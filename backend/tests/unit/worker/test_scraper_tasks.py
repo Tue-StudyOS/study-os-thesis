@@ -112,9 +112,9 @@ class TestScrapeResearcherWork:
 
         with (
             patch("app.db.SessionLocal", return_value=_acm(session)),
-            patch("app.scraper.adapters.openalex_client.OpenAlexSourceClient", return_value=source) as source_cls,
-            patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
-            patch("app.scraper.orchestrator.ScraperOrchestrator", return_value=orchestrator) as orchestrator_cls,
+            patch("app.scraper.pipeline.OpenAlexSourceClient", return_value=source) as source_cls,
+            patch("app.scraper.pipeline.build_chat_client", return_value=AsyncMock()),
+            patch("app.scraper.pipeline.ScraperOrchestrator", return_value=orchestrator) as orchestrator_cls,
         ):
             result = await _scrape_researcher_work(7, _fake_settings(), max_results=250, since_days=3650)
 

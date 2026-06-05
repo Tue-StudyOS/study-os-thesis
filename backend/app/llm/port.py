@@ -5,7 +5,11 @@ on a concrete provider implementation.  Provider adapters (OllamaClient,
 LiteLLMAdapter, …) satisfy this protocol structurally — no inheritance required.
 """
 
-from typing import Any, Protocol, runtime_checkable
+from typing import Any, Protocol, TypeVar, runtime_checkable
+
+from pydantic import BaseModel
+
+T = TypeVar("T", bound=BaseModel)
 
 
 @runtime_checkable
@@ -38,6 +42,16 @@ class LLMPort(Protocol):
         All provider adapters normalise their provider-specific response format
         to this shape so that service-layer code remains provider-agnostic.
         """
+        ...
+
+    async def chat_structured(
+        self,
+        model: str,
+        messages: list[dict[str, Any]],
+        output_schema: type[T],
+        options: dict[str, Any] | None = None,
+    ) -> T:
+        """Execute a chat turn and validate the JSON response as output_schema."""
         ...
 
     async def embed(self, model: str, text: str) -> list[float]:
