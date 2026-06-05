@@ -45,7 +45,6 @@ class Paper(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     # Canonical identifiers
-    arxiv_id: Mapped[str | None] = mapped_column(String(50), unique=True, nullable=True, index=True)
     doi: Mapped[str | None] = mapped_column(String(100), unique=True, nullable=True, index=True)
     # Content
     title: Mapped[str] = mapped_column(String(1000), nullable=False)

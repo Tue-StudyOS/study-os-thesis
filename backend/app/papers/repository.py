@@ -28,7 +28,6 @@ class PaperRepository:
         summary: str | None = None,
         authors: list[str] | None = None,
         publication_date: datetime | None = None,
-        arxiv_id: str | None = None,
         doi: str | None = None,
         recency_score: float = 0.0,
         relevance_score: float = 0.0,
@@ -44,7 +43,6 @@ class PaperRepository:
             summary=summary,
             authors=authors or [],
             publication_date=publication_date,
-            arxiv_id=arxiv_id,
             doi=doi,
             recency_score=recency_score,
             relevance_score=relevance_score,
@@ -59,9 +57,6 @@ class PaperRepository:
     async def get_by_id(self, paper_id: int) -> Paper | None:
         return await self._session.get(Paper, paper_id)
 
-    async def get_by_arxiv_id(self, arxiv_id: str) -> Paper | None:
-        return await self._session.scalar(select(Paper).where(Paper.arxiv_id == arxiv_id))
-
     async def get_by_doi(self, doi: str) -> Paper | None:
         return await self._session.scalar(select(Paper).where(Paper.doi == doi))
 
@@ -70,7 +65,6 @@ class PaperRepository:
         return await self._session.scalar(
             select(Paper).where(
                 Paper.title_normalized == title_normalized,
-                Paper.arxiv_id.is_(None),
                 Paper.doi.is_(None),
             )
         )

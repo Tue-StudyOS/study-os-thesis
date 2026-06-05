@@ -6,9 +6,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from app.chairs.schemas import ArxivIngestRequest, ChairCreate, ChairPatch
+from app.chairs.schemas import ChairCreate, ChairPatch
 from app.chairs.service import ChairService
-from app.exceptions import AlreadyExistsException, NotFoundException
+from app.exceptions import NotFoundException
 from app.models.chair import Chair, ChairDocument, ChairDocumentKind
 from tests.conftest import _make_orm
 
@@ -32,7 +32,15 @@ def _make_chair(**overrides) -> Chair:
 
 
 def _make_document(**overrides) -> ChairDocument:
-    defaults = dict(id=1, chair_id=1, kind=ChairDocumentKind.paper, title="Paper", content="Abstract", arxiv_id="2301.07041", published_year=2023, embedding=[0.1] * 10)
+    defaults = dict(
+        id=1,
+        chair_id=1,
+        kind=ChairDocumentKind.description,
+        title="Description",
+        content="Description",
+        published_year=None,
+        embedding=[0.1] * 10,
+    )
     return _make_orm(ChairDocument, **{**defaults, **overrides})
 
 
@@ -146,72 +154,6 @@ class TestCreateChair:
         mock_llm_embed.embed.assert_not_called()
         mock_chair_repo.add_document.assert_not_called()
         mock_chair_repo.commit.assert_called_once()
-
-
-@pytest.mark.unit
-class TestIngestArxiv:
-    async def test_validates_chair_exists(self, chair_service, mock_chair_repo):
-        mock_chair_repo.get_by_id.return_value = None
-
-        with pytest.raises(NotFoundException):
-            req = ArxivIngestRequest(arxiv_id="2301.07041")
-            await chair_service.ingest_arxiv_paper(999, req)
-
-    async def test_duplicate_raises(self, chair_service, mock_chair_repo):
-        mock_chair_repo.get_by_id.return_value = _make_chair()
-        mock_chair_repo.get_document_by_arxiv.return_value = _make_document()
-
-        with pytest.raises(AlreadyExistsException):
-            req = ArxivIngestRequest(arxiv_id="2301.07041")
-            await chair_service.ingest_arxiv_paper(1, req)
-
-    async def test_fetches_metadata(self, chair_service, mock_chair_repo, monkeypatch):
-        mock_chair_repo.get_by_id.return_value = _make_chair()
-        mock_chair_repo.get_document_by_arxiv.return_value = None
-        mock_chair_repo.add_document.return_value = _make_document()
-
-        fetch_mock = AsyncMock(return_value=("Title", "Abstract text", 2024))
-        monkeypatch.setattr("app.chairs.service._fetch_arxiv_metadata", fetch_mock)
-
-        req = ArxivIngestRequest(arxiv_id="2301.07041")
-        await chair_service.ingest_arxiv_paper(1, req)
-
-        fetch_mock.assert_called_once_with("2301.07041")
-
-    async def test_embeds_abstract(self, chair_service, mock_chair_repo, mock_llm_embed, monkeypatch):
-        mock_chair_repo.get_by_id.return_value = _make_chair()
-        mock_chair_repo.get_document_by_arxiv.return_value = None
-        mock_chair_repo.add_document.return_value = _make_document()
-
-        monkeypatch.setattr(
-            "app.chairs.service._fetch_arxiv_metadata",
-            AsyncMock(return_value=("Title", "The paper abstract.", 2024)),
-        )
-
-        req = ArxivIngestRequest(arxiv_id="2301.07041")
-        await chair_service.ingest_arxiv_paper(1, req)
-
-        mock_llm_embed.embed.assert_called_once_with("test-embed-model", "The paper abstract.")
-
-    async def test_stores_paper_document(self, chair_service, mock_chair_repo, monkeypatch):
-        mock_chair_repo.get_by_id.return_value = _make_chair()
-        mock_chair_repo.get_document_by_arxiv.return_value = None
-        mock_chair_repo.add_document.return_value = _make_document()
-
-        monkeypatch.setattr(
-            "app.chairs.service._fetch_arxiv_metadata",
-            AsyncMock(return_value=("Paper Title", "Paper Abstract", 2023)),
-        )
-
-        req = ArxivIngestRequest(arxiv_id="2301.07041")
-        await chair_service.ingest_arxiv_paper(1, req)
-
-        call_kwargs = mock_chair_repo.add_document.call_args.kwargs
-        assert call_kwargs["kind"] == ChairDocumentKind.paper
-        assert call_kwargs["title"] == "Paper Title"
-        assert call_kwargs["content"] == "Paper Abstract"
-        assert call_kwargs["arxiv_id"] == "2301.07041"
-        assert call_kwargs["published_year"] == 2023
 
 
 @pytest.mark.unit

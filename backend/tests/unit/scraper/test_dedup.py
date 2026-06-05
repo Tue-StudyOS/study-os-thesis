@@ -15,7 +15,6 @@ def _make_paper(**kwargs):
         id=1,
         title="Some Paper",
         title_normalized="some paper",
-        arxiv_id=None,
         doi=None,
         abstract=None,
         authors=[],
@@ -28,9 +27,8 @@ def _make_paper(**kwargs):
 def _make_candidate(**kwargs):
     defaults = dict(
         title="Some Paper",
-        source="google_scholar",
-        source_url="https://example.com",
-        arxiv_id=None,
+        source="openalex",
+        source_url="https://openalex.org/W1",
         doi=None,
         abstract=None,
         authors=[],
@@ -58,7 +56,6 @@ class TestNormalizeTitle:
         assert DeduplicationService.normalize_title(raw) == expected
 
     def test_en_dash_stripped(self):
-        # Real-world: paper titles with em/en dashes
         result = DeduplicationService.normalize_title("Model\u2013Based RL")
         assert "\u2013" not in result
 
@@ -76,32 +73,10 @@ class TestFindDuplicate:
         self.repo = AsyncMock()
         self.svc = DeduplicationService(self.repo)
 
-    async def test_tier1_arxiv_id_match_returns_paper(self):
-        existing = _make_paper(id=42, arxiv_id="2301.07041")
-        self.repo.get_by_arxiv_id.return_value = existing
-        candidate = _make_candidate(arxiv_id="2301.07041")
-
-        result = await self.svc.find_duplicate(candidate)
-
-        assert result is existing
-        self.repo.get_by_arxiv_id.assert_awaited_once_with("2301.07041")
-        self.repo.get_by_doi.assert_not_awaited()
-        self.repo.get_by_title_author.assert_not_awaited()
-
-    async def test_tier1_no_arxiv_id_skips_lookup(self):
-        candidate = _make_candidate(arxiv_id=None)
-        self.repo.get_by_doi.return_value = None
-        self.repo.get_by_title_author.return_value = None
-
-        await self.svc.find_duplicate(candidate)
-
-        self.repo.get_by_arxiv_id.assert_not_awaited()
-
-    async def test_tier2_doi_match_when_arxiv_misses(self):
+    async def test_doi_match_returns_paper(self):
         existing = _make_paper(id=7, doi="10.1234/test")
-        self.repo.get_by_arxiv_id.return_value = None
         self.repo.get_by_doi.return_value = existing
-        candidate = _make_candidate(arxiv_id="2301.00000", doi="10.1234/test")
+        candidate = _make_candidate(doi="10.1234/test")
 
         result = await self.svc.find_duplicate(candidate)
 
@@ -109,18 +84,16 @@ class TestFindDuplicate:
         self.repo.get_by_doi.assert_awaited_once_with("10.1234/test")
         self.repo.get_by_title_author.assert_not_awaited()
 
-    async def test_tier2_no_doi_skips_lookup(self):
-        self.repo.get_by_arxiv_id.return_value = None
+    async def test_no_doi_skips_doi_lookup(self):
         self.repo.get_by_title_author.return_value = None
-        candidate = _make_candidate(doi=None)
+        candidate = _make_candidate(doi=None, authors=["Author A"])
 
         await self.svc.find_duplicate(candidate)
 
         self.repo.get_by_doi.assert_not_awaited()
 
-    async def test_tier3_title_author_match(self):
+    async def test_title_author_match_after_doi_miss(self):
         existing = _make_paper(id=3)
-        self.repo.get_by_arxiv_id.return_value = None
         self.repo.get_by_doi.return_value = None
         self.repo.get_by_title_author.return_value = existing
         candidate = _make_candidate(title="Deep Learning", authors=["Alice Smith", "Bob Jones"])
@@ -133,8 +106,7 @@ class TestFindDuplicate:
             "Alice Smith",
         )
 
-    async def test_tier3_no_authors_skips_lookup(self):
-        self.repo.get_by_arxiv_id.return_value = None
+    async def test_no_authors_skips_title_author_lookup(self):
         self.repo.get_by_doi.return_value = None
         candidate = _make_candidate(authors=[])
 
@@ -144,25 +116,13 @@ class TestFindDuplicate:
         self.repo.get_by_title_author.assert_not_awaited()
 
     async def test_all_tiers_miss_returns_none(self):
-        self.repo.get_by_arxiv_id.return_value = None
         self.repo.get_by_doi.return_value = None
         self.repo.get_by_title_author.return_value = None
-        candidate = _make_candidate(arxiv_id="0000.00000", doi="10.0000/x", authors=["Author A"])
+        candidate = _make_candidate(doi="10.0000/x", authors=["Author A"])
 
         result = await self.svc.find_duplicate(candidate)
 
         assert result is None
-
-    async def test_whitespace_only_title_normalizes_to_empty(self):
-        self.repo.get_by_arxiv_id.return_value = None
-        self.repo.get_by_doi.return_value = None
-        candidate = _make_candidate(title="   ", authors=["Author A"])
-        self.repo.get_by_title_author.return_value = None
-
-        result = await self.svc.find_duplicate(candidate)
-
-        assert result is None
-        self.repo.get_by_title_author.assert_awaited_once_with("", "Author A")
 
 
 @pytest.mark.unit
@@ -172,16 +132,6 @@ class TestMergeMetadata:
         self.repo = AsyncMock()
         self.svc = DeduplicationService(self.repo)
 
-    async def test_fills_null_arxiv_id(self):
-        existing = _make_paper(arxiv_id=None)
-        self.repo.update.return_value = existing
-        candidate = _make_candidate(arxiv_id="2301.07041")
-
-        await self.svc.merge_metadata(existing, candidate)
-
-        kwargs = self.repo.update.call_args.kwargs
-        assert kwargs["arxiv_id"] == "2301.07041"
-
     async def test_fills_null_doi(self):
         existing = _make_paper(doi=None)
         self.repo.update.return_value = existing
@@ -189,7 +139,7 @@ class TestMergeMetadata:
 
         await self.svc.merge_metadata(existing, candidate)
 
-        assert "doi" in self.repo.update.call_args.kwargs
+        assert self.repo.update.call_args.kwargs["doi"] == "10.1234/test"
 
     async def test_fills_null_abstract(self):
         existing = _make_paper(abstract=None)
@@ -219,27 +169,15 @@ class TestMergeMetadata:
 
         assert self.repo.update.call_args.kwargs["authors"] == ["Alice", "Bob"]
 
-    async def test_does_not_overwrite_existing_arxiv_id(self):
-        existing = _make_paper(arxiv_id="1111.11111")
-        self.repo.update.return_value = existing
-        candidate = _make_candidate(arxiv_id="2222.22222")
-
-        await self.svc.merge_metadata(existing, candidate)
-
-        if self.repo.update.called:
-            assert "arxiv_id" not in self.repo.update.call_args.kwargs
-
     async def test_no_update_called_when_nothing_to_fill(self):
         date = datetime(2023, 1, 1, tzinfo=timezone.utc)
         existing = _make_paper(
-            arxiv_id="1111.11111",
             doi="10.1234/x",
             abstract="Existing abstract",
             publication_date=date,
             authors=["Alice"],
         )
         candidate = _make_candidate(
-            arxiv_id="2222.22222",
             doi="10.9999/y",
             abstract="New abstract",
             publication_date=datetime(2024, 1, 1, tzinfo=timezone.utc),
@@ -251,14 +189,13 @@ class TestMergeMetadata:
         self.repo.update.assert_not_awaited()
 
     async def test_multiple_fields_filled_in_single_update_call(self):
-        existing = _make_paper(arxiv_id=None, doi=None, abstract=None)
+        existing = _make_paper(doi=None, abstract=None)
         self.repo.update.return_value = existing
-        candidate = _make_candidate(arxiv_id="2301.07041", doi="10.1234/x", abstract="Abstract text")
+        candidate = _make_candidate(doi="10.1234/x", abstract="Abstract text")
 
         await self.svc.merge_metadata(existing, candidate)
 
         self.repo.update.assert_awaited_once()
         kwargs = self.repo.update.call_args.kwargs
-        assert kwargs["arxiv_id"] == "2301.07041"
         assert kwargs["doi"] == "10.1234/x"
         assert kwargs["abstract"] == "Abstract text"

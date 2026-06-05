@@ -14,14 +14,12 @@ from app.db import Base
 class JobType(str, enum.Enum):
     embed_thesis = "embed_thesis"
     embed_chair = "embed_chair"
-    ingest_arxiv = "ingest_arxiv"
     parse_transcript = "parse_transcript"
     chat_turn = "chat_turn"
     generate_proposal = "generate_proposal"
     scrape_chair = "scrape_chair"
     scrape_researcher = "scrape_researcher"
     enrich_paper = "enrich_paper"
-    ingest_single_paper = "ingest_single_paper"
 
 
 class JobStatus(str, enum.Enum):

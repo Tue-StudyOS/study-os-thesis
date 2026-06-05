@@ -10,7 +10,6 @@ from pydantic import BaseModel, ConfigDict
 class ResearcherCreate(BaseModel):
     name: str
     chair_id: int | None = None
-    google_scholar_id: str | None = None
     orcid: str | None = None
     affiliation: str | None = None
     is_professor: bool = False
@@ -22,7 +21,6 @@ class ResearcherOut(BaseModel):
     id: int
     name: str
     chair_id: int | None
-    google_scholar_id: str | None
     orcid: str | None
     affiliation: str | None
     is_professor: bool

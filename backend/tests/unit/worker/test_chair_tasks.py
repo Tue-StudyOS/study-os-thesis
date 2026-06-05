@@ -1,4 +1,4 @@
-"""Tests for chair-related Celery tasks (ArXiv ingest + description embedding)."""
+"""Tests for chair-related Celery tasks."""
 
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -7,11 +7,9 @@ import pytest
 
 from app.chairs.tasks import (
     _embed_chair_work,
-    _ingest_arxiv_work,
     embed_chair_description,
-    ingest_arxiv_paper,
 )
-from app.exceptions import AlreadyExistsException, NotFoundException
+from app.exceptions import NotFoundException
 
 
 def _acm(session):
@@ -22,43 +20,12 @@ def _acm(session):
 
 
 @pytest.mark.unit
-class TestIngestArxivWiring:
-    def test_treats_duplicate_and_missing_as_permanent(self):
-        with patch("app.chairs.tasks.execute_task") as ex:
-            ingest_arxiv_paper(chair_id=1, arxiv_id="2301.07041", user_id=3, job_id="j")
-
-        permanent = ex.call_args.kwargs["permanent_exceptions"]
-        assert AlreadyExistsException in permanent
-        assert NotFoundException in permanent
-
-
-@pytest.mark.unit
 class TestEmbedChairWiring:
     def test_delegates_to_runner(self):
         with patch("app.chairs.tasks.execute_task") as ex:
             embed_chair_description(chair_id=1, user_id=3, job_id="j")
         assert ex.call_args.kwargs["job_id"] == "j"
         assert callable(ex.call_args.kwargs["work"])
-
-
-@pytest.mark.unit
-class TestIngestArxivWork:
-    async def test_calls_service_and_returns_doc(self):
-        session = AsyncMock()
-        svc = AsyncMock()
-        svc.ingest_arxiv_paper.return_value = SimpleNamespace(id=42, title="Paper")
-        settings = SimpleNamespace(ollama_embed_model="m")
-
-        with (
-            patch("app.db.SessionLocal", return_value=_acm(session)),
-            patch("app.chairs.repository.ChairRepository", return_value=AsyncMock()),
-            patch("app.chairs.service.ChairService", return_value=svc),
-            patch("app.llm.factory.build_embed_client", return_value=AsyncMock()),
-        ):
-            result = await _ingest_arxiv_work(1, "2301.07041", settings)
-
-        svc.ingest_arxiv_paper.assert_awaited_once()
-        assert result == {"document_id": 42, "title": "Paper"}
 
 
 @pytest.mark.unit

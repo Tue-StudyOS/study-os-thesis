@@ -5,8 +5,6 @@ import {
   listChairs,
   createChair,
   deleteChair,
-  addArxivDocument,
-  deleteDocument,
   type Chair,
   type ChairCreate,
 } from "../api/chairs";
@@ -163,60 +161,14 @@ function CreateChairForm({ onCreated }: { onCreated: (c: Chair) => void }) {
   );
 }
 
-// ─── Arxiv ingest form ────────────────────────────────────────────────────────
-
-function ArxivForm({ chairId, onAdded }: { chairId: number; onAdded: () => void }) {
-  const [arxivId, setArxivId] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!arxivId.trim()) return;
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      const doc = await addArxivDocument(chairId, arxivId.trim());
-      setSuccess(`"${doc.title ?? arxivId}" erfolgreich hinzugefügt.`);
-      setArxivId("");
-      onAdded();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Fehler");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="flex gap-2 items-start flex-wrap">
-      <input
-        value={arxivId}
-        onChange={(e) => setArxivId(e.target.value)}
-        placeholder="ArXiv ID, z.B. 2301.07041"
-        className={`${inputCls} w-64`}
-      />
-      <button type="submit" disabled={loading}
-        className="bg-secondary-container text-on-secondary-container px-4 py-2 rounded-lg font-label-md text-label-md hover:opacity-80 transition-opacity disabled:opacity-50 whitespace-nowrap">
-        {loading ? "Lädt…" : "Paper hinzufügen"}
-      </button>
-      {error && <p className="w-full text-error font-body-sm">{error}</p>}
-      {success && <p className="w-full text-tertiary-container font-body-sm">{success}</p>}
-    </form>
-  );
-}
-
 // ─── Chair row ────────────────────────────────────────────────────────────────
 
 function ChairRow({
   chair,
   onDeleted,
-  onRefresh,
 }: {
   chair: Chair;
   onDeleted: (id: number) => void;
-  onRefresh: (id: number) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -234,17 +186,6 @@ function ChairRow({
     }
   }
 
-  async function handleDeleteDoc(docId: number) {
-    try {
-      await deleteDocument(chair.id, docId);
-      onRefresh(chair.id);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Fehler beim Löschen");
-    }
-  }
-
-  const papers = chair.documents.filter((d) => d.kind === "paper");
-
   return (
     <div className="border border-outline-variant rounded-xl overflow-hidden">
       {/* Header row */}
@@ -252,7 +193,7 @@ function ChairRow({
         <div className="flex-1 min-w-0">
           <h4 className="font-title-md text-on-surface font-semibold truncate">{chair.name}</h4>
           <p className="font-body-sm text-on-surface-variant">
-            {(chair.professor_title ? `${chair.professor_title} ` : "") + chair.professor_name} · {papers.length} Papers
+            {(chair.professor_title ? `${chair.professor_title} ` : "") + chair.professor_name}
           </p>
         </div>
         <div className="flex items-center gap-2 ml-4 shrink-0">
@@ -282,45 +223,6 @@ function ChairRow({
       {expanded && (
         <div className="p-4 border-t border-outline-variant bg-surface space-y-4">
           <p className="font-body-sm text-on-surface-variant">{chair.short_description}</p>
-
-          {/* ArXiv ingest */}
-          <div>
-            <h5 className="font-label-md text-on-surface uppercase tracking-wider text-[11px] mb-2">
-              Paper hinzufügen
-            </h5>
-            <ArxivForm chairId={chair.id} onAdded={() => onRefresh(chair.id)} />
-          </div>
-
-          {/* Paper list */}
-          {papers.length > 0 && (
-            <div>
-              <h5 className="font-label-md text-on-surface uppercase tracking-wider text-[11px] mb-2">
-                Gespeicherte Papers
-              </h5>
-              <div className="space-y-2">
-                {papers.map((doc) => (
-                  <div key={doc.id} className="flex items-start gap-3 bg-surface-container-low rounded-lg p-3">
-                    <div className="flex-1 min-w-0">
-                      <p className="font-body-sm text-on-surface font-medium line-clamp-1">
-                        {doc.title ?? doc.arxiv_id ?? "Paper"}
-                      </p>
-                      <p className="font-label-md text-[11px] text-on-surface-variant">
-                        {doc.arxiv_id && `arXiv:${doc.arxiv_id}`}
-                        {doc.published_year && ` · ${doc.published_year}`}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => handleDeleteDoc(doc.id)}
-                      className="p-1 rounded hover:bg-error-container transition-colors text-error shrink-0"
-                      title="Paper entfernen"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">close</span>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>
@@ -344,10 +246,6 @@ function ChairsTab() {
 
   useEffect(load, []);
 
-  async function refreshChair(_id: number) {
-    load();
-  }
-
   if (loading) return <Spinner />;
   if (error) return <ErrorBox msg={error} />;
 
@@ -364,7 +262,6 @@ function ChairsTab() {
             key={chair.id}
             chair={chair}
             onDeleted={(id) => setChairs((prev) => prev.filter((c) => c.id !== id))}
-            onRefresh={refreshChair}
           />
         ))
       )}

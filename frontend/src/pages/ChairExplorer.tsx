@@ -143,11 +143,11 @@ function PaperDetail({ paper, onBack }: { paper: Paper; onBack: () => void }) {
             </div>
             <div>
               <dt className="font-semibold">Digital Object Identifier (DOI)</dt>
-              <dd>{paper.doi ?? paper.arxiv_id ?? "Not available"}</dd>
+              <dd>{paper.doi ?? "Not available"}</dd>
             </div>
           </dl>
           <a
-            href={paper.source_url || (paper.arxiv_id ? `https://arxiv.org/pdf/${paper.arxiv_id}` : "#")}
+            href={paper.source_url || "#"}
             target="_blank"
             rel="noreferrer"
             className="mt-5 flex w-full items-center justify-center rounded-[4px] bg-primary px-4 py-2.5 font-label-md text-[13px] text-on-primary hover:bg-primary-container hover:text-on-primary-container"
@@ -311,7 +311,7 @@ export default function ChairExplorer() {
       chairs.map((chair) =>
         listPapers({ chair_id: chair.id, limit: 100 })
           .then((chairPapers) => [chair.id, chairPapers.length] as const)
-          .catch(() => [chair.id, chair.documents.filter((doc) => doc.kind === "paper").length] as const),
+          .catch(() => [chair.id, 0] as const),
       ),
     ).then((counts) => {
       setPaperCountsByChair(Object.fromEntries(counts));
@@ -330,12 +330,8 @@ export default function ChairExplorer() {
   );
 
   const featured = routeChairId ? chairs.find((chair) => chair.id === routeChairId) ?? null : null;
-  const chairDocumentPapers = useMemo(
-    () => (featured?.documents ?? []).filter((doc) => doc.kind === "paper"),
-    [featured],
-  );
   const visiblePapers = papers.length > 0 ? papers : [];
-  const publicationCount = Math.max(visiblePapers.length, chairDocumentPapers.length);
+  const publicationCount = visiblePapers.length;
   const activeProjects = featured ? theses.filter((thesis) => thesis.chair_id === featured.id).length : 0;
   // TODO: Replace this hard-coded fallback when chair team-member scraping lands.
   const teamMembers = 25;
@@ -388,15 +384,6 @@ export default function ChairExplorer() {
   useEffect(() => {
     setLatestPage(1);
   }, [latestSearch]);
-
-  const newestDocumentPapers = useMemo(
-    () =>
-      chairDocumentPapers
-        .slice()
-        .sort((a, b) => (b.published_year ?? 0) - (a.published_year ?? 0))
-        .slice(0, 10),
-    [chairDocumentPapers],
-  );
 
   function goToProposals(chairId?: number) {
     navigate(chairId ? `/proposals?chair_id=${chairId}` : "/proposals");
@@ -494,11 +481,10 @@ export default function ChairExplorer() {
               {filtered.length > 0 && (
                 <section className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
                   {filtered.map((chair) => {
-                    const chairPapers = chair.documents.filter((doc) => doc.kind === "paper");
-                    const paperCount = Math.max(paperCountsByChair[chair.id] ?? 0, chairPapers.length);
+                    const paperCount = paperCountsByChair[chair.id] ?? 0;
                     const chairProjects = theses.filter((thesis) => thesis.chair_id === chair.id).length;
                     const inferredTopics = inferTopicsFromText(
-                      `${chair.short_description} ${chairPapers.map((doc) => `${doc.title ?? ""} ${doc.content}`).join(" ")}`,
+                      chair.short_description,
                     ).slice(0, 3);
 
                     return (
@@ -727,28 +713,7 @@ export default function ChairExplorer() {
                     </div>
                   )}
 
-                  {newestPapers.length === 0 && newestDocumentPapers.map((doc) => (
-                    <button
-                      key={doc.id}
-                      onClick={() => setSelectedPaper(null)}
-                      className="grid w-full gap-2 border-b border-outline-variant px-4 py-3 text-left last:border-b-0 md:grid-cols-[minmax(0,1fr)_80px_150px]"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate font-body-sm text-[14px] font-semibold text-on-surface">
-                          {doc.title ?? "Untitled paper"}
-                        </p>
-                        <p className="truncate font-body-sm text-[12px] text-on-surface-variant">
-                          {doc.arxiv_id ? `arXiv:${doc.arxiv_id}` : "Chair document"}
-                        </p>
-                      </div>
-                      <p className="font-body-sm text-[13px] text-on-surface">{doc.published_year ?? "n.d."}</p>
-                      <p className="font-body-sm text-[12px] text-on-surface-variant md:text-right">
-                        arXiv
-                      </p>
-                    </button>
-                  ))}
-
-                  {newestPapers.length === 0 && newestDocumentPapers.length === 0 && (
+                  {newestPapers.length === 0 && (
                     <div className="px-4 py-3 font-body-sm text-[13px] text-on-surface-variant">
                       No papers available for this chair yet.
                     </div>

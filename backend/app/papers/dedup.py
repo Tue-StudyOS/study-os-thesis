@@ -1,13 +1,11 @@
 """Deduplication service for the scraper pipeline.
 
-Three-tier lookup strategy:
-  1. arxiv_id  — most reliable; unique worldwide
-  2. doi       — also a canonical identifier
-  3. (title_normalized, first_author) — fallback for non-arXiv papers
+Two-tier lookup strategy:
+  1. doi       — canonical identifier when available
+  2. (title_normalized, first_author) — fallback for papers without DOI
 
 When a duplicate is found, the service merges any missing fields from the
-incoming candidate into the existing DB row (e.g. fills in arxiv_id once
-we discover it from arXiv, updates the abstract if we now have a better one).
+incoming candidate into the existing DB row.
 """
 
 from __future__ import annotations
@@ -25,19 +23,13 @@ class DeduplicationService:
 
     async def find_duplicate(self, candidate: PaperCandidate) -> Paper | None:
         """Return an existing Paper that matches *candidate*, or None."""
-        # Tier 1: exact arxiv_id
-        if candidate.arxiv_id:
-            existing = await self._repo.get_by_arxiv_id(candidate.arxiv_id)
-            if existing:
-                return existing
-
-        # Tier 2: exact DOI
+        # Tier 1: exact DOI
         if candidate.doi:
             existing = await self._repo.get_by_doi(candidate.doi)
             if existing:
                 return existing
 
-        # Tier 3: normalised title + first author
+        # Tier 2: normalised title + first author
         title_norm = self.normalize_title(candidate.title)
         first_author = candidate.authors[0] if candidate.authors else None
         if first_author:
@@ -51,8 +43,6 @@ class DeduplicationService:
         """Fill NULL fields on *existing* with data from *candidate* if better."""
         updates: dict[str, object] = {}
 
-        if existing.arxiv_id is None and candidate.arxiv_id:
-            updates["arxiv_id"] = candidate.arxiv_id
         if existing.doi is None and candidate.doi:
             updates["doi"] = candidate.doi
         if existing.abstract is None and candidate.abstract:

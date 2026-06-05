@@ -59,7 +59,6 @@ class ScraperOrchestrator:
 
         researcher = ResearcherInfo(
             name=researcher_row.name,
-            google_scholar_id=researcher_row.google_scholar_id,
             orcid=researcher_row.orcid,
             affiliation=researcher_row.affiliation,
             chair_id=researcher_row.chair_id,
@@ -78,13 +77,6 @@ class ScraperOrchestrator:
             max_results=self._max_results,
             since_days=self._since_days,
         )
-        if researcher.google_scholar_id and researcher.google_scholar_id != researcher_row.google_scholar_id:
-            await self._researcher_repo.update_google_scholar_id(researcher_id, researcher.google_scholar_id)
-            _logger.info(
-                "scraper.persisted_google_scholar_id researcher_id=%d profile_id=%s",
-                researcher_id,
-                researcher.google_scholar_id,
-            )
         _logger.info("scraper.source_results count=%d researcher=%r", len(candidates), researcher.name)
 
         llm_sem = asyncio.Semaphore(_LLM_CONCURRENCY)
@@ -192,7 +184,6 @@ class ScraperOrchestrator:
             publication_date=candidate.publication_date,
             source=candidate.source,
             source_url=candidate.source_url,
-            arxiv_id=candidate.arxiv_id,
             doi=candidate.doi,
             recency_score=recency,
             relevance_score=recency,  # MVP: relevance = recency
@@ -208,9 +199,9 @@ class ScraperOrchestrator:
         await self._researcher_repo.link_paper(researcher_id, paper.id)
 
         _logger.info(
-            "scraper.paper_stored paper_id=%d arxiv_id=%s tags=%s title=%r",
+            "scraper.paper_stored paper_id=%d doi=%s tags=%s title=%r",
             paper.id,
-            paper.arxiv_id,
+            paper.doi,
             tags,
             candidate.title[:60],
         )
@@ -227,7 +218,7 @@ class ScraperOrchestrator:
             return [r.id for r in researchers]
 
         # MVP: bootstrap with the chair's professor as the sole researcher.
-        # Strip leading academic titles so the stored name matches Scholar profiles.
+        # Strip leading academic titles so author lookup uses a plain name.
         clean_name = (
             re.sub(
                 r"^\s*(?:(?:Professor|Prof)\.?\s*|Dr(?:\.-Ing\.)?\.?\s*)+",

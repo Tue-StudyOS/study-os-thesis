@@ -246,8 +246,8 @@ study-os-thesis/
 
 ### Professors / Admins
 - **Chair management** — Create research chairs with name, description, and
-  professor. Ingest ArXiv papers by ID; the abstract is fetched, embedded, and
-  stored as a chair document for semantic search.
+  professor. Paper discovery is OpenAlex-only and stores publications in the
+  papers table for chair publication views.
 - **Thesis proposals** — Submit open thesis proposals linked to a chair.
 
 ---

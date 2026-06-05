@@ -9,7 +9,6 @@ from sqlalchemy import (
     SmallInteger,
     String,
     Text,
-    UniqueConstraint,
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -20,7 +19,6 @@ from app.models.thesis import EMBEDDING_DIM
 
 class ChairDocumentKind(str, enum.Enum):
     description = "description"
-    paper = "paper"
 
 
 class Chair(Base):
@@ -51,11 +49,6 @@ class ChairDocument(Base):
     """
 
     __tablename__ = "chair_documents"
-    __table_args__ = (
-        # Prevent the same ArXiv paper from being added twice to the same chair.
-        UniqueConstraint("chair_id", "arxiv_id", name="uq_chair_documents_chair_arxiv"),
-    )
-
     id: Mapped[int] = mapped_column(primary_key=True)
     chair_id: Mapped[int] = mapped_column(ForeignKey("chairs.id", ondelete="CASCADE"), nullable=False, index=True)
     kind: Mapped[ChairDocumentKind] = mapped_column(Enum(ChairDocumentKind, name="chair_document_kind"), nullable=False)
@@ -63,8 +56,6 @@ class ChairDocument(Base):
     title: Mapped[str | None] = mapped_column(String(500), nullable=True)
     # The text that was embedded.
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    # ArXiv identifier (e.g. "2301.07041"), null for description documents.
-    arxiv_id: Mapped[str | None] = mapped_column(String(50), nullable=True)
     published_year: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
     embedding: Mapped[list[float] | None] = mapped_column(Vector(EMBEDDING_DIM), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)

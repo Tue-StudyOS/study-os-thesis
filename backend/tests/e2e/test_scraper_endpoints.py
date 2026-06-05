@@ -41,9 +41,8 @@ def _make_paper(**kwargs):
         summary="A short summary.",
         authors=["Georg Martius", "Alice Author"],
         publication_date=datetime(2023, 6, 1, tzinfo=timezone.utc),
-        source="google_scholar",
-        source_url="https://scholar.google.com/test",
-        arxiv_id="2301.07041",
+        source="openalex",
+        source_url="https://openalex.org/W1",
         doi=None,
         recency_score=0.8,
         relevance_score=0.8,
@@ -59,7 +58,6 @@ def _make_researcher(**kwargs):
         id=1,
         name="Georg Martius",
         chair_id=1,
-        google_scholar_id="b-JF-UIAAAAJ",
         orcid=None,
         affiliation="University of Tübingen",
         is_professor=True,
@@ -110,7 +108,7 @@ class TestRunChairScrape:
             with patch(
                 "app.scraper.tasks.scrape_chair_papers.delay",
                 return_value=_mock_celery_result(),
-            ):
+            ) as scrape_delay:
                 resp = await client.post("/api/scraper/run/1", json={"since_days": 365, "max_results": 20})
         finally:
             _app.dependency_overrides.pop(get_chair_repository, None)
@@ -120,6 +118,7 @@ class TestRunChairScrape:
         data = resp.json()
         assert "job_id" in data
         assert data["chair_id"] == 1
+        assert scrape_delay.call_args.args[-2:] == (20, 365)
 
     async def test_chair_not_found_returns_404(self, client, _app):
         from app.scraper.deps import get_chair_repository
@@ -182,42 +181,6 @@ class TestRunChairScrape:
             if orig_override is not None:
                 _app.dependency_overrides[get_current_user] = orig_override
         assert resp.status_code == 401
-
-
-@pytest.mark.e2e
-class TestIngestPaper:
-    async def test_admin_can_ingest_paper(self, admin_client, _app):
-        from app.jobs.deps import get_job_service
-
-        job = _make_job(type="ingest_single_paper")
-        job_svc = AsyncMock()
-        job_svc.create_job.return_value = job
-        job_svc.set_celery_task_id.return_value = job
-        _app.dependency_overrides[get_job_service] = lambda: job_svc
-
-        try:
-            with patch(
-                "app.scraper.tasks.ingest_single_paper.delay",
-                return_value=_mock_celery_result(),
-            ):
-                resp = await admin_client.post(
-                    "/api/scraper/paper",
-                    json={"arxiv_id": "2301.07041", "researcher_id": None},
-                )
-        finally:
-            _app.dependency_overrides.pop(get_job_service, None)
-
-        assert resp.status_code == 202
-        assert "job_id" in resp.json()
-        assert resp.json()["arxiv_id"] == "2301.07041"
-
-    async def test_student_cannot_ingest_paper(self, client):
-        resp = await client.post("/api/scraper/paper", json={"arxiv_id": "2301.07041"})
-        assert resp.status_code == 403
-
-    async def test_missing_arxiv_id_returns_422(self, admin_client):
-        resp = await admin_client.post("/api/scraper/paper", json={})
-        assert resp.status_code == 422
 
 
 @pytest.mark.e2e
@@ -289,9 +252,8 @@ class TestListPapers:
                 summary=None,
                 authors=["Georg Martius"],
                 publication_date=None,
-                source="google_scholar",
+                source="openalex",
                 source_url="https://example.com",
-                arxiv_id="2301.07041",
                 doi=None,
                 recency_score=0.8,
                 relevance_score=0.8,
@@ -308,7 +270,7 @@ class TestListPapers:
         assert resp.status_code == 200
         papers = resp.json()
         assert len(papers) == 1
-        assert papers[0]["arxiv_id"] == "2301.07041"
+        assert papers[0]["source"] == "openalex"
 
     async def test_chair_id_filter_forwarded_to_service(self, client, _app):
         from app.papers.deps import get_paper_service
@@ -375,9 +337,8 @@ class TestGetPaper:
                 summary=None,
                 authors=[],
                 publication_date=None,
-                source="arxiv",
-                source_url="https://arxiv.org/abs/2301.07041",
-                arxiv_id="2301.07041",
+                source="openalex",
+                source_url="https://openalex.org/W42",
                 doi=None,
                 recency_score=0.5,
                 relevance_score=0.5,

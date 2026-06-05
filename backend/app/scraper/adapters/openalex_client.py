@@ -9,7 +9,6 @@ from datetime import datetime, timezone
 import httpx
 
 from app.papers.domain import PaperCandidate, ResearcherInfo
-from app.scraper.adapters.arxiv_client import extract_arxiv_id_from_url
 from app.scraper.interfaces import PaperSourceClient
 
 _logger = logging.getLogger(__name__)
@@ -190,7 +189,6 @@ class OpenAlexSourceClient(PaperSourceClient):
         ids = work.get("ids") or {}
         doi = work.get("doi") or ids.get("doi")
         source_url = self._source_url(work)
-        arxiv_id = extract_arxiv_id_from_url(source_url) if source_url else None
 
         return PaperCandidate(
             title=title,
@@ -199,7 +197,6 @@ class OpenAlexSourceClient(PaperSourceClient):
             publication_date=_parse_publication_date(work.get("publication_date")),
             source="openalex",
             source_url=source_url,
-            arxiv_id=arxiv_id,
             doi=doi,
         )
 

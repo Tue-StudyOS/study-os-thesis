@@ -68,14 +68,6 @@ class ChairRepository:
     async def get_document(self, doc_id: int) -> ChairDocument | None:
         return await self._session.get(ChairDocument, doc_id)
 
-    async def get_document_by_arxiv(self, chair_id: int, arxiv_id: str) -> ChairDocument | None:
-        return await self._session.scalar(
-            select(ChairDocument).where(
-                ChairDocument.chair_id == chair_id,
-                ChairDocument.arxiv_id == arxiv_id,
-            )
-        )
-
     async def add_document(
         self,
         *,
@@ -83,7 +75,6 @@ class ChairRepository:
         kind: ChairDocumentKind,
         content: str,
         title: str | None = None,
-        arxiv_id: str | None = None,
         published_year: int | None = None,
         embedding: list[float] | None = None,
     ) -> ChairDocument:
@@ -92,7 +83,6 @@ class ChairRepository:
             kind=kind,
             content=content,
             title=title,
-            arxiv_id=arxiv_id,
             published_year=published_year,
             embedding=embedding,
         )

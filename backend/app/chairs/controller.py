@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, status
 
 from app.auth.deps import CurrentUserDep, require_role
 from app.chairs.deps import ChairServiceDep
-from app.chairs.schemas import ArxivIngestRequest, ChairCreate, ChairOut, ChairPatch
+from app.chairs.schemas import ChairCreate, ChairOut, ChairPatch
 from app.jobs.deps import JobServiceDep
 from app.models import User, UserRole
 from app.models.job import JobType
@@ -73,34 +73,6 @@ async def delete_chair(
     chair_service: ChairServiceDep,
 ) -> None:
     await chair_service.delete_chair(chair_id)
-
-
-@router.post(
-    "/{chair_id}/documents/arxiv",
-    status_code=status.HTTP_202_ACCEPTED,
-)
-async def ingest_arxiv_paper(
-    chair_id: int,
-    body: ArxivIngestRequest,
-    _admin: AdminDep,
-    chair_service: ChairServiceDep,
-    job_service: JobServiceDep,
-) -> dict:
-    """Dispatch ArXiv paper ingestion to a background worker."""
-    from app.chairs.tasks import ingest_arxiv_paper as ingest_task
-
-    # Validate chair exists before dispatching
-    await chair_service.get_chair(chair_id)
-
-    job = await job_service.create_job(
-        type=JobType.ingest_arxiv,
-        user_id=_admin.id,
-        input_data={"chair_id": chair_id, "arxiv_id": body.arxiv_id},
-    )
-    task_result = ingest_task.delay(chair_id, body.arxiv_id, _admin.id, str(job.id))
-    await job_service.set_celery_task_id(job.id, task_result.id)
-
-    return {"job_id": str(job.id), "chair_id": chair_id, "arxiv_id": body.arxiv_id}
 
 
 @router.delete("/{chair_id}/documents/{doc_id}", status_code=status.HTTP_204_NO_CONTENT)

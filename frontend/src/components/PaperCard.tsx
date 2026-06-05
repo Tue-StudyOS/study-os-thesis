@@ -2,7 +2,7 @@ import AiInsightSnippet from "./AiInsightSnippet";
 
 export interface Paper {
   id: string;
-  category: string; // e.g. "ArXiv • CS.AI"
+  category: string; // e.g. "OpenAlex • AI"
   title: string;
   abstract: string;
   authors?: string;

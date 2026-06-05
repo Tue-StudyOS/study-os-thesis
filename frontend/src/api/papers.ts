@@ -11,7 +11,6 @@ export interface Paper {
   publication_date: string | null;
   source: string;
   source_url: string;
-  arxiv_id: string | null;
   doi: string | null;
   recency_score: number;
   relevance_score: number;

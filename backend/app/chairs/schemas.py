@@ -12,7 +12,6 @@ class ChairDocumentOut(BaseModel):
     kind: ChairDocumentKind
     title: str | None
     content: str
-    arxiv_id: str | None
     published_year: int | None
     created_at: datetime
 
@@ -48,12 +47,3 @@ class ChairPatch(BaseModel):
     professor_user_id: int | None = None
     website_url: str | None = Field(default=None, max_length=500)
 
-
-class ArxivIngestRequest(BaseModel):
-    """Request body to ingest a single ArXiv paper into a chair's document store."""
-
-    arxiv_id: str = Field(
-        min_length=5,
-        max_length=50,
-        description="ArXiv paper ID, e.g. '2301.07041' or 'cs/0301027'.",
-    )
