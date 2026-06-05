@@ -16,4 +16,3 @@ class ScrapeRunResponse(BaseModel):
     job_id: str
     chair_id: int
     message: str
-

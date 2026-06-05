@@ -7,7 +7,7 @@ from datetime import datetime
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-
+from sqlalchemy import Select
 from app.models.paper import Paper, PaperTag, Tag
 
 
@@ -105,7 +105,7 @@ class PaperRepository:
         *,
         chair_id: int | None = None,
         tag_name: str | None = None,
-    ):
+    ) -> Select[tuple[Paper]]:
         """Base paper query with filters shared by list() and count()."""
         from app.models.researcher import Researcher, ResearcherPaper
 

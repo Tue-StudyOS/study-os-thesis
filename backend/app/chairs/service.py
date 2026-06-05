@@ -134,4 +134,3 @@ class ChairService:
         except Exception as exc:
             _logger.warning("Embedding failed, document stored without embedding: %s", exc)
             return None
-

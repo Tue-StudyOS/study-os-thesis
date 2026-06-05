@@ -46,4 +46,3 @@ class ChairPatch(BaseModel):
     professor_name: str | None = Field(default=None, min_length=2, max_length=255)
     professor_user_id: int | None = None
     website_url: str | None = Field(default=None, max_length=500)
-
