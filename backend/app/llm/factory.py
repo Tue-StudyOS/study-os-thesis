@@ -62,6 +62,7 @@ def build_chat_client(settings: Settings) -> LLMPort:
                 chat_kwargs={
                     "api_key": settings.deepseek_api_key,
                     "api_base": settings.deepseek_base_url,
+                    "reasoning_effort": "high",
                 },
             )
 

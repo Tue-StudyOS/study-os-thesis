@@ -18,6 +18,7 @@ The factory (``app.llm.factory``) constructs instances of this class with the
 correct model names and provider-specific kwargs.
 """
 
+import json
 import logging
 from typing import Any
 
@@ -68,6 +69,51 @@ def _normalise_tool_calls(
     return result
 
 
+def _to_openai_messages(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Translate Ollama-shaped messages into OpenAI/DeepSeek-compatible shape.
+
+    The service layer builds messages in Ollama's dict shape (tool_call
+    arguments are a dict, tool results carry only a ``name``).  OpenAI-compatible
+    providers require:
+      - each assistant ``tool_calls`` entry to have ``id`` + ``type`` and
+        ``function.arguments`` encoded as a JSON *string*;
+      - each ``tool`` result message to carry the matching ``tool_call_id``.
+
+    Tool-call ids are synthesised and matched to the following tool results by
+    order (the agent loop appends tool results immediately after the assistant
+    turn that requested them, in the same order).
+    """
+    out: list[dict[str, Any]] = []
+    pending_ids: list[str] = []
+    counter = 0
+
+    for msg in messages:
+        tool_calls = msg.get("tool_calls")
+        if msg.get("role") == "assistant" and tool_calls:
+            converted: list[dict[str, Any]] = []
+            for tc in tool_calls:
+                fn = tc.get("function", {}) or {}
+                args = fn.get("arguments", {})
+                if not isinstance(args, str):
+                    args = json.dumps(args)
+                call_id = tc.get("id") or f"call_{counter}"
+                counter += 1
+                pending_ids.append(call_id)
+                converted.append({"id": call_id, "type": "function", "function": {"name": fn.get("name", ""), "arguments": args}})
+            new_msg = dict(msg)
+            new_msg["tool_calls"] = converted
+            out.append(new_msg)
+        elif msg.get("role") == "tool":
+            new_msg = dict(msg)
+            if "tool_call_id" not in new_msg and pending_ids:
+                new_msg["tool_call_id"] = pending_ids.pop(0)
+            out.append(new_msg)
+        else:
+            out.append(msg)
+
+    return out
+
+
 class LiteLLMAdapter:
     """Provider-agnostic LLM adapter built on top of LiteLLM.
 
@@ -111,6 +157,7 @@ class LiteLLMAdapter:
         messages: list[dict[str, Any]],
         tools: list[dict[str, Any]] | None = None,
         options: dict[str, Any] | None = None,
+        format: str | None = None,
     ) -> dict[str, Any]:
         """Execute a single non-streamed chat turn via LiteLLM.
 
@@ -123,6 +170,9 @@ class LiteLLMAdapter:
         kwargs: dict[str, Any] = dict(self._chat_kwargs)
         if tools:
             kwargs["tools"] = tools
+        # Map Ollama's JSON output mode to the OpenAI-compatible response_format.
+        if format == "json":
+            kwargs["response_format"] = {"type": "json_object"}
         # Map Ollama-style options (num_predict, temperature, …) to OpenAI params.
         if options:
             if "temperature" in options:
@@ -132,7 +182,7 @@ class LiteLLMAdapter:
 
         response = await litellm.acompletion(
             model=self._chat_model,
-            messages=messages,
+            messages=_to_openai_messages(messages),
             stream=False,
             **kwargs,
         )
@@ -145,6 +195,12 @@ class LiteLLMAdapter:
         }
         if msg.tool_calls:
             result["tool_calls"] = _normalise_tool_calls(msg.tool_calls)
+        # DeepSeek thinking mode: the reasoning trace must be echoed back on the
+        # assistant message within the same tool-calling turn. Surface it so the
+        # caller can replay it (see _to_openai_messages).
+        reasoning = getattr(msg, "reasoning_content", None)
+        if reasoning:
+            result["reasoning_content"] = reasoning
 
         return {"message": result}
 

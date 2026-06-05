@@ -320,13 +320,16 @@ class ChatService:
                 new_messages.append(assistant_row)
                 if on_message_created:
                     await on_message_created(assistant_row)
-                llm_messages.append(
-                    {
-                        "role": "assistant",
-                        "content": assistant_content,
-                        "tool_calls": tool_calls,
-                    }
-                )
+                llm_assistant_msg: dict[str, Any] = {
+                    "role": "assistant",
+                    "content": assistant_content,
+                    "tool_calls": tool_calls,
+                }
+                # Echo back the reasoning trace when present (DeepSeek thinking
+                # mode requires it; absent for providers that don't emit one).
+                if assistant_msg.get("reasoning_content"):
+                    llm_assistant_msg["reasoning_content"] = assistant_msg["reasoning_content"]
+                llm_messages.append(llm_assistant_msg)
 
                 for call in tool_calls:
                     fn = call.get("function", {}) or {}
