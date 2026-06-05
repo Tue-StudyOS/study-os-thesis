@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - "**/*.py"
-      - "backend/pyproject.toml"
-      - "backend/uv.lock"
-      - ".github/workflows/qa.yml"
+      - '**/*.py'
+      - 'backend/pyproject.toml'
+      - 'backend/uv.lock'
+      - '.github/workflows/qa.yml'
 
 # The Python project lives in backend/:
 # - backend/pyproject.toml
@@ -29,7 +29,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
-          cache-dependency-glob: "backend/uv.lock"
+          cache-dependency-glob: 'backend/uv.lock'
 
       - name: Install dependencies
         run: uv sync
@@ -47,9 +47,9 @@ jobs:
     # The test suite mocks all I/O, but these values satisfy required settings
     # at import time.
     env:
-      DATABASE_URL: "postgresql+asyncpg://ci:ci@127.0.0.1:5432/ci"
-      JWT_SECRET: "ci-placeholder-secret-not-for-production-1234567890"
-      REDIS_URL: "redis://127.0.0.1:6379/0"
+      DATABASE_URL: 'postgresql+asyncpg://ci:ci@127.0.0.1:5432/ci'
+      JWT_SECRET: 'ci-placeholder-secret-not-for-production-1234567890'
+      REDIS_URL: 'redis://127.0.0.1:6379/0'
 
     steps:
       - name: Checkout repository
@@ -59,13 +59,10 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
-          cache-dependency-glob: "backend/uv.lock"
+          cache-dependency-glob: 'backend/uv.lock'
 
       - name: Install dependencies
         run: uv sync
-
-      - name: Install Playwright Chromium
-        run: uv run playwright install chromium --with-deps
 
       - name: Run tests
         run: uv run pytest --maxfail=1 --disable-warnings -q
