@@ -91,3 +91,6 @@ class JobService:
         status: JobStatus | None = None,
     ) -> list[Job]:
         return await self._repo.list_by_user(user_id, type=type, status=status)
+
+    async def find_active_chair_scrape(self, chair_id: int) -> Job | None:
+        return await self._repo.get_active_scrape_for_chair(chair_id)

@@ -63,6 +63,26 @@ class Settings(BaseSettings):
     redis_url: str = Field("redis://localhost:6379/0", alias="REDIS_URL")
 
     # ---------------------------------------------------------------------------
+    # Scraper settings
+    # ---------------------------------------------------------------------------
+    scraper_scholar_delay: float = Field(3.0, alias="SCRAPER_SCHOLAR_DELAY")
+    scraper_scholar_max_pages: int = Field(3, alias="SCRAPER_SCHOLAR_MAX_PAGES")
+    scraper_scholar_headless: bool = Field(True, alias="SCRAPER_SCHOLAR_HEADLESS")
+    scraper_arxiv_delay: float = Field(3.0, alias="SCRAPER_ARXIV_DELAY")
+    scraper_arxiv_batch_size: int = Field(50, alias="SCRAPER_ARXIV_BATCH_SIZE")
+    scraper_max_results: int = Field(250, alias="SCRAPER_MAX_RESULTS")
+    scraper_since_days: int = Field(3650, alias="SCRAPER_SINCE_DAYS")
+    scraper_recency_half_life: int = Field(180, alias="SCRAPER_RECENCY_HALF_LIFE")
+
+    # Dedicated LLM model for paper enrichment (can differ from the chat model)
+    llm_enrichment_model: str = Field("", alias="LLM_ENRICHMENT_MODEL")
+
+    @property
+    def effective_enrichment_model(self) -> str:
+        """Use LLM_ENRICHMENT_MODEL if set, otherwise fall back to the chat model."""
+        return self.llm_enrichment_model.strip() or self.ollama_chat_model
+
+    # ---------------------------------------------------------------------------
     # CORS
     # ---------------------------------------------------------------------------
     cors_origins: str = Field("http://localhost:5173", alias="CORS_ORIGINS")

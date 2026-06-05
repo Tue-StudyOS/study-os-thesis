@@ -78,6 +78,7 @@ function CreateChairForm({ onCreated }: { onCreated: (c: Chair) => void }) {
   const [form, setForm] = useState<ChairCreate>({
     name: "",
     short_description: "",
+    professor_title: "",
     professor_name: "",
     website_url: "",
   });
@@ -89,11 +90,12 @@ function CreateChairForm({ onCreated }: { onCreated: (c: Chair) => void }) {
     try {
       const chair = await createChair({
         ...form,
+        professor_title: form.professor_title || null,
         website_url: form.website_url || null,
       });
       onCreated(chair);
       setOpen(false);
-      setForm({ name: "", short_description: "", professor_name: "", website_url: "" });
+      setForm({ name: "", short_description: "", professor_title: "", professor_name: "", website_url: "" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Fehler");
     } finally {
@@ -130,11 +132,18 @@ function CreateChairForm({ onCreated }: { onCreated: (c: Chair) => void }) {
           onChange={(e) => setForm((f) => ({ ...f, short_description: e.target.value }))}
           className={inputCls} placeholder="Forschungsschwerpunkte…" />
       </Field>
-      <Field label="Professor *">
-        <input required value={form.professor_name}
-          onChange={(e) => setForm((f) => ({ ...f, professor_name: e.target.value }))}
-          className={inputCls} placeholder="Prof. Dr. Max Mustermann" />
-      </Field>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <Field label="Titel">
+          <input value={form.professor_title ?? ""}
+            onChange={(e) => setForm((f) => ({ ...f, professor_title: e.target.value }))}
+            className={inputCls} placeholder="Prof. Dr." />
+        </Field>
+        <Field label="Name *">
+          <input required value={form.professor_name}
+            onChange={(e) => setForm((f) => ({ ...f, professor_name: e.target.value }))}
+            className={inputCls} placeholder="Georg Martius" />
+        </Field>
+      </div>
       <Field label="Website">
         <input value={form.website_url ?? ""} onChange={(e) => setForm((f) => ({ ...f, website_url: e.target.value }))}
           className={inputCls} placeholder="https://…" type="url" />
@@ -242,7 +251,9 @@ function ChairRow({
       <div className="flex items-center justify-between p-4 bg-surface-container-lowest">
         <div className="flex-1 min-w-0">
           <h4 className="font-title-md text-on-surface font-semibold truncate">{chair.name}</h4>
-          <p className="font-body-sm text-on-surface-variant">{chair.professor_name} · {papers.length} Papers</p>
+          <p className="font-body-sm text-on-surface-variant">
+            {(chair.professor_title ? `${chair.professor_title} ` : "") + chair.professor_name} · {papers.length} Papers
+          </p>
         </div>
         <div className="flex items-center gap-2 ml-4 shrink-0">
           <button

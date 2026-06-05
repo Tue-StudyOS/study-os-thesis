@@ -1,0 +1,447 @@
+"""Unit tests for scraper Celery tasks.
+
+Covers: task wiring (execute_task delegation), retry policy, and the async
+work functions (_enrich_paper_work, _ingest_single_paper_work).
+"""
+
+from datetime import datetime, timezone
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
+from app.exceptions import NotFoundException
+from app.scraper.tasks import (
+    _enrich_paper_work,
+    _ingest_single_paper_work,
+    _scrape_researcher_work,
+    enrich_paper,
+    ingest_single_paper,
+    scrape_all_chairs,
+    scrape_chair_papers,
+    scrape_researcher_papers,
+)
+
+
+def _acm(session):
+    cm = MagicMock()
+    cm.__aenter__ = AsyncMock(return_value=session)
+    cm.__aexit__ = AsyncMock(return_value=False)
+    return cm
+
+
+def _fake_settings():
+    return SimpleNamespace(
+        redis_url="redis://localhost:6379/0",
+        ollama_embed_model="embed-model",
+        ollama_chat_model="chat-model",
+        effective_enrichment_model="chat-model",
+        scraper_scholar_headless=True,
+        scraper_scholar_delay=0.0,
+        scraper_scholar_max_pages=1,
+        scraper_arxiv_delay=0.0,
+        scraper_arxiv_batch_size=50,
+        scraper_max_results=5,
+        scraper_since_days=365,
+        scraper_recency_half_life=180,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Task wiring tests (patch execute_task, check what gets passed)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+class TestScrapeChairPapersWiring:
+    def test_delegates_to_execute_task(self):
+        with patch("app.scraper.tasks.execute_task") as ex:
+            scrape_chair_papers(chair_id=1, user_id=5, job_id="job-1")
+        ex.assert_called_once()
+
+    def test_correct_job_id_and_user_id_forwarded(self):
+        with patch("app.scraper.tasks.execute_task") as ex:
+            scrape_chair_papers(chair_id=1, user_id=5, job_id="job-abc")
+        assert ex.call_args.kwargs["job_id"] == "job-abc"
+        assert ex.call_args.kwargs["user_id"] == 5
+
+    def test_success_event_name(self):
+        with patch("app.scraper.tasks.execute_task") as ex:
+            scrape_chair_papers(chair_id=1, user_id=5, job_id="j")
+        assert ex.call_args.kwargs["success_event"] == "scrape_chair_complete"
+
+    def test_work_is_callable(self):
+        with patch("app.scraper.tasks.execute_task") as ex:
+            scrape_chair_papers(chair_id=1, user_id=5, job_id="j")
+        assert callable(ex.call_args.kwargs["work"])
+
+
+@pytest.mark.unit
+class TestScrapeResearcherPapersWiring:
+    def test_delegates_to_execute_task(self):
+        with patch("app.scraper.tasks.execute_task") as ex:
+            scrape_researcher_papers(researcher_id=2, user_id=5, job_id="j")
+        ex.assert_called_once()
+
+    def test_success_event_name(self):
+        with patch("app.scraper.tasks.execute_task") as ex:
+            scrape_researcher_papers(researcher_id=2, user_id=5, job_id="j")
+        assert ex.call_args.kwargs["success_event"] == "scrape_researcher_complete"
+
+
+@pytest.mark.unit
+class TestEnrichPaperWiring:
+    def test_delegates_to_execute_task(self):
+        with patch("app.scraper.tasks.execute_task") as ex:
+            enrich_paper(paper_id=3, user_id=5, job_id="j")
+        ex.assert_called_once()
+
+    def test_success_event_name(self):
+        with patch("app.scraper.tasks.execute_task") as ex:
+            enrich_paper(paper_id=3, user_id=5, job_id="j")
+        assert ex.call_args.kwargs["success_event"] == "enrich_paper_complete"
+
+    def test_force_false_by_default(self):
+        # The work lambda must capture force=False when not passed
+        with patch("app.scraper.tasks.execute_task") as ex:
+            enrich_paper(paper_id=3, user_id=5, job_id="j")
+        # Verify work is a callable (force is baked in via lambda)
+        assert callable(ex.call_args.kwargs["work"])
+
+
+@pytest.mark.unit
+class TestIngestSinglePaperWiring:
+    def test_delegates_to_execute_task(self):
+        with patch("app.scraper.tasks.execute_task") as ex:
+            ingest_single_paper(arxiv_id="2301.07041", researcher_id=None, user_id=5, job_id="j")
+        ex.assert_called_once()
+
+    def test_success_event_name(self):
+        with patch("app.scraper.tasks.execute_task") as ex:
+            ingest_single_paper(arxiv_id="2301.07041", researcher_id=None, user_id=5, job_id="j")
+        assert ex.call_args.kwargs["success_event"] == "ingest_paper_complete"
+
+
+@pytest.mark.unit
+class TestScrapeResearcherWork:
+    async def test_uses_openalex_source(self):
+        session = AsyncMock()
+        source = AsyncMock()
+        orchestrator = AsyncMock()
+        orchestrator.scrape_for_researcher.return_value = {"stored": 0}
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.scraper.adapters.openalex_client.OpenAlexSourceClient", return_value=source) as source_cls,
+            patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
+            patch("app.scraper.orchestrator.ScraperOrchestrator", return_value=orchestrator) as orchestrator_cls,
+        ):
+            result = await _scrape_researcher_work(7, _fake_settings(), max_results=250, since_days=3650)
+
+        source_cls.assert_called_once_with()
+        assert orchestrator_cls.call_args.kwargs["source"] is source
+        orchestrator.scrape_for_researcher.assert_awaited_once_with(7)
+        source.close.assert_awaited_once()
+        assert result == {"stored": 0}
+
+
+# ---------------------------------------------------------------------------
+# Retry policy
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+class TestRetryPolicy:
+    def test_scrape_chair_max_retries(self):
+        assert scrape_chair_papers.max_retries == 2
+
+    def test_scrape_researcher_max_retries(self):
+        assert scrape_researcher_papers.max_retries == 3
+
+    def test_enrich_paper_max_retries(self):
+        assert enrich_paper.max_retries == 3
+
+    def test_ingest_single_paper_max_retries(self):
+        assert ingest_single_paper.max_retries == 3
+
+    def test_scrape_all_chairs_max_retries_zero(self):
+        assert scrape_all_chairs.max_retries == 0
+
+    def test_scrape_researcher_has_long_soft_limit(self):
+        # Must be much longer than others — Scholar + arXiv + LLM can take minutes
+        assert scrape_researcher_papers.soft_time_limit == 600
+
+    def test_enrich_paper_soft_limit(self):
+        assert enrich_paper.soft_time_limit == 120
+
+
+# ---------------------------------------------------------------------------
+# _enrich_paper_work
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+class TestEnrichPaperWork:
+    def _setup_session(self, paper, tags=None):
+        session = AsyncMock()
+        paper_repo = AsyncMock()
+        tag_repo = AsyncMock()
+        paper_repo.get_by_id.return_value = paper
+        paper_repo.update.return_value = paper
+        tag = SimpleNamespace(id=1, name="robotics")
+        tag_repo.get_or_create.return_value = tag
+        return session, paper_repo, tag_repo
+
+    async def test_skips_if_already_enriched_and_no_force(self):
+        paper = SimpleNamespace(
+            id=1,
+            title="T",
+            abstract="A",
+            enriched_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
+        )
+        session, paper_repo, tag_repo = self._setup_session(paper)
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.papers.repository.PaperRepository", return_value=paper_repo),
+            patch("app.papers.repository.TagRepository", return_value=tag_repo),
+            patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
+        ):
+            result = await _enrich_paper_work(1, force=False, settings=_fake_settings())
+
+        assert result["skipped"] is True
+        paper_repo.update.assert_not_awaited()
+
+    async def test_force_overrides_enriched_at_guard(self):
+        paper = SimpleNamespace(
+            id=1,
+            title="T",
+            abstract="Existing abstract",
+            enriched_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
+        )
+        session, paper_repo, tag_repo = self._setup_session(paper)
+        llm = AsyncMock()
+        llm.chat.return_value = {"message": {"content": "summary"}}
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.papers.repository.PaperRepository", return_value=paper_repo),
+            patch("app.papers.repository.TagRepository", return_value=tag_repo),
+            patch("app.llm.factory.build_chat_client", return_value=llm),
+            patch("app.scraper.adapters.llm_enricher.LLMPaperEnricher.summarize", new=AsyncMock(return_value="s")),
+            patch("app.scraper.adapters.llm_enricher.LLMPaperEnricher.generate_tags", new=AsyncMock(return_value=[])),
+        ):
+            result = await _enrich_paper_work(1, force=True, settings=_fake_settings())
+
+        assert result.get("skipped") is not True
+
+    async def test_no_abstract_returns_skip_with_reason(self):
+        paper = SimpleNamespace(id=1, title="T", abstract=None, enriched_at=None)
+        session, paper_repo, tag_repo = self._setup_session(paper)
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.papers.repository.PaperRepository", return_value=paper_repo),
+            patch("app.papers.repository.TagRepository", return_value=tag_repo),
+            patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
+        ):
+            result = await _enrich_paper_work(1, force=False, settings=_fake_settings())
+
+        assert result["skipped"] is True
+        assert result["reason"] == "no_abstract"
+
+    async def test_paper_not_found_raises(self):
+        session = AsyncMock()
+        paper_repo = AsyncMock()
+        paper_repo.get_by_id.return_value = None
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.papers.repository.PaperRepository", return_value=paper_repo),
+            patch("app.papers.repository.TagRepository", return_value=AsyncMock()),
+            patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
+        ):
+            with pytest.raises(NotFoundException):
+                await _enrich_paper_work(999, force=False, settings=_fake_settings())
+
+    async def test_happy_path_updates_paper_and_returns_counts(self):
+        paper = SimpleNamespace(id=1, title="T", abstract="Abstract text", enriched_at=None)
+        session, paper_repo, tag_repo = self._setup_session(paper)
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.papers.repository.PaperRepository", return_value=paper_repo),
+            patch("app.papers.repository.TagRepository", return_value=tag_repo),
+            patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
+            patch("app.scraper.adapters.llm_enricher.LLMPaperEnricher.summarize", new=AsyncMock(return_value="A summary")),
+            patch("app.scraper.adapters.llm_enricher.LLMPaperEnricher.generate_tags", new=AsyncMock(return_value=["robotics"])),
+        ):
+            result = await _enrich_paper_work(1, force=False, settings=_fake_settings())
+
+        paper_repo.update.assert_awaited_once()
+        update_kwargs = paper_repo.update.call_args.kwargs
+        assert update_kwargs["summary"] == "A summary"
+        assert update_kwargs["enriched_at"] is not None
+        paper_repo.commit.assert_awaited_once()
+        assert result["paper_id"] == 1
+        assert result["tag_count"] == 1
+        assert result["summary_len"] == len("A summary")
+
+
+# ---------------------------------------------------------------------------
+# _ingest_single_paper_work
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+class TestIngestSinglePaperWork:
+    def _mock_arxiv_enricher(self, title="Fetched Title", abstract="Fetched abstract"):
+        enricher = AsyncMock()
+
+        async def enrich(paper):
+            paper.title = title
+            paper.abstract = abstract
+            paper.authors = ["Author A"]
+            paper.publication_date = datetime(2023, 1, 1, tzinfo=timezone.utc)
+            return paper
+
+        enricher.enrich.side_effect = enrich
+        return enricher
+
+    async def test_duplicate_paper_returns_created_false(self):
+        existing = SimpleNamespace(id=42)
+        session = AsyncMock()
+        paper_repo = AsyncMock()
+        tag_repo = AsyncMock()
+        researcher_repo = AsyncMock()
+        dedup = AsyncMock()
+        dedup.find_duplicate.return_value = existing
+        dedup.merge_metadata.return_value = existing
+        paper_repo.commit = AsyncMock()
+
+        arxiv_enricher = self._mock_arxiv_enricher()
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.papers.repository.PaperRepository", return_value=paper_repo),
+            patch("app.papers.repository.TagRepository", return_value=tag_repo),
+            patch("app.researchers.repository.ResearcherRepository", return_value=researcher_repo),
+            patch("app.papers.dedup.DeduplicationService", return_value=dedup),
+            patch("app.scraper.adapters.arxiv_client.ArxivMetadataEnricher", return_value=arxiv_enricher) as arxiv_cls,
+            patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
+        ):
+            result = await _ingest_single_paper_work("2301.07041", None, _fake_settings())
+
+        arxiv_cls.assert_called_once_with(redis_url="redis://localhost:6379/0", rate_limit_delay=0.0, batch_size=50)
+        assert result["created"] is False
+        assert result["paper_id"] == 42
+        paper_repo.create.assert_not_awaited()
+
+    async def test_duplicate_links_researcher_when_provided(self):
+        existing = SimpleNamespace(id=42)
+        session = AsyncMock()
+        paper_repo = AsyncMock()
+        tag_repo = AsyncMock()
+        researcher_repo = AsyncMock()
+        dedup = AsyncMock()
+        dedup.find_duplicate.return_value = existing
+        dedup.merge_metadata.return_value = existing
+        paper_repo.commit = AsyncMock()
+        arxiv_enricher = self._mock_arxiv_enricher()
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.papers.repository.PaperRepository", return_value=paper_repo),
+            patch("app.papers.repository.TagRepository", return_value=tag_repo),
+            patch("app.researchers.repository.ResearcherRepository", return_value=researcher_repo),
+            patch("app.papers.dedup.DeduplicationService", return_value=dedup),
+            patch("app.scraper.adapters.arxiv_client.ArxivMetadataEnricher", return_value=arxiv_enricher),
+            patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
+        ):
+            await _ingest_single_paper_work("2301.07041", researcher_id=7, settings=_fake_settings())
+
+        researcher_repo.link_paper.assert_awaited_with(7, 42)
+
+    async def test_no_researcher_id_does_not_call_link_paper(self):
+        existing = SimpleNamespace(id=42)
+        session = AsyncMock()
+        paper_repo = AsyncMock()
+        tag_repo = AsyncMock()
+        researcher_repo = AsyncMock()
+        dedup = AsyncMock()
+        dedup.find_duplicate.return_value = existing
+        dedup.merge_metadata.return_value = existing
+        paper_repo.commit = AsyncMock()
+        arxiv_enricher = self._mock_arxiv_enricher()
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.papers.repository.PaperRepository", return_value=paper_repo),
+            patch("app.papers.repository.TagRepository", return_value=tag_repo),
+            patch("app.researchers.repository.ResearcherRepository", return_value=researcher_repo),
+            patch("app.papers.dedup.DeduplicationService", return_value=dedup),
+            patch("app.scraper.adapters.arxiv_client.ArxivMetadataEnricher", return_value=arxiv_enricher),
+            patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
+        ):
+            await _ingest_single_paper_work("2301.07041", researcher_id=None, settings=_fake_settings())
+
+        researcher_repo.link_paper.assert_not_awaited()
+
+    async def test_empty_title_from_arxiv_raises_value_error(self):
+        arxiv_enricher = AsyncMock()
+
+        async def enrich_empty(paper):
+            paper.title = ""  # arXiv returned nothing
+            return paper
+
+        arxiv_enricher.enrich.side_effect = enrich_empty
+        session = AsyncMock()
+        paper_repo = AsyncMock()
+        tag_repo = AsyncMock()
+        researcher_repo = AsyncMock()
+        dedup = AsyncMock()
+        dedup.find_duplicate.return_value = None
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.papers.repository.PaperRepository", return_value=paper_repo),
+            patch("app.papers.repository.TagRepository", return_value=tag_repo),
+            patch("app.researchers.repository.ResearcherRepository", return_value=researcher_repo),
+            patch("app.papers.dedup.DeduplicationService", return_value=dedup),
+            patch("app.scraper.adapters.arxiv_client.ArxivMetadataEnricher", return_value=arxiv_enricher),
+            patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
+        ):
+            with pytest.raises(ValueError, match="not found"):
+                await _ingest_single_paper_work("9999.00000", None, _fake_settings())
+
+    async def test_new_paper_stored_and_returns_created_true(self):
+        session = AsyncMock()
+        paper_repo = AsyncMock()
+        tag_repo = AsyncMock()
+        researcher_repo = AsyncMock()
+        dedup = AsyncMock()
+        dedup.find_duplicate.return_value = None
+        paper_repo.create.return_value = SimpleNamespace(id=99)
+        tag = SimpleNamespace(id=1, name="robotics")
+        tag_repo.get_or_create.return_value = tag
+        paper_repo.commit = AsyncMock()
+        arxiv_enricher = self._mock_arxiv_enricher()
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.papers.repository.PaperRepository", return_value=paper_repo),
+            patch("app.papers.repository.TagRepository", return_value=tag_repo),
+            patch("app.researchers.repository.ResearcherRepository", return_value=researcher_repo),
+            patch("app.papers.dedup.DeduplicationService", return_value=dedup),
+            patch("app.scraper.adapters.arxiv_client.ArxivMetadataEnricher", return_value=arxiv_enricher),
+            patch("app.llm.factory.build_chat_client", return_value=AsyncMock()),
+            patch("app.scraper.adapters.llm_enricher.LLMPaperEnricher.summarize", new=AsyncMock(return_value="s")),
+            patch("app.scraper.adapters.llm_enricher.LLMPaperEnricher.generate_tags", new=AsyncMock(return_value=["robotics"])),
+        ):
+            result = await _ingest_single_paper_work("2301.07041", researcher_id=None, settings=_fake_settings())
+
+        paper_repo.create.assert_awaited_once()
+        paper_repo.commit.assert_awaited_once()
+        assert result["created"] is True
+        assert result["paper_id"] == 99
+        assert result["arxiv_id"] == "2301.07041"

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <link href="http://arxiv.org/api/query?search_query=id_list:2301.07041" rel="self" type="application/atom+xml"/>
+  <title type="html">ArXiv Query: id_list:2301.07041</title>
+  <entry>
+    <id>http://arxiv.org/abs/2301.07041v2</id>
+    <updated>2023-03-15T00:00:00Z</updated>
+    <published>2023-01-17T12:34:56Z</published>
+    <title>Causal Influence Detection for Improving Efficiency in Reinforcement Learning</title>
+    <summary>We introduce a method for detecting causal influences between agents in
+multi-agent reinforcement learning. By selectively communicating only when
+causal influence is detected, our approach achieves sample efficiency
+improvements of up to 40% compared to baselines while maintaining
+near-optimal cooperative behavior across diverse environments.</summary>
+    <author>
+      <name>Georg Martius</name>
+    </author>
+    <author>
+      <name>Bernhard Scholkopf</name>
+    </author>
+    <author>
+      <name>Sebastien Lachapelle</name>
+    </author>
+    <link href="http://arxiv.org/abs/2301.07041v2" rel="alternate" type="text/html"/>
+    <link title="pdf" href="http://arxiv.org/pdf/2301.07041v2" rel="related" type="application/pdf"/>
+  </entry>
+</feed>

@@ -14,6 +14,7 @@ export interface Chair {
   id: number;
   name: string;
   short_description: string;
+  professor_title: string | null;
   professor_name: string;
   professor_user_id: number | null;
   website_url: string | null;
@@ -24,6 +25,7 @@ export interface Chair {
 export interface ChairCreate {
   name: string;
   short_description: string;
+  professor_title?: string | null;
   professor_name: string;
   professor_user_id?: number | null;
   website_url?: string | null;
@@ -32,6 +34,7 @@ export interface ChairCreate {
 export interface ChairPatch {
   name?: string;
   short_description?: string;
+  professor_title?: string | null;
   professor_name?: string;
   professor_user_id?: number | null;
   website_url?: string | null;

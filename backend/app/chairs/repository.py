@@ -22,6 +22,7 @@ class ChairRepository:
         *,
         name: str,
         short_description: str,
+        professor_title: str | None,
         professor_name: str,
         professor_user_id: int | None,
         website_url: str | None,
@@ -29,6 +30,7 @@ class ChairRepository:
         chair = Chair(
             name=name,
             short_description=short_description,
+            professor_title=professor_title,
             professor_name=professor_name,
             professor_user_id=professor_user_id,
             website_url=website_url,
@@ -124,7 +126,7 @@ class ChairRepository:
                 {
                     "chair_id": chair.id,
                     "chair_name": chair.name,
-                    "professor_name": chair.professor_name,
+                    "professor_name": (f"{chair.professor_title} {chair.professor_name}".strip() if chair.professor_title else chair.professor_name),
                     "short_description": chair.short_description,
                     "document_kind": doc.kind.value,
                     "document_title": doc.title,

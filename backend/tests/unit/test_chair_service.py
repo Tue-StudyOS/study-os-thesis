@@ -19,7 +19,15 @@ def chair_service(mock_chair_repo, mock_llm_embed, fake_settings) -> ChairServic
 
 
 def _make_chair(**overrides) -> Chair:
-    defaults = dict(id=1, name="Test Chair", short_description="A test chair description.", professor_name="Prof. Test", professor_user_id=None, website_url=None)
+    defaults = dict(
+        id=1,
+        name="Test Chair",
+        short_description="A test chair description.",
+        professor_title="Prof.",
+        professor_name="Test",
+        professor_user_id=None,
+        website_url=None,
+    )
     return _make_orm(Chair, **{**defaults, **overrides})
 
 
@@ -39,7 +47,8 @@ class TestCreateChair:
         data = ChairCreate(
             name="New Chair",
             short_description="Description that is long enough for validation.",
-            professor_name="Prof. New",
+            professor_title="Prof.",
+            professor_name="New",
         )
         await chair_service.create_chair(data)
 
@@ -47,6 +56,40 @@ class TestCreateChair:
             "test-embed-model",
             "Description that is long enough for validation.",
         )
+
+    async def test_stores_professor_title_separately(self, chair_service, mock_chair_repo):
+        chair = _make_chair()
+        mock_chair_repo.create.return_value = chair
+        mock_chair_repo.get_by_id.return_value = chair
+
+        data = ChairCreate(
+            name="Chair",
+            short_description="Description that is long enough for validation.",
+            professor_title="Prof. Dr.",
+            professor_name="Georg Martius",
+        )
+        await chair_service.create_chair(data, embed=False)
+
+        call_kwargs = mock_chair_repo.create.call_args.kwargs
+        assert call_kwargs["professor_title"] == "Prof. Dr."
+        assert call_kwargs["professor_name"] == "Georg Martius"
+
+    async def test_splits_title_from_name_if_user_enters_combined(self, chair_service, mock_chair_repo):
+        chair = _make_chair()
+        mock_chair_repo.create.return_value = chair
+        mock_chair_repo.get_by_id.return_value = chair
+
+        data = ChairCreate(
+            name="Chair",
+            short_description="Description that is long enough for validation.",
+            professor_title=None,
+            professor_name="Prof. Dr. Georg Martius",
+        )
+        await chair_service.create_chair(data, embed=False)
+
+        call_kwargs = mock_chair_repo.create.call_args.kwargs
+        assert call_kwargs["professor_title"] == "Prof. Dr."
+        assert call_kwargs["professor_name"] == "Georg Martius"
 
     async def test_stores_description_document(self, chair_service, mock_chair_repo, mock_llm_embed):
         chair = _make_chair()
@@ -57,7 +100,8 @@ class TestCreateChair:
         data = ChairCreate(
             name="Chair",
             short_description="Description that is long enough for validation.",
-            professor_name="Prof.",
+            professor_title="Prof.",
+            professor_name="Test",
         )
         await chair_service.create_chair(data)
 
@@ -76,7 +120,8 @@ class TestCreateChair:
         data = ChairCreate(
             name="Chair",
             short_description="Description that is long enough for validation.",
-            professor_name="Prof.",
+            professor_title="Prof.",
+            professor_name="Test",
         )
         result = await chair_service.create_chair(data)
 
@@ -93,7 +138,8 @@ class TestCreateChair:
         data = ChairCreate(
             name="Chair",
             short_description="Description that is long enough for validation.",
-            professor_name="Prof.",
+            professor_title="Prof.",
+            professor_name="Test",
         )
         await chair_service.create_chair(data, embed=False)
 

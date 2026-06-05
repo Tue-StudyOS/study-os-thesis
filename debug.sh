@@ -15,6 +15,7 @@ ENV_EXAMPLE="$BACKEND_DIR/.env.example"
 BACKEND_PID=""
 FRONTEND_PID=""
 CELERY_PID=""
+BEAT_PID=""
 
 # --------------------------------------------------------------------------- #
 # Helpers
@@ -56,6 +57,7 @@ cleanup() {
   trap - SIGINT SIGTERM EXIT
 
   info "Shutting down app processes..."
+  kill_pid "$BEAT_PID"
   kill_pid "$CELERY_PID"
   kill_pid "$BACKEND_PID"
   kill_pid "$FRONTEND_PID"
@@ -149,6 +151,16 @@ setup() {
     info "Frontend dependencies up to date — skipping."
   fi
 
+  # -- Playwright browser --------------------------------------------------- #
+  local pw_marker="$BACKEND_DIR/.venv/.playwright-installed"
+  if [[ ! -f "$pw_marker" ]]; then
+    info "Installing Playwright Chromium browser..."
+    (cd "$BACKEND_DIR" && uv run playwright install chromium)
+    touch "$pw_marker"
+  else
+    info "Playwright Chromium up to date — skipping."
+  fi
+
   # -- Database migrations -------------------------------------------------- #
   local alembic_marker="$BACKEND_DIR/.venv/.alembic-ran"
   local migrations_dir="$BACKEND_DIR/alembic/versions"
@@ -187,8 +199,20 @@ run_app() {
     LITELLM_DONT_SHOW_FEEDBACK_BOX=1 \
     uv run celery -A app.worker.celery_app worker \
       --loglevel=info \
-      --concurrency=2) &
+      --concurrency=2 \
+      --max-tasks-per-child=10) &
   CELERY_PID=$!
+
+  # Celery Beat scheduler — runs periodic tasks (e.g. weekly paper scraping).
+  # Set SCRAPER_BEAT_SCHEDULE=disabled in .env to turn off automatic scraping.
+  info "Starting Celery Beat scheduler..."
+  (cd "$BACKEND_DIR" && exec env \
+    LITELLM_LOCAL_MODEL_COST_MAP=1 \
+    LITELLM_DONT_SHOW_FEEDBACK_BOX=1 \
+    uv run celery -A app.worker.celery_app beat \
+      --loglevel=info \
+      --schedule=/tmp/celerybeat-schedule) &
+  BEAT_PID=$!
 
   info "Starting backend (uvicorn) on port 8000..."
   # LITELLM_LOCAL_MODEL_COST_MAP suppresses LiteLLM's network call to fetch pricing data.
@@ -214,6 +238,7 @@ run_app() {
   info "  Backend  : http://localhost:8000"
   info "  API docs : http://localhost:8000/docs"
   info "  Worker   : Celery (2 processes)"
+  info "  Beat     : Celery Beat (weekly scrape, see SCRAPER_BEAT_SCHEDULE)"
   info "========================================="
   info "Press Ctrl+C to stop the app."
   echo ""

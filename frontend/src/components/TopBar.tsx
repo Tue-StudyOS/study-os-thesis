@@ -3,9 +3,18 @@ import { useAuth } from "../auth/AuthContext";
 interface TopBarProps {
   title?: string;
   showSearch?: boolean;
+  searchValue?: string;
+  searchPlaceholder?: string;
+  onSearchChange?: (value: string) => void;
 }
 
-export default function TopBar({ title, showSearch = true }: TopBarProps) {
+export default function TopBar({
+  title,
+  showSearch = true,
+  searchValue,
+  searchPlaceholder = "Search research, courses...",
+  onSearchChange,
+}: TopBarProps) {
   const { user } = useAuth();
 
   return (
@@ -28,8 +37,10 @@ export default function TopBar({ title, showSearch = true }: TopBarProps) {
               search
             </span>
             <input
+              value={searchValue}
+              onChange={(e) => onSearchChange?.(e.target.value)}
               className="bg-transparent border-none focus:outline-none focus:ring-0 text-body-sm font-body-sm text-on-surface w-full placeholder:text-on-surface-variant/70"
-              placeholder="Search research, courses..."
+              placeholder={searchPlaceholder}
               type="text"
             />
           </div>

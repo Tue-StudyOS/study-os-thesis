@@ -69,6 +69,7 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/chairs" element={<ChairExplorer />} />
+          <Route path="/chairs/:chairParam" element={<ChairExplorer />} />
           <Route path="/proposals" element={<Proposals />} />
           <Route
             path="/admin"

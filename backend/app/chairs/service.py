@@ -18,6 +18,30 @@ _ARXIV_API = "https://export.arxiv.org/api/query"
 _ARXIV_NS = "http://www.w3.org/2005/Atom"
 
 
+def _split_professor_title_and_name(title: str | None, name: str) -> tuple[str | None, str]:
+    """Split a combined input like "Prof. Dr. Georg Martius" into (title, name).
+
+    We preserve the title separately (no data loss) and keep `name` canonical
+    for scraping/matching.
+    """
+
+    s = (name or "").strip()
+    if not s:
+        return (title.strip() if title else None), s
+
+    import re
+
+    # Repeated leading titles (case-insensitive), e.g. "Prof. Dr.", "Professor Dr.-Ing.".
+    m = re.match(r"^\s*((?:(?:Professor|Prof)\.?\s*|Dr(?:\.-Ing\.)?\.?\s*)+)", s, flags=re.IGNORECASE)
+    parsed_title = m.group(1).strip() if m else None
+    parsed_name = s[m.end() :].strip() if m else s
+
+    out_title = title or parsed_title
+    if out_title is not None:
+        out_title = out_title.strip() or None
+    return out_title, parsed_name
+
+
 class ChairService:
     def __init__(
         self,
@@ -34,11 +58,13 @@ class ChairService:
     # ------------------------------------------------------------------
 
     async def create_chair(self, data: ChairCreate, *, embed: bool = True) -> Chair:
-        _logger.info("Creating chair: name=%r professor=%r", data.name, data.professor_name)
+        professor_title, professor_name = _split_professor_title_and_name(data.professor_title, data.professor_name)
+        _logger.info("Creating chair: name=%r professor=%r", data.name, professor_name)
         chair = await self._chair_repo.create(
             name=data.name,
             short_description=data.short_description,
-            professor_name=data.professor_name,
+            professor_title=professor_title,
+            professor_name=professor_name,
             professor_user_id=data.professor_user_id,
             website_url=data.website_url,
         )
@@ -69,6 +95,15 @@ class ChairService:
         if chair is None:
             raise NotFoundException("Chair", chair_id)
         updates = data.model_dump(exclude_none=True)
+
+        if "professor_name" in updates or "professor_title" in updates:
+            professor_title, professor_name = _split_professor_title_and_name(
+                updates.get("professor_title"),
+                str(updates.get("professor_name") or chair.professor_name),
+            )
+            updates["professor_title"] = professor_title
+            updates["professor_name"] = professor_name
+
         chair = await self._chair_repo.update(chair, **updates)
         await self._chair_repo.commit()
         return await self._chair_repo.get_by_id(chair_id, load_documents=True)  # type: ignore[return-value]
