@@ -28,9 +28,7 @@ class TestToOpenAIMessages:
             {
                 "role": "assistant",
                 "content": None,
-                "tool_calls": [
-                    {"function": {"name": "search", "arguments": {"q": "test"}}}
-                ],
+                "tool_calls": [{"function": {"name": "search", "arguments": {"q": "test"}}}],
             }
         ]
         result = _to_openai_messages(msgs)
@@ -67,9 +65,7 @@ class TestToOpenAIMessages:
             {
                 "role": "assistant",
                 "content": None,
-                "tool_calls": [
-                    {"id": "my_id", "function": {"name": "foo", "arguments": {}}}
-                ],
+                "tool_calls": [{"id": "my_id", "function": {"name": "foo", "arguments": {}}}],
             }
         ]
         tc = _to_openai_messages(msgs)[0]["tool_calls"][0]
@@ -202,6 +198,4 @@ async def test_deepseek_no_extra_body_thinking():
 
         _, kwargs = mock_acompletion.call_args
         extra_body = kwargs.get("extra_body", {})
-        assert "thinking" not in extra_body, (
-            "extra_body should not contain 'thinking'; reasoning_effort handles this"
-        )
+        assert "thinking" not in extra_body, "extra_body should not contain 'thinking'; reasoning_effort handles this"
