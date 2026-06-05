@@ -28,7 +28,7 @@ export function setChairSyncStatus(
 
 export function chairIdFromScrapeJob(job: Job): number | null {
   const chairId = job.input_data?.chair_id;
-  return typeof chairId === "number" && Number.isInteger(chairId) ? chairId : null;
+  return typeof chairId === "number" && Number.isInteger(chairId) && chairId > 0 ? chairId : null;
 }
 
 export function runningSyncMapFromJobs(jobs: Job[]): ChairSyncMap {

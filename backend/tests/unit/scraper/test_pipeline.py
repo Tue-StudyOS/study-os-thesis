@@ -40,3 +40,35 @@ def test_build_scraper_pipeline_wires_openalex_only_dependencies():
     assert orchestrator_cls.call_args.kwargs["source"] is source
     assert orchestrator_cls.call_args.kwargs["max_results"] == 250
     assert orchestrator_cls.call_args.kwargs["since_days"] == 365
+
+
+@pytest.mark.unit
+def test_build_scraper_pipeline_uses_settings_defaults_only_for_none():
+    session = AsyncMock()
+    settings = _settings()
+
+    with (
+        patch("app.scraper.pipeline.OpenAlexSourceClient", return_value=AsyncMock()),
+        patch("app.scraper.pipeline.build_chat_client", return_value=AsyncMock()),
+        patch("app.scraper.pipeline.ScraperOrchestrator", return_value=AsyncMock()) as orchestrator_cls,
+    ):
+        build_scraper_pipeline(session, settings, max_results=None, since_days=None)
+
+    assert orchestrator_cls.call_args.kwargs["max_results"] == settings.scraper_max_results
+    assert orchestrator_cls.call_args.kwargs["since_days"] == settings.scraper_since_days
+
+
+@pytest.mark.unit
+def test_build_scraper_pipeline_preserves_explicit_zero_override():
+    session = AsyncMock()
+    settings = _settings()
+
+    with (
+        patch("app.scraper.pipeline.OpenAlexSourceClient", return_value=AsyncMock()),
+        patch("app.scraper.pipeline.build_chat_client", return_value=AsyncMock()),
+        patch("app.scraper.pipeline.ScraperOrchestrator", return_value=AsyncMock()) as orchestrator_cls,
+    ):
+        build_scraper_pipeline(session, settings, max_results=0, since_days=0)
+
+    assert orchestrator_cls.call_args.kwargs["max_results"] == 0
+    assert orchestrator_cls.call_args.kwargs["since_days"] == 0

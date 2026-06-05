@@ -25,6 +25,7 @@ from typing import Any, TypeVar
 import litellm
 from pydantic import BaseModel
 
+from app.llm.litellm_constants import LITELLM_JSON_RESPONSE_FORMAT, LITELLM_SYNTHETIC_TOOL_CALL_PREFIX
 from app.llm.structured import parse_structured_content
 
 T = TypeVar("T", bound=BaseModel)
@@ -100,7 +101,7 @@ def _to_openai_messages(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 args = fn.get("arguments", {})
                 if not isinstance(args, str):
                     args = json.dumps(args)
-                call_id = tc.get("id") or f"call_{counter}"
+                call_id = tc.get("id") or f"{LITELLM_SYNTHETIC_TOOL_CALL_PREFIX}_{counter}"
                 counter += 1
                 pending_ids.append(call_id)
                 converted.append({"id": call_id, "type": "function", "function": {"name": fn.get("name", ""), "arguments": args}})
@@ -176,7 +177,7 @@ class LiteLLMAdapter:
             kwargs["tools"] = tools
         # Map Ollama's JSON output mode to the OpenAI-compatible response_format.
         if format == "json":
-            kwargs["response_format"] = {"type": "json_object"}
+            kwargs["response_format"] = LITELLM_JSON_RESPONSE_FORMAT
         # Map Ollama-style options (num_predict, temperature, …) to OpenAI params.
         if options:
             if "temperature" in options:

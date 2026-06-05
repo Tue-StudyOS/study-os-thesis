@@ -166,6 +166,13 @@ class TestRunChairScrape:
         assert resp.status_code == 409
         assert str(existing_job.id) in resp.json()["detail"]["job_id"]
 
+    async def test_rejects_json_numeric_strings(self, client):
+        resp = await client.post("/api/scraper/run/1", json={"since_days": "365", "max_results": 20})
+        assert resp.status_code == 422
+
+        resp = await client.post("/api/scraper/run/1", json={"since_days": 365, "max_results": "20"})
+        assert resp.status_code == 422
+
     async def test_unauthenticated_returns_401(self, _app):
         from httpx import ASGITransport, AsyncClient
         from app.auth.deps import get_current_user
@@ -323,6 +330,11 @@ class TestListPapers:
         assert resp.status_code == 200
         assert paper_svc.list_papers.call_args.kwargs.get("limit") == 15
         assert paper_svc.list_papers.call_args.kwargs.get("offset") == 30
+
+    async def test_rejects_pagination_outside_bounds(self, client):
+        assert (await client.get("/api/papers?limit=0")).status_code == 422
+        assert (await client.get("/api/papers?limit=201")).status_code == 422
+        assert (await client.get("/api/papers?offset=-1")).status_code == 422
 
     async def test_unauthenticated_returns_401(self, _app):
         from httpx import ASGITransport, AsyncClient

@@ -26,6 +26,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
@@ -60,6 +65,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
@@ -84,6 +94,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
@@ -94,11 +109,7 @@ jobs:
         run: uv sync --group audit
 
       - name: Audit Python dependencies
-        run: |
-          reqfile="$(mktemp)"
-          uv export --frozen --no-hashes --no-emit-project --group dev --group audit --output-file "$reqfile" >/dev/null
-          uv run --group audit pip-audit -r "$reqfile" --progress-spinner off
-          rm -f "$reqfile"
+        run: uv run --group audit pip-audit --local --progress-spinner off
 
   frontend-test:
     name: Frontend tests and build

@@ -15,6 +15,7 @@ import {
   setChairSyncStatus,
   type ChairSyncMap,
 } from "../utils/chairSync";
+import { chairIdFromRouteParam } from "../utils/chairRoutes";
 
 const latestPublicationLimit = 15;
 
@@ -143,9 +144,8 @@ export default function ChairExplorer() {
   const visibleChairIdRef = useRef<number | null>(null);
   const latestPageRef = useRef(1);
   const navigate = useNavigate();
-  const routeChairId = chairParam?.startsWith("chairID=")
-    ? Number(chairParam.replace("chairID=", ""))
-    : null;
+  const routeChairId = chairIdFromRouteParam(chairParam);
+  const isChairDetailRoute = chairParam !== undefined;
 
   useEffect(() => {
     Promise.all([listChairs(), listTheses(100)])
@@ -166,12 +166,13 @@ export default function ChairExplorer() {
     Promise.all(
       chairs.map((chair) =>
         listPapers({ chair_id: chair.id, limit: 1 })
-          .then((chairPapers) => [chair.id, chairPapers.total] as const)
-          .catch(() => [chair.id, 0] as const),
+          .then((chairPapers) => [chair.id, chairPapers.total] as const),
       ),
-    ).then((counts) => {
-      setPaperCountsByChair(Object.fromEntries(counts));
-    });
+    )
+      .then((counts) => {
+        setPaperCountsByChair(Object.fromEntries(counts));
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : "Fehler beim Laden der Paper-Zahlen"));
   }, [chairs]);
 
   const filtered = useMemo(
@@ -198,7 +199,7 @@ export default function ChairExplorer() {
   const visiblePapers = papers.length > 0 ? papers : [];
   const publicationCount = paperTotal;
   const activeProjects = featured ? theses.filter((thesis) => thesis.chair_id === featured.id).length : 0;
-  // TODO: Replace this hard-coded fallback when chair team-member scraping lands.
+  // TODO: Replace this hard-coded value when chair team-member scraping lands.
   const teamMembers = 25;
   // TODO: Add citation_count to the paper API once a citation source is available.
   const labCitations = papers.reduce((total) => total + (0 satisfies number), 0);
@@ -314,8 +315,8 @@ export default function ChairExplorer() {
             if (!cancelled) void settleSyncJob(chairId, job);
           });
         }
-      } catch {
-        // Active job rehydration is best-effort; normal page loading still works without it.
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Fehler beim Laden aktiver Sync-Jobs");
       }
     }
 
@@ -389,7 +390,7 @@ export default function ChairExplorer() {
             </div>
           )}
 
-          {!loading && !error && !routeChairId && chairs.length > 0 && (
+          {!loading && !error && !isChairDetailRoute && chairs.length > 0 && (
             <>
               <section className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                 <div>
@@ -414,7 +415,7 @@ export default function ChairExplorer() {
             </>
           )}
 
-          {!loading && !error && routeChairId && !featured && (
+          {!loading && !error && isChairDetailRoute && !featured && (
             <div className="rounded-[6px] border border-outline-variant bg-surface-container-lowest p-6 font-body-md text-on-surface-variant">
               Chair not found.
             </div>
@@ -426,33 +427,31 @@ export default function ChairExplorer() {
                 <PaperDetailPanel paper={selectedPaper} onBack={() => setSelectedPaper(null)} />
               ) : (
                 <>
-              <ChairDetailHero
-                chair={featured}
-                publicationCount={publicationCount}
-                activeProjects={activeProjects}
-                labCitations={labCitations}
-                teamMembers={teamMembers}
-                syncState={featuredSync.state}
-                syncError={featuredSync.error}
-                onBack={() => navigate("/chairs")}
-                onSync={() => handleSyncPapers(featured.id)}
-              />
+                  <ChairDetailHero
+                    chair={featured}
+                    publicationCount={publicationCount}
+                    activeProjects={activeProjects}
+                    labCitations={labCitations}
+                    teamMembers={teamMembers}
+                    syncState={featuredSync.state}
+                    syncError={featuredSync.error}
+                    onBack={() => navigate("/chairs")}
+                    onSync={() => handleSyncPapers(featured.id)}
+                  />
 
-              <LatestPublicationsTable
-                papers={newestPapers}
-                total={paperTotal}
-                search={latestSearch}
-                page={safeLatestPage}
-                pageCount={latestPageCount}
-                pageSize={latestPublicationLimit}
-                onSearchChange={setLatestSearch}
-                onPageChange={setLatestPage}
-                onSelectPaper={setSelectedPaper}
-              />
-
+                  <LatestPublicationsTable
+                    papers={newestPapers}
+                    total={paperTotal}
+                    search={latestSearch}
+                    page={safeLatestPage}
+                    pageCount={latestPageCount}
+                    pageSize={latestPublicationLimit}
+                    onSearchChange={setLatestSearch}
+                    onPageChange={setLatestPage}
+                    onSelectPaper={setSelectedPaper}
+                  />
                 </>
               )}
-
             </>
           )}
         </div>

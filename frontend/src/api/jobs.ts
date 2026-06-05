@@ -1,4 +1,11 @@
 import { api } from "./client";
+import {
+  JOB_POLL_DEFAULT_INTERVAL_MS,
+  JOB_POLL_DEFAULT_MAX_POLLS,
+  JOB_POLL_MIN_INTERVAL_MS,
+  JOB_POLL_MIN_MAX_POLLS,
+} from "./constants";
+import { assertInteger } from "./numeric";
 
 export type JobStatus = "pending" | "started" | "success" | "failure" | "retry";
 
@@ -49,8 +56,10 @@ export interface PollJobOptions {
  */
 export async function pollJob(
   jobId: string,
-  { intervalMs = 2000, maxPolls = 150 }: PollJobOptions = {},
+  { intervalMs = JOB_POLL_DEFAULT_INTERVAL_MS, maxPolls = JOB_POLL_DEFAULT_MAX_POLLS }: PollJobOptions = {},
 ): Promise<Job> {
+  assertInteger("intervalMs", intervalMs, { min: JOB_POLL_MIN_INTERVAL_MS });
+  assertInteger("maxPolls", maxPolls, { min: JOB_POLL_MIN_MAX_POLLS });
   let job = await getJob(jobId);
   for (
     let i = 0;

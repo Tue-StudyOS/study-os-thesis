@@ -1,5 +1,11 @@
 import { getToken } from "./client";
+import {
+  JOB_TREE_CHILD_POLL_INTERVAL_MS,
+  JOB_TREE_PARENT_POLL_INTERVAL_MS,
+  JOB_TREE_TIMEOUT_MS,
+} from "./constants";
 import { getJob, type Job, type JobStatus } from "./jobs";
+import { assertInteger } from "./numeric";
 
 export type JobEvent = {
   type: string;
@@ -15,8 +21,8 @@ type DispatchedJob = {
 };
 
 type WaitForJobTreeOptions = {
-  parentFallbackMs?: number;
-  childFallbackMs?: number;
+  parentPollIntervalMs?: number;
+  childPollIntervalMs?: number;
   timeoutMs?: number;
 };
 
@@ -47,7 +53,7 @@ function wsUrl(token: string): string {
   return `${protocol}//${window.location.host}/api/ws?token=${encodeURIComponent(token)}`;
 }
 
-function openJobSocket(onEvent: (event: JobEvent) => void): WebSocket | null {
+function openJobSocket(onEvent: (event: JobEvent) => void, onError: (error: Error) => void): WebSocket | null {
   const token = getToken();
   if (!token) return null;
 
@@ -55,11 +61,13 @@ function openJobSocket(onEvent: (event: JobEvent) => void): WebSocket | null {
   socket.onmessage = (message) => {
     try {
       const event = JSON.parse(message.data) as JobEvent;
-      if (typeof event.job_id === "string" && typeof event.status === "string") {
-        onEvent(event);
+      if (typeof event.job_id !== "string" || typeof event.status !== "string") {
+        throw new Error("Malformed job event");
       }
-    } catch {
-      // Ignore malformed socket messages; REST fallback will recover state.
+      onEvent(event);
+    } catch (error) {
+      onError(error instanceof Error ? error : new Error("Malformed job event"));
+      socket.close();
     }
   };
   return socket;
@@ -67,7 +75,7 @@ function openJobSocket(onEvent: (event: JobEvent) => void): WebSocket | null {
 
 async function waitForTerminalJob(
   jobId: string,
-  fallbackMs: number,
+  pollIntervalMs: number,
   deadline: number,
   events: Map<string, JobEvent>,
 ): Promise<Job> {
@@ -83,7 +91,7 @@ async function waitForTerminalJob(
     lastJob = await getJob(jobId);
     if (isTerminal(lastJob.status)) return lastJob;
 
-    await sleep(fallbackMs);
+    await sleep(pollIntervalMs);
   }
 
   return lastJob ?? getJob(jobId);
@@ -92,17 +100,27 @@ async function waitForTerminalJob(
 export async function waitForJobTree(
   parentJobId: string,
   {
-    parentFallbackMs = 5000,
-    childFallbackMs = 10000,
-    timeoutMs = 10 * 60 * 1000,
+    parentPollIntervalMs = JOB_TREE_PARENT_POLL_INTERVAL_MS,
+    childPollIntervalMs = JOB_TREE_CHILD_POLL_INTERVAL_MS,
+    timeoutMs = JOB_TREE_TIMEOUT_MS,
   }: WaitForJobTreeOptions = {},
 ): Promise<Job> {
+  assertInteger("parentPollIntervalMs", parentPollIntervalMs, { min: 1 });
+  assertInteger("childPollIntervalMs", childPollIntervalMs, { min: 1 });
+  assertInteger("timeoutMs", timeoutMs, { min: 1 });
   const events = new Map<string, JobEvent>();
-  const socket = openJobSocket((event) => events.set(event.job_id, event));
+  let socketError: Error | null = null;
+  const socket = openJobSocket(
+    (event) => events.set(event.job_id, event),
+    (error) => {
+      socketError = error;
+    },
+  );
   const deadline = Date.now() + timeoutMs;
 
   try {
-    const parent = await waitForTerminalJob(parentJobId, parentFallbackMs, deadline, events);
+    const parent = await waitForTerminalJob(parentJobId, parentPollIntervalMs, deadline, events);
+    if (socketError !== null) throw socketError;
     if (parent.status !== "success") return parent;
 
     const parentEvent = events.get(parentJobId);
@@ -114,8 +132,9 @@ export async function waitForJobTree(
     if (childIds.length === 0) return parent;
 
     const children = await Promise.all(
-      childIds.map((jobId) => waitForTerminalJob(jobId, childFallbackMs, deadline, events)),
+      childIds.map((jobId) => waitForTerminalJob(jobId, childPollIntervalMs, deadline, events)),
     );
+    if (socketError !== null) throw socketError;
     const failedChild = children.find((job) => job.status === "failure");
     return failedChild ?? parent;
   } finally {

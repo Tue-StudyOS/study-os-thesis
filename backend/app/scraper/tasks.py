@@ -40,8 +40,8 @@ async def _scrape_chair_work(
         pipeline = build_scraper_pipeline(
             session,
             settings,
-            max_results=max_results or settings.scraper_max_results,
-            since_days=since_days or settings.scraper_since_days,
+            max_results=max_results,
+            since_days=since_days,
         )
         try:
             researcher_ids = await pipeline.orchestrator.ensure_researchers_for_chair(chair_id, chair.professor_name)
@@ -122,8 +122,8 @@ async def _scrape_researcher_work(
         pipeline = build_scraper_pipeline(
             session,
             settings,
-            max_results=max_results or settings.scraper_max_results,
-            since_days=since_days or settings.scraper_since_days,
+            max_results=max_results,
+            since_days=since_days,
         )
         try:
             return await pipeline.orchestrator.scrape_for_researcher(researcher_id)

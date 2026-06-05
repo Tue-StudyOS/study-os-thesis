@@ -2,7 +2,7 @@
 name = "study-os-thesis-backend"
 version = "0.1.0"
 description = "FastAPI backend for the thesis recommendation app"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<3.14"
 dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.30",
@@ -23,7 +23,6 @@ dependencies = [
     "litellm==1.86.0",
     "celery[redis]>=5.4",
     "redis>=5.0",
-    "thefuzz>=0.22",
 ]
 
 [dependency-groups]
@@ -59,6 +58,9 @@ markers = [
     "integration: requires PostgreSQL + pgvector",
     "e2e: full HTTP stack with DI overrides",
     "eval: optional LLM quality evaluations; skipped unless explicitly enabled",
+]
+filterwarnings = [
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.:starlette.exceptions.StarletteDeprecationWarning",
 ]
 
 [tool.ruff]

@@ -115,8 +115,8 @@ export function coursesToRadarData(courses: StudentCourse[]): number[] {
     AXES.forEach((axis, idx) => {
       const matched = AXIS_KEYWORDS[axis].some((kw) => lower.includes(kw));
       if (matched) {
-        axisSums[idx] += gradeToScore(course.grade);
-        axisCounts[idx] += 1;
+        axisSums[idx] = (axisSums[idx] ?? 0) + gradeToScore(course.grade);
+        axisCounts[idx] = (axisCounts[idx] ?? 0) + 1;
       }
     });
   }
@@ -132,7 +132,7 @@ export function coursesToRadarData(courses: StudentCourse[]): number[] {
   const fallback = Math.max(0.5, globalAvg * 0.6);
 
   return AXES.map((_, idx) =>
-    axisCounts[idx] > 0 ? axisSums[idx] / axisCounts[idx] : fallback,
+    (axisCounts[idx] ?? 0) > 0 ? (axisSums[idx] ?? 0) / (axisCounts[idx] ?? 1) : fallback,
   );
 }
 
@@ -252,7 +252,7 @@ export default function SkillRadar({ currentData }: SkillRadarProps) {
                 fill="#74777f"
                 dominantBaseline="middle"
               >
-                {LEVEL_LABELS[i]}
+                  {LEVEL_LABELS[i] ?? ""}
               </text>
             );
           })}

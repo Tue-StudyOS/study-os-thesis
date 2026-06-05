@@ -70,9 +70,10 @@ export default function Chat() {
       try {
         const list = await api<Session[]>("/api/chat/sessions");
         if (cancelled) return;
-        if (list.length > 0) {
+        const firstSession = list[0];
+        if (firstSession) {
           setSessions(list);
-          setActive(list[0].id);
+          setActive(firstSession.id);
         } else {
           // No sessions yet — create one automatically.
           const s = await api<Session>("/api/chat/sessions", { method: "POST" });
@@ -237,7 +238,7 @@ export default function Chat() {
             ) : (
               <>
                 {/* Timestamp header */}
-                {messages.length > 0 && (
+                {messages[0] && (
                   <div className="flex justify-center">
                     <span className="font-label-md text-label-md text-on-surface-variant text-xs">
                       {formatTime(messages[0].created_at)}

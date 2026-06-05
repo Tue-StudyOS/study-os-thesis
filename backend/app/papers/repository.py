@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import Select
 from app.models.paper import Paper, PaperTag, Tag
+from app.papers.api_constants import PAPER_LIST_DEFAULT_LIMIT, PAPER_LIST_DEFAULT_OFFSET
 
 
 class PaperRepository:
@@ -75,8 +76,8 @@ class PaperRepository:
         *,
         chair_id: int | None = None,
         tag_name: str | None = None,
-        limit: int = 50,
-        offset: int = 0,
+        limit: int = PAPER_LIST_DEFAULT_LIMIT,
+        offset: int = PAPER_LIST_DEFAULT_OFFSET,
     ) -> list[Paper]:
         """List papers ordered by relevance_score DESC, with optional filters."""
         stmt = self._filtered_query(chair_id=chair_id, tag_name=tag_name)

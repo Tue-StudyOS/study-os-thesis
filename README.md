@@ -34,13 +34,15 @@ Used to run PostgreSQL + pgvector.
   Settings → Resources → WSL Integration → toggle your distro → Apply & Restart.
 - **Linux**: Install the `docker` daemon and the `docker compose` plugin.
 
-### 2. uv (Python package manager)
+### 2. Python 3.13 + uv
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 Restart your shell afterwards so `uv` is on PATH. Verify with `uv --version`.
+The backend is pinned to Python 3.13 because several LLM dependencies do not
+publish Python 3.14-compatible releases yet.
 
 ### 3. Node.js ≥ 20
 
@@ -209,8 +211,9 @@ make audit
 ```
 
 This runs backend Ruff lint/format checks, frontend Vitest unit tests, and a
-production frontend build. `make audit` checks backend Python advisories with
-`pip-audit` and frontend advisories with `npm audit --audit-level=moderate`.
+production frontend build. `make audit` checks the synced backend Python
+environment with `pip-audit` and frontend advisories with
+`npm audit --audit-level=moderate`.
 Backend pytest can be run directly from `backend/`:
 
 ```bash
@@ -251,7 +254,7 @@ study-os-thesis/
 │   ├── scripts/
 │   │   └── seed.py         Idempotent DB seed (3 Tübingen chairs)
 │   ├── log_config.json     Uvicorn logging config
-│   ├── pyproject.toml      Python dependencies (Python ≥ 3.13)
+│   ├── pyproject.toml      Python dependencies (Python 3.13)
 │   └── .env.example        Environment variable template
 ├── frontend/
 │   └── src/

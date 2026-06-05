@@ -23,6 +23,10 @@ class ScraperPipeline:
     source: OpenAlexSourceClient
 
 
+def _resolve_numeric_override(value: int | None, default: int) -> int:
+    return value if value is not None else default
+
+
 def build_scraper_pipeline(
     session: AsyncSession,
     settings: Settings,
@@ -42,7 +46,7 @@ def build_scraper_pipeline(
         paper_repo=paper_repo,
         tag_repo=tag_repo,
         researcher_repo=researcher_repo,
-        max_results=max_results or settings.scraper_max_results,
-        since_days=since_days or settings.scraper_since_days,
+        max_results=_resolve_numeric_override(max_results, settings.scraper_max_results),
+        since_days=_resolve_numeric_override(since_days, settings.scraper_since_days),
     )
     return ScraperPipeline(orchestrator=orchestrator, source=source)

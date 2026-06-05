@@ -64,6 +64,9 @@ describe("chair sync state helpers", () => {
   it("extracts chair ids from scrape job input data", () => {
     expect(chairIdFromScrapeJob(makeJob({ chair_id: 6 }))).toBe(6);
     expect(chairIdFromScrapeJob(makeJob({ chair_id: "6" }))).toBeNull();
+    expect(chairIdFromScrapeJob(makeJob({ chair_id: 6.5 }))).toBeNull();
+    expect(chairIdFromScrapeJob(makeJob({ chair_id: 0 }))).toBeNull();
+    expect(chairIdFromScrapeJob(makeJob({ chair_id: "-6" }))).toBeNull();
     expect(chairIdFromScrapeJob(makeJob(null))).toBeNull();
   });
 

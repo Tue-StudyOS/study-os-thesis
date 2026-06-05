@@ -9,13 +9,16 @@ from datetime import datetime, timezone
 import httpx
 
 from app.papers.domain import PaperCandidate, ResearcherInfo
+from app.scraper.adapters.openalex_constants import (
+    OPENALEX_API_BASE_URL,
+    OPENALEX_AUTHOR_LOOKUP_PAGE_SIZE,
+    OPENALEX_DAYS_PER_YEAR,
+    OPENALEX_DEFAULT_TIMEOUT_SECONDS,
+    OPENALEX_MAX_PAGE_SIZE,
+)
 from app.scraper.interfaces import PaperSourceClient
 
 _logger = logging.getLogger(__name__)
-
-_OPENALEX_API = "https://api.openalex.org"
-_DEFAULT_TIMEOUT = 20.0
-_DEFAULT_PAGE_SIZE = 100
 
 
 def _strip_leading_titles_for_search(name: str) -> str:
@@ -28,7 +31,7 @@ def _normalize_name(name: str) -> str:
 
 
 def _year_cutoff(since_days: int) -> int:
-    return datetime.now(timezone.utc).year - (since_days // 365)
+    return datetime.now(timezone.utc).year - (since_days // OPENALEX_DAYS_PER_YEAR)
 
 
 def _short_openalex_id(value: str) -> str:
@@ -60,12 +63,12 @@ class OpenAlexSourceClient(PaperSourceClient):
     def __init__(
         self,
         *,
-        timeout: float = _DEFAULT_TIMEOUT,
-        page_size: int = _DEFAULT_PAGE_SIZE,
+        timeout: float = OPENALEX_DEFAULT_TIMEOUT_SECONDS,
+        page_size: int = OPENALEX_MAX_PAGE_SIZE,
         mailto: str | None = None,
     ) -> None:
         self._timeout = timeout
-        self._page_size = max(1, min(page_size, _DEFAULT_PAGE_SIZE))
+        self._page_size = max(1, min(page_size, OPENALEX_MAX_PAGE_SIZE))
         self._mailto = mailto
 
     async def fetch_papers(
@@ -75,6 +78,9 @@ class OpenAlexSourceClient(PaperSourceClient):
         max_results: int = 20,
         since_days: int = 365,
     ) -> list[PaperCandidate]:
+        if max_results <= 0:
+            return []
+
         author_name = _strip_leading_titles_for_search(researcher.name) or researcher.name
         author_id = await self._resolve_author_id(author_name, researcher.affiliation)
         if author_id is None:
@@ -93,7 +99,7 @@ class OpenAlexSourceClient(PaperSourceClient):
         return papers
 
     async def _resolve_author_id(self, name: str, affiliation: str | None) -> str | None:
-        params = {"search": name, "per-page": 5}
+        params = {"search": name, "per-page": OPENALEX_AUTHOR_LOOKUP_PAGE_SIZE}
         data = await self._get_json("/authors", params)
         if data is None:
             return None
@@ -212,7 +218,7 @@ class OpenAlexSourceClient(PaperSourceClient):
         request_params = dict(params)
         if self._mailto:
             request_params["mailto"] = self._mailto
-        url = f"{_OPENALEX_API}{path}"
+        url = f"{OPENALEX_API_BASE_URL}{path}"
         try:
             async with httpx.AsyncClient(timeout=self._timeout) as client:
                 resp = await client.get(url, params=request_params)
@@ -223,7 +229,11 @@ class OpenAlexSourceClient(PaperSourceClient):
         if not resp.is_success:
             _logger.warning("OpenAlex API %s path=%s url=%s", resp.status_code, path, resp.request.url)
             return None
-        return resp.json()
+        try:
+            return resp.json()
+        except ValueError as exc:
+            _logger.warning("OpenAlex returned invalid JSON path=%s url=%s: %s", path, resp.request.url, exc)
+            return None
 
     async def close(self) -> None:
         return None

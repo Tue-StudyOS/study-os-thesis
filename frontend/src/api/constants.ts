@@ -1,0 +1,24 @@
+export const PAPER_LIST_DEFAULT_LIMIT = 50;
+export const PAPER_LIST_MIN_LIMIT = 1;
+export const PAPER_LIST_MAX_LIMIT = 200;
+export const PAPER_LIST_MIN_OFFSET = 0;
+
+export const SCRAPE_SINCE_DAYS_DEFAULT = 3650;
+export const SCRAPE_SINCE_DAYS_MIN = 30;
+export const SCRAPE_SINCE_DAYS_MAX = 3650;
+export const SCRAPE_MAX_RESULTS_DEFAULT = 250;
+export const SCRAPE_MAX_RESULTS_MIN = 1;
+export const SCRAPE_MAX_RESULTS_MAX = 500;
+
+export const THESIS_LIST_DEFAULT_LIMIT = 50;
+export const THESIS_LIST_MIN_LIMIT = 1;
+export const THESIS_LIST_MAX_LIMIT = 100;
+export const THESIS_LIST_MIN_OFFSET = 0;
+
+export const JOB_POLL_DEFAULT_INTERVAL_MS = 2000;
+export const JOB_POLL_MIN_INTERVAL_MS = 1;
+export const JOB_POLL_DEFAULT_MAX_POLLS = 150;
+export const JOB_POLL_MIN_MAX_POLLS = 1;
+export const JOB_TREE_PARENT_POLL_INTERVAL_MS = 5000;
+export const JOB_TREE_CHILD_POLL_INTERVAL_MS = 10000;
+export const JOB_TREE_TIMEOUT_MS = 10 * 60 * 1000;

@@ -5,6 +5,13 @@ from __future__ import annotations
 from fastapi import APIRouter, Query
 
 from app.auth.deps import CurrentUserDep
+from app.papers.api_constants import (
+    PAPER_LIST_DEFAULT_LIMIT,
+    PAPER_LIST_DEFAULT_OFFSET,
+    PAPER_LIST_MAX_LIMIT,
+    PAPER_LIST_MIN_LIMIT,
+    PAPER_LIST_MIN_OFFSET,
+)
 from app.papers.deps import PaperServiceDep
 from app.papers.schemas import PaginatedPapersOut, PaperOut
 
@@ -17,8 +24,8 @@ async def list_papers(
     paper_service: PaperServiceDep,
     chair_id: int | None = Query(None, description="Filter by chair"),
     tag: str | None = Query(None, description="Filter by canonical tag name"),
-    limit: int = Query(50, ge=1, le=200),
-    offset: int = Query(0, ge=0),
+    limit: int = Query(PAPER_LIST_DEFAULT_LIMIT, ge=PAPER_LIST_MIN_LIMIT, le=PAPER_LIST_MAX_LIMIT),
+    offset: int = Query(PAPER_LIST_DEFAULT_OFFSET, ge=PAPER_LIST_MIN_OFFSET),
 ) -> PaginatedPapersOut:
     """Return papers ordered by relevance_score DESC."""
     result = await paper_service.list_papers(

@@ -17,6 +17,17 @@ export class LLMUnavailableError extends Error {
   }
 }
 
+async function readErrorDetail(res: Response): Promise<string> {
+  try {
+    const data = await res.json();
+    if (typeof data?.detail === "string") return data.detail;
+    if (data?.detail !== undefined) return JSON.stringify(data.detail);
+  } catch {
+    // Response body is not JSON.
+  }
+  return res.statusText || `Request failed: ${res.status}`;
+}
+
 type FetchOpts = RequestInit & {
   json?: unknown;
   form?: Record<string, string>;
@@ -44,9 +55,14 @@ export async function api<T = unknown>(path: string, opts: FetchOpts = {}): Prom
     body = opts.multipart;
   }
 
+  const request: RequestInit = { ...opts, headers };
+  if (body !== undefined) {
+    request.body = body;
+  }
+
   let res: Response;
   try {
-    res = await fetch(path, { ...opts, headers, body });
+    res = await fetch(path, request);
   } catch (err) {
     // Network-level failure (backend down, no internet, DNS failure).
     if (err instanceof TypeError) {
@@ -74,15 +90,7 @@ export async function api<T = unknown>(path: string, opts: FetchOpts = {}): Prom
       }
     }
 
-    let detail = res.statusText;
-    try {
-      const data = await res.json();
-      if (data?.detail)
-        detail = typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail);
-    } catch {
-      // ignore — keep statusText as fallback
-    }
-    throw new Error(detail || `Request failed: ${res.status}`);
+    throw new Error(await readErrorDetail(res));
   }
 
   if (res.status === 204) return undefined as T;

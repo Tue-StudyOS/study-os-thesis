@@ -40,6 +40,13 @@ def _work(title: str, year: int, *, openalex_id: str = "https://openalex.org/W1"
 @pytest.mark.unit
 class TestOpenAlexSourceClient:
     @respx.mock
+    async def test_zero_max_results_returns_empty_without_network(self):
+        papers = await OpenAlexSourceClient().fetch_papers(ResearcherInfo(name="Georg Martius"), max_results=0, since_days=3650)
+
+        assert papers == []
+        assert not respx.calls
+
+    @respx.mock
     async def test_resolves_author_then_fetches_recent_works(self):
         author_route = respx.get("https://api.openalex.org/authors").mock(return_value=httpx.Response(200, json=_authors_response()))
         works_route = respx.get("https://api.openalex.org/works").mock(return_value=httpx.Response(200, json=_works_response([_work("Recent Paper", 2024)])))
@@ -86,6 +93,23 @@ class TestOpenAlexSourceClient:
         respx.get("https://api.openalex.org/authors").mock(return_value=httpx.Response(200, json={"results": []}))
 
         papers = await OpenAlexSourceClient().fetch_papers(ResearcherInfo(name="Unknown Person"), max_results=10, since_days=3650)
+
+        assert papers == []
+
+    @respx.mock
+    async def test_invalid_author_json_returns_empty(self):
+        respx.get("https://api.openalex.org/authors").mock(return_value=httpx.Response(200, text="not json"))
+
+        papers = await OpenAlexSourceClient().fetch_papers(ResearcherInfo(name="Georg Martius"), max_results=10, since_days=3650)
+
+        assert papers == []
+
+    @respx.mock
+    async def test_invalid_works_json_returns_empty(self):
+        respx.get("https://api.openalex.org/authors").mock(return_value=httpx.Response(200, json=_authors_response()))
+        respx.get("https://api.openalex.org/works").mock(return_value=httpx.Response(200, text="not json"))
+
+        papers = await OpenAlexSourceClient().fetch_papers(ResearcherInfo(name="Georg Martius"), max_results=10, since_days=3650)
 
         assert papers == []
 

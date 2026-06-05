@@ -126,6 +126,25 @@ class TestScrapeResearcherWork:
         source.close.assert_awaited_once()
         assert result == {"stored": 0}
 
+    async def test_forwards_explicit_zero_overrides_to_pipeline(self):
+        session = AsyncMock()
+        pipeline = SimpleNamespace(
+            orchestrator=AsyncMock(),
+            source=AsyncMock(),
+        )
+        pipeline.orchestrator.scrape_for_researcher.return_value = {"stored": 0}
+
+        with (
+            patch("app.db.SessionLocal", return_value=_acm(session)),
+            patch("app.scraper.pipeline.build_scraper_pipeline", return_value=pipeline) as build_pipeline,
+        ):
+            result = await _scrape_researcher_work(7, _fake_settings(), max_results=0, since_days=0)
+
+        assert build_pipeline.call_args.kwargs["max_results"] == 0
+        assert build_pipeline.call_args.kwargs["since_days"] == 0
+        pipeline.source.close.assert_awaited_once()
+        assert result == {"stored": 0}
+
 
 # ---------------------------------------------------------------------------
 # Retry policy

@@ -8,35 +8,43 @@ chat model, allowing a smaller/faster model for this batch workload.
 from __future__ import annotations
 
 import logging
+import re
+from difflib import get_close_matches
 
 from pydantic import BaseModel, Field
-from thefuzz import process as fuzz_process  # type: ignore[import-untyped]
 
 from app.llm.port import LLMPort
+from app.scraper.adapters.llm_enricher_constants import (
+    MAX_GENERATED_TAGS,
+    MAX_SUMMARY_CHARS,
+    SUMMARY_MAX_TOKENS,
+    SUMMARY_TEMPERATURE,
+    TAG_FUZZY_THRESHOLD,
+    TAG_MAX_TOKENS,
+    TAG_TEMPERATURE,
+)
 from app.scraper.interfaces import LLMEnricher
 from app.scraper.tags import CANONICAL_TAGS
 
 _logger = logging.getLogger(__name__)
 
-# Fuzzy-match threshold: a returned tag must have this similarity to a
-# canonical tag to be accepted (0-100 scale).
-_FUZZY_THRESHOLD = 80
+_TAG_SEPARATOR_RE = re.compile(r"[\s_\-/]+")
 
 
 class PaperTagSelection(BaseModel):
-    tags: list[str] = Field(default_factory=list, min_length=0, max_length=5)
+    tags: list[str] = Field(default_factory=list, min_length=0, max_length=MAX_GENERATED_TAGS)
 
 
 class PaperSummaryOutput(BaseModel):
-    summary: str = Field(min_length=1, max_length=1800)
+    summary: str = Field(min_length=1, max_length=MAX_SUMMARY_CHARS)
 
 
 class LLMPaperEnricher(LLMEnricher):
     """Generates a 2-3 sentence summary and 2-5 canonical tags for a paper.
 
     The tag generation uses a closed-vocabulary prompt to keep tags consistent
-    across the corpus.  Raw LLM output is parsed, then fuzzy-matched against
-    the canonical tag set so minor phrasing variations are normalised.
+    across the corpus. Raw LLM output is parsed, then normalized against the
+    canonical tag set so minor phrasing variations are accepted.
     """
 
     def __init__(self, llm_client: LLMPort, model_name: str) -> None:
@@ -55,7 +63,7 @@ class LLMPaperEnricher(LLMEnricher):
                 self._model,
                 [{"role": "user", "content": prompt}],
                 output_schema=PaperSummaryOutput,
-                options={"temperature": 0.3, "num_predict": 250},
+                options={"temperature": SUMMARY_TEMPERATURE, "num_predict": SUMMARY_MAX_TOKENS},
             )
             return result.summary.strip()
         except Exception as exc:
@@ -75,7 +83,7 @@ class LLMPaperEnricher(LLMEnricher):
                 self._model,
                 [{"role": "user", "content": prompt}],
                 output_schema=PaperTagSelection,
-                options={"temperature": 0.1, "num_predict": 150},
+                options={"temperature": TAG_TEMPERATURE, "num_predict": TAG_MAX_TOKENS},
             )
         except Exception as exc:
             _logger.warning("LLM tag generation failed for %r: %s", title[:60], exc)
@@ -86,16 +94,16 @@ class LLMPaperEnricher(LLMEnricher):
     def _normalize(self, tags: list[str], title: str) -> list[str]:
         normalized: list[str] = []
         for tag in tags:
-            tag_lower = tag.strip().lower()
+            tag_lower = _normalize_tag_text(tag)
             if tag_lower in CANONICAL_TAGS:
                 normalized.append(tag_lower)
                 continue
-            # Fuzzy match against the canonical set
-            match = fuzz_process.extractOne(tag_lower, CANONICAL_TAGS)
-            if match and match[1] >= _FUZZY_THRESHOLD:
+
+            match = get_close_matches(tag_lower, CANONICAL_TAGS, n=1, cutoff=TAG_FUZZY_THRESHOLD)
+            if match:
                 normalized.append(match[0])
             else:
-                _logger.debug("Unrecognized tag discarded: %r (best match: %s)", tag, match)
+                _logger.debug("Unrecognized tag discarded: %r", tag)
 
         # Deduplicate while preserving order
         seen: set[str] = set()
@@ -105,3 +113,7 @@ class LLMPaperEnricher(LLMEnricher):
                 seen.add(t)
                 result.append(t)
         return result
+
+
+def _normalize_tag_text(tag: str) -> str:
+    return _TAG_SEPARATOR_RE.sub(" ", tag.strip().lower()).strip()
