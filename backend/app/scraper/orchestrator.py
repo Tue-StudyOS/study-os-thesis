@@ -228,12 +228,15 @@ class ScraperOrchestrator:
 
         # MVP: bootstrap with the chair's professor as the sole researcher.
         # Strip leading academic titles so the stored name matches Scholar profiles.
-        clean_name = re.sub(
-            r"^\s*(?:(?:Professor|Prof)\.?\s*|Dr(?:\.-Ing\.)?\.?\s*)+",
-            "",
-            professor_name,
-            flags=re.IGNORECASE,
-        ).strip() or professor_name
+        clean_name = (
+            re.sub(
+                r"^\s*(?:(?:Professor|Prof)\.?\s*|Dr(?:\.-Ing\.)?\.?\s*)+",
+                "",
+                professor_name,
+                flags=re.IGNORECASE,
+            ).strip()
+            or professor_name
+        )
         _logger.info(
             "No researchers found for chair_id=%d — auto-creating from professor_name=%r (clean=%r)",
             chair_id,
