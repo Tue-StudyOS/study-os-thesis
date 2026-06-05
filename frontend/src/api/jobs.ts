@@ -21,6 +21,17 @@ export function getJob(jobId: string): Promise<Job> {
   return api<Job>(`/api/jobs/${jobId}`);
 }
 
+export function listJobs(params: {
+  type?: string;
+  status?: JobStatus;
+} = {}): Promise<Job[]> {
+  const q = new URLSearchParams();
+  if (params.type) q.set("type", params.type);
+  if (params.status) q.set("status", params.status);
+  const suffix = q.toString() ? `?${q}` : "";
+  return api<Job[]>(`/api/jobs${suffix}`);
+}
+
 export interface PollJobOptions {
   /** Delay between polls in milliseconds. */
   intervalMs?: number;

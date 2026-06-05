@@ -1,19 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import TopBar from "../components/TopBar";
-import { ChairDetailHero, ChairListView, professorName, type SyncState } from "../components/chairs";
+import { ChairDetailHero, ChairListView, professorName } from "../components/chairs";
 import { LatestPublicationsTable, PaperDetailPanel } from "../components/publications";
 import { listChairs, getChair, type Chair } from "../api/chairs";
+import { listJobs, type Job } from "../api/jobs";
+import { waitForJobTree } from "../api/jobEvents";
 import { listPapers, triggerScrape, type Paper } from "../api/papers";
 import { listTheses, type Thesis } from "../api/theses";
+import {
+  chairIdFromScrapeJob,
+  getChairSyncStatus,
+  runningSyncMapFromJobs,
+  setChairSyncStatus,
+  type ChairSyncMap,
+} from "../utils/chairSync";
 
 const latestPublicationLimit = 15;
-const idleSync = { state: "idle", error: null } satisfies ChairSyncStatus;
-
-type ChairSyncStatus = {
-  state: SyncState;
-  error: string | null;
-};
 
 function ChairDetailPanel({
   chairId,
@@ -131,7 +134,7 @@ export default function ChairExplorer() {
   const [theses, setTheses] = useState<Thesis[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [syncByChairId, setSyncByChairId] = useState<Record<number, ChairSyncStatus>>({});
+  const [syncByChairId, setSyncByChairId] = useState<ChairSyncMap>({});
   const [search, setSearch] = useState("");
   const [latestSearch, setLatestSearch] = useState("");
   const [latestPage, setLatestPage] = useState(1);
@@ -191,7 +194,7 @@ export default function ChairExplorer() {
   }, [theses]);
 
   const featured = routeChairId ? chairs.find((chair) => chair.id === routeChairId) ?? null : null;
-  const featuredSync = featured ? syncByChairId[featured.id] ?? idleSync : idleSync;
+  const featuredSync = getChairSyncStatus(syncByChairId, featured?.id);
   const visiblePapers = papers.length > 0 ? papers : [];
   const publicationCount = paperTotal;
   const activeProjects = featured ? theses.filter((thesis) => thesis.chair_id === featured.id).length : 0;
@@ -256,46 +259,86 @@ export default function ChairExplorer() {
     navigate(chairId ? `/proposals?chair_id=${chairId}` : "/proposals");
   }
 
+  async function refreshSyncedChair(chairId: number) {
+    const countResult = await listPapers({ chair_id: chairId, limit: 1 });
+    setPaperCountsByChair((current) => ({
+      ...current,
+      [chairId]: countResult.total,
+    }));
+    if (visibleChairIdRef.current !== chairId) return;
+
+    const fresh = await listPapers({
+      chair_id: chairId,
+      limit: latestPublicationLimit,
+      offset: (latestPageRef.current - 1) * latestPublicationLimit,
+    });
+    if (visibleChairIdRef.current === chairId) {
+      setPapers(fresh.items);
+      setPaperTotal(fresh.total);
+    }
+  }
+
+  async function settleSyncJob(chairId: number, job: Job) {
+    if (job.status === "success") {
+      await refreshSyncedChair(chairId);
+      setSyncByChairId((current) => setChairSyncStatus(current, chairId, { state: "done", error: null }));
+      return;
+    }
+
+    setSyncByChairId((current) =>
+      setChairSyncStatus(current, chairId, { state: "error", error: job.error ?? "Scrape job failed" }),
+    );
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function restoreActiveScrapes() {
+      try {
+        const [pending, started] = await Promise.all([
+          listJobs({ type: "scrape_chair", status: "pending" }),
+          listJobs({ type: "scrape_chair", status: "started" }),
+        ]);
+        if (cancelled) return;
+
+        const activeJobs = [...pending, ...started];
+        setSyncByChairId((current) => ({
+          ...current,
+          ...runningSyncMapFromJobs(activeJobs),
+        }));
+
+        for (const activeJob of activeJobs) {
+          const chairId = chairIdFromScrapeJob(activeJob);
+          if (chairId == null) continue;
+          void waitForJobTree(activeJob.id).then((job) => {
+            if (!cancelled) void settleSyncJob(chairId, job);
+          });
+        }
+      } catch {
+        // Active job rehydration is best-effort; normal page loading still works without it.
+      }
+    }
+
+    void restoreActiveScrapes();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   async function handleSyncPapers(chairId: number) {
     if (syncByChairId[chairId]?.state === "running") return;
-    setSyncByChairId((current) => ({
-      ...current,
-      [chairId]: { state: "running", error: null },
-    }));
+    setSyncByChairId((current) => setChairSyncStatus(current, chairId, { state: "running", error: null }));
     try {
       const job = await triggerScrape(chairId);
-      if (job.status === "success") {
-        const countResult = await listPapers({ chair_id: chairId, limit: 1 });
-        setPaperCountsByChair((current) => ({
-          ...current,
-          [chairId]: countResult.total,
-        }));
-        if (visibleChairIdRef.current === chairId) {
-          const fresh = await listPapers({
-            chair_id: chairId,
-            limit: latestPublicationLimit,
-            offset: (latestPageRef.current - 1) * latestPublicationLimit,
-          });
-          if (visibleChairIdRef.current === chairId) {
-            setPapers(fresh.items);
-            setPaperTotal(fresh.total);
-          }
-        }
-        setSyncByChairId((current) => ({
-          ...current,
-          [chairId]: { state: "done", error: null },
-        }));
-      } else {
-        setSyncByChairId((current) => ({
-          ...current,
-          [chairId]: { state: "error", error: job.error ?? "Scrape job failed" },
-        }));
-      }
+      await settleSyncJob(chairId, job);
     } catch (e) {
-      setSyncByChairId((current) => ({
-        ...current,
-        [chairId]: { state: "error", error: e instanceof Error ? e.message : "Unknown error" },
-      }));
+      setSyncByChairId((current) =>
+        setChairSyncStatus(current, chairId, {
+          state: "error",
+          error: e instanceof Error ? e.message : "Unknown error",
+        }),
+      );
     }
   }
 
