@@ -1,7 +1,7 @@
 """Celery application instance for study-os-thesis."""
 
 from celery import Celery
-from celery.signals import worker_process_init
+from celery.signals import setup_logging, worker_process_init
 
 celery_app = Celery("study_os_thesis")
 celery_app.config_from_object("app.worker.celery_config")
@@ -14,6 +14,15 @@ celery_app.autodiscover_tasks(
         "app.scraper",
     ]
 )
+
+
+@setup_logging.connect
+def _configure_worker_logging(**_kwargs: object) -> None:
+    """Use the shared backend logging configuration for Celery processes."""
+
+    from app.logging_config import configure_logging
+
+    configure_logging()
 
 
 @worker_process_init.connect

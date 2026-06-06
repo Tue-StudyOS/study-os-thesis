@@ -48,6 +48,11 @@ class TestCeleryConfig:
 
         assert celery_config.task_reject_on_worker_lost is True
 
+    def test_worker_does_not_hijack_root_logger(self):
+        from app.worker import celery_config
+
+        assert celery_config.worker_hijack_root_logger is False
+
     def test_result_expires_is_24h(self):
         from app.worker import celery_config
 

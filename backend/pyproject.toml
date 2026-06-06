@@ -23,6 +23,7 @@ dependencies = [
     "litellm==1.86.0",
     "celery[redis]>=5.4",
     "redis>=5.0",
+    "colorlog>=6.9",
 ]
 
 [dependency-groups]
