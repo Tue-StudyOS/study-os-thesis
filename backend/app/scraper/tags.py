@@ -2,8 +2,8 @@
 
 These tags are seeded into the `tags` DB table on first use and are the only
 values the LLM is allowed to assign to papers. Extend this list to add new
-subject areas; the fuzzy matcher in LLMPaperEnricher will handle minor LLM
-phrasing variations automatically.
+subject areas; LLMPaperEnricher normalizes minor LLM phrasing variations
+automatically.
 """
 
 CANONICAL_TAGS: frozenset[str] = frozenset(

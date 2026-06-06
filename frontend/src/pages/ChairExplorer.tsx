@@ -1,168 +1,23 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import TopBar from "../components/TopBar";
+import { ChairDetailHero, ChairListView, professorName } from "../components/chairs";
+import { LatestPublicationsTable, PaperDetailPanel } from "../components/publications";
 import { listChairs, getChair, type Chair } from "../api/chairs";
+import { listJobs, type Job } from "../api/jobs";
+import { waitForJobTree } from "../api/jobEvents";
 import { listPapers, triggerScrape, type Paper } from "../api/papers";
 import { listTheses, type Thesis } from "../api/theses";
-
-type SyncState = "idle" | "running" | "done" | "error";
+import {
+  chairIdFromScrapeJob,
+  getChairSyncStatus,
+  runningSyncMapFromJobs,
+  setChairSyncStatus,
+  type ChairSyncMap,
+} from "../utils/chairSync";
+import { chairIdFromRouteParam } from "../utils/chairRoutes";
 
 const latestPublicationLimit = 15;
-const tagColors = ["bg-sky-500", "bg-emerald-500", "bg-orange-400", "bg-amber-500", "bg-slate-500"];
-
-const fallbackTopicHints = [
-  ["computer vision", ["vision", "scene", "image", "3d", "reconstruction", "segmentation"]],
-  ["autonomous systems", ["autonomous", "driving", "robot", "vehicle", "control"]],
-  ["generative models", ["generative", "gan", "vae", "diffusion", "synthesis"]],
-  ["self-supervised learning", ["self-supervised", "unannotated", "representation"]],
-  ["machine learning", ["machine learning", "learning", "model"]],
-  ["robotics", ["robotics", "robot", "motion", "perception"]],
-  ["synthetic data", ["synthetic", "data generation", "dataset"]],
-] as const;
-
-function titleCase(value: string) {
-  return value.replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
-function inferTopicsFromText(text: string) {
-  const normalized = text.toLowerCase();
-  return fallbackTopicHints
-    .filter(([, hints]) => hints.some((hint) => normalized.includes(hint)))
-    .map(([topic]) => topic);
-}
-
-function formatPaperYear(publicationDate: string | null) {
-  if (!publicationDate) return "n.d.";
-  return new Date(publicationDate).getFullYear().toString();
-}
-
-function formatPublicationDate(iso: string | null): string {
-  if (!iso) return "Unknown";
-  return new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(new Date(iso));
-}
-
-function formatAuthors(authors: string[], source: string) {
-  if (authors.length === 0) return source;
-  const shown = authors.slice(0, 3).join(", ");
-  const more = authors.length > 3 ? ` +${authors.length - 3}` : "";
-  return `${shown}${more}`;
-}
-
-function scoreCount(score: number): number {
-  return Math.max(0, Math.min(5, Math.round(score * 5)));
-}
-
-function ScoreMeter({ score }: { score: number }) {
-  const count = scoreCount(score);
-
-  return (
-    <div className="min-w-[92px]">
-      <div className="flex items-end justify-between gap-3">
-        <span className="font-label-md text-[14px] font-semibold text-on-surface">{count}</span>
-        <span className="font-body-sm text-[12px] text-on-surface-variant">{count}/5</span>
-      </div>
-      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-surface-container-high">
-        <div className="h-full rounded-full bg-primary" style={{ width: `${(count / 5) * 100}%` }} />
-      </div>
-    </div>
-  );
-}
-
-function PaperTags({ tags }: { tags: string[] }) {
-  const shown = tags.length > 0 ? tags.slice(0, 3) : ["Causal AI", "Machine Learning"];
-
-  return (
-    <div className="flex flex-wrap gap-1">
-      {shown.map((tag, index) => (
-        <span
-          key={`${tag}-${index}`}
-          className={`${tagColors[index % tagColors.length]} rounded-full px-2 py-0.5 font-label-md text-[10px] text-white`}
-        >
-          {tag}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function PaperDetail({ paper, onBack }: { paper: Paper; onBack: () => void }) {
-  const abstract = paper.abstract ?? paper.summary ?? "No abstract is available for this paper yet.";
-
-  return (
-    <section className="space-y-4">
-      <button
-        type="button"
-        onClick={onBack}
-        className="inline-flex items-center gap-2 rounded-[4px] border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-label-md text-[12px] text-on-surface hover:bg-surface-container"
-      >
-        <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-        Back to Chair
-      </button>
-
-      <div className="grid grid-cols-1 gap-4 rounded-[6px] border border-outline-variant bg-surface-container-lowest p-5 shadow-sm md:grid-cols-[1fr_160px]">
-        <div>
-          <h1 className="max-w-4xl font-headline-lg text-[30px] font-semibold leading-[1.08] text-on-surface md:text-[34px]">
-            {paper.title}
-          </h1>
-          <p className="mt-3 font-body-sm text-[13px] text-on-surface">
-            {formatAuthors(paper.authors, paper.source)}
-          </p>
-        </div>
-        <div>
-          <p className="font-label-md text-[12px] text-on-surface">Score</p>
-          <div className="mt-2">
-            <ScoreMeter score={paper.relevance_score} />
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <section className="rounded-[6px] border border-outline-variant bg-surface-container-lowest p-5 shadow-sm">
-          <h2 className="font-title-lg text-[20px] font-semibold text-on-surface">Abstract</h2>
-          <div className="mt-3 space-y-4 font-body-sm text-[14px] leading-relaxed text-on-surface">
-            {abstract.split(/\n{2,}/).map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
-          </div>
-
-          <h2 className="mt-6 font-title-lg text-[18px] font-semibold text-on-surface">Keywords</h2>
-          <div className="mt-3">
-            <PaperTags tags={paper.tags} />
-          </div>
-        </section>
-
-        <aside className="h-fit rounded-[6px] border border-outline-variant bg-surface-container-lowest p-5 shadow-sm">
-          <dl className="space-y-4 font-body-sm text-[14px] text-on-surface">
-            <div>
-              <dt className="font-semibold">Publication Date</dt>
-              <dd>{formatPublicationDate(paper.publication_date)}</dd>
-            </div>
-            <div>
-              <dt className="font-semibold">Journal/Conference</dt>
-              <dd>{paper.source}</dd>
-            </div>
-            <div>
-              <dt className="font-semibold">Digital Object Identifier (DOI)</dt>
-              <dd>{paper.doi ?? paper.arxiv_id ?? "Not available"}</dd>
-            </div>
-          </dl>
-          <a
-            href={paper.source_url || (paper.arxiv_id ? `https://arxiv.org/pdf/${paper.arxiv_id}` : "#")}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-5 flex w-full items-center justify-center rounded-[4px] bg-primary px-4 py-2.5 font-label-md text-[13px] text-on-primary hover:bg-primary-container hover:text-on-primary-container"
-          >
-            Open Paper
-          </a>
-        </aside>
-      </div>
-    </section>
-  );
-}
-
-function professorName(chair: Chair) {
-  return (chair.professor_title ? `${chair.professor_title} ` : "") + chair.professor_name;
-}
 
 function ChairDetailPanel({
   chairId,
@@ -275,21 +130,22 @@ export default function ChairExplorer() {
   const { chairParam } = useParams<{ chairParam: string }>();
   const [chairs, setChairs] = useState<Chair[]>([]);
   const [papers, setPapers] = useState<Paper[]>([]);
+  const [paperTotal, setPaperTotal] = useState(0);
   const [paperCountsByChair, setPaperCountsByChair] = useState<Record<number, number>>({});
   const [theses, setTheses] = useState<Thesis[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [syncState, setSyncState] = useState<SyncState>("idle");
-  const [syncError, setSyncError] = useState<string | null>(null);
+  const [syncByChairId, setSyncByChairId] = useState<ChairSyncMap>({});
   const [search, setSearch] = useState("");
   const [latestSearch, setLatestSearch] = useState("");
   const [latestPage, setLatestPage] = useState(1);
   const [selectedPaper, setSelectedPaper] = useState<Paper | null>(null);
   const [selectedChairId, setSelectedChairId] = useState<number | null>(null);
+  const visibleChairIdRef = useRef<number | null>(null);
+  const latestPageRef = useRef(1);
   const navigate = useNavigate();
-  const routeChairId = chairParam?.startsWith("chairID=")
-    ? Number(chairParam.replace("chairID=", ""))
-    : null;
+  const routeChairId = chairIdFromRouteParam(chairParam);
+  const isChairDetailRoute = chairParam !== undefined;
 
   useEffect(() => {
     Promise.all([listChairs(), listTheses(100)])
@@ -309,13 +165,14 @@ export default function ChairExplorer() {
 
     Promise.all(
       chairs.map((chair) =>
-        listPapers({ chair_id: chair.id, limit: 100 })
-          .then((chairPapers) => [chair.id, chairPapers.length] as const)
-          .catch(() => [chair.id, chair.documents.filter((doc) => doc.kind === "paper").length] as const),
+        listPapers({ chair_id: chair.id, limit: 1 })
+          .then((chairPapers) => [chair.id, chairPapers.total] as const),
       ),
-    ).then((counts) => {
-      setPaperCountsByChair(Object.fromEntries(counts));
-    });
+    )
+      .then((counts) => {
+        setPaperCountsByChair(Object.fromEntries(counts));
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : "Fehler beim Laden der Paper-Zahlen"));
   }, [chairs]);
 
   const filtered = useMemo(
@@ -328,32 +185,53 @@ export default function ChairExplorer() {
       ),
     [chairs, search],
   );
+  const projectCountsByChair = useMemo(() => {
+    const counts: Record<number, number> = {};
+    for (const thesis of theses) {
+      if (thesis.chair_id == null) continue;
+      counts[thesis.chair_id] = (counts[thesis.chair_id] ?? 0) + 1;
+    }
+    return counts;
+  }, [theses]);
 
   const featured = routeChairId ? chairs.find((chair) => chair.id === routeChairId) ?? null : null;
-  const chairDocumentPapers = useMemo(
-    () => (featured?.documents ?? []).filter((doc) => doc.kind === "paper"),
-    [featured],
-  );
+  const featuredSync = getChairSyncStatus(syncByChairId, featured?.id);
   const visiblePapers = papers.length > 0 ? papers : [];
-  const publicationCount = Math.max(visiblePapers.length, chairDocumentPapers.length);
+  const publicationCount = paperTotal;
   const activeProjects = featured ? theses.filter((thesis) => thesis.chair_id === featured.id).length : 0;
-  // TODO: Replace this hard-coded fallback when chair team-member scraping lands.
+  // TODO: Replace this hard-coded value when chair team-member scraping lands.
   const teamMembers = 25;
   // TODO: Add citation_count to the paper API once a citation source is available.
   const labCitations = papers.reduce((total) => total + (0 satisfies number), 0);
 
   useEffect(() => {
+    visibleChairIdRef.current = featured?.id ?? null;
+  }, [featured]);
+
+  useEffect(() => {
     if (!featured) {
       setPapers([]);
+      setPaperTotal(0);
       return;
     }
     setLatestSearch("");
     setLatestPage(1);
     setSelectedPaper(null);
-    listPapers({ chair_id: featured.id, limit: 100 })
-      .then(setPapers)
-      .catch((e) => setError(e instanceof Error ? e.message : "Fehler beim Laden der Papers"));
   }, [featured]);
+
+  useEffect(() => {
+    if (!featured) return;
+    listPapers({
+      chair_id: featured.id,
+      limit: latestPublicationLimit,
+      offset: (latestPage - 1) * latestPublicationLimit,
+    })
+      .then((result) => {
+        setPapers(result.items);
+        setPaperTotal(result.total);
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : "Fehler beim Laden der Papers"));
+  }, [featured, latestPage]);
 
   const newestPapers = useMemo(
     () =>
@@ -367,58 +245,111 @@ export default function ChairExplorer() {
     [visiblePapers],
   );
 
-  const filteredLatestPapers = useMemo(() => {
-    const query = latestSearch.trim().toLowerCase();
-    if (!query) return newestPapers;
-    return newestPapers.filter(
-      (paper) =>
-        paper.title.toLowerCase().includes(query) ||
-        paper.source.toLowerCase().includes(query) ||
-        paper.authors.some((author) => author.toLowerCase().includes(query)) ||
-        paper.tags.some((tag) => tag.toLowerCase().includes(query)),
-    );
-  }, [latestSearch, newestPapers]);
-  const latestPageCount = Math.max(1, Math.ceil(filteredLatestPapers.length / latestPublicationLimit));
+  const latestPageCount = Math.max(1, Math.ceil(paperTotal / latestPublicationLimit));
   const safeLatestPage = Math.min(latestPage, latestPageCount);
-  const visibleLatestPapers = filteredLatestPapers.slice(
-    (safeLatestPage - 1) * latestPublicationLimit,
-    safeLatestPage * latestPublicationLimit,
-  );
+
+  useEffect(() => {
+    latestPageRef.current = safeLatestPage;
+  }, [safeLatestPage]);
 
   useEffect(() => {
     setLatestPage(1);
   }, [latestSearch]);
 
-  const newestDocumentPapers = useMemo(
-    () =>
-      chairDocumentPapers
-        .slice()
-        .sort((a, b) => (b.published_year ?? 0) - (a.published_year ?? 0))
-        .slice(0, 10),
-    [chairDocumentPapers],
-  );
-
   function goToProposals(chairId?: number) {
     navigate(chairId ? `/proposals?chair_id=${chairId}` : "/proposals");
   }
 
-  async function handleSyncPapers() {
-    if (!featured || syncState === "running") return;
-    setSyncState("running");
-    setSyncError(null);
-    try {
-      const job = await triggerScrape(featured.id);
-      if (job.status === "success") {
-        const fresh = await listPapers({ chair_id: featured.id, limit: 100 });
-        setPapers(fresh);
-        setSyncState("done");
-      } else {
-        setSyncError(job.error ?? "Scrape job failed");
-        setSyncState("error");
+  async function refreshSyncedChair(chairId: number) {
+    const countResult = await listPapers({ chair_id: chairId, limit: 1 });
+    setPaperCountsByChair((current) => ({
+      ...current,
+      [chairId]: countResult.total,
+    }));
+    if (visibleChairIdRef.current !== chairId) return;
+
+    const fresh = await listPapers({
+      chair_id: chairId,
+      limit: latestPublicationLimit,
+      offset: (latestPageRef.current - 1) * latestPublicationLimit,
+    });
+    if (visibleChairIdRef.current === chairId) {
+      setPapers(fresh.items);
+      setPaperTotal(fresh.total);
+    }
+  }
+
+  async function settleSyncJob(chairId: number, job: Job) {
+    if (job.status === "success") {
+      await refreshSyncedChair(chairId);
+      setSyncByChairId((current) => setChairSyncStatus(current, chairId, { state: "done", error: null }));
+      return;
+    }
+
+    setSyncByChairId((current) =>
+      setChairSyncStatus(current, chairId, { state: "error", error: job.error ?? "Scrape job failed" }),
+    );
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function restoreActiveScrapes() {
+      try {
+        const [pending, started] = await Promise.all([
+          listJobs({ type: "scrape_chair", status: "pending" }),
+          listJobs({ type: "scrape_chair", status: "started" }),
+        ]);
+        if (cancelled) return;
+
+        const activeJobs = [...pending, ...started];
+        setSyncByChairId((current) => ({
+          ...current,
+          ...runningSyncMapFromJobs(activeJobs),
+        }));
+
+        for (const activeJob of activeJobs) {
+          const chairId = chairIdFromScrapeJob(activeJob);
+          if (chairId == null) continue;
+          void waitForJobTree(activeJob.id)
+            .then((job) => {
+              if (!cancelled) void settleSyncJob(chairId, job);
+            })
+            .catch((e) => {
+              if (cancelled) return;
+              setSyncByChairId((current) =>
+                setChairSyncStatus(current, chairId, {
+                  state: "error",
+                  error: e instanceof Error ? e.message : "Fehler beim Wiederherstellen des Sync-Jobs",
+                }),
+              );
+            });
+        }
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Fehler beim Laden aktiver Sync-Jobs");
       }
+    }
+
+    void restoreActiveScrapes();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function handleSyncPapers(chairId: number) {
+    if (syncByChairId[chairId]?.state === "running") return;
+    setSyncByChairId((current) => setChairSyncStatus(current, chairId, { state: "running", error: null }));
+    try {
+      const job = await triggerScrape(chairId);
+      await settleSyncJob(chairId, job);
     } catch (e) {
-      setSyncError(e instanceof Error ? e.message : "Unknown error");
-      setSyncState("error");
+      setSyncByChairId((current) =>
+        setChairSyncStatus(current, chairId, {
+          state: "error",
+          error: e instanceof Error ? e.message : "Unknown error",
+        }),
+      );
     }
   }
 
@@ -469,7 +400,7 @@ export default function ChairExplorer() {
             </div>
           )}
 
-          {!loading && !error && !routeChairId && chairs.length > 0 && (
+          {!loading && !error && !isChairDetailRoute && chairs.length > 0 && (
             <>
               <section className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                 <div>
@@ -485,89 +416,16 @@ export default function ChairExplorer() {
                 </span>
               </section>
 
-              {filtered.length === 0 && (
-                <div className="rounded-[6px] border border-outline-variant bg-surface-container-lowest p-6 font-body-sm text-on-surface-variant">
-                  No chairs match your search.
-                </div>
-              )}
-
-              {filtered.length > 0 && (
-                <section className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
-                  {filtered.map((chair) => {
-                    const chairPapers = chair.documents.filter((doc) => doc.kind === "paper");
-                    const paperCount = Math.max(paperCountsByChair[chair.id] ?? 0, chairPapers.length);
-                    const chairProjects = theses.filter((thesis) => thesis.chair_id === chair.id).length;
-                    const inferredTopics = inferTopicsFromText(
-                      `${chair.short_description} ${chairPapers.map((doc) => `${doc.title ?? ""} ${doc.content}`).join(" ")}`,
-                    ).slice(0, 3);
-
-                    return (
-                      <article
-                        key={chair.id}
-                        className="flex min-h-[260px] flex-col rounded-[6px] border border-outline-variant bg-surface-container-lowest p-5 shadow-sm transition hover:shadow-md"
-                      >
-                        <div className="flex-1">
-                          <h2 className="font-title-lg text-[22px] font-semibold leading-tight text-on-surface">
-                            {chair.name}
-                          </h2>
-                          <p className="mt-2 flex items-center gap-2 font-body-sm text-[14px] text-on-surface-variant">
-                            <span className="material-symbols-outlined text-[18px]">person</span>
-                            {professorName(chair)}
-                          </p>
-                          <p className="mt-4 line-clamp-4 font-body-sm text-[14px] leading-relaxed text-on-surface">
-                            {chair.short_description}
-                          </p>
-
-                          {inferredTopics.length > 0 && (
-                            <div className="mt-4 flex flex-wrap gap-1.5">
-                              {inferredTopics.map((topic) => (
-                                <span
-                                  key={topic}
-                                  className="rounded-[4px] bg-surface-container-high px-2 py-0.5 font-label-md text-[10px] text-on-surface"
-                                >
-                                  #{titleCase(topic).replace(/\s+/g, "")}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="mt-5 grid grid-cols-2 gap-2 border-t border-outline-variant pt-4 text-center">
-                          <div>
-                            <p className="font-title-lg text-[24px] leading-none text-on-surface">{paperCount}</p>
-                            <p className="mt-1 font-label-md text-[11px] text-on-surface-variant">Papers</p>
-                          </div>
-                          <div className="border-l border-outline-variant">
-                            <p className="font-title-lg text-[24px] leading-none text-on-surface">{chairProjects}</p>
-                            <p className="mt-1 font-label-md text-[11px] text-on-surface-variant">Projects</p>
-                          </div>
-                        </div>
-
-                        <div className="mt-5 flex flex-wrap gap-2">
-                          <button
-                            onClick={() => navigate(`/chairs/chairID=${chair.id}`)}
-                            className="flex flex-1 items-center justify-center gap-2 rounded-[4px] bg-primary px-3 py-2.5 font-label-md text-[12px] text-on-primary hover:bg-primary-container hover:text-on-primary-container"
-                          >
-                            View Chair
-                            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-                          </button>
-                          <button
-                            onClick={() => navigate(`/chairs/chairID=${chair.id}`)}
-                            className="flex flex-1 items-center justify-center gap-2 rounded-[4px] border border-outline-variant px-3 py-2.5 font-label-md text-[12px] text-on-surface hover:bg-surface-container"
-                          >
-                            Papers
-                            <span className="material-symbols-outlined text-[16px]">article</span>
-                          </button>
-                        </div>
-                      </article>
-                    );
-                  })}
-                </section>
-              )}
+              <ChairListView
+                chairs={filtered}
+                paperCountsByChair={paperCountsByChair}
+                projectCountsByChair={projectCountsByChair}
+                onOpenChair={(chairId) => navigate(`/chairs/chairID=${chairId}`)}
+              />
             </>
           )}
 
-          {!loading && !error && routeChairId && !featured && (
+          {!loading && !error && isChairDetailRoute && !featured && (
             <div className="rounded-[6px] border border-outline-variant bg-surface-container-lowest p-6 font-body-md text-on-surface-variant">
               Chair not found.
             </div>
@@ -576,220 +434,34 @@ export default function ChairExplorer() {
           {!loading && !error && featured && (
             <>
               {selectedPaper ? (
-                <PaperDetail paper={selectedPaper} onBack={() => setSelectedPaper(null)} />
+                <PaperDetailPanel paper={selectedPaper} onBack={() => setSelectedPaper(null)} />
               ) : (
                 <>
-              <section className="space-y-4">
-                <button
-                  onClick={() => navigate("/chairs")}
-                  className="inline-flex items-center gap-2 rounded-[4px] border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-label-md text-[12px] text-on-surface hover:bg-surface-container"
-                >
-                  <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-                  Back to Chairs
-                </button>
+                  <ChairDetailHero
+                    chair={featured}
+                    publicationCount={publicationCount}
+                    activeProjects={activeProjects}
+                    labCitations={labCitations}
+                    teamMembers={teamMembers}
+                    syncState={featuredSync.state}
+                    syncError={featuredSync.error}
+                    onBack={() => navigate("/chairs")}
+                    onSync={() => handleSyncPapers(featured.id)}
+                  />
 
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                  <h1 className="max-w-[760px] font-serif text-[34px] font-bold leading-[1.02] tracking-normal text-on-surface md:text-[44px] xl:text-[50px]">
-                    {featured.name}
-                  </h1>
-                  <div className="flex shrink-0 flex-col items-start gap-2 lg:items-end">
-                    <button
-                      onClick={handleSyncPapers}
-                      disabled={syncState === "running"}
-                      className="flex min-w-[112px] items-center justify-center gap-2 rounded-[4px] bg-primary px-4 py-2.5 font-label-md text-[12px] text-on-primary shadow-sm disabled:opacity-70"
-                    >
-                      {syncState === "running" ? (
-                        <span className="h-4 w-4 shrink-0 rounded-full border-2 border-on-primary/30 border-t-on-primary animate-spin" />
-                      ) : (
-                        <span className="material-symbols-outlined text-[16px]">check_circle</span>
-                      )}
-                      {syncState === "running" ? "Syncing" : "Synced"}
-                    </button>
-                    {syncState === "error" && syncError && (
-                      <p className="max-w-[240px] text-left font-label-md text-[11px] text-error lg:text-right">
-                        {syncError}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid gap-6 xl:grid-cols-[minmax(0,1.55fr)_minmax(380px,0.85fr)] xl:items-stretch">
-                  <div className="max-w-none">
-                    <h2 className="font-title-lg text-[16px] font-semibold text-on-surface">About</h2>
-                    <p className="mt-1 max-w-[860px] font-body-md text-[15px] font-semibold leading-snug text-on-surface">
-                      {featured.short_description}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 overflow-hidden rounded-[6px] border border-outline-variant bg-surface-container-lowest shadow-sm">
-                    {[
-                      [publicationCount.toLocaleString(), "Publications"],
-                      [activeProjects.toLocaleString(), "Active Projects"],
-                      [labCitations.toLocaleString(), "Lab Citations"],
-                      [teamMembers.toLocaleString(), "Team Members"],
-                    ].map(([value, label], index) => (
-                      <div
-                        key={label}
-                        className={[
-                          "flex min-h-[94px] flex-col items-center justify-center px-5 py-3",
-                          index % 2 === 1 ? "border-l border-outline-variant" : "",
-                          index > 1 ? "border-t border-outline-variant" : "",
-                        ].join(" ")}
-                      >
-                        <p className="font-title-lg text-[30px] leading-none text-on-surface">{value}</p>
-                        <p className="mt-2 font-label-md text-[12px] text-on-surface-variant">{label}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </section>
-
-              <section>
-                <div className="mb-3 flex items-center justify-between gap-4">
-                  <h2 className="font-headline-md text-[26px] font-semibold text-on-surface">
-                    Latest Publications
-                  </h2>
-                </div>
-
-                {newestPapers.length > 0 && (
-                  <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                    <label className="relative block w-full md:max-w-[420px]">
-                      <span className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant">
-                        search
-                      </span>
-                      <input
-                        value={latestSearch}
-                        onChange={(event) => setLatestSearch(event.target.value)}
-                        placeholder="Search publications, authors, tags..."
-                        className="h-10 w-full rounded-[6px] border border-outline-variant bg-surface-container-lowest pl-10 pr-3 font-body-sm text-[13px] text-on-surface outline-none focus:border-primary"
-                      />
-                    </label>
-                    <span className="font-body-sm text-[12px] text-on-surface-variant">
-                      {filteredLatestPapers.length} result{filteredLatestPapers.length === 1 ? "" : "s"}
-                    </span>
-                  </div>
-                )}
-
-                <div className="overflow-x-auto">
-                  {newestPapers.length > 0 && (
-                    <div className="grid min-w-[900px] grid-cols-[minmax(300px,1fr)_210px_70px_220px_120px] gap-4 px-4 pb-2">
-                      <span className="font-label-md text-[11px] uppercase tracking-[0.04em] text-on-surface-variant">
-                        Title
-                      </span>
-                      <span className="font-label-md text-[11px] uppercase tracking-[0.04em] text-on-surface-variant">
-                        Authors
-                      </span>
-                      <span className="font-label-md text-[11px] uppercase tracking-[0.04em] text-on-surface-variant">
-                        Year
-                      </span>
-                      <span className="font-label-md text-[11px] uppercase tracking-[0.04em] text-on-surface-variant">
-                        Tags
-                      </span>
-                      <span className="flex items-center gap-1 font-label-md text-[11px] uppercase tracking-[0.04em] text-on-surface-variant">
-                        Score
-                        <span className="material-symbols-outlined text-[18px]">arrow_downward</span>
-                      </span>
-                    </div>
-                  )}
-
-                  {newestPapers.length > 0 && filteredLatestPapers.length > 0 && (
-                    <div className="min-w-[900px] space-y-1">
-                      {visibleLatestPapers.map((paper) => (
-                        <button
-                          key={paper.id}
-                          onClick={() => setSelectedPaper(paper)}
-                          className="grid min-h-[78px] w-full grid-cols-[minmax(300px,1fr)_210px_70px_220px_120px] items-center gap-4 rounded-[4px] border border-outline-variant bg-surface-container-lowest px-4 py-2.5 text-left shadow-sm transition hover:shadow-md"
-                        >
-                          <div className="min-w-0">
-                            <p className="truncate font-body-sm text-[14px] font-semibold text-on-surface">
-                              {paper.title}
-                            </p>
-                            <p className="truncate font-body-sm text-[12px] text-on-surface">
-                              {formatAuthors(paper.authors, paper.source)}
-                            </p>
-                          </div>
-                          <p className="truncate font-body-sm text-[12px] text-on-surface-variant">
-                            {paper.authors.slice(0, 2).join(", ") || "-"}
-                          </p>
-                          <p className="font-body-sm text-[14px] text-on-surface">
-                            {formatPaperYear(paper.publication_date)}
-                          </p>
-                          <PaperTags tags={paper.tags} />
-                          <ScoreMeter score={paper.relevance_score} />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {newestPapers.length > 0 && filteredLatestPapers.length === 0 && (
-                    <div className="min-w-[900px] rounded-[4px] border border-outline-variant bg-surface-container-lowest px-4 py-4 font-body-sm text-[13px] text-on-surface-variant">
-                      No publications match your search.
-                    </div>
-                  )}
-
-                  {newestPapers.length === 0 && newestDocumentPapers.map((doc) => (
-                    <button
-                      key={doc.id}
-                      onClick={() => setSelectedPaper(null)}
-                      className="grid w-full gap-2 border-b border-outline-variant px-4 py-3 text-left last:border-b-0 md:grid-cols-[minmax(0,1fr)_80px_150px]"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate font-body-sm text-[14px] font-semibold text-on-surface">
-                          {doc.title ?? "Untitled paper"}
-                        </p>
-                        <p className="truncate font-body-sm text-[12px] text-on-surface-variant">
-                          {doc.arxiv_id ? `arXiv:${doc.arxiv_id}` : "Chair document"}
-                        </p>
-                      </div>
-                      <p className="font-body-sm text-[13px] text-on-surface">{doc.published_year ?? "n.d."}</p>
-                      <p className="font-body-sm text-[12px] text-on-surface-variant md:text-right">
-                        arXiv
-                      </p>
-                    </button>
-                  ))}
-
-                  {newestPapers.length === 0 && newestDocumentPapers.length === 0 && (
-                    <div className="px-4 py-3 font-body-sm text-[13px] text-on-surface-variant">
-                      No papers available for this chair yet.
-                    </div>
-                  )}
-                </div>
-
-                {newestPapers.length > 0 && filteredLatestPapers.length > 0 && (
-                  <div className="mt-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                    <span className="font-body-sm text-[12px] text-on-surface-variant">
-                      Showing {(safeLatestPage - 1) * latestPublicationLimit + 1}-
-                      {Math.min(safeLatestPage * latestPublicationLimit, filteredLatestPapers.length)} of{" "}
-                      {filteredLatestPapers.length}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setLatestPage((page) => Math.max(1, page - 1))}
-                        disabled={safeLatestPage === 1}
-                        className="inline-flex items-center gap-1 rounded-[4px] border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-label-md text-[12px] text-on-surface hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-45"
-                      >
-                        <span className="material-symbols-outlined text-[16px]">chevron_left</span>
-                        Previous
-                      </button>
-                      <span className="min-w-[72px] text-center font-label-md text-[12px] text-on-surface-variant">
-                        {safeLatestPage} / {latestPageCount}
-                      </span>
-                      <button
-                        onClick={() => setLatestPage((page) => Math.min(latestPageCount, page + 1))}
-                        disabled={safeLatestPage === latestPageCount}
-                        className="inline-flex items-center gap-1 rounded-[4px] border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-label-md text-[12px] text-on-surface hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-45"
-                      >
-                        Next
-                        <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </section>
-
+                  <LatestPublicationsTable
+                    papers={newestPapers}
+                    total={paperTotal}
+                    search={latestSearch}
+                    page={safeLatestPage}
+                    pageCount={latestPageCount}
+                    pageSize={latestPublicationLimit}
+                    onSearchChange={setLatestSearch}
+                    onPageChange={setLatestPage}
+                    onSelectPaper={setSelectedPaper}
+                  />
                 </>
               )}
-
             </>
           )}
         </div>

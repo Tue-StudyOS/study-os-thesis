@@ -6,6 +6,13 @@ from app.auth.deps import CurrentUserDep, require_role
 from app.jobs.deps import JobServiceDep
 from app.models import User, UserRole
 from app.models.job import JobType
+from app.theses.api_constants import (
+    THESIS_LIST_DEFAULT_LIMIT,
+    THESIS_LIST_DEFAULT_OFFSET,
+    THESIS_LIST_MAX_LIMIT,
+    THESIS_LIST_MIN_LIMIT,
+    THESIS_LIST_MIN_OFFSET,
+)
 from app.theses.deps import ThesisServiceDep
 from app.theses.schemas import ThesisCreate, ThesisOut
 
@@ -42,8 +49,8 @@ async def create_thesis(
 async def list_theses(
     _user: CurrentUserDep,
     thesis_service: ThesisServiceDep,
-    limit: int = Query(20, ge=1, le=100),
-    offset: int = Query(0, ge=0),
+    limit: int = Query(THESIS_LIST_DEFAULT_LIMIT, ge=THESIS_LIST_MIN_LIMIT, le=THESIS_LIST_MAX_LIMIT),
+    offset: int = Query(THESIS_LIST_DEFAULT_OFFSET, ge=THESIS_LIST_MIN_OFFSET),
 ) -> list:
     return await thesis_service.list_theses(limit=limit, offset=offset)
 

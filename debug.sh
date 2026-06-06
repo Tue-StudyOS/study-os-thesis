@@ -217,6 +217,8 @@ run_app() {
   info "Starting backend (uvicorn) on port 8000..."
   # LITELLM_LOCAL_MODEL_COST_MAP suppresses LiteLLM's network call to fetch pricing data.
   # LITELLM_DONT_SHOW_FEEDBACK_BOX suppresses the interactive prompt.
+  # Keep reload scoped to app/: watching the backend root also watches .venv,
+  # caches, logs, and metadata, which makes startup/reload unreasonably slow.
   (cd "$BACKEND_DIR" && exec env \
     LITELLM_LOCAL_MODEL_COST_MAP=1 \
     LITELLM_DONT_SHOW_FEEDBACK_BOX=1 \

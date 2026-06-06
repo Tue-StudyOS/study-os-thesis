@@ -20,6 +20,7 @@ task_track_started: bool = True
 task_acks_late: bool = True
 worker_prefetch_multiplier: int = 1
 task_reject_on_worker_lost: bool = True
+worker_hijack_root_logger: bool = False
 
 # Results
 result_expires: int = 86400  # 24 hours

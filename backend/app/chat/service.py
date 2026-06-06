@@ -9,10 +9,10 @@ from app.chat.repository import ChatRepository
 from app.config import Settings
 from app.exceptions import BadRequestException, ForbiddenException, NotFoundException
 from app.llm.port import LLMPort
-from app.models import ChatMessage, ChatSession, MessageRole, Thesis, ThesisSource
+from app.models import ChatMessage, ChatSession, MessageRole
+from app.proposals.generation import ProposalGenerationService
 from app.students.repository import StudentRepository
 from app.theses.repository import ThesisRepository
-from app.theses.schemas import GeneratedProposalItem
 from app.tools.search_theses import search_theses_with_client
 
 _logger = logging.getLogger(__name__)
@@ -43,48 +43,6 @@ You have access to three tools:
    and that they can find them under "Meine Vorschläge".
 
 Always cite thesis ids and chair names in your recommendations.\
-"""
-
-_PROPOSAL_GENERATION_PROMPT = """\
-You are a research proposal writer for a German university. Generate {count} distinct \
-thesis proposal(s) for a student based on the information below.
-
-## Chair
-Name: {chair_name}
-Description: {chair_description}
-
-## Student profile
-GPA (German scale, lower=better): {gpa}
-Semester: {semester}
-Program: {program}
-Courses: {courses}
-
-## Requested research direction
-{research_direction}
-
-## Instructions
-- Each proposal must be a concrete, feasible Master's or Bachelor's thesis.
-- Infer the difficulty (bachelor/master/phd) from the student's GPA, semester, and the \
-  complexity of the research direction. Lower GPA (e.g. 1.x) + higher semester → more \
-  advanced difficulty.
-- For skills_required, list specific tools/languages/concepts the student would need.
-- Return ONLY a valid JSON array, no markdown, no explanation.
-
-## Required JSON format
-[
-  {{
-    "title": "<concise thesis title>",
-    "abstract": "<2-4 sentence description of the research question, method, and expected contribution>",
-    "difficulty": "bachelor" | "master" | "phd",
-    "skills_required": {{
-      "programming": ["Python", "PyTorch"],
-      "math": ["Linear Algebra", "Probability Theory"],
-      "theory": ["Deep Learning", "Optimization"],
-      "domain": ["Computer Vision", "Robotics"],
-      "other": []
-    }}
-  }}
-]
 """
 
 TOOLS_SPEC: list[dict[str, Any]] = [
@@ -469,98 +427,19 @@ class ChatService:
             research_direction[:80],
         )
 
-        chair = await self._chair_repo.get_by_id(chair_id, load_documents=False)
-        if chair is None:
-            return json.dumps({"error": f"Chair {chair_id} not found"})
-
-        gpa = "N/A"
-        semester = "N/A"
-        program = "N/A"
-        courses_str = "No courses available"
-        if self._student_repo is not None:
-            try:
-                student = await self._student_repo.get_by_user_id(user_id)
-                if student:
-                    gpa = str(student.gpa) if student.gpa is not None else "N/A"
-                    semester = str(student.semester) if student.semester else "N/A"
-                    program = student.program or "N/A"
-                    if student.courses:
-                        courses_str = "; ".join(f"{c.course_name} ({c.credits} ECTS, {c.grade})" if c.credits and c.grade else c.course_name for c in student.courses)
-            except Exception as exc:
-                _logger.warning("Could not load student profile for proposal generation: %s", exc)
-
-        prompt = _PROPOSAL_GENERATION_PROMPT.format(
-            count=count,
-            chair_name=chair.name,
-            chair_description=chair.short_description,
-            gpa=gpa,
-            semester=semester,
-            program=program,
-            courses=courses_str,
+        generator = ProposalGenerationService(
+            chair_repo=self._chair_repo,
+            thesis_repo=self._thesis_repo,
+            student_repo=self._student_repo,
+            chat_client=self._ollama,
+            embed_client=self._embed,
+            settings=self._settings,
+        )
+        result = await generator.generate_and_save(
+            chair_id=chair_id,
             research_direction=research_direction,
+            count=count,
+            user_id=user_id,
+            chat_session_id=chat_session_id,
         )
-        _logger.info("Calling LLM to generate %d proposal(s) for chair %d", count, chair_id)
-        try:
-            response = await self._ollama.chat(
-                model=self._settings.effective_extract_model,
-                messages=[{"role": "user", "content": prompt}],
-            )
-        except Exception as exc:
-            _logger.error("LLM call failed during proposal generation: %s", exc)
-            return json.dumps({"error": f"LLM unavailable: {exc}"})
-
-        content = (response.get("message", {}) or {}).get("content", "") or ""
-        content = content.strip()
-        if content.startswith("```"):
-            content = content.split("```")[1]
-            if content.startswith("json"):
-                content = content[4:]
-        content = content.strip()
-
-        try:
-            raw_list: Any = json.loads(content)
-            if not isinstance(raw_list, list):
-                raw_list = [raw_list]
-            proposals = [GeneratedProposalItem.model_validate(p) for p in raw_list[:count]]
-        except Exception as exc:
-            _logger.error("Failed to parse LLM proposal output: %s\nContent: %s", exc, content[:500])
-            return json.dumps({"error": "LLM returned invalid proposal format", "raw": content[:200]})
-
-        saved = []
-        for proposal in proposals:
-            _logger.info("Embedding proposal: %r", proposal.title)
-            try:
-                embedding = await self._embed.embed(
-                    self._settings.ollama_embed_model,
-                    f"{proposal.title}\n\n{proposal.abstract}",
-                )
-            except Exception:
-                embedding = None
-
-            thesis = Thesis(
-                title=proposal.title,
-                abstract=proposal.abstract,
-                chair_id=chair_id,
-                submitter_id=user_id,
-                source=ThesisSource.student,
-                difficulty=proposal.difficulty,
-                skills_required=proposal.skills_required.model_dump(),
-                generated_for_user_id=user_id,
-                chat_session_id=chat_session_id,
-                embedding=embedding,
-            )
-            self._thesis_repo.session.add(thesis)
-            await self._thesis_repo.session.flush()
-            await self._thesis_repo.session.refresh(thesis)
-            await self._thesis_repo.commit()
-            saved.append({"id": thesis.id, "title": thesis.title, "difficulty": thesis.difficulty.value})
-            _logger.info("Proposal saved: id=%d title=%r", thesis.id, thesis.title)
-
-        _logger.info("Generated and saved %d proposal(s) for user_id=%d", len(saved), user_id)
-        return json.dumps(
-            {
-                "generated": len(saved),
-                "proposals": saved,
-                "message": f"{len(saved)} proposal(s) saved to 'Meine Vorschläge'.",
-            }
-        )
+        return json.dumps(result)

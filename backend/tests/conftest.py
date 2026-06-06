@@ -79,6 +79,7 @@ def mock_llm_chat() -> AsyncMock:
             "tool_calls": [],
         }
     }
+    mock.chat_structured.return_value = SimpleNamespace(gpa=None, courses=[])
     mock.embed.return_value = [0.1] * EMBEDDING_DIM
     mock.aclose.return_value = None
     return mock

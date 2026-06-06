@@ -1,8 +1,13 @@
-from typing import Any
+from typing import Any, TypeVar
 
 import httpx
+from pydantic import BaseModel
 
+from app.llm.ollama_constants import OLLAMA_DEFAULT_TIMEOUT_SECONDS, OLLAMA_JSON_FORMAT
 from app.config import get_settings
+from app.llm.structured import parse_structured_content
+
+T = TypeVar("T", bound=BaseModel)
 
 
 class OllamaError(RuntimeError):
@@ -17,7 +22,7 @@ class OllamaClient:
     Call `aclose()` (or use as an async context manager) to release resources.
     """
 
-    def __init__(self, host: str | None = None, timeout: float = 600.0):
+    def __init__(self, host: str | None = None, timeout: float = OLLAMA_DEFAULT_TIMEOUT_SECONDS):
         s = get_settings()
         self.host = (host or s.ollama_host).rstrip("/")
         self.timeout = timeout
@@ -86,3 +91,14 @@ class OllamaClient:
         if r.status_code != 200:
             raise OllamaError(f"chat failed ({r.status_code}): {r.text}")
         return r.json()
+
+    async def chat_structured(
+        self,
+        model: str,
+        messages: list[dict[str, Any]],
+        output_schema: type[T],
+        options: dict[str, Any] | None = None,
+    ) -> T:
+        response = await self.chat(model=model, messages=messages, options=options, format=OLLAMA_JSON_FORMAT)
+        content = (response.get("message", {}) or {}).get("content", "") or ""
+        return parse_structured_content(content, output_schema)

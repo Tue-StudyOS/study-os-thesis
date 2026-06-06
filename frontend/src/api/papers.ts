@@ -1,6 +1,16 @@
 import { api } from "./client";
+import {
+  PAPER_LIST_MAX_LIMIT,
+  PAPER_LIST_MIN_LIMIT,
+  PAPER_LIST_MIN_OFFSET,
+  SCRAPE_MAX_RESULTS_MAX,
+  SCRAPE_MAX_RESULTS_MIN,
+  SCRAPE_SINCE_DAYS_MAX,
+  SCRAPE_SINCE_DAYS_MIN,
+} from "./constants";
 import { waitForJobTree } from "./jobEvents";
 import type { Job } from "./jobs";
+import { appendIntegerParam, assertInteger, setIntegerBodyField } from "./numeric";
 
 export interface Paper {
   id: number;
@@ -11,7 +21,6 @@ export interface Paper {
   publication_date: string | null;
   source: string;
   source_url: string;
-  arxiv_id: string | null;
   doi: string | null;
   recency_score: number;
   relevance_score: number;
@@ -20,27 +29,35 @@ export interface Paper {
   tags: string[];
 }
 
+export interface PaginatedPapers {
+  items: Paper[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
 export function listPapers(params: {
   chair_id?: number;
   tag?: string;
   limit?: number;
   offset?: number;
-}): Promise<Paper[]> {
+}): Promise<PaginatedPapers> {
   const q = new URLSearchParams();
-  if (params.chair_id !== undefined) q.set("chair_id", String(params.chair_id));
+  appendIntegerParam(q, "chair_id", params.chair_id, { min: 1 });
   if (params.tag) q.set("tag", params.tag);
-  if (params.limit !== undefined) q.set("limit", String(params.limit));
-  if (params.offset !== undefined) q.set("offset", String(params.offset));
-  return api<Paper[]>(`/api/papers?${q}`);
+  appendIntegerParam(q, "limit", params.limit, { min: PAPER_LIST_MIN_LIMIT, max: PAPER_LIST_MAX_LIMIT });
+  appendIntegerParam(q, "offset", params.offset, { min: PAPER_LIST_MIN_OFFSET });
+  return api<PaginatedPapers>(`/api/papers?${q}`);
 }
 
 export async function triggerScrape(
   chairId: number,
   opts: { since_days?: number; max_results?: number } = {},
 ): Promise<Job> {
+  assertInteger("chairId", chairId, { min: 1 });
   const body: { since_days?: number; max_results?: number } = {};
-  if (opts.since_days !== undefined) body.since_days = opts.since_days;
-  if (opts.max_results !== undefined) body.max_results = opts.max_results;
+  setIntegerBodyField(body, "since_days", opts.since_days, { min: SCRAPE_SINCE_DAYS_MIN, max: SCRAPE_SINCE_DAYS_MAX });
+  setIntegerBodyField(body, "max_results", opts.max_results, { min: SCRAPE_MAX_RESULTS_MIN, max: SCRAPE_MAX_RESULTS_MAX });
 
   const { job_id } = await api<{ job_id: string }>(`/api/scraper/run/${chairId}`, {
     method: "POST",

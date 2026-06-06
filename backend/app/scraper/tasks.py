@@ -28,14 +28,7 @@ async def _scrape_chair_work(
     from app.exceptions import NotFoundException
     from app.jobs.repository import JobRepository
     from app.models.job import JobType
-    from app.papers.dedup import DeduplicationService
-    from app.papers.repository import PaperRepository, TagRepository
-    from app.researchers.repository import ResearcherRepository
-    from app.scraper.adapters.llm_enricher import LLMPaperEnricher
-    from app.scraper.adapters.openalex_client import OpenAlexSourceClient
-    from app.scraper.adapters.ranker import RecencyPaperRanker
-    from app.scraper.orchestrator import ScraperOrchestrator
-    from app.llm.factory import build_chat_client
+    from app.scraper.pipeline import build_scraper_pipeline
 
     # Step 1: resolve researcher IDs (auto-creates from professor_name if table is empty)
     async with SessionLocal() as session:
@@ -44,29 +37,16 @@ async def _scrape_chair_work(
         if chair is None:
             raise NotFoundException("Chair", chair_id)
 
-        source = OpenAlexSourceClient()
-        llm_client = build_chat_client(settings)
-        llm_enricher = LLMPaperEnricher(llm_client, settings.effective_enrichment_model)
-        ranker = RecencyPaperRanker(half_life_days=settings.scraper_recency_half_life)
-
-        paper_repo = PaperRepository(session)
-        tag_repo = TagRepository(session)
-        researcher_repo = ResearcherRepository(session)
-        dedup = DeduplicationService(paper_repo)
-
-        orchestrator = ScraperOrchestrator(
-            source=source,
-            llm_enricher=llm_enricher,
-            ranker=ranker,
-            dedup=dedup,
-            paper_repo=paper_repo,
-            tag_repo=tag_repo,
-            researcher_repo=researcher_repo,
-            max_results=max_results or settings.scraper_max_results,
-            since_days=since_days or settings.scraper_since_days,
+        pipeline = build_scraper_pipeline(
+            session,
+            settings,
+            max_results=max_results,
+            since_days=since_days,
         )
-
-        researcher_ids = await orchestrator.ensure_researchers_for_chair(chair_id, chair.professor_name)
+        try:
+            researcher_ids = await pipeline.orchestrator.ensure_researchers_for_chair(chair_id, chair.professor_name)
+        finally:
+            await pipeline.source.close()
 
     # Step 2: fan-out — create a Job row for each researcher task so it is
     # trackable via GET /api/jobs, then dispatch the Celery task.
@@ -136,41 +116,19 @@ async def _scrape_researcher_work(
     since_days: int | None = None,
 ) -> dict:
     from app.db import SessionLocal
-    from app.llm.factory import build_chat_client
-    from app.papers.dedup import DeduplicationService
-    from app.papers.repository import PaperRepository, TagRepository
-    from app.researchers.repository import ResearcherRepository
-    from app.scraper.adapters.llm_enricher import LLMPaperEnricher
-    from app.scraper.adapters.openalex_client import OpenAlexSourceClient
-    from app.scraper.adapters.ranker import RecencyPaperRanker
-    from app.scraper.orchestrator import ScraperOrchestrator
+    from app.scraper.pipeline import build_scraper_pipeline
 
     async with SessionLocal() as session:
-        source = OpenAlexSourceClient()
-        llm_client = build_chat_client(settings)
-        llm_enricher = LLMPaperEnricher(llm_client, settings.effective_enrichment_model)
-        ranker = RecencyPaperRanker(half_life_days=settings.scraper_recency_half_life)
-
-        paper_repo = PaperRepository(session)
-        tag_repo = TagRepository(session)
-        researcher_repo = ResearcherRepository(session)
-        dedup = DeduplicationService(paper_repo)
-
-        orchestrator = ScraperOrchestrator(
-            source=source,
-            llm_enricher=llm_enricher,
-            ranker=ranker,
-            dedup=dedup,
-            paper_repo=paper_repo,
-            tag_repo=tag_repo,
-            researcher_repo=researcher_repo,
-            max_results=max_results or settings.scraper_max_results,
-            since_days=since_days or settings.scraper_since_days,
+        pipeline = build_scraper_pipeline(
+            session,
+            settings,
+            max_results=max_results,
+            since_days=since_days,
         )
-
-        result = await orchestrator.scrape_for_researcher(researcher_id)
-        await source.close()
-        return result
+        try:
+            return await pipeline.orchestrator.scrape_for_researcher(researcher_id)
+        finally:
+            await pipeline.source.close()
 
 
 @celery_app.task(
@@ -355,135 +313,4 @@ def enrich_paper(self: Any, paper_id: int, user_id: int, job_id: str, force: boo
         redis_url=settings.redis_url,
         work=lambda: _enrich_paper_work(paper_id, force, settings),
         success_event="enrich_paper_complete",
-    )
-
-
-# ---------------------------------------------------------------------------
-# Task: ingest_single_paper  (fetch + enrich + store one arXiv paper)
-# ---------------------------------------------------------------------------
-
-
-async def _ingest_single_paper_work(
-    arxiv_id: str,
-    researcher_id: int | None,
-    settings: Any,
-) -> dict:
-    """Fetch one arXiv paper, run LLM enrichment, dedup, and persist."""
-    from datetime import datetime, timezone
-
-    from app.db import SessionLocal
-    from app.llm.factory import build_chat_client
-    from app.papers.dedup import DeduplicationService
-    from app.papers.domain import PaperCandidate
-    from app.papers.repository import PaperRepository, TagRepository
-    from app.researchers.repository import ResearcherRepository
-    from app.scraper.adapters.arxiv_client import ArxivMetadataEnricher
-    from app.scraper.adapters.llm_enricher import LLMPaperEnricher
-    from app.scraper.adapters.ranker import RecencyPaperRanker
-
-    arxiv_enricher = ArxivMetadataEnricher(
-        redis_url=settings.redis_url,
-        rate_limit_delay=settings.scraper_arxiv_delay,
-        batch_size=settings.scraper_arxiv_batch_size,
-    )
-    ranker = RecencyPaperRanker(half_life_days=settings.scraper_recency_half_life)
-
-    # Seed a minimal candidate so the arXiv enricher has an ID to work with
-    candidate = PaperCandidate(
-        title="",
-        source="arxiv",
-        source_url=f"https://arxiv.org/abs/{arxiv_id}",
-        arxiv_id=arxiv_id,
-    )
-    candidate = await arxiv_enricher.enrich(candidate)
-
-    if not candidate.title:
-        raise ValueError(f"arXiv paper '{arxiv_id}' not found or returned no title")
-
-    async with SessionLocal() as session:
-        paper_repo = PaperRepository(session)
-        tag_repo = TagRepository(session)
-        researcher_repo = ResearcherRepository(session)
-        dedup = DeduplicationService(paper_repo)
-
-        # Dedup check — return existing paper_id if already stored
-        existing = await dedup.find_duplicate(candidate)
-        if existing is not None:
-            await dedup.merge_metadata(existing, candidate)
-            if researcher_id is not None:
-                await researcher_repo.link_paper(researcher_id, existing.id)
-            await paper_repo.commit()
-            logger.info("ingest_single_paper: arxiv_id=%s already exists as paper_id=%d", arxiv_id, existing.id)
-            return {"paper_id": existing.id, "arxiv_id": arxiv_id, "created": False}
-
-        # LLM enrichment
-        summary: str | None = None
-        tags: list[str] = []
-        enriched_at: datetime | None = None
-        if candidate.abstract:
-            llm_client = build_chat_client(settings)
-            enricher = LLMPaperEnricher(llm_client, settings.effective_enrichment_model)
-            summary = await enricher.summarize(candidate.title, candidate.abstract)
-            tags = await enricher.generate_tags(candidate.title, candidate.abstract)
-            enriched_at = datetime.now(timezone.utc)
-
-        recency = ranker.compute_recency_score(candidate.publication_date)
-
-        paper = await paper_repo.create(
-            title=candidate.title,
-            title_normalized=DeduplicationService.normalize_title(candidate.title),
-            abstract=candidate.abstract,
-            summary=summary,
-            authors=candidate.authors,
-            publication_date=candidate.publication_date,
-            source=candidate.source,
-            source_url=candidate.source_url,
-            arxiv_id=candidate.arxiv_id,
-            doi=candidate.doi,
-            recency_score=recency,
-            relevance_score=recency,
-            enriched_at=enriched_at,
-        )
-
-        for tag_name in tags:
-            tag = await tag_repo.get_or_create(tag_name)
-            await paper_repo.add_tag(paper.id, tag.id)
-
-        if researcher_id is not None:
-            await researcher_repo.link_paper(researcher_id, paper.id)
-
-        await paper_repo.commit()
-
-    logger.info("ingest_single_paper: stored paper_id=%d arxiv_id=%s tags=%s", paper.id, arxiv_id, tags)
-    return {"paper_id": paper.id, "arxiv_id": arxiv_id, "created": True}
-
-
-@celery_app.task(
-    bind=True,
-    name="app.scraper.tasks.ingest_single_paper",
-    max_retries=3,
-    default_retry_delay=30,
-    soft_time_limit=180,
-    time_limit=240,
-)
-def ingest_single_paper(
-    self: Any,
-    arxiv_id: str,
-    researcher_id: int | None,
-    user_id: int,
-    job_id: str,
-) -> dict:
-    """Fetch, enrich, and store a single arXiv paper by ID."""
-    from app.config import get_settings
-
-    settings = get_settings()
-    logger.info("ingest_single_paper: arxiv_id=%s job_id=%s", arxiv_id, job_id)
-
-    return execute_task(
-        self,
-        job_id=job_id,
-        user_id=user_id,
-        redis_url=settings.redis_url,
-        work=lambda: _ingest_single_paper_work(arxiv_id, researcher_id, settings),
-        success_event="ingest_paper_complete",
     )

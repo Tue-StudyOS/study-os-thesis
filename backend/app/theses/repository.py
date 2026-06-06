@@ -4,6 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Thesis, ThesisSource
+from app.theses.api_constants import THESIS_LIST_DEFAULT_LIMIT, THESIS_LIST_DEFAULT_OFFSET
 
 
 class ThesisRepository:
@@ -40,7 +41,7 @@ class ThesisRepository:
         await self._session.refresh(thesis)
         return thesis
 
-    async def list(self, limit: int = 20, offset: int = 0) -> list[Thesis]:
+    async def list(self, limit: int = THESIS_LIST_DEFAULT_LIMIT, offset: int = THESIS_LIST_DEFAULT_OFFSET) -> list[Thesis]:
         rows = await self._session.scalars(select(Thesis).order_by(Thesis.created_at.desc()).limit(limit).offset(offset))
         return list(rows)
 

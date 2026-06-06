@@ -17,11 +17,11 @@ type Message = {
 
 type Session = { id: number; user_id: number; created_at: string };
 
-// Mock ArXiv paper cards for the right sidebar
+// Mock paper cards for the right sidebar
 const MOCK_PAPERS: Paper[] = [
   {
     id: "1",
-    category: "ArXiv • CS.AI",
+    category: "OpenAlex • AI",
     title: "Emergent Abilities in Large Language Models: A Critical Review",
     abstract:
       "This paper investigates the phenomenon of emergent abilities in LLMs, challenging previous assumptions with new metrics and rigorous statistical analysis across multiple benchmarks.",
@@ -30,7 +30,7 @@ const MOCK_PAPERS: Paper[] = [
   },
   {
     id: "2",
-    category: "ArXiv • STAT.ML",
+    category: "OpenAlex • ML",
     title:
       "Probabilistic Inference in High-Dimensional Spaces for Robotics",
     abstract:
@@ -40,7 +40,7 @@ const MOCK_PAPERS: Paper[] = [
   },
   {
     id: "3",
-    category: "ArXiv • CS.LG",
+    category: "OpenAlex • Learning",
     title: "Scalable Self-Supervised Learning for Scientific Graphs",
     abstract:
       "A contrastive learning framework tailored for molecular and citation graphs that achieves state-of-the-art results with minimal labeled data.",
@@ -70,9 +70,10 @@ export default function Chat() {
       try {
         const list = await api<Session[]>("/api/chat/sessions");
         if (cancelled) return;
-        if (list.length > 0) {
+        const firstSession = list[0];
+        if (firstSession) {
           setSessions(list);
-          setActive(list[0].id);
+          setActive(firstSession.id);
         } else {
           // No sessions yet — create one automatically.
           const s = await api<Session>("/api/chat/sessions", { method: "POST" });
@@ -237,7 +238,7 @@ export default function Chat() {
             ) : (
               <>
                 {/* Timestamp header */}
-                {messages.length > 0 && (
+                {messages[0] && (
                   <div className="flex justify-center">
                     <span className="font-label-md text-label-md text-on-surface-variant text-xs">
                       {formatTime(messages[0].created_at)}
@@ -258,15 +259,15 @@ export default function Chat() {
                       <p className="font-body-md text-body-md text-on-surface leading-relaxed">
                         Hallo! Ich habe dein Transcript analysiert. Du hast starke
                         Grundlagen in KI und Statistik. Worüber möchtest du heute
-                        mehr erfahren? Ich habe Zugriff auf aktuelle ArXiv-Paper
+                        mehr erfahren? Ich habe Zugriff auf aktuelle Publikationen
                         und Lehrstuhl-Infos.
                       </p>
                       <div className="flex flex-wrap gap-unit mt-stack-md">
                         <button
-                          onClick={() => setInput("Zeig mir aktuelle ArXiv Trends")}
+                          onClick={() => setInput("Zeig mir aktuelle Forschungstrends")}
                           className="font-label-md text-[11px] px-3 py-1.5 rounded-full border border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary transition-colors bg-surface-container-lowest"
                         >
-                          Show ArXiv trends
+                          Show research trends
                         </button>
                         <button
                           onClick={() => setInput("Erkläre mir spezifische Lehrstühle")}

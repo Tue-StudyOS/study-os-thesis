@@ -108,15 +108,6 @@ def _mock_chair_service():
     svc.get_chair.return_value = fake_chair
     svc.update_chair.return_value = fake_chair
     svc.delete_chair.return_value = None
-    svc.ingest_arxiv_paper.return_value = SimpleNamespace(
-        id=1,
-        kind="paper",
-        title="Paper",
-        content="Abstract",
-        arxiv_id="2301.07041",
-        published_year=2023,
-        created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
-    )
     svc.delete_document.return_value = None
     return svc
 
@@ -186,8 +177,10 @@ def _app():
 
 
 def _mock_paper_service():
+    from app.papers.service import PaginatedPapers
+
     svc = AsyncMock()
-    svc.list_papers.return_value = []
+    svc.list_papers.return_value = PaginatedPapers(items=[], total=0, limit=50, offset=0)
     svc.get_paper.return_value = SimpleNamespace(
         id=1,
         title="Paper",
@@ -195,9 +188,8 @@ def _mock_paper_service():
         summary=None,
         authors=[],
         publication_date=None,
-        source="arxiv",
-        source_url="https://arxiv.org/abs/x",
-        arxiv_id=None,
+        source="openalex",
+        source_url="https://openalex.org/W1",
         doi=None,
         recency_score=0.5,
         relevance_score=0.5,
@@ -215,7 +207,6 @@ def _mock_researcher_service():
         id=1,
         name="Georg Martius",
         chair_id=1,
-        google_scholar_id="ABC",
         orcid=None,
         affiliation=None,
         is_professor=True,
@@ -225,7 +216,6 @@ def _mock_researcher_service():
         id=1,
         name="New Researcher",
         chair_id=1,
-        google_scholar_id=None,
         orcid=None,
         affiliation=None,
         is_professor=False,
@@ -270,7 +260,6 @@ def _celery_patch():
     with (
         patch("app.theses.tasks.embed_thesis.delay", return_value=_mock_celery_task()) as t,
         patch("app.chairs.tasks.embed_chair_description.delay", return_value=_mock_celery_task()) as c1,
-        patch("app.chairs.tasks.ingest_arxiv_paper.delay", return_value=_mock_celery_task()) as c2,
         patch("app.students.tasks.parse_transcript.delay", return_value=_mock_celery_task()) as s,
         patch("app.chat.tasks.process_chat_turn.delay", return_value=_mock_celery_task()) as ch,
         patch("app.students.pdf_store.store_pdf", new=AsyncMock()),
@@ -278,7 +267,6 @@ def _celery_patch():
         yield {
             "embed_thesis": t,
             "embed_chair_description": c1,
-            "ingest_arxiv_paper": c2,
             "parse_transcript": s,
             "process_chat_turn": ch,
         }

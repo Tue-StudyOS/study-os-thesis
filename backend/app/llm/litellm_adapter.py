@@ -20,10 +20,15 @@ correct model names and provider-specific kwargs.
 
 import json
 import logging
-from typing import Any
+from typing import Any, TypeVar
 
 import litellm
+from pydantic import BaseModel
 
+from app.llm.litellm_constants import LITELLM_JSON_RESPONSE_FORMAT, LITELLM_SYNTHETIC_TOOL_CALL_PREFIX
+from app.llm.structured import parse_structured_content
+
+T = TypeVar("T", bound=BaseModel)
 _logger = logging.getLogger(__name__)
 
 # Suppress litellm's verbose internal logging by default.
@@ -96,7 +101,7 @@ def _to_openai_messages(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 args = fn.get("arguments", {})
                 if not isinstance(args, str):
                     args = json.dumps(args)
-                call_id = tc.get("id") or f"call_{counter}"
+                call_id = tc.get("id") or f"{LITELLM_SYNTHETIC_TOOL_CALL_PREFIX}_{counter}"
                 counter += 1
                 pending_ids.append(call_id)
                 converted.append({"id": call_id, "type": "function", "function": {"name": fn.get("name", ""), "arguments": args}})
@@ -172,7 +177,7 @@ class LiteLLMAdapter:
             kwargs["tools"] = tools
         # Map Ollama's JSON output mode to the OpenAI-compatible response_format.
         if format == "json":
-            kwargs["response_format"] = {"type": "json_object"}
+            kwargs["response_format"] = LITELLM_JSON_RESPONSE_FORMAT
         # Map Ollama-style options (num_predict, temperature, …) to OpenAI params.
         if options:
             if "temperature" in options:
@@ -221,3 +226,14 @@ class LiteLLMAdapter:
     async def aclose(self) -> None:
         """No-op — LiteLLM manages its own connection lifecycle."""
         pass
+
+    async def chat_structured(
+        self,
+        model: str,
+        messages: list[dict[str, Any]],
+        output_schema: type[T],
+        options: dict[str, Any] | None = None,
+    ) -> T:
+        response = await self.chat(model=model, messages=messages, options=options, format="json")
+        content = (response.get("message", {}) or {}).get("content", "") or ""
+        return parse_structured_content(content, output_schema)

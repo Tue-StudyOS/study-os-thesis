@@ -25,7 +25,6 @@ class ResearcherService:
         researcher = await self._repo.create(
             name=data.name,
             chair_id=data.chair_id,
-            google_scholar_id=data.google_scholar_id,
             orcid=data.orcid,
             affiliation=data.affiliation,
             is_professor=data.is_professor,

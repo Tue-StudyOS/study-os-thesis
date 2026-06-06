@@ -98,7 +98,7 @@ export default function Dashboard() {
   const skillBars = radarData
     ? SKILL_BAR_AXES.map((label, i) => ({
         label,
-        percent: Math.round((radarData[i] / 4) * 100),
+        percent: Math.round(((radarData[i] ?? 0) / 4) * 100),
       }))
     : null;
 
@@ -285,7 +285,7 @@ export default function Dashboard() {
               )}
 
               <div className={!hasProfile && !profileLoading ? "opacity-40 pointer-events-none" : ""}>
-                <SkillRadar currentData={radarData} />
+                <SkillRadar {...(radarData ? { currentData: radarData } : {})} />
 
                 {skillBars && (
                   <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">

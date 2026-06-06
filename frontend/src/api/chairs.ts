@@ -2,10 +2,9 @@ import { api } from "./client";
 
 export interface ChairDocument {
   id: number;
-  kind: "description" | "paper";
+  kind: "description";
   title: string | null;
   content: string;
-  arxiv_id: string | null;
   published_year: number | null;
   created_at: string;
 }
@@ -58,15 +57,4 @@ export function updateChair(id: number, body: ChairPatch): Promise<Chair> {
 
 export function deleteChair(id: number): Promise<void> {
   return api<void>(`/api/chairs/${id}`, { method: "DELETE" });
-}
-
-export function addArxivDocument(chairId: number, arxivId: string): Promise<ChairDocument> {
-  return api<ChairDocument>(`/api/chairs/${chairId}/documents/arxiv`, {
-    method: "POST",
-    json: { arxiv_id: arxivId },
-  });
-}
-
-export function deleteDocument(chairId: number, docId: number): Promise<void> {
-  return api<void>(`/api/chairs/${chairId}/documents/${docId}`, { method: "DELETE" });
 }

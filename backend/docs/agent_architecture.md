@@ -73,7 +73,7 @@ flowchart LR
 
 ## 4. RAG Pipeline — Document Ingestion
 
-There are three separate ingestion paths feeding the knowledge base.
+There are two ingestion paths feeding the knowledge base and publications view.
 
 ### 4.1 Chair Knowledge Base
 
@@ -85,15 +85,15 @@ flowchart TD
         A3 --> A4["INSERT chair_documents\nkind=description\nembedding=vector(2560)"]
     end
 
-    subgraph "Path B: ArXiv Paper"
-        B1["POST /api/chairs/{id}/documents/arxiv\n(admin)"] --> B2["ChairService.ingest_arxiv_paper"]
-        B2 --> B3["HTTP GET arxiv.org/api/query\n→ parse Atom XML\n→ title + abstract"]
-        B3 --> B4["embed_client.embed(abstract)"]
-        B4 --> B5["INSERT chair_documents\nkind=paper\nembedding=vector(2560)"]
+    subgraph "Path B: OpenAlex Publications"
+        B1["POST /api/scraper/run/{chair_id}\n(admin)"] --> B2["ScraperOrchestrator.scrape_for_researcher"]
+        B2 --> B3["OpenAlex works API\n→ title + abstract + DOI + source URL"]
+        B3 --> B4["Deduplicate by DOI\nor title + first author"]
+        B4 --> B5["INSERT papers\nsource=openalex"]
     end
 
     A4 --> VDB[("chair_documents\nVector(2560)")]
-    B5 --> VDB
+    B5 --> PT[("papers")]
 ```
 
 ### 4.2 Student Profile Embedding
@@ -246,7 +246,6 @@ erDiagram
         string kind
         string title
         text content
-        string arxiv_id
         int published_year
         vector embedding
         datetime created_at

@@ -20,31 +20,29 @@ from app.scraper.orchestrator import ScraperOrchestrator, _LLM_CONCURRENCY
 # ---------------------------------------------------------------------------
 
 
-def _researcher(id_=1, name="Georg Martius", chair_id=1, scholar_id="ABC123"):
+def _researcher(id_=1, name="Georg Martius", chair_id=1):
     return SimpleNamespace(
         id=id_,
         name=name,
         chair_id=chair_id,
-        google_scholar_id=scholar_id,
         orcid=None,
         affiliation=None,
     )
 
 
-def _candidate(title="Paper A", arxiv_id=None, abstract="Abstract text", year=2023, source="google_scholar"):
+def _candidate(title="Paper A", abstract="Abstract text", year=2023, source="openalex"):
     return PaperCandidate(
         title=title,
         abstract=abstract,
         authors=["Alice", "Bob"],
         publication_date=datetime(year, 6, 1, tzinfo=timezone.utc),
         source=source,
-        source_url="https://scholar.google.com/test",
-        arxiv_id=arxiv_id,
+        source_url="https://openalex.org/W1",
     )
 
 
 def _paper_row(id_=99, **kwargs):
-    defaults = dict(arxiv_id=None, tags=[])
+    defaults = dict(doi=None, tags=[])
     defaults.update(kwargs)
     return SimpleNamespace(id=id_, **defaults)
 
@@ -204,7 +202,7 @@ class TestScrapeForResearcher:
 
     async def test_abstract_present_triggers_llm(self):
         o = _build_orchestrator()
-        o._source.fetch_papers.return_value = [_candidate(abstract="Some abstract")]
+        o._source.fetch_papers.return_value = [_candidate(abstract="Some abstract", source="manual")]
 
         await o.scrape_for_researcher(1)
 
@@ -228,7 +226,7 @@ class TestScrapeForResearcher:
 
     async def test_tags_stored_for_each_tag(self):
         o = _build_orchestrator()
-        o._source.fetch_papers.return_value = [_candidate()]
+        o._source.fetch_papers.return_value = [_candidate(source="manual")]
         o._llm.generate_tags.return_value = ["robotics", "optimization"]
         tag1 = SimpleNamespace(id=1, name="robotics")
         tag2 = SimpleNamespace(id=2, name="optimization")
@@ -241,7 +239,7 @@ class TestScrapeForResearcher:
 
     async def test_candidate_exception_counted_as_error(self):
         o = _build_orchestrator()
-        o._source.fetch_papers.return_value = [_candidate("Bad"), _candidate("Good")]
+        o._source.fetch_papers.return_value = [_candidate("Bad", source="manual"), _candidate("Good", source="manual")]
         # First LLM call raises, second succeeds
         call_count = 0
 
@@ -286,29 +284,6 @@ class TestScrapeForResearcher:
         assert result["researcher_name"] == "Georg Martius"
         assert result["total"] == 0
 
-    async def test_discovered_google_scholar_id_is_persisted(self):
-        o = _build_orchestrator()
-        o._researcher_repo.get_by_id.return_value = _researcher(scholar_id=None)
-
-        async def fetch_side_effect(researcher, **kwargs):
-            researcher.google_scholar_id = "DISCOVERED"
-            return []
-
-        o._source.fetch_papers.side_effect = fetch_side_effect
-
-        await o.scrape_for_researcher(1)
-
-        o._researcher_repo.update_google_scholar_id.assert_awaited_once_with(1, "DISCOVERED")
-
-    async def test_existing_google_scholar_id_is_not_rewritten(self):
-        o = _build_orchestrator()
-        o._researcher_repo.get_by_id.return_value = _researcher(scholar_id="EXISTING")
-        o._source.fetch_papers.return_value = []
-
-        await o.scrape_for_researcher(1)
-
-        o._researcher_repo.update_google_scholar_id.assert_not_awaited()
-
     async def test_empty_candidate_list_returns_zeros(self):
         o = _build_orchestrator()
         o._source.fetch_papers.return_value = []
@@ -336,7 +311,7 @@ class TestConcurrency:
         """LLM calls must never overlap."""
         o = _build_orchestrator()
         n = 5
-        candidates = [_candidate(f"P{i}", abstract=f"Abstract {i}") for i in range(n)]
+        candidates = [_candidate(f"P{i}", abstract=f"Abstract {i}", source="manual") for i in range(n)]
         o._source.fetch_papers.return_value = candidates
 
         max_concurrent_llm = 0
@@ -401,7 +376,7 @@ class TestConcurrency:
         """One failing candidate must not prevent others from completing."""
         o = _build_orchestrator()
         n = 6
-        candidates = [_candidate(f"P{i}") for i in range(n)]
+        candidates = [_candidate(f"P{i}", source="manual") for i in range(n)]
         o._source.fetch_papers.return_value = candidates
 
         call_count = 0

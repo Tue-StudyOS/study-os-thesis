@@ -18,9 +18,8 @@ class PaperCandidate(BaseModel):
     authors: list[str] = Field(default_factory=list)
     publication_date: datetime | None = None
     # Identifies the source adapter that discovered this paper
-    source: str  # e.g. "google_scholar", "arxiv", "semantic_scholar"
+    source: str
     source_url: str
-    arxiv_id: str | None = None
     doi: str | None = None
 
 
@@ -37,7 +36,6 @@ class ResearcherInfo(BaseModel):
     """Researcher identity passed to paper-source adapters."""
 
     name: str
-    google_scholar_id: str | None = None
     orcid: str | None = None
     affiliation: str | None = None
     chair_id: int | None = None

@@ -34,13 +34,15 @@ Used to run PostgreSQL + pgvector.
   Settings → Resources → WSL Integration → toggle your distro → Apply & Restart.
 - **Linux**: Install the `docker` daemon and the `docker compose` plugin.
 
-### 2. uv (Python package manager)
+### 2. Python 3.13 + uv
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 Restart your shell afterwards so `uv` is on PATH. Verify with `uv --version`.
+The backend is pinned to Python 3.13 because several LLM dependencies do not
+publish Python 3.14-compatible releases yet.
 
 ### 3. Node.js ≥ 20
 
@@ -199,6 +201,41 @@ in a separate terminal), you can also start it directly with
 
 ---
 
+## Quality gates
+
+Run the deterministic local quality gate before opening a PR:
+
+```bash
+make check
+make audit
+```
+
+This runs backend Ruff lint/format checks, frontend Vitest unit tests, and a
+production frontend build. `make audit` checks the synced backend Python
+environment with `pip-audit` and frontend advisories with
+`npm audit --audit-level=moderate`.
+Backend pytest can be run directly from `backend/`:
+
+```bash
+uv run pytest
+```
+
+Optional LLM quality evals live under `backend/tests/evals`. They are skipped
+by default because they require DeepEval and an LLM judge configuration:
+
+```bash
+cd backend
+uv sync --group eval
+RUN_DEEPEVAL=1 uv run pytest tests/evals -m eval -p no:rerunfailures
+```
+
+CI runs backend lint, backend tests, backend dependency audit, frontend tests,
+frontend build, and frontend dependency audit. DeepEval checks run via the
+manual **LLM Evals** workflow when the required judge-model credentials are
+configured.
+
+---
+
 ## Project layout
 
 ```
@@ -217,7 +254,7 @@ study-os-thesis/
 │   ├── scripts/
 │   │   └── seed.py         Idempotent DB seed (3 Tübingen chairs)
 │   ├── log_config.json     Uvicorn logging config
-│   ├── pyproject.toml      Python dependencies (Python ≥ 3.13)
+│   ├── pyproject.toml      Python dependencies (Python 3.13)
 │   └── .env.example        Environment variable template
 ├── frontend/
 │   └── src/
@@ -246,8 +283,8 @@ study-os-thesis/
 
 ### Professors / Admins
 - **Chair management** — Create research chairs with name, description, and
-  professor. Ingest ArXiv papers by ID; the abstract is fetched, embedded, and
-  stored as a chair document for semantic search.
+  professor. Paper discovery is OpenAlex-only and stores publications in the
+  papers table for chair publication views.
 - **Thesis proposals** — Submit open thesis proposals linked to a chair.
 
 ---

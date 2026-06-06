@@ -93,3 +93,8 @@ class TestCreateThesis:
         """GET /api/theses should return a list."""
         response = await client.get("/api/theses")
         assert response.status_code == 200
+
+    async def test_list_theses_rejects_pagination_outside_bounds(self, client):
+        assert (await client.get("/api/theses?limit=0")).status_code == 422
+        assert (await client.get("/api/theses?limit=101")).status_code == 422
+        assert (await client.get("/api/theses?offset=-1")).status_code == 422

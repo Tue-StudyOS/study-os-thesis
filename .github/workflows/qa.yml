@@ -4,32 +4,38 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - "**/*.py"
-      - "backend/pyproject.toml"
-      - "backend/uv.lock"
-      - ".github/workflows/qa.yml"
-
-# The Python project lives in backend/:
-# - backend/pyproject.toml
-# - backend/uv.lock
-defaults:
-  run:
-    working-directory: backend
+      - '**/*.py'
+      - 'frontend/**'
+      - 'backend/pyproject.toml'
+      - 'backend/uv.lock'
+      - 'package-lock.json'
+      - 'frontend/package.json'
+      - 'frontend/package-lock.json'
+      - '.github/workflows/qa.yml'
 
 jobs:
-  lint:
-    name: Lint (Ruff)
+  backend-lint:
+    name: Backend lint (Ruff)
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
-          cache-dependency-glob: "backend/uv.lock"
+          cache-dependency-glob: 'backend/uv.lock'
 
       - name: Install dependencies
         run: uv sync
@@ -40,32 +46,120 @@ jobs:
       - name: Ruff format check
         run: uv run ruff format --check .
 
-  test:
-    name: Test (pytest)
+  backend-test:
+    name: Backend tests (pytest)
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
 
     # The test suite mocks all I/O, but these values satisfy required settings
     # at import time.
     env:
-      DATABASE_URL: "postgresql+asyncpg://ci:ci@127.0.0.1:5432/ci"
-      JWT_SECRET: "ci-placeholder-secret-not-for-production-1234567890"
-      REDIS_URL: "redis://127.0.0.1:6379/0"
+      DATABASE_URL: 'postgresql+asyncpg://ci:ci@127.0.0.1:5432/ci'
+      JWT_SECRET: 'ci-placeholder-secret-not-for-production-1234567890'
+      REDIS_URL: 'redis://127.0.0.1:6379/0'
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
-          cache-dependency-glob: "backend/uv.lock"
+          cache-dependency-glob: 'backend/uv.lock'
 
       - name: Install dependencies
         run: uv sync
 
-      - name: Install Playwright Chromium
-        run: uv run playwright install chromium --with-deps
-
       - name: Run tests
         run: uv run pytest --maxfail=1 --disable-warnings -q
+
+  backend-audit:
+    name: Backend dependency audit
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: 'backend/uv.lock'
+
+      - name: Install dependencies
+        run: uv sync --group audit
+
+      - name: Audit Python dependencies
+        run: uv run --group audit pip-audit --local --progress-spinner off
+
+  frontend-test:
+    name: Frontend tests and build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test
+
+      - name: Build frontend
+        run: npm run build
+
+  frontend-audit:
+    name: Frontend dependency audit
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit npm dependencies
+        run: npm audit --audit-level=moderate

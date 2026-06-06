@@ -14,11 +14,6 @@ class TestRetryPolicy:
 
         assert embed_thesis.max_retries == 3
 
-    def test_ingest_arxiv_max_retries(self):
-        from app.chairs.tasks import ingest_arxiv_paper
-
-        assert ingest_arxiv_paper.max_retries == 3
-
     def test_parse_transcript_max_retries(self):
         from app.students.tasks import parse_transcript
 

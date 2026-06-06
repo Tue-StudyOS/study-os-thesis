@@ -6,6 +6,7 @@ import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from pydantic import BaseModel, StrictStr, ValidationError
 
 from app.llm.litellm_adapter import LiteLLMAdapter, _to_openai_messages
 
@@ -199,3 +200,60 @@ async def test_deepseek_no_extra_body_thinking():
         _, kwargs = mock_acompletion.call_args
         extra_body = kwargs.get("extra_body", {})
         assert "thinking" not in extra_body, "extra_body should not contain 'thinking'; reasoning_effort handles this"
+
+
+class StructuredAnswer(BaseModel):
+    answer: StrictStr
+
+
+@pytest.mark.asyncio
+async def test_chat_structured_validates_json_response():
+    mock_msg = MagicMock()
+    mock_msg.content = '{"answer": "ok"}'
+    mock_msg.tool_calls = None
+    mock_msg.reasoning_content = None
+
+    mock_choice = MagicMock()
+    mock_choice.message = mock_msg
+
+    mock_response = MagicMock()
+    mock_response.choices = [mock_choice]
+
+    with patch("litellm.acompletion", new_callable=AsyncMock) as mock_acompletion:
+        mock_acompletion.return_value = mock_response
+
+        adapter = LiteLLMAdapter(chat_model="m", embed_model="e")
+        result = await adapter.chat_structured(
+            "m",
+            messages=[{"role": "user", "content": "hi"}],
+            output_schema=StructuredAnswer,
+        )
+
+        assert result == StructuredAnswer(answer="ok")
+        _, kwargs = mock_acompletion.call_args
+        assert kwargs["response_format"] == {"type": "json_object"}
+
+
+@pytest.mark.asyncio
+async def test_chat_structured_rejects_invalid_schema():
+    mock_msg = MagicMock()
+    mock_msg.content = '{"answer": 42}'
+    mock_msg.tool_calls = None
+    mock_msg.reasoning_content = None
+
+    mock_choice = MagicMock()
+    mock_choice.message = mock_msg
+
+    mock_response = MagicMock()
+    mock_response.choices = [mock_choice]
+
+    with patch("litellm.acompletion", new_callable=AsyncMock) as mock_acompletion:
+        mock_acompletion.return_value = mock_response
+
+        adapter = LiteLLMAdapter(chat_model="m", embed_model="e")
+        with pytest.raises(ValidationError):
+            await adapter.chat_structured(
+                "m",
+                messages=[{"role": "user", "content": "hi"}],
+                output_schema=StructuredAnswer,
+            )

@@ -4,11 +4,12 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-
+from sqlalchemy import Select
 from app.models.paper import Paper, PaperTag, Tag
+from app.papers.api_constants import PAPER_LIST_DEFAULT_LIMIT, PAPER_LIST_DEFAULT_OFFSET
 
 
 class PaperRepository:
@@ -28,7 +29,6 @@ class PaperRepository:
         summary: str | None = None,
         authors: list[str] | None = None,
         publication_date: datetime | None = None,
-        arxiv_id: str | None = None,
         doi: str | None = None,
         recency_score: float = 0.0,
         relevance_score: float = 0.0,
@@ -44,7 +44,6 @@ class PaperRepository:
             summary=summary,
             authors=authors or [],
             publication_date=publication_date,
-            arxiv_id=arxiv_id,
             doi=doi,
             recency_score=recency_score,
             relevance_score=relevance_score,
@@ -59,9 +58,6 @@ class PaperRepository:
     async def get_by_id(self, paper_id: int) -> Paper | None:
         return await self._session.get(Paper, paper_id)
 
-    async def get_by_arxiv_id(self, arxiv_id: str) -> Paper | None:
-        return await self._session.scalar(select(Paper).where(Paper.arxiv_id == arxiv_id))
-
     async def get_by_doi(self, doi: str) -> Paper | None:
         return await self._session.scalar(select(Paper).where(Paper.doi == doi))
 
@@ -70,7 +66,7 @@ class PaperRepository:
         return await self._session.scalar(
             select(Paper).where(
                 Paper.title_normalized == title_normalized,
-                Paper.arxiv_id.is_(None),
+                Paper.authors[0].astext == first_author,
                 Paper.doi.is_(None),
             )
         )
@@ -80,19 +76,42 @@ class PaperRepository:
         *,
         chair_id: int | None = None,
         tag_name: str | None = None,
-        limit: int = 50,
-        offset: int = 0,
+        limit: int = PAPER_LIST_DEFAULT_LIMIT,
+        offset: int = PAPER_LIST_DEFAULT_OFFSET,
     ) -> list[Paper]:
         """List papers ordered by relevance_score DESC, with optional filters."""
-        from app.models.researcher import Researcher, ResearcherPaper
-
+        stmt = self._filtered_query(chair_id=chair_id, tag_name=tag_name)
         stmt = (
-            select(Paper)
-            .options(selectinload(Paper.tags).selectinload(PaperTag.tag))
+            stmt.options(selectinload(Paper.tags).selectinload(PaperTag.tag))
+            .distinct()
             .order_by(Paper.relevance_score.desc(), Paper.publication_date.desc())
             .limit(limit)
             .offset(offset)
         )
+
+        rows = await self._session.scalars(stmt)
+        return list(rows.unique())
+
+    async def count(
+        self,
+        *,
+        chair_id: int | None = None,
+        tag_name: str | None = None,
+    ) -> int:
+        """Count distinct papers matching the same filters as list()."""
+        stmt = self._filtered_query(chair_id=chair_id, tag_name=tag_name).with_only_columns(func.count(func.distinct(Paper.id))).order_by(None)
+        return await self._session.scalar(stmt) or 0
+
+    def _filtered_query(
+        self,
+        *,
+        chair_id: int | None = None,
+        tag_name: str | None = None,
+    ) -> Select[tuple[Paper]]:
+        """Base paper query with filters shared by list() and count()."""
+        from app.models.researcher import Researcher, ResearcherPaper
+
+        stmt = select(Paper)
 
         if chair_id is not None:
             stmt = stmt.join(Paper.researchers).join(ResearcherPaper.researcher).where(Researcher.chair_id == chair_id)
@@ -100,8 +119,7 @@ class PaperRepository:
         if tag_name is not None:
             stmt = stmt.join(Paper.tags).join(PaperTag.tag).where(Tag.name == tag_name.lower())
 
-        rows = await self._session.scalars(stmt)
-        return list(rows)
+        return stmt
 
     async def update(self, paper: Paper, **fields: object) -> Paper:
         for key, value in fields.items():

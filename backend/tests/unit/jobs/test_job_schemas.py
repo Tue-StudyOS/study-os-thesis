@@ -16,14 +16,12 @@ class TestJobEnums:
         expected = {
             "embed_thesis",
             "embed_chair",
-            "ingest_arxiv",
             "parse_transcript",
             "chat_turn",
             "generate_proposal",
             "scrape_chair",
             "scrape_researcher",
             "enrich_paper",
-            "ingest_single_paper",
         }
         actual = {e.value for e in JobType}
         assert expected == actual

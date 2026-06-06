@@ -1,8 +1,6 @@
 """Business logic for student profiles and transcript processing."""
 
-import json
 import logging
-from typing import Any
 
 from app.config import Settings
 from app.exceptions import BadRequestException, NotFoundException
@@ -158,51 +156,14 @@ class StudentService:
     async def _parse_transcript_with_llm(self, raw_text: str) -> TranscriptParseResult:
         prompt = _TRANSCRIPT_PROMPT + raw_text
         try:
-            response = await self._ollama.chat(
+            return await self._ollama.chat_structured(
                 model=self._settings.effective_extract_model,
                 messages=[{"role": "user", "content": prompt}],
-                format="json",
+                output_schema=TranscriptParseResult,
             )
         except Exception as exc:
-            _logger.error("LLM transcript extraction failed: %s", exc)
-            raise BadRequestException(f"Transcript extraction failed: {exc}") from exc
-        content: str = (response.get("message", {}) or {}).get("content", "") or ""
-        content = content.strip()
-        if content.startswith("```"):
-            content = content.split("```")[1]
-            if content.startswith("json"):
-                content = content[4:]
-        content = content.strip()
-        try:
-            data: Any = json.loads(content)
-        except json.JSONDecodeError as exc:
-            _logger.error("LLM returned non-JSON transcript parse result: %s", content[:500])
+            _logger.error("LLM transcript extraction failed validation: %s", exc)
             raise BadRequestException("The LLM could not parse the transcript into structured data. Please ensure the PDF is a valid text-based transcript.") from exc
-        try:
-            return TranscriptParseResult.model_validate(data)
-        except Exception as exc:
-            _logger.warning(
-                "Strict validation failed (%s), attempting per-course fallback: %s",
-                exc,
-                data,
-            )
-        # Fallback: validate each course individually, skip invalid ones
-        valid_courses: list[StudentCourseItem] = []
-        raw_courses = data.get("courses", []) if isinstance(data, dict) else []
-        for raw in raw_courses:
-            try:
-                valid_courses.append(StudentCourseItem.model_validate(raw))
-            except Exception as course_exc:
-                _logger.warning("Skipping invalid course row (%s): %s", course_exc, raw)
-        if not valid_courses:
-            _logger.error("No valid courses could be extracted from: %s", data)
-            raise BadRequestException("The LLM could not produce any valid course rows from the transcript.")
-        gpa_raw = data.get("gpa") if isinstance(data, dict) else None
-        try:
-            gpa_val = float(gpa_raw) if gpa_raw is not None else None
-        except (TypeError, ValueError):
-            gpa_val = None
-        return TranscriptParseResult(gpa=gpa_val, courses=valid_courses)
 
     async def _embed_course_profile(self, courses: list[StudentCourseItem]) -> list[float] | None:
         if not courses:

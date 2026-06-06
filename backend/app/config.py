@@ -65,11 +65,6 @@ class Settings(BaseSettings):
     # ---------------------------------------------------------------------------
     # Scraper settings
     # ---------------------------------------------------------------------------
-    scraper_scholar_delay: float = Field(3.0, alias="SCRAPER_SCHOLAR_DELAY")
-    scraper_scholar_max_pages: int = Field(3, alias="SCRAPER_SCHOLAR_MAX_PAGES")
-    scraper_scholar_headless: bool = Field(True, alias="SCRAPER_SCHOLAR_HEADLESS")
-    scraper_arxiv_delay: float = Field(3.0, alias="SCRAPER_ARXIV_DELAY")
-    scraper_arxiv_batch_size: int = Field(50, alias="SCRAPER_ARXIV_BATCH_SIZE")
     scraper_max_results: int = Field(250, alias="SCRAPER_MAX_RESULTS")
     scraper_since_days: int = Field(3650, alias="SCRAPER_SINCE_DAYS")
     scraper_recency_half_life: int = Field(180, alias="SCRAPER_RECENCY_HALF_LIFE")

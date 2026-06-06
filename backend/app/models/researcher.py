@@ -15,7 +15,6 @@ class Researcher(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    google_scholar_id: Mapped[str | None] = mapped_column(String(50), unique=True, nullable=True)
     orcid: Mapped[str | None] = mapped_column(String(50), unique=True, nullable=True)
     affiliation: Mapped[str | None] = mapped_column(String(500), nullable=True)
     chair_id: Mapped[int | None] = mapped_column(ForeignKey("chairs.id", ondelete="SET NULL"), nullable=True, index=True)

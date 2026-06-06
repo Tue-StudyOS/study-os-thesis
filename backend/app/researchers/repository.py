@@ -19,7 +19,6 @@ class ResearcherRepository:
         *,
         name: str,
         chair_id: int | None = None,
-        google_scholar_id: str | None = None,
         orcid: str | None = None,
         affiliation: str | None = None,
         is_professor: bool = False,
@@ -27,7 +26,6 @@ class ResearcherRepository:
         researcher = Researcher(
             name=name,
             chair_id=chair_id,
-            google_scholar_id=google_scholar_id,
             orcid=orcid,
             affiliation=affiliation,
             is_professor=is_professor,
@@ -51,13 +49,6 @@ class ResearcherRepository:
     async def list_by_chair(self, chair_id: int) -> list[Researcher]:
         rows = await self._session.scalars(select(Researcher).where(Researcher.chair_id == chair_id).order_by(Researcher.name))
         return list(rows)
-
-    async def update_google_scholar_id(self, researcher_id: int, google_scholar_id: str) -> None:
-        researcher = await self.get_by_id(researcher_id)
-        if researcher is None:
-            return
-        researcher.google_scholar_id = google_scholar_id
-        await self._session.flush()
 
     async def link_paper(self, researcher_id: int, paper_id: int) -> None:
         """Create researcher_papers row if it doesn't exist yet."""

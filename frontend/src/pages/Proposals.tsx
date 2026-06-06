@@ -66,7 +66,7 @@ function ProposalCard({
   featured = false,
 }: {
   thesis: Thesis;
-  chairName?: string;
+  chairName?: string | undefined;
   featured?: boolean;
 }) {
   const src = SOURCE_CONFIG[thesis.source] ?? SOURCE_CONFIG.student;
@@ -159,6 +159,7 @@ function ProposalGrid({
   }
 
   const [featured, ...rest] = theses;
+  if (!featured) return null;
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
       <ProposalCard

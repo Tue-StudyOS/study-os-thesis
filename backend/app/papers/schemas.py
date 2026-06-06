@@ -25,7 +25,6 @@ class PaperOut(BaseModel):
     publication_date: datetime | None
     source: str
     source_url: str
-    arxiv_id: str | None
     doi: str | None
     recency_score: float
     relevance_score: float
@@ -49,7 +48,6 @@ class PaperOut(BaseModel):
             "publication_date": p.publication_date,
             "source": p.source,
             "source_url": p.source_url,
-            "arxiv_id": p.arxiv_id,
             "doi": p.doi,
             "recency_score": p.recency_score,
             "relevance_score": p.relevance_score,
@@ -58,3 +56,10 @@ class PaperOut(BaseModel):
             "tags": tag_names,
         }
         return cls.model_validate(data)
+
+
+class PaginatedPapersOut(BaseModel):
+    items: list[PaperOut]
+    total: int
+    limit: int
+    offset: int

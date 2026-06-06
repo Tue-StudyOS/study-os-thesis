@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.admin.api_constants import ADMIN_USER_LIST_DEFAULT_LIMIT, ADMIN_USER_LIST_DEFAULT_OFFSET
 from app.models import User, UserRole
 
 
@@ -26,6 +27,6 @@ class UserRepository:
     async def commit(self) -> None:
         await self._session.commit()
 
-    async def list_all(self, limit: int = 100, offset: int = 0) -> list[User]:
+    async def list_all(self, limit: int = ADMIN_USER_LIST_DEFAULT_LIMIT, offset: int = ADMIN_USER_LIST_DEFAULT_OFFSET) -> list[User]:
         rows = await self._session.scalars(select(User).order_by(User.created_at.desc()).limit(limit).offset(offset))
         return list(rows)

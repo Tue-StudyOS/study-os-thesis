@@ -7,29 +7,44 @@ chat model, allowing a smaller/faster model for this batch workload.
 
 from __future__ import annotations
 
-import json
 import logging
 import re
+from difflib import get_close_matches
 
-from thefuzz import process as fuzz_process  # type: ignore[import-untyped]
+from pydantic import BaseModel, Field
 
 from app.llm.port import LLMPort
+from app.scraper.adapters.llm_enricher_constants import (
+    MAX_GENERATED_TAGS,
+    MAX_SUMMARY_CHARS,
+    SUMMARY_MAX_TOKENS,
+    SUMMARY_TEMPERATURE,
+    TAG_FUZZY_THRESHOLD,
+    TAG_MAX_TOKENS,
+    TAG_TEMPERATURE,
+)
 from app.scraper.interfaces import LLMEnricher
 from app.scraper.tags import CANONICAL_TAGS
 
 _logger = logging.getLogger(__name__)
 
-# Fuzzy-match threshold: a returned tag must have this similarity to a
-# canonical tag to be accepted (0-100 scale).
-_FUZZY_THRESHOLD = 80
+_TAG_SEPARATOR_RE = re.compile(r"[\s_\-/]+")
+
+
+class PaperTagSelection(BaseModel):
+    tags: list[str] = Field(default_factory=list, min_length=0, max_length=MAX_GENERATED_TAGS)
+
+
+class PaperSummaryOutput(BaseModel):
+    summary: str = Field(min_length=1, max_length=MAX_SUMMARY_CHARS)
 
 
 class LLMPaperEnricher(LLMEnricher):
     """Generates a 2-3 sentence summary and 2-5 canonical tags for a paper.
 
     The tag generation uses a closed-vocabulary prompt to keep tags consistent
-    across the corpus.  Raw LLM output is parsed, then fuzzy-matched against
-    the canonical tag set so minor phrasing variations are normalised.
+    across the corpus. Raw LLM output is parsed, then normalized against the
+    canonical tag set so minor phrasing variations are accepted.
     """
 
     def __init__(self, llm_client: LLMPort, model_name: str) -> None:
@@ -40,16 +55,17 @@ class LLMPaperEnricher(LLMEnricher):
         prompt = (
             "Summarize this research paper in 2-3 sentences for a graduate student. "
             "Focus on the main contribution and methodology. "
-            "Be concise and avoid jargon where possible.\n\n"
+            'Be concise and avoid jargon where possible. Return ONLY a valid JSON object like {"summary": "..."}.\n\n'
             f"Title: {title}\n\nAbstract: {abstract}"
         )
         try:
-            resp = await self._llm.chat(
+            result = await self._llm.chat_structured(
                 self._model,
                 [{"role": "user", "content": prompt}],
-                options={"temperature": 0.3, "num_predict": 250},
+                output_schema=PaperSummaryOutput,
+                options={"temperature": SUMMARY_TEMPERATURE, "num_predict": SUMMARY_MAX_TOKENS},
             )
-            return resp["message"]["content"].strip()
+            return result.summary.strip()
         except Exception as exc:
             _logger.warning("LLM summarize failed for %r: %s", title[:60], exc)
             return ""
@@ -58,55 +74,36 @@ class LLMPaperEnricher(LLMEnricher):
         tag_list = ", ".join(f'"{t}"' for t in sorted(CANONICAL_TAGS))
         prompt = (
             "Given this research paper, select 2 to 5 topic tags from the list below. "
-            "Return ONLY a valid JSON array of strings — no explanation, no markdown. "
-            'Example output: ["machine learning", "optimization"]\n\n'
+            'Return ONLY a valid JSON object like {"tags": ["machine learning", "optimization"]} — no explanation, no markdown. '
             f"Available tags: [{tag_list}]\n\n"
             f"Title: {title}\n\nAbstract: {abstract}"
         )
         try:
-            resp = await self._llm.chat(
+            result = await self._llm.chat_structured(
                 self._model,
                 [{"role": "user", "content": prompt}],
-                options={"temperature": 0.1, "num_predict": 150},
+                output_schema=PaperTagSelection,
+                options={"temperature": TAG_TEMPERATURE, "num_predict": TAG_MAX_TOKENS},
             )
-            raw = resp["message"]["content"].strip()
         except Exception as exc:
             _logger.warning("LLM tag generation failed for %r: %s", title[:60], exc)
             return []
 
-        return self._parse_and_normalize(raw, title)
+        return self._normalize(result.tags, title)
 
-    def _parse_and_normalize(self, raw: str, title: str) -> list[str]:
-        # Extract JSON array (may be wrapped in markdown code fences)
-        raw = re.sub(r"```(?:json)?", "", raw).strip()
-        json_match = re.search(r"\[.*?\]", raw, re.DOTALL)
-        if json_match:
-            raw = json_match.group(0)
-
-        try:
-            tags: list[str] = json.loads(raw)
-        except json.JSONDecodeError:
-            # Fallback: pull any quoted strings from the response
-            tags = re.findall(r'"([^"]+)"', raw)
-
-        if not isinstance(tags, list):
-            _logger.warning("LLM returned non-list tags for %r: %r", title[:60], raw[:200])
-            return []
-
+    def _normalize(self, tags: list[str], title: str) -> list[str]:
         normalized: list[str] = []
         for tag in tags:
-            if not isinstance(tag, str):
-                continue
-            tag_lower = tag.strip().lower()
+            tag_lower = _normalize_tag_text(tag)
             if tag_lower in CANONICAL_TAGS:
                 normalized.append(tag_lower)
                 continue
-            # Fuzzy match against the canonical set
-            match = fuzz_process.extractOne(tag_lower, CANONICAL_TAGS)
-            if match and match[1] >= _FUZZY_THRESHOLD:
+
+            match = get_close_matches(tag_lower, CANONICAL_TAGS, n=1, cutoff=TAG_FUZZY_THRESHOLD)
+            if match:
                 normalized.append(match[0])
             else:
-                _logger.debug("Unrecognized tag discarded: %r (best match: %s)", tag, match)
+                _logger.debug("Unrecognized tag discarded: %r", tag)
 
         # Deduplicate while preserving order
         seen: set[str] = set()
@@ -116,3 +113,7 @@ class LLMPaperEnricher(LLMEnricher):
                 seen.add(t)
                 result.append(t)
         return result
+
+
+def _normalize_tag_text(tag: str) -> str:
+    return _TAG_SEPARATOR_RE.sub(" ", tag.strip().lower()).strip()

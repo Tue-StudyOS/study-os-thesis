@@ -2,6 +2,7 @@ from app.config import Settings
 from app.exceptions import BadRequestException, NotFoundException
 from app.llm.port import LLMPort
 from app.models import Thesis, ThesisSource, User, UserRole
+from app.theses.api_constants import THESIS_LIST_DEFAULT_LIMIT, THESIS_LIST_DEFAULT_OFFSET
 from app.theses.repository import ThesisRepository
 from app.theses.schemas import ThesisCreate
 from app.users.repository import UserRepository
@@ -49,7 +50,7 @@ class ThesisService:
         await self._thesis_repo.commit()
         return thesis
 
-    async def list_theses(self, limit: int = 20, offset: int = 0) -> list[Thesis]:
+    async def list_theses(self, limit: int = THESIS_LIST_DEFAULT_LIMIT, offset: int = THESIS_LIST_DEFAULT_OFFSET) -> list[Thesis]:
         return await self._thesis_repo.list(limit=limit, offset=offset)
 
     async def get_thesis(self, thesis_id: int) -> Thesis:
