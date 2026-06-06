@@ -22,7 +22,7 @@ def log_config() -> dict:
 def test_console_formatter_is_colored_and_uses_standard_format(log_config: dict) -> None:
     formatter = log_config["formatters"]["console"]
 
-    assert formatter["class"] == "colorlog.ColoredFormatter"
+    assert formatter["()"] == "colorlog.ColoredFormatter"
     assert formatter["format"] == LOG_FORMAT
     assert formatter["force_color"] is True
 
