@@ -4,12 +4,20 @@ from app.auth.deps import CurrentUserDep
 from app.exceptions import BadRequestException
 from app.jobs.deps import JobServiceDep
 from app.models.job import JobType
+from app.students.constants import (
+    STUDENT_PROGRAM_MAX_LENGTH,
+    STUDENT_SEMESTER_MAX,
+    STUDENT_SEMESTER_MIN,
+    STUDENT_TRANSCRIPT_ACCEPTED_CONTENT_TYPES,
+    STUDENT_TRANSCRIPT_MAX_PDF_SIZE_BYTES,
+    STUDENT_TRANSCRIPT_MAX_PDF_SIZE_LABEL,
+    STUDENTS_API_PREFIX,
+    STUDENTS_API_TAG,
+)
 from app.students.deps import StudentServiceDep
 from app.students.schemas import StudentOut
 
-router = APIRouter(prefix="/api/students", tags=["students"])
-
-_MAX_PDF_SIZE = 10 * 1024 * 1024  # 10 MB
+router = APIRouter(prefix=STUDENTS_API_PREFIX, tags=[STUDENTS_API_TAG])
 
 
 @router.get("/me", response_model=StudentOut)
@@ -25,20 +33,20 @@ async def upload_transcript(
     current_user: CurrentUserDep,
     job_service: JobServiceDep,
     file: UploadFile,
-    program: str | None = Form(default=None, max_length=255),
-    semester: int | None = Form(default=None, ge=1, le=30),
+    program: str | None = Form(default=None, max_length=STUDENT_PROGRAM_MAX_LENGTH),
+    semester: int | None = Form(default=None, ge=STUDENT_SEMESTER_MIN, le=STUDENT_SEMESTER_MAX),
 ) -> dict:
     """Upload a PDF transcript. Processing is dispatched to a background worker."""
     from app.config import get_settings
     from app.students.pdf_store import store_pdf
     from app.students.tasks import parse_transcript
 
-    if file.content_type not in ("application/pdf", "application/octet-stream"):
+    if file.content_type not in STUDENT_TRANSCRIPT_ACCEPTED_CONTENT_TYPES:
         raise BadRequestException("Only PDF files are accepted.")
 
     pdf_bytes = await file.read()
-    if len(pdf_bytes) > _MAX_PDF_SIZE:
-        raise BadRequestException("PDF exceeds the 10 MB size limit.")
+    if len(pdf_bytes) > STUDENT_TRANSCRIPT_MAX_PDF_SIZE_BYTES:
+        raise BadRequestException(f"PDF exceeds the {STUDENT_TRANSCRIPT_MAX_PDF_SIZE_LABEL} size limit.")
     if not pdf_bytes:
         raise BadRequestException("Uploaded file is empty.")
 

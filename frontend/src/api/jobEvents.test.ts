@@ -52,4 +52,26 @@ describe("job event parsing", () => {
       status: "failure",
     });
   });
+
+  it("defaults missing event type while preserving valid payload data", () => {
+    expect(
+      parseJobEventMessage(
+        JSON.stringify({
+          job_id: "job-2",
+          status: "retry",
+          data: { error: "temporary" },
+        }),
+      ),
+    ).toEqual({
+      type: "job_status",
+      job_id: "job-2",
+      status: "retry",
+      data: { error: "temporary" },
+    });
+  });
+
+  it("rejects non-object JSON payloads and missing statuses", () => {
+    expect(() => parseJobEventMessage(JSON.stringify(["job-1", "success"]))).toThrow("Malformed job event");
+    expect(() => parseJobEventMessage(JSON.stringify({ job_id: "job-1" }))).toThrow("Malformed job event");
+  });
 });

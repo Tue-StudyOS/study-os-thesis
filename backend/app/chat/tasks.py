@@ -5,6 +5,17 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from app.chat.constants import (
+    CHAT_MESSAGE_EVENT,
+    CHAT_MESSAGE_STATUS_IN_PROGRESS,
+    CHAT_TURN_COMPLETED_EVENT,
+    CHAT_TURN_STARTED_EVENT,
+    PROCESS_CHAT_TURN_DEFAULT_RETRY_DELAY_SECONDS,
+    PROCESS_CHAT_TURN_MAX_RETRIES,
+    PROCESS_CHAT_TURN_SOFT_TIME_LIMIT_SECONDS,
+    PROCESS_CHAT_TURN_TASK_NAME,
+    PROCESS_CHAT_TURN_TIME_LIMIT_SECONDS,
+)
 from app.worker.celery_app import celery_app
 from app.worker.task_runner import execute_task
 
@@ -36,10 +47,10 @@ async def _process_chat_turn_work(session_id: int, user_id: int, content: str, j
             event_data["tool_name"] = msg.tool_name
         publish_event(
             redis_url,
-            event_type="chat_message",
+            event_type=CHAT_MESSAGE_EVENT,
             job_id=job_id,
             user_id=user_id,
-            status="in_progress",
+            status=CHAT_MESSAGE_STATUS_IN_PROGRESS,
             data=event_data,
         )
 
@@ -59,11 +70,11 @@ async def _process_chat_turn_work(session_id: int, user_id: int, content: str, j
 
 @celery_app.task(
     bind=True,
-    name="app.chat.tasks.process_chat_turn",
-    max_retries=2,
-    default_retry_delay=30,
-    soft_time_limit=600,
-    time_limit=660,
+    name=PROCESS_CHAT_TURN_TASK_NAME,
+    max_retries=PROCESS_CHAT_TURN_MAX_RETRIES,
+    default_retry_delay=PROCESS_CHAT_TURN_DEFAULT_RETRY_DELAY_SECONDS,
+    soft_time_limit=PROCESS_CHAT_TURN_SOFT_TIME_LIMIT_SECONDS,
+    time_limit=PROCESS_CHAT_TURN_TIME_LIMIT_SECONDS,
 )
 def process_chat_turn(
     self: Any,
@@ -87,7 +98,7 @@ def process_chat_turn(
         user_id=user_id,
         redis_url=settings.redis_url,
         work=lambda: _process_chat_turn_work(session_id, user_id, content, job_id, settings.redis_url, settings),
-        success_event="chat_turn_completed",
-        started_event="chat_turn_started",
+        success_event=CHAT_TURN_COMPLETED_EVENT,
+        started_event=CHAT_TURN_STARTED_EVENT,
         started_data={"session_id": session_id},
     )

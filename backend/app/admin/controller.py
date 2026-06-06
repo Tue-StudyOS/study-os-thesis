@@ -2,7 +2,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
-from app.admin.api_constants import (
+from app.admin.constants import (
+    ADMIN_API_PREFIX,
+    ADMIN_API_TAG,
     ADMIN_USER_LIST_DEFAULT_LIMIT,
     ADMIN_USER_LIST_DEFAULT_OFFSET,
     ADMIN_USER_LIST_MAX_LIMIT,
@@ -14,7 +16,7 @@ from app.auth.deps import require_role
 from app.auth.schemas import UserOut
 from app.models import User, UserRole
 
-router = APIRouter(prefix="/api/admin", tags=["admin"])
+router = APIRouter(prefix=ADMIN_API_PREFIX, tags=[ADMIN_API_TAG])
 
 
 @router.get("/users", response_model=list[UserOut])

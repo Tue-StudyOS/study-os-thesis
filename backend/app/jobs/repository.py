@@ -8,6 +8,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.jobs.constants import ACTIVE_JOB_LOOKUP_LIMIT, JOB_LIST_DEFAULT_LIMIT, JOB_LIST_DEFAULT_OFFSET
 from app.models.job import Job, JobStatus, JobType
 
 
@@ -54,8 +55,8 @@ class JobRepository:
         *,
         type: JobType | None = None,
         status: JobStatus | None = None,
-        limit: int = 50,
-        offset: int = 0,
+        limit: int = JOB_LIST_DEFAULT_LIMIT,
+        offset: int = JOB_LIST_DEFAULT_OFFSET,
     ) -> list[Job]:
         stmt = select(Job).where(Job.user_id == user_id).order_by(Job.created_at.desc()).limit(limit).offset(offset)
         if type is not None:
@@ -72,7 +73,7 @@ class JobRepository:
             .where(Job.type == JobType.scrape_chair)
             .where(Job.status.in_([JobStatus.pending, JobStatus.started]))
             .where(Job.input_data["chair_id"].astext == str(chair_id))
-            .limit(1)
+            .limit(ACTIVE_JOB_LOOKUP_LIMIT)
         )
         return (await self._session.scalars(stmt)).first()
 

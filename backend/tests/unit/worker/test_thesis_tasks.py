@@ -11,6 +11,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from app.exceptions import NotFoundException
+from app.theses.constants import EMBED_THESIS_MAX_RETRIES, EMBED_THESIS_SOFT_TIME_LIMIT_SECONDS
 from app.theses.tasks import _embed_thesis_work, embed_thesis
 
 
@@ -36,6 +37,10 @@ class TestEmbedThesisWiring:
         assert callable(kw["work"])
         # default success event / no started event for embedding tasks
         assert "started_event" not in kw
+
+    def test_task_limits_come_from_constants(self):
+        assert embed_thesis.max_retries == EMBED_THESIS_MAX_RETRIES
+        assert embed_thesis.soft_time_limit == EMBED_THESIS_SOFT_TIME_LIMIT_SECONDS
 
 
 @pytest.mark.unit

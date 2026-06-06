@@ -10,6 +10,7 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from app.admin import controller as admin_router
+from app.constants import HEALTH_API_PATH, META_API_TAG
 from app.auth import controller as auth_router
 from app.chairs import controller as chairs_router
 from app.chat import controller as chat_router
@@ -186,7 +187,7 @@ def create_app() -> FastAPI:
     app.include_router(scraper_router.router)
     app.include_router(ws_router.router)
 
-    @app.get("/api/health", tags=["meta"])
+    @app.get(HEALTH_API_PATH, tags=[META_API_TAG])
     async def health() -> dict[str, str]:
         return {"status": "ok"}
 

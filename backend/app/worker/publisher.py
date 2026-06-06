@@ -7,6 +7,8 @@ from typing import Any
 
 import redis as sync_redis
 
+from app.worker.constants import JOB_EVENTS_CHANNEL
+
 logger = logging.getLogger(__name__)
 
 
@@ -34,6 +36,6 @@ def publish_event(
     }
     try:
         r = sync_redis.from_url(redis_url)
-        r.publish("job_events", json.dumps(payload))
+        r.publish(JOB_EVENTS_CHANNEL, json.dumps(payload))
     except Exception:
         logger.exception("Failed to publish event to Redis")

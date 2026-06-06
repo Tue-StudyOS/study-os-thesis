@@ -17,6 +17,7 @@ from app.llm.port import LLMPort
 from app.scraper.adapters.llm_enricher_constants import (
     MAX_GENERATED_TAGS,
     MAX_SUMMARY_CHARS,
+    LLM_ENRICHER_LOG_TITLE_MAX_CHARS,
     SUMMARY_MAX_TOKENS,
     SUMMARY_TEMPERATURE,
     TAG_FUZZY_THRESHOLD,
@@ -67,7 +68,7 @@ class LLMPaperEnricher(LLMEnricher):
             )
             return result.summary.strip()
         except Exception as exc:
-            _logger.warning("LLM summarize failed for %r: %s", title[:60], exc)
+            _logger.warning("LLM summarize failed for %r: %s", title[:LLM_ENRICHER_LOG_TITLE_MAX_CHARS], exc)
             return ""
 
     async def generate_tags(self, title: str, abstract: str) -> list[str]:
@@ -86,7 +87,7 @@ class LLMPaperEnricher(LLMEnricher):
                 options={"temperature": TAG_TEMPERATURE, "num_predict": TAG_MAX_TOKENS},
             )
         except Exception as exc:
-            _logger.warning("LLM tag generation failed for %r: %s", title[:60], exc)
+            _logger.warning("LLM tag generation failed for %r: %s", title[:LLM_ENRICHER_LOG_TITLE_MAX_CHARS], exc)
             return []
 
         return self._normalize(result.tags, title)

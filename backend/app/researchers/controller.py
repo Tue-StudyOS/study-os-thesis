@@ -8,10 +8,11 @@ from fastapi import APIRouter, Depends, Query, status
 
 from app.auth.deps import CurrentUserDep, require_role
 from app.models import User, UserRole
+from app.researchers.constants import RESEARCHERS_API_PREFIX, RESEARCHERS_API_TAG
 from app.researchers.deps import ResearcherServiceDep
 from app.researchers.schemas import ResearcherCreate, ResearcherOut
 
-router = APIRouter(prefix="/api/researchers", tags=["researchers"])
+router = APIRouter(prefix=RESEARCHERS_API_PREFIX, tags=[RESEARCHERS_API_TAG])
 
 AdminDep = Annotated[User, Depends(require_role(UserRole.admin))]
 

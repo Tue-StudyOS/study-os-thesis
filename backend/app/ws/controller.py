@@ -7,13 +7,14 @@ import logging
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from app.auth_core.security import decode_access_token
+from app.ws.constants import WS_AUTH_CLOSE_CODE, WS_JOB_UPDATES_PATH
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
 
-@router.websocket("/api/ws")
+@router.websocket(WS_JOB_UPDATES_PATH)
 async def ws_job_updates(websocket: WebSocket) -> None:
     """WebSocket endpoint for pushing job events to connected clients.
 
@@ -25,20 +26,20 @@ async def ws_job_updates(websocket: WebSocket) -> None:
     token = websocket.query_params.get("token")
     if not token:
         await websocket.send_json({"error": "Missing token"})
-        await websocket.close(code=4001, reason="Missing token")
+        await websocket.close(code=WS_AUTH_CLOSE_CODE, reason="Missing token")
         return
 
     payload = decode_access_token(token)
     if not payload or "sub" not in payload:
         await websocket.send_json({"error": "Invalid token"})
-        await websocket.close(code=4001, reason="Invalid token")
+        await websocket.close(code=WS_AUTH_CLOSE_CODE, reason="Invalid token")
         return
 
     try:
         user_id = int(payload["sub"])
     except (ValueError, TypeError):
         await websocket.send_json({"error": "Invalid token subject"})
-        await websocket.close(code=4001, reason="Invalid token subject")
+        await websocket.close(code=WS_AUTH_CLOSE_CODE, reason="Invalid token subject")
         return
 
     manager = websocket.app.state.ws_manager

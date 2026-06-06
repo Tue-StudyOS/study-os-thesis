@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import Select
 from app.models.paper import Paper, PaperTag, Tag
-from app.papers.api_constants import PAPER_LIST_DEFAULT_LIMIT, PAPER_LIST_DEFAULT_OFFSET
+from app.papers.constants import PAPER_LIST_DEFAULT_LIMIT, PAPER_LIST_DEFAULT_OFFSET
 
 
 class PaperRepository:

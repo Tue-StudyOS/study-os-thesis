@@ -1,13 +1,14 @@
 from fastapi import APIRouter, status
 
 from app.auth.deps import CurrentUserDep
+from app.chat.constants import CHAT_API_PREFIX, CHAT_API_TAG, CHAT_JOB_CONTENT_PREVIEW_MAX_CHARS
 from app.chat.deps import ChatServiceDep
 from app.chat.schemas import MessageIn, MessageOut, SessionOut
 from app.jobs.deps import JobServiceDep
 from app.models import ChatMessage, ChatSession
 from app.models.job import JobType
 
-router = APIRouter(prefix="/api/chat", tags=["chat"])
+router = APIRouter(prefix=CHAT_API_PREFIX, tags=[CHAT_API_TAG])
 
 
 @router.post("/sessions", response_model=SessionOut, status_code=status.HTTP_201_CREATED)
@@ -55,7 +56,7 @@ async def send_message(
     job = await job_service.create_job(
         type=JobType.chat_turn,
         user_id=user.id,
-        input_data={"session_id": session_id, "content": body.content[:200]},
+        input_data={"session_id": session_id, "content": body.content[:CHAT_JOB_CONTENT_PREVIEW_MAX_CHARS]},
     )
     task_result = process_chat_turn.delay(
         session_id=session_id,

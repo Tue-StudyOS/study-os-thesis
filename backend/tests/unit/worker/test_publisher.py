@@ -8,6 +8,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from app.worker.constants import JOB_EVENTS_CHANNEL
+
 
 @pytest.mark.unit
 class TestPublishEvent:
@@ -28,7 +30,7 @@ class TestPublishEvent:
 
             mock_conn.publish.assert_called_once()
             channel = mock_conn.publish.call_args[0][0]
-            assert channel == "job_events"
+            assert channel == JOB_EVENTS_CHANNEL
 
     def test_payload_is_valid_json(self):
         from app.worker.publisher import publish_event

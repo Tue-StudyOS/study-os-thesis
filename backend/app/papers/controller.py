@@ -5,7 +5,9 @@ from __future__ import annotations
 from fastapi import APIRouter, Query
 
 from app.auth.deps import CurrentUserDep
-from app.papers.api_constants import (
+from app.papers.constants import (
+    PAPERS_API_PREFIX,
+    PAPERS_API_TAG,
     PAPER_LIST_DEFAULT_LIMIT,
     PAPER_LIST_DEFAULT_OFFSET,
     PAPER_LIST_MAX_LIMIT,
@@ -15,7 +17,7 @@ from app.papers.api_constants import (
 from app.papers.deps import PaperServiceDep
 from app.papers.schemas import PaginatedPapersOut, PaperOut
 
-router = APIRouter(prefix="/api/papers", tags=["papers"])
+router = APIRouter(prefix=PAPERS_API_PREFIX, tags=[PAPERS_API_TAG])
 
 
 @router.get("", response_model=PaginatedPapersOut)

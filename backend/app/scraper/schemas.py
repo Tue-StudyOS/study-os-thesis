@@ -6,7 +6,7 @@ from typing import Annotated
 
 from pydantic import BaseModel, Field, Strict
 
-from app.scraper.api_constants import (
+from app.scraper.constants.api import (
     SCRAPE_MAX_RESULTS_DEFAULT,
     SCRAPE_MAX_RESULTS_MAX,
     SCRAPE_MAX_RESULTS_MIN,

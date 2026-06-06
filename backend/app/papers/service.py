@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from app.models.paper import Paper
-from app.papers.api_constants import PAPER_LIST_DEFAULT_LIMIT, PAPER_LIST_DEFAULT_OFFSET
+from app.papers.constants import PAPER_LIST_DEFAULT_LIMIT, PAPER_LIST_DEFAULT_OFFSET
 from app.papers.repository import PaperRepository
 
 

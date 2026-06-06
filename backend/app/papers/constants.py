@@ -1,4 +1,7 @@
-"""Numeric API constants for paper endpoints."""
+"""Constants for paper API and repository behavior."""
+
+PAPERS_API_PREFIX = "/api/papers"
+PAPERS_API_TAG = "papers"
 
 PAPER_LIST_DEFAULT_LIMIT = 50
 PAPER_LIST_MIN_LIMIT = 1

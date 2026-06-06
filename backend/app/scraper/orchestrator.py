@@ -17,6 +17,7 @@ from app.papers.dedup import DeduplicationService
 from app.papers.domain import PaperCandidate, ResearcherInfo
 from app.papers.repository import PaperRepository, TagRepository
 from app.researchers.repository import ResearcherRepository
+from app.scraper.constants.logging import SCRAPER_LOG_TITLE_MAX_CHARS
 from app.scraper.interfaces import LLMEnricher, PaperRanker, PaperSourceClient
 
 # LLM enrichment can run in parallel, but DB writes must stay sequential because
@@ -169,7 +170,7 @@ class ScraperOrchestrator:
             await self._researcher_repo.link_paper(researcher_id, existing.id)
             _logger.debug(
                 "scraper.paper_skipped title=%r (duplicate paper_id=%d)",
-                candidate.title[:60],
+                candidate.title[:SCRAPER_LOG_TITLE_MAX_CHARS],
                 existing.id,
             )
             return 0, 1
@@ -203,7 +204,7 @@ class ScraperOrchestrator:
             paper.id,
             paper.doi,
             tags,
-            candidate.title[:60],
+            candidate.title[:SCRAPER_LOG_TITLE_MAX_CHARS],
         )
         return 1, 0
 

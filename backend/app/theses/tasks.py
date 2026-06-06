@@ -6,6 +6,13 @@ import logging
 from typing import Any
 
 from app.exceptions import NotFoundException
+from app.theses.constants import (
+    EMBED_THESIS_DEFAULT_RETRY_DELAY_SECONDS,
+    EMBED_THESIS_MAX_RETRIES,
+    EMBED_THESIS_SOFT_TIME_LIMIT_SECONDS,
+    EMBED_THESIS_TASK_NAME,
+    EMBED_THESIS_TIME_LIMIT_SECONDS,
+)
 from app.worker.celery_app import celery_app
 from app.worker.task_runner import execute_task
 
@@ -35,11 +42,11 @@ async def _embed_thesis_work(thesis_id: int, settings: Any) -> dict:
 
 @celery_app.task(
     bind=True,
-    name="app.theses.tasks.embed_thesis",
-    max_retries=3,
-    default_retry_delay=60,
-    soft_time_limit=120,
-    time_limit=180,
+    name=EMBED_THESIS_TASK_NAME,
+    max_retries=EMBED_THESIS_MAX_RETRIES,
+    default_retry_delay=EMBED_THESIS_DEFAULT_RETRY_DELAY_SECONDS,
+    soft_time_limit=EMBED_THESIS_SOFT_TIME_LIMIT_SECONDS,
+    time_limit=EMBED_THESIS_TIME_LIMIT_SECONDS,
 )
 def embed_thesis(self: Any, thesis_id: int, user_id: int, job_id: str) -> dict:
     """Generate and store the embedding for a thesis."""

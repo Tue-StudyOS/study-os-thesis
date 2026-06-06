@@ -5,6 +5,7 @@ import logging
 from typing import Any
 
 from app.chairs.repository import ChairRepository
+from app.chat.constants import CHAT_RESEARCH_DIRECTION_LOG_MAX_CHARS, MAX_HISTORY_MESSAGES, MAX_TOOL_ITERATIONS
 from app.chat.repository import ChatRepository
 from app.config import Settings
 from app.exceptions import BadRequestException, ForbiddenException, NotFoundException
@@ -125,12 +126,6 @@ TOOLS_SPEC: list[dict[str, Any]] = [
         },
     },
 ]
-
-MAX_TOOL_ITERATIONS = 6
-# Keep only the most recent N messages sent to the LLM to avoid exceeding the
-# model's context window and to bound memory/latency for long conversations.
-MAX_HISTORY_MESSAGES = 20
-
 
 def _db_row_to_llm_message(row: ChatMessage) -> dict[str, Any]:
     msg: dict[str, Any] = {"role": row.role.value, "content": row.content or ""}
@@ -424,7 +419,7 @@ class ChatService:
             user_id,
             chair_id,
             count,
-            research_direction[:80],
+            research_direction[:CHAT_RESEARCH_DIRECTION_LOG_MAX_CHARS],
         )
 
         generator = ProposalGenerationService(
