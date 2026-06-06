@@ -108,7 +108,11 @@ def _deduplicate_title_author_papers() -> None:
 
 
 def upgrade() -> None:
-    op.execute("DELETE FROM jobs WHERE type IN ('ingest_arxiv', 'ingest_single_paper')")
+    # Compare via ::text so the literals are not cast to the job_type enum. One
+    # of these values (ingest_single_paper) is added via ALTER TYPE ADD VALUE in
+    # 0010; Postgres forbids referencing such a value in the same transaction it
+    # was added, which happens when all migrations run in one transaction.
+    op.execute("DELETE FROM jobs WHERE type::text IN ('ingest_arxiv', 'ingest_single_paper')")
     op.execute("DELETE FROM chair_documents WHERE kind = 'paper'")
 
     op.drop_index("ix_papers_arxiv_id", table_name="papers")
