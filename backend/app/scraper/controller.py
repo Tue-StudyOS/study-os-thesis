@@ -11,10 +11,11 @@ from app.exceptions import NotFoundException
 from app.jobs.deps import JobServiceDep
 from app.models import User, UserRole
 from app.models.job import JobType
+from app.scraper.constants.api import SCRAPER_API_PREFIX, SCRAPER_API_TAG
 from app.scraper.deps import ChairRepoDep
 from app.scraper.schemas import ScrapeChairRequest, ScrapeRunResponse
 
-router = APIRouter(prefix="/api/scraper", tags=["scraper"])
+router = APIRouter(prefix=SCRAPER_API_PREFIX, tags=[SCRAPER_API_TAG])
 
 AdminDep = Annotated[User, Depends(require_role(UserRole.admin))]
 

@@ -11,6 +11,17 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from app.exceptions import NotFoundException
+from app.scraper.constants.tasks import (
+    ENRICH_PAPER_COMPLETE_EVENT,
+    ENRICH_PAPER_MAX_RETRIES,
+    ENRICH_PAPER_SOFT_TIME_LIMIT_SECONDS,
+    SCRAPE_ALL_CHAIRS_MAX_RETRIES,
+    SCRAPE_CHAIR_COMPLETE_EVENT,
+    SCRAPE_CHAIR_MAX_RETRIES,
+    SCRAPE_RESEARCHER_COMPLETE_EVENT,
+    SCRAPE_RESEARCHER_MAX_RETRIES,
+    SCRAPE_RESEARCHER_SOFT_TIME_LIMIT_SECONDS,
+)
 from app.scraper.tasks import (
     _enrich_paper_work,
     _scrape_researcher_work,
@@ -61,7 +72,7 @@ class TestScrapeChairPapersWiring:
     def test_success_event_name(self):
         with patch("app.scraper.tasks.execute_task") as ex:
             scrape_chair_papers(chair_id=1, user_id=5, job_id="j")
-        assert ex.call_args.kwargs["success_event"] == "scrape_chair_complete"
+        assert ex.call_args.kwargs["success_event"] == SCRAPE_CHAIR_COMPLETE_EVENT
 
     def test_work_is_callable(self):
         with patch("app.scraper.tasks.execute_task") as ex:
@@ -79,7 +90,7 @@ class TestScrapeResearcherPapersWiring:
     def test_success_event_name(self):
         with patch("app.scraper.tasks.execute_task") as ex:
             scrape_researcher_papers(researcher_id=2, user_id=5, job_id="j")
-        assert ex.call_args.kwargs["success_event"] == "scrape_researcher_complete"
+        assert ex.call_args.kwargs["success_event"] == SCRAPE_RESEARCHER_COMPLETE_EVENT
 
 
 @pytest.mark.unit
@@ -92,7 +103,7 @@ class TestEnrichPaperWiring:
     def test_success_event_name(self):
         with patch("app.scraper.tasks.execute_task") as ex:
             enrich_paper(paper_id=3, user_id=5, job_id="j")
-        assert ex.call_args.kwargs["success_event"] == "enrich_paper_complete"
+        assert ex.call_args.kwargs["success_event"] == ENRICH_PAPER_COMPLETE_EVENT
 
     def test_force_false_by_default(self):
         # The work lambda must capture force=False when not passed
@@ -154,23 +165,23 @@ class TestScrapeResearcherWork:
 @pytest.mark.unit
 class TestRetryPolicy:
     def test_scrape_chair_max_retries(self):
-        assert scrape_chair_papers.max_retries == 2
+        assert scrape_chair_papers.max_retries == SCRAPE_CHAIR_MAX_RETRIES
 
     def test_scrape_researcher_max_retries(self):
-        assert scrape_researcher_papers.max_retries == 3
+        assert scrape_researcher_papers.max_retries == SCRAPE_RESEARCHER_MAX_RETRIES
 
     def test_enrich_paper_max_retries(self):
-        assert enrich_paper.max_retries == 3
+        assert enrich_paper.max_retries == ENRICH_PAPER_MAX_RETRIES
 
     def test_scrape_all_chairs_max_retries_zero(self):
-        assert scrape_all_chairs.max_retries == 0
+        assert scrape_all_chairs.max_retries == SCRAPE_ALL_CHAIRS_MAX_RETRIES
 
     def test_scrape_researcher_has_long_soft_limit(self):
         # OpenAlex pagination and LLM fallback can still take longer than enrichment.
-        assert scrape_researcher_papers.soft_time_limit == 600
+        assert scrape_researcher_papers.soft_time_limit == SCRAPE_RESEARCHER_SOFT_TIME_LIMIT_SECONDS
 
     def test_enrich_paper_soft_limit(self):
-        assert enrich_paper.soft_time_limit == 120
+        assert enrich_paper.soft_time_limit == ENRICH_PAPER_SOFT_TIME_LIMIT_SECONDS
 
 
 # ---------------------------------------------------------------------------

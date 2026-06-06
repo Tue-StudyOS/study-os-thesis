@@ -8,10 +8,11 @@ from fastapi import APIRouter, Query
 
 from app.auth.deps import CurrentUserDep
 from app.jobs.deps import JobServiceDep
+from app.jobs.constants import JOBS_API_PREFIX, JOBS_API_TAG
 from app.jobs.schemas import JobOut
 from app.models.job import JobStatus, JobType
 
-router = APIRouter(prefix="/api/jobs", tags=["jobs"])
+router = APIRouter(prefix=JOBS_API_PREFIX, tags=[JOBS_API_TAG])
 
 
 @router.get("/{job_id}", response_model=JobOut)

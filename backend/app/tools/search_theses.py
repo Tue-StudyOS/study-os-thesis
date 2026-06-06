@@ -33,11 +33,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import Settings
 from app.llm.port import LLMPort
+from app.tools.constants import (
+    THESIS_SEARCH_DEFAULT_K,
+    THESIS_SEARCH_FETCH_MULTIPLIER,
+    THESIS_SEARCH_MAX_K,
+    THESIS_SEARCH_MIN_K,
+    THESIS_SEARCH_RRF_K,
+)
 
 _logger = logging.getLogger(__name__)
-
-# Standard RRF constant (Cormack, Clarke & Buettcher, SIGIR 2009).
-RRF_K = 60
 
 
 class ThesisHit(TypedDict):
@@ -63,12 +67,12 @@ def _rrf_fuse(
 
     for rank, row in enumerate(vector_rows):
         tid, title, abstract = row[0], row[1], row[2]
-        scores[tid] = scores.get(tid, 0.0) + 1.0 / (rank + 1 + RRF_K)
+        scores[tid] = scores.get(tid, 0.0) + 1.0 / (rank + 1 + THESIS_SEARCH_RRF_K)
         meta[tid] = (title, abstract)
 
     for rank, row in enumerate(bm25_rows):
         tid, title, abstract = row[0], row[1], row[2]
-        scores[tid] = scores.get(tid, 0.0) + 1.0 / (rank + 1 + RRF_K)
+        scores[tid] = scores.get(tid, 0.0) + 1.0 / (rank + 1 + THESIS_SEARCH_RRF_K)
         meta[tid] = (title, abstract)
 
     sorted_ids = sorted(scores, key=lambda i: scores[i], reverse=True)
@@ -151,7 +155,7 @@ async def search_theses_with_client(
     ollama: LLMPort,
     settings: Settings,
     query: str,
-    k: int = 5,
+    k: int = THESIS_SEARCH_DEFAULT_K,
     *,
     session: AsyncSession | None = None,
     chair_id: int | None = None,
@@ -166,8 +170,8 @@ async def search_theses_with_client(
     """
     from app.db import SessionLocal  # deferred to avoid circular import
 
-    k = max(1, min(k, 20))
-    fetch = k * 3  # over-fetch so RRF has enough candidates from each leg
+    k = max(THESIS_SEARCH_MIN_K, min(k, THESIS_SEARCH_MAX_K))
+    fetch = k * THESIS_SEARCH_FETCH_MULTIPLIER  # over-fetch so RRF has enough candidates from each leg
 
     async def _run(s: AsyncSession) -> list[ThesisHit]:
         vector_task = _vector_search(s, ollama, settings, query, fetch, chair_id=chair_id)

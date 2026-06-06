@@ -3,13 +3,14 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
 from app.auth.deps import CurrentUserDep, require_role
+from app.chairs.constants import CHAIRS_API_PREFIX, CHAIRS_API_TAG
 from app.chairs.deps import ChairServiceDep
 from app.chairs.schemas import ChairCreate, ChairOut, ChairPatch
 from app.jobs.deps import JobServiceDep
 from app.models import User, UserRole
 from app.models.job import JobType
 
-router = APIRouter(prefix="/api/chairs", tags=["chairs"])
+router = APIRouter(prefix=CHAIRS_API_PREFIX, tags=[CHAIRS_API_TAG])
 
 AdminDep = Annotated[User, Depends(require_role(UserRole.admin))]
 

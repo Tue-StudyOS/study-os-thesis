@@ -7,6 +7,8 @@ import json
 import logging
 from typing import Any
 
+from app.worker.constants import JOB_EVENTS_CHANNEL
+from app.ws.constants import WS_DEFAULT_RETRY_DELAY_SECONDS
 from app.ws.manager import ConnectionManager
 
 logger = logging.getLogger(__name__)
@@ -49,7 +51,7 @@ async def _aclose(pubsub: Any, client: Any) -> None:
             pass
 
 
-async def redis_listener(manager: ConnectionManager, redis_url: str, *, retry_delay: float = 5.0) -> None:
+async def redis_listener(manager: ConnectionManager, redis_url: str, *, retry_delay: float = WS_DEFAULT_RETRY_DELAY_SECONDS) -> None:
     """Subscribe to ``job_events`` and dispatch messages to WebSocket clients.
 
     Runs as an ``asyncio.Task`` in the FastAPI lifespan. Resilient to Redis being
@@ -63,7 +65,7 @@ async def redis_listener(manager: ConnectionManager, redis_url: str, *, retry_de
         client = aioredis.from_url(redis_url)
         pubsub = client.pubsub()
         try:
-            await pubsub.subscribe("job_events")
+            await pubsub.subscribe(JOB_EVENTS_CHANNEL)
             async for message in pubsub.listen():
                 await _handle_message(message, manager)
         except asyncio.CancelledError:

@@ -8,8 +8,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from celery.exceptions import MaxRetriesExceededError, Retry
+from celery.exceptions import SoftTimeLimitExceeded
 
 from app.exceptions import NotFoundException
+from app.worker.constants import TASK_FAILURE_ERROR_MAX_CHARS, TASK_TIMEOUT_MESSAGE
 from app.worker import task_runner
 
 
@@ -120,6 +122,23 @@ class TestPermanentFailure:
 
         lifecycle_patches["failure"].assert_called_once()
         lifecycle_patches["retry"].assert_not_called()
+
+    def test_soft_time_limit_records_human_message(self, lifecycle_patches):
+        lifecycle_patches["run"].side_effect = SoftTimeLimitExceeded()
+
+        with pytest.raises(SoftTimeLimitExceeded):
+            _call()
+
+        lifecycle_patches["failure"].assert_called_once_with("job-1", TASK_TIMEOUT_MESSAGE)
+        lifecycle_patches["success"].assert_not_called()
+
+    def test_failure_event_truncates_long_error(self, lifecycle_patches):
+        long_error = "x" * (TASK_FAILURE_ERROR_MAX_CHARS + 50)
+
+        task_runner._fail("redis://x", "job-1", 7, long_error)
+
+        kw = lifecycle_patches["publish"].call_args.kwargs
+        assert kw["data"]["error"] == "x" * TASK_FAILURE_ERROR_MAX_CHARS
 
 
 @pytest.mark.unit

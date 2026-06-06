@@ -5,6 +5,33 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from app.scraper.constants.tasks import (
+    ENRICH_PAPER_COMPLETE_EVENT,
+    ENRICH_PAPER_DEFAULT_RETRY_DELAY_SECONDS,
+    ENRICH_PAPER_MAX_RETRIES,
+    ENRICH_PAPER_SOFT_TIME_LIMIT_SECONDS,
+    ENRICH_PAPER_TASK_NAME,
+    ENRICH_PAPER_TIME_LIMIT_SECONDS,
+    SCRAPE_ALL_CHAIRS_ADMIN_LOOKUP_LIMIT,
+    SCRAPE_ALL_CHAIRS_FALLBACK_USER_ID,
+    SCRAPE_ALL_CHAIRS_MAX_RETRIES,
+    SCRAPE_ALL_CHAIRS_SOFT_TIME_LIMIT_SECONDS,
+    SCRAPE_ALL_CHAIRS_TASK_NAME,
+    SCRAPE_ALL_CHAIRS_TIME_LIMIT_SECONDS,
+    SCRAPE_ALL_CHAIRS_TRIGGER,
+    SCRAPE_CHAIR_COMPLETE_EVENT,
+    SCRAPE_CHAIR_DEFAULT_RETRY_DELAY_SECONDS,
+    SCRAPE_CHAIR_MAX_RETRIES,
+    SCRAPE_CHAIR_SOFT_TIME_LIMIT_SECONDS,
+    SCRAPE_CHAIR_TASK_NAME,
+    SCRAPE_CHAIR_TIME_LIMIT_SECONDS,
+    SCRAPE_RESEARCHER_COMPLETE_EVENT,
+    SCRAPE_RESEARCHER_DEFAULT_RETRY_DELAY_SECONDS,
+    SCRAPE_RESEARCHER_MAX_RETRIES,
+    SCRAPE_RESEARCHER_SOFT_TIME_LIMIT_SECONDS,
+    SCRAPE_RESEARCHER_TASK_NAME,
+    SCRAPE_RESEARCHER_TIME_LIMIT_SECONDS,
+)
 from app.worker.celery_app import celery_app
 from app.worker.task_runner import execute_task
 
@@ -74,11 +101,11 @@ async def _scrape_chair_work(
 
 @celery_app.task(
     bind=True,
-    name="app.scraper.tasks.scrape_chair_papers",
-    max_retries=2,
-    default_retry_delay=60,
-    soft_time_limit=120,
-    time_limit=180,
+    name=SCRAPE_CHAIR_TASK_NAME,
+    max_retries=SCRAPE_CHAIR_MAX_RETRIES,
+    default_retry_delay=SCRAPE_CHAIR_DEFAULT_RETRY_DELAY_SECONDS,
+    soft_time_limit=SCRAPE_CHAIR_SOFT_TIME_LIMIT_SECONDS,
+    time_limit=SCRAPE_CHAIR_TIME_LIMIT_SECONDS,
 )
 def scrape_chair_papers(
     self: Any,
@@ -100,7 +127,7 @@ def scrape_chair_papers(
         user_id=user_id,
         redis_url=settings.redis_url,
         work=lambda: _scrape_chair_work(chair_id, user_id, settings, max_results, since_days),
-        success_event="scrape_chair_complete",
+        success_event=SCRAPE_CHAIR_COMPLETE_EVENT,
     )
 
 
@@ -133,11 +160,11 @@ async def _scrape_researcher_work(
 
 @celery_app.task(
     bind=True,
-    name="app.scraper.tasks.scrape_researcher_papers",
-    max_retries=3,
-    default_retry_delay=30,
-    soft_time_limit=600,
-    time_limit=660,
+    name=SCRAPE_RESEARCHER_TASK_NAME,
+    max_retries=SCRAPE_RESEARCHER_MAX_RETRIES,
+    default_retry_delay=SCRAPE_RESEARCHER_DEFAULT_RETRY_DELAY_SECONDS,
+    soft_time_limit=SCRAPE_RESEARCHER_SOFT_TIME_LIMIT_SECONDS,
+    time_limit=SCRAPE_RESEARCHER_TIME_LIMIT_SECONDS,
 )
 def scrape_researcher_papers(
     self: Any,
@@ -159,7 +186,7 @@ def scrape_researcher_papers(
         user_id=user_id,
         redis_url=settings.redis_url,
         work=lambda: _scrape_researcher_work(researcher_id, settings, max_results, since_days),
-        success_event="scrape_researcher_complete",
+        success_event=SCRAPE_RESEARCHER_COMPLETE_EVENT,
     )
 
 
@@ -235,8 +262,8 @@ async def _scrape_all_chairs_work() -> dict:
 
     async with SessionLocal() as session:
         # Find a system actor — first admin user, falling back to user id=1
-        admin = await session.scalar(select(User).where(User.role == UserRole.admin).limit(1))
-        system_user_id: int = admin.id if admin is not None else 1
+        admin = await session.scalar(select(User).where(User.role == UserRole.admin).limit(SCRAPE_ALL_CHAIRS_ADMIN_LOOKUP_LIMIT))
+        system_user_id: int = admin.id if admin is not None else SCRAPE_ALL_CHAIRS_FALLBACK_USER_ID
 
         chair_repo = ChairRepository(session)
         chairs = await chair_repo.list()
@@ -251,7 +278,7 @@ async def _scrape_all_chairs_work() -> dict:
             job = await job_repo.create(
                 type=JobType.scrape_chair,
                 user_id=system_user_id,
-                input_data={"chair_id": chair.id, "triggered_by": "beat"},
+                input_data={"chair_id": chair.id, "triggered_by": SCRAPE_ALL_CHAIRS_TRIGGER},
             )
             await session.commit()
 
@@ -274,11 +301,11 @@ async def _scrape_all_chairs_work() -> dict:
 
 
 @celery_app.task(
-    name="app.scraper.tasks.scrape_all_chairs",
+    name=SCRAPE_ALL_CHAIRS_TASK_NAME,
     # No retries — Beat will re-run on the next schedule if this fails
-    max_retries=0,
-    soft_time_limit=120,
-    time_limit=180,
+    max_retries=SCRAPE_ALL_CHAIRS_MAX_RETRIES,
+    soft_time_limit=SCRAPE_ALL_CHAIRS_SOFT_TIME_LIMIT_SECONDS,
+    time_limit=SCRAPE_ALL_CHAIRS_TIME_LIMIT_SECONDS,
 )
 def scrape_all_chairs() -> dict:
     """Celery Beat entry point: kick off paper scraping for every chair.
@@ -293,11 +320,11 @@ def scrape_all_chairs() -> dict:
 
 @celery_app.task(
     bind=True,
-    name="app.scraper.tasks.enrich_paper",
-    max_retries=3,
-    default_retry_delay=30,
-    soft_time_limit=120,
-    time_limit=180,
+    name=ENRICH_PAPER_TASK_NAME,
+    max_retries=ENRICH_PAPER_MAX_RETRIES,
+    default_retry_delay=ENRICH_PAPER_DEFAULT_RETRY_DELAY_SECONDS,
+    soft_time_limit=ENRICH_PAPER_SOFT_TIME_LIMIT_SECONDS,
+    time_limit=ENRICH_PAPER_TIME_LIMIT_SECONDS,
 )
 def enrich_paper(self: Any, paper_id: int, user_id: int, job_id: str, force: bool = False) -> dict:
     """LLM-enrich a single paper (summary + tags). Idempotent unless force=True."""
@@ -312,5 +339,5 @@ def enrich_paper(self: Any, paper_id: int, user_id: int, job_id: str, force: boo
         user_id=user_id,
         redis_url=settings.redis_url,
         work=lambda: _enrich_paper_work(paper_id, force, settings),
-        success_event="enrich_paper_complete",
+        success_event=ENRICH_PAPER_COMPLETE_EVENT,
     )

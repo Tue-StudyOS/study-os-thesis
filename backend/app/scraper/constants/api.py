@@ -1,4 +1,7 @@
-"""Numeric API constants for scraper endpoints."""
+"""Constants for scraper HTTP API behavior."""
+
+SCRAPER_API_PREFIX = "/api/scraper"
+SCRAPER_API_TAG = "scraper"
 
 SCRAPE_SINCE_DAYS_DEFAULT = 3650
 SCRAPE_SINCE_DAYS_MIN = 30

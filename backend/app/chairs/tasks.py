@@ -5,6 +5,13 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from app.chairs.constants import (
+    EMBED_CHAIR_DEFAULT_RETRY_DELAY_SECONDS,
+    EMBED_CHAIR_MAX_RETRIES,
+    EMBED_CHAIR_SOFT_TIME_LIMIT_SECONDS,
+    EMBED_CHAIR_TASK_NAME,
+    EMBED_CHAIR_TIME_LIMIT_SECONDS,
+)
 from app.exceptions import NotFoundException
 from app.worker.celery_app import celery_app
 from app.worker.task_runner import execute_task
@@ -40,11 +47,11 @@ async def _embed_chair_work(chair_id: int, settings: Any) -> dict:
 
 @celery_app.task(
     bind=True,
-    name="app.chairs.tasks.embed_chair_description",
-    max_retries=3,
-    default_retry_delay=60,
-    soft_time_limit=120,
-    time_limit=180,
+    name=EMBED_CHAIR_TASK_NAME,
+    max_retries=EMBED_CHAIR_MAX_RETRIES,
+    default_retry_delay=EMBED_CHAIR_DEFAULT_RETRY_DELAY_SECONDS,
+    soft_time_limit=EMBED_CHAIR_SOFT_TIME_LIMIT_SECONDS,
+    time_limit=EMBED_CHAIR_TIME_LIMIT_SECONDS,
 )
 def embed_chair_description(self: Any, chair_id: int, user_id: int, job_id: str) -> dict:
     """Embed a chair's description and store it as a ChairDocument."""

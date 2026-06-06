@@ -1,4 +1,4 @@
-from app.admin.api_constants import ADMIN_USER_LIST_DEFAULT_LIMIT, ADMIN_USER_LIST_DEFAULT_OFFSET
+from app.admin.constants import ADMIN_USER_LIST_DEFAULT_LIMIT, ADMIN_USER_LIST_DEFAULT_OFFSET
 from app.models import User
 from app.users.repository import UserRepository
 

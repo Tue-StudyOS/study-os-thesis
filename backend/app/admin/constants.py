@@ -1,4 +1,7 @@
-"""Numeric API constants for admin endpoints."""
+"""Constants for admin API behavior."""
+
+ADMIN_API_PREFIX = "/api/admin"
+ADMIN_API_TAG = "admin"
 
 ADMIN_USER_LIST_DEFAULT_LIMIT = 50
 ADMIN_USER_LIST_MIN_LIMIT = 1

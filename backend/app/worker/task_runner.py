@@ -15,6 +15,17 @@ from typing import Any
 from celery.exceptions import MaxRetriesExceededError, SoftTimeLimitExceeded
 
 from app.exceptions import NotFoundException
+from app.worker.constants import (
+    TASK_COMPLETE_EVENT,
+    TASK_FAILED_EVENT,
+    TASK_FAILURE_ERROR_MAX_CHARS,
+    TASK_STATUS_FAILURE,
+    TASK_STATUS_RETRY,
+    TASK_STATUS_STARTED,
+    TASK_STATUS_SUCCESS,
+    TASK_TIMEOUT_MESSAGE,
+    TASK_TRACEBACK_MAX_CHARS,
+)
 from app.worker.job_status import mark_failure, mark_retry, mark_started, mark_success
 from app.worker.publisher import publish_event
 from app.worker.utils import run_async
@@ -32,7 +43,7 @@ def execute_task(
     user_id: int,
     redis_url: str,
     work: Callable[[], Awaitable[dict]],
-    success_event: str = "task_complete",
+    success_event: str = TASK_COMPLETE_EVENT,
     started_event: str | None = None,
     started_data: dict | None = None,
     permanent_exceptions: tuple[type[BaseException], ...] = _PERMANENT,
@@ -51,7 +62,7 @@ def execute_task(
             event_type=started_event,
             job_id=job_id,
             user_id=user_id,
-            status="started",
+            status=TASK_STATUS_STARTED,
             data=started_data or {},
         )
 
@@ -65,7 +76,7 @@ def execute_task(
             redis_url,
             job_id,
             user_id,
-            "Processing timed out before it finished. Try a faster model or raise the task time limit.",
+            TASK_TIMEOUT_MESSAGE,
         )
         raise
     except permanent_exceptions as exc:
@@ -75,10 +86,10 @@ def execute_task(
         mark_retry(job_id)
         publish_event(
             redis_url,
-            event_type="task_failed",
+            event_type=TASK_FAILED_EVENT,
             job_id=job_id,
             user_id=user_id,
-            status="retry",
+            status=TASK_STATUS_RETRY,
             data={"error": str(exc)},
         )
         try:
@@ -87,7 +98,7 @@ def execute_task(
             _fail(redis_url, job_id, user_id, f"Exhausted retries: {exc}")
             raise
     except Exception:
-        _fail(redis_url, job_id, user_id, traceback.format_exc()[:1000])
+        _fail(redis_url, job_id, user_id, traceback.format_exc()[:TASK_TRACEBACK_MAX_CHARS])
         raise
 
     mark_success(job_id, result)
@@ -96,7 +107,7 @@ def execute_task(
         event_type=success_event,
         job_id=job_id,
         user_id=user_id,
-        status="success",
+        status=TASK_STATUS_SUCCESS,
         data=result,
     )
     return result
@@ -106,9 +117,9 @@ def _fail(redis_url: str, job_id: str, user_id: int, error: str) -> None:
     mark_failure(job_id, error)
     publish_event(
         redis_url,
-        event_type="task_failed",
+        event_type=TASK_FAILED_EVENT,
         job_id=job_id,
         user_id=user_id,
-        status="failure",
-        data={"error": error[:500]},
+        status=TASK_STATUS_FAILURE,
+        data={"error": error[:TASK_FAILURE_ERROR_MAX_CHARS]},
     )

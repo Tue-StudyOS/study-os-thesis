@@ -2,10 +2,11 @@ from fastapi import APIRouter
 
 from app.auth.deps import CurrentUserDep
 from app.models import Thesis
+from app.proposals.constants import PROPOSALS_API_PREFIX, PROPOSALS_API_TAG
 from app.proposals.deps import ProposalServiceDep
 from app.theses.schemas import ThesisOut
 
-router = APIRouter(prefix="/api/proposals", tags=["proposals"])
+router = APIRouter(prefix=PROPOSALS_API_PREFIX, tags=[PROPOSALS_API_TAG])
 
 
 @router.get("/mine", response_model=list[ThesisOut])

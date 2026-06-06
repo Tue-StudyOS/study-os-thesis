@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Thesis, ThesisSource
-from app.theses.api_constants import THESIS_LIST_DEFAULT_LIMIT, THESIS_LIST_DEFAULT_OFFSET
+from app.theses.constants import THESIS_LIST_DEFAULT_LIMIT, THESIS_LIST_DEFAULT_OFFSET
 
 
 class ThesisRepository:

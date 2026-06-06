@@ -6,7 +6,9 @@ from app.auth.deps import CurrentUserDep, require_role
 from app.jobs.deps import JobServiceDep
 from app.models import User, UserRole
 from app.models.job import JobType
-from app.theses.api_constants import (
+from app.theses.constants import (
+    THESES_API_PREFIX,
+    THESES_API_TAG,
     THESIS_LIST_DEFAULT_LIMIT,
     THESIS_LIST_DEFAULT_OFFSET,
     THESIS_LIST_MAX_LIMIT,
@@ -16,7 +18,7 @@ from app.theses.api_constants import (
 from app.theses.deps import ThesisServiceDep
 from app.theses.schemas import ThesisCreate, ThesisOut
 
-router = APIRouter(prefix="/api/theses", tags=["theses"])
+router = APIRouter(prefix=THESES_API_PREFIX, tags=[THESES_API_TAG])
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

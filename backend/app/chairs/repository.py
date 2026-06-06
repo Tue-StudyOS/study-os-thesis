@@ -4,6 +4,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.chairs.constants import (
+    CHAIR_LIST_DEFAULT_LIMIT,
+    CHAIR_LIST_DEFAULT_OFFSET,
+    CHAIR_SEARCH_DEFAULT_K,
+    CHAIR_SNIPPET_MAX_CHARS,
+)
 from app.models.chair import Chair, ChairDocument, ChairDocumentKind
 
 
@@ -46,7 +52,7 @@ class ChairRepository:
             stmt = stmt.options(selectinload(Chair.documents))
         return await self._session.scalar(stmt)
 
-    async def list(self, limit: int = 100, offset: int = 0) -> list[Chair]:
+    async def list(self, limit: int = CHAIR_LIST_DEFAULT_LIMIT, offset: int = CHAIR_LIST_DEFAULT_OFFSET) -> list[Chair]:
         rows = await self._session.scalars(select(Chair).options(selectinload(Chair.documents)).order_by(Chair.name).limit(limit).offset(offset))
         return list(rows)
 
@@ -95,7 +101,7 @@ class ChairRepository:
         await self._session.delete(doc)
         await self._session.flush()
 
-    async def search_by_embedding(self, embedding: list[float], k: int = 5) -> list[dict]:
+    async def search_by_embedding(self, embedding: list[float], k: int = CHAIR_SEARCH_DEFAULT_K) -> list[dict]:
         """ANN search over chair_documents; returns top-k with chair metadata."""
         stmt = (
             select(
@@ -120,7 +126,7 @@ class ChairRepository:
                     "short_description": chair.short_description,
                     "document_kind": doc.kind.value,
                     "document_title": doc.title,
-                    "snippet": doc.content[:300],
+                    "snippet": doc.content[:CHAIR_SNIPPET_MAX_CHARS],
                     "score": round(1 - distance, 4),
                     "already_seen": chair.id in seen_chairs,
                 }

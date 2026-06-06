@@ -2,7 +2,7 @@ from app.config import Settings
 from app.exceptions import BadRequestException, NotFoundException
 from app.llm.port import LLMPort
 from app.models import Thesis, ThesisSource, User, UserRole
-from app.theses.api_constants import THESIS_LIST_DEFAULT_LIMIT, THESIS_LIST_DEFAULT_OFFSET
+from app.theses.constants import THESIS_LIST_DEFAULT_LIMIT, THESIS_LIST_DEFAULT_OFFSET
 from app.theses.repository import ThesisRepository
 from app.theses.schemas import ThesisCreate
 from app.users.repository import UserRepository
