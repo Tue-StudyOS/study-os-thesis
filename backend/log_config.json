@@ -3,7 +3,7 @@
   "disable_existing_loggers": false,
   "formatters": {
     "console": {
-      "class": "colorlog.ColoredFormatter",
+      "()": "colorlog.ColoredFormatter",
       "format": "%(log_color)s%(asctime)8s | %(levelname)-8s | %(name)-28.28s | %(filename)-24.24s:%(lineno)4d | %(message)s%(reset)s",
       "datefmt": "%H:%M:%S",
       "force_color": true,
