@@ -127,6 +127,7 @@ TOOLS_SPEC: list[dict[str, Any]] = [
     },
 ]
 
+
 def _db_row_to_llm_message(row: ChatMessage) -> dict[str, Any]:
     msg: dict[str, Any] = {"role": row.role.value, "content": row.content or ""}
     if row.role == MessageRole.assistant and row.tool_calls:
