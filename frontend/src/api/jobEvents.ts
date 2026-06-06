@@ -27,6 +27,7 @@ type WaitForJobTreeOptions = {
 };
 
 const TERMINAL = new Set<JobStatus>(["success", "failure"]);
+const JOB_STATUSES = new Set<JobStatus>(["pending", "started", "success", "failure", "retry"]);
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -48,6 +49,41 @@ function dispatchedJobsFromData(data: Record<string, unknown> | null | undefined
   );
 }
 
+function optionalString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+function optionalRecord(value: unknown): Record<string, unknown> | undefined {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined;
+}
+
+export function parseJobEventMessage(data: string): JobEvent {
+  const event = JSON.parse(data) as unknown;
+  if (typeof event !== "object" || event === null) {
+    throw new Error("Malformed job event");
+  }
+
+  const candidate = event as Partial<JobEvent>;
+  if (typeof candidate.job_id !== "string" || !JOB_STATUSES.has(candidate.status as JobStatus)) {
+    throw new Error("Malformed job event");
+  }
+
+  const parsed: JobEvent = {
+    type: typeof candidate.type === "string" ? candidate.type : "job_status",
+    job_id: candidate.job_id,
+    status: candidate.status as JobStatus,
+  };
+  const dataRecord = optionalRecord(candidate.data);
+  const error = optionalString(candidate.error);
+  const timestamp = optionalString(candidate.timestamp);
+  if (dataRecord !== undefined) parsed.data = dataRecord;
+  if (error !== undefined) parsed.error = error;
+  if (timestamp !== undefined) parsed.timestamp = timestamp;
+  return parsed;
+}
+
 function wsUrl(token: string): string {
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   return `${protocol}//${window.location.host}/api/ws?token=${encodeURIComponent(token)}`;
@@ -60,11 +96,7 @@ function openJobSocket(onEvent: (event: JobEvent) => void, onError: (error: Erro
   const socket = new WebSocket(wsUrl(token));
   socket.onmessage = (message) => {
     try {
-      const event = JSON.parse(message.data) as JobEvent;
-      if (typeof event.job_id !== "string" || typeof event.status !== "string") {
-        throw new Error("Malformed job event");
-      }
-      onEvent(event);
+      onEvent(parseJobEventMessage(message.data));
     } catch (error) {
       onError(error instanceof Error ? error : new Error("Malformed job event"));
       socket.close();
@@ -78,10 +110,14 @@ async function waitForTerminalJob(
   pollIntervalMs: number,
   deadline: number,
   events: Map<string, JobEvent>,
+  getSocketError: () => Error | null,
 ): Promise<Job> {
   let lastJob: Job | null = null;
 
   while (Date.now() < deadline) {
+    const socketError = getSocketError();
+    if (socketError !== null) throw socketError;
+
     const event = events.get(jobId);
     if (event && isTerminal(event.status)) {
       const job = await getJob(jobId);
@@ -119,8 +155,7 @@ export async function waitForJobTree(
   const deadline = Date.now() + timeoutMs;
 
   try {
-    const parent = await waitForTerminalJob(parentJobId, parentPollIntervalMs, deadline, events);
-    if (socketError !== null) throw socketError;
+    const parent = await waitForTerminalJob(parentJobId, parentPollIntervalMs, deadline, events, () => socketError);
     if (parent.status !== "success") return parent;
 
     const parentEvent = events.get(parentJobId);
@@ -132,9 +167,8 @@ export async function waitForJobTree(
     if (childIds.length === 0) return parent;
 
     const children = await Promise.all(
-      childIds.map((jobId) => waitForTerminalJob(jobId, childPollIntervalMs, deadline, events)),
+      childIds.map((jobId) => waitForTerminalJob(jobId, childPollIntervalMs, deadline, events, () => socketError)),
     );
-    if (socketError !== null) throw socketError;
     const failedChild = children.find((job) => job.status === "failure");
     return failedChild ?? parent;
   } finally {

@@ -311,9 +311,19 @@ export default function ChairExplorer() {
         for (const activeJob of activeJobs) {
           const chairId = chairIdFromScrapeJob(activeJob);
           if (chairId == null) continue;
-          void waitForJobTree(activeJob.id).then((job) => {
-            if (!cancelled) void settleSyncJob(chairId, job);
-          });
+          void waitForJobTree(activeJob.id)
+            .then((job) => {
+              if (!cancelled) void settleSyncJob(chairId, job);
+            })
+            .catch((e) => {
+              if (cancelled) return;
+              setSyncByChairId((current) =>
+                setChairSyncStatus(current, chairId, {
+                  state: "error",
+                  error: e instanceof Error ? e.message : "Fehler beim Wiederherstellen des Sync-Jobs",
+                }),
+              );
+            });
         }
       } catch (e) {
         setError(e instanceof Error ? e.message : "Fehler beim Laden aktiver Sync-Jobs");
