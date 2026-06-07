@@ -101,10 +101,37 @@ class TestFindDuplicate:
         result = await self.svc.find_duplicate(candidate)
 
         assert result is existing
+        # Candidate has no DOI -> tier-2 must match existing rows regardless of
+        # their DOI (require_null_doi=False).
         self.repo.get_by_title_author.assert_awaited_once_with(
             DeduplicationService.normalize_title("Deep Learning"),
             "Alice Smith",
+            require_null_doi=False,
         )
+
+    async def test_null_doi_candidate_matches_existing_with_doi(self):
+        """Regression for issue #33: a DOI-less re-scrape must dedup against a
+        row that was first stored *with* a DOI, not create a duplicate."""
+        existing = _make_paper(id=42, doi="10.48550/arxiv.2605.12049")
+        self.repo.get_by_doi.return_value = None
+        self.repo.get_by_title_author.return_value = existing
+        candidate = _make_candidate(doi=None, authors=["Aaron Spieler"])
+
+        result = await self.svc.find_duplicate(candidate)
+
+        assert result is existing
+        assert self.repo.get_by_title_author.call_args.kwargs["require_null_doi"] is False
+
+    async def test_doi_candidate_restricts_title_author_to_null_doi(self):
+        """When the candidate has a DOI, tier-2 only matches DOI-less rows so
+        distinct versions sharing a title+author are not merged."""
+        self.repo.get_by_doi.return_value = None
+        self.repo.get_by_title_author.return_value = None
+        candidate = _make_candidate(doi="10.1234/v2", authors=["Alice Smith"])
+
+        await self.svc.find_duplicate(candidate)
+
+        assert self.repo.get_by_title_author.call_args.kwargs["require_null_doi"] is True
 
     async def test_no_authors_skips_title_author_lookup(self):
         self.repo.get_by_doi.return_value = None

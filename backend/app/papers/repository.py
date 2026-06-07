@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import Select
@@ -55,21 +56,46 @@ class PaperRepository:
         await self._session.refresh(paper)
         return paper
 
+    async def create_ignoring_conflict(self, **kwargs: object) -> Paper | None:
+        """Create a paper, returning None if a unique constraint blocks it.
+
+        Wraps create() in a SAVEPOINT so that losing a concurrent insert race
+        (another scraper task already persisted the same paper, tripping the
+        doi or (title_normalized, authors->>0) unique index) rolls back only
+        this insert instead of poisoning the surrounding transaction.
+        """
+        try:
+            async with self._session.begin_nested():
+                return await self.create(**kwargs)  # type: ignore[arg-type]
+        except IntegrityError:
+            return None
+
     async def get_by_id(self, paper_id: int) -> Paper | None:
         return await self._session.get(Paper, paper_id)
 
     async def get_by_doi(self, doi: str) -> Paper | None:
         return await self._session.scalar(select(Paper).where(Paper.doi == doi))
 
-    async def get_by_title_author(self, title_normalized: str, first_author: str) -> Paper | None:
-        """Look up a paper by its normalised title and first author name."""
-        return await self._session.scalar(
-            select(Paper).where(
-                Paper.title_normalized == title_normalized,
-                Paper.authors[0].astext == first_author,
-                Paper.doi.is_(None),
-            )
-        )
+    async def get_by_title_author(
+        self,
+        title_normalized: str,
+        first_author: str,
+        *,
+        require_null_doi: bool = True,
+    ) -> Paper | None:
+        """Look up a paper by its normalised title and first author name.
+
+        When ``require_null_doi`` is True (default) only DOI-less rows match;
+        when False, any row with the same title+author matches, preferring a
+        DOI-bearing row so it becomes the canonical survivor.
+        """
+        conditions = [
+            Paper.title_normalized == title_normalized,
+            Paper.authors[0].astext == first_author,
+        ]
+        if require_null_doi:
+            conditions.append(Paper.doi.is_(None))
+        return await self._session.scalar(select(Paper).where(*conditions).order_by(Paper.doi.is_(None), Paper.id))
 
     async def list(
         self,

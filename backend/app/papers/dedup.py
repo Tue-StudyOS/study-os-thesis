@@ -29,11 +29,20 @@ class DeduplicationService:
             if existing:
                 return existing
 
-        # Tier 2: normalised title + first author
+        # Tier 2: normalised title + first author.
+        # When the candidate has no DOI we must match an existing row even if
+        # that row *has* a DOI — otherwise a DOI-less re-scrape of a paper that
+        # was first stored with a DOI is treated as new and duplicated. When the
+        # candidate has a DOI, restrict to DOI-less existing rows so distinct
+        # versions sharing a title+author (different DOIs) are not merged.
         title_norm = self.normalize_title(candidate.title)
         first_author = candidate.authors[0] if candidate.authors else None
         if first_author:
-            existing = await self._repo.get_by_title_author(title_norm, first_author)
+            existing = await self._repo.get_by_title_author(
+                title_norm,
+                first_author,
+                require_null_doi=bool(candidate.doi),
+            )
             if existing:
                 return existing
 

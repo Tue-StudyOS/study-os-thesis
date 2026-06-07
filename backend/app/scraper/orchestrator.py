@@ -175,8 +175,11 @@ class ScraperOrchestrator:
             )
             return 0, 1
 
-        # Stage 5c: Persist paper
-        paper = await self._paper_repo.create(
+        # Stage 5c: Persist paper. create_ignoring_conflict returns None when a
+        # concurrent researcher task already inserted the same paper (the dedup
+        # check above can miss it because the other transaction hasn't committed
+        # yet); in that case fall back to merge + link on the now-visible row.
+        paper = await self._paper_repo.create_ignoring_conflict(
             title=candidate.title,
             title_normalized=DeduplicationService.normalize_title(candidate.title),
             abstract=candidate.abstract,
@@ -190,6 +193,18 @@ class ScraperOrchestrator:
             relevance_score=recency,  # MVP: relevance = recency
             enriched_at=enriched_at,
         )
+        if paper is None:
+            existing = await self._dedup.find_duplicate(candidate)
+            if existing is None:
+                raise RuntimeError(f"paper insert conflicted but no duplicate found: {candidate.title!r}")
+            await self._dedup.merge_metadata(existing, candidate)
+            await self._researcher_repo.link_paper(researcher_id, existing.id)
+            _logger.debug(
+                "scraper.paper_skipped title=%r (concurrent duplicate paper_id=%d)",
+                candidate.title[:SCRAPER_LOG_TITLE_MAX_CHARS],
+                existing.id,
+            )
+            return 0, 1
 
         # Persist tags and link them
         for tag_name in tags:

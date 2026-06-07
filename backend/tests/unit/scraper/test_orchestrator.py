@@ -72,6 +72,14 @@ def _build_orchestrator(**overrides):
     o._dedup.find_duplicate.return_value = None
     o._dedup.merge_metadata.return_value = AsyncMock()
     o._paper_repo.create.return_value = _paper_row()
+
+    # The orchestrator persists via create_ignoring_conflict; forward to the
+    # create mock so tests can configure/assert on create as before. Override
+    # create_ignoring_conflict directly to exercise the concurrent-race path.
+    async def _forward_create(**kw):
+        return await o._paper_repo.create(**kw)
+
+    o._paper_repo.create_ignoring_conflict.side_effect = _forward_create
     o._tag_repo.get_or_create.return_value = SimpleNamespace(id=1, name="machine learning")
     o._researcher_repo.get_by_id.return_value = _researcher()
     o._researcher_repo.list_by_chair.return_value = []
@@ -186,6 +194,43 @@ class TestScrapeForResearcher:
         assert o._dedup.merge_metadata.await_count == 1
         assert o._dedup.merge_metadata.call_args[0][0] is existing
         o._researcher_repo.link_paper.assert_awaited()
+
+    async def test_concurrent_insert_race_merged_not_duplicated(self):
+        """If a concurrent task already inserted the paper, the unique index
+        makes create_ignoring_conflict return None; we must merge + link the
+        existing row instead of raising or duplicating."""
+        o = _build_orchestrator()
+        existing = _paper_row(77)
+        o._source.fetch_papers.return_value = [_candidate("Paper A")]
+        # find_duplicate misses first (other txn uncommitted), then sees the row.
+        o._dedup.find_duplicate.side_effect = [None, existing]
+        # Simulate the unique-constraint conflict on insert.
+        o._paper_repo.create_ignoring_conflict.side_effect = None
+        o._paper_repo.create_ignoring_conflict.return_value = None
+
+        result = await o.scrape_for_researcher(1)
+
+        assert result["stored"] == 0
+        assert result["skipped"] == 1
+        assert result["errors"] == 0
+        assert o._dedup.merge_metadata.await_count == 1
+        assert o._dedup.merge_metadata.call_args[0][0] is existing
+        o._researcher_repo.link_paper.assert_awaited_with(1, 77)
+
+    async def test_conflict_without_visible_duplicate_is_error(self):
+        """A conflict with no findable duplicate is unexpected and counts as an
+        error (not a silent skip)."""
+        o = _build_orchestrator()
+        o._source.fetch_papers.return_value = [_candidate("Paper A")]
+        o._dedup.find_duplicate.return_value = None  # never finds it
+        o._paper_repo.create_ignoring_conflict.side_effect = None
+        o._paper_repo.create_ignoring_conflict.return_value = None
+
+        result = await o.scrape_for_researcher(1)
+
+        assert result["stored"] == 0
+        assert result["skipped"] == 0
+        assert result["errors"] == 1
 
     async def test_no_abstract_skips_llm_enrichment(self):
         o = _build_orchestrator()
