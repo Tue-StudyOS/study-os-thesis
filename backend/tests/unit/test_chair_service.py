@@ -156,6 +156,31 @@ class TestCreateChair:
 
 
 @pytest.mark.unit
+class TestUpsertChair:
+    async def test_delegates_to_repo_upsert_and_skips_embedding(self, chair_service, mock_chair_repo, mock_llm_embed):
+        chair = _make_chair()
+        mock_chair_repo.upsert_by_name.return_value = chair
+        mock_chair_repo.get_by_id.return_value = chair
+
+        data = ChairCreate(
+            name="Chair",
+            short_description="Description that is long enough for validation.",
+            professor_title=None,
+            professor_name="Prof. Dr. Georg Martius",
+        )
+        result = await chair_service.upsert_chair(data)
+
+        assert result is chair
+        mock_llm_embed.embed.assert_not_called()
+        mock_chair_repo.add_document.assert_not_called()
+        call_kwargs = mock_chair_repo.upsert_by_name.call_args.kwargs
+        assert call_kwargs["name"] == "Chair"
+        assert call_kwargs["professor_title"] == "Prof. Dr."
+        assert call_kwargs["professor_name"] == "Georg Martius"
+        mock_chair_repo.commit.assert_called_once()
+
+
+@pytest.mark.unit
 class TestDeleteChair:
     async def test_delegates_to_repo(self, chair_service, mock_chair_repo):
         chair = _make_chair()

@@ -2,10 +2,15 @@
 
 from __future__ import annotations
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.researcher import Researcher, ResearcherPaper
+
+
+def _normalize_name(name: str) -> str:
+    """Lowercase + trim for case-insensitive employee-name dedup."""
+    return name.strip().lower()
 
 
 class ResearcherRepository:
@@ -19,6 +24,11 @@ class ResearcherRepository:
         *,
         name: str,
         chair_id: int | None = None,
+        title: str | None = None,
+        role: str | None = None,
+        email: str | None = None,
+        profile_url: str | None = None,
+        source_url: str | None = None,
         orcid: str | None = None,
         affiliation: str | None = None,
         is_professor: bool = False,
@@ -26,6 +36,11 @@ class ResearcherRepository:
         researcher = Researcher(
             name=name,
             chair_id=chair_id,
+            title=title,
+            role=role,
+            email=email,
+            profile_url=profile_url,
+            source_url=source_url,
             orcid=orcid,
             affiliation=affiliation,
             is_professor=is_professor,
@@ -41,9 +56,61 @@ class ResearcherRepository:
     async def get_by_name_and_chair(self, name: str, chair_id: int) -> Researcher | None:
         return await self._session.scalar(
             select(Researcher).where(
-                Researcher.name == name,
+                func.lower(func.trim(Researcher.name)) == _normalize_name(name),
                 Researcher.chair_id == chair_id,
             )
+        )
+
+    async def get_by_profile_url(self, profile_url: str) -> Researcher | None:
+        return await self._session.scalar(select(Researcher).where(Researcher.profile_url == profile_url))
+
+    async def upsert(
+        self,
+        *,
+        name: str,
+        chair_id: int | None = None,
+        title: str | None = None,
+        role: str | None = None,
+        email: str | None = None,
+        profile_url: str | None = None,
+        source_url: str | None = None,
+        orcid: str | None = None,
+        affiliation: str | None = None,
+        is_professor: bool = False,
+    ) -> Researcher:
+        """Create or update an employee, deduplicating on profile_url, then on
+        (normalized name + chair_id). On a hit, only provided (non-None) fields
+        overwrite existing values; ``name``/``is_professor`` always apply."""
+        existing: Researcher | None = None
+        if profile_url is not None:
+            existing = await self.get_by_profile_url(profile_url)
+        if existing is None and chair_id is not None:
+            existing = await self.get_by_name_and_chair(name, chair_id)
+
+        updates = {
+            "chair_id": chair_id,
+            "title": title,
+            "role": role,
+            "email": email,
+            "profile_url": profile_url,
+            "source_url": source_url,
+            "orcid": orcid,
+            "affiliation": affiliation,
+        }
+        if existing is not None:
+            existing.name = name
+            existing.is_professor = is_professor
+            for field, value in updates.items():
+                if value is not None:
+                    setattr(existing, field, value)
+            await self._session.flush()
+            await self._session.refresh(existing)
+            return existing
+
+        return await self.create(
+            name=name,
+            is_professor=is_professor,
+            **updates,
         )
 
     async def list_by_chair(self, chair_id: int) -> list[Researcher]:

@@ -76,6 +76,25 @@ class ChairService:
         _logger.info("Chair id=%d committed to DB", chair.id)
         return await self._chair_repo.get_by_id(chair.id, load_documents=True)  # type: ignore[return-value]
 
+    async def upsert_chair(self, data: ChairCreate) -> Chair:
+        """Create a chair or update the existing one matched by name.
+
+        Used by the chair-discovery pipeline; skips description embedding so it
+        can run repeatedly without piling up duplicate description documents.
+        """
+        professor_title, professor_name = _split_professor_title_and_name(data.professor_title, data.professor_name)
+        _logger.info("Upserting chair: name=%r professor=%r", data.name, professor_name)
+        chair = await self._chair_repo.upsert_by_name(
+            name=data.name,
+            short_description=data.short_description,
+            professor_title=professor_title,
+            professor_name=professor_name,
+            professor_user_id=data.professor_user_id,
+            website_url=data.website_url,
+        )
+        await self._chair_repo.commit()
+        return await self._chair_repo.get_by_id(chair.id, load_documents=True)  # type: ignore[return-value]
+
     async def get_chair(self, chair_id: int) -> Chair:
         chair = await self._chair_repo.get_by_id(chair_id, load_documents=True)
         if chair is None:

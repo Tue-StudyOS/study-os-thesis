@@ -25,6 +25,29 @@ class ResearcherService:
         researcher = await self._repo.create(
             name=data.name,
             chair_id=data.chair_id,
+            title=data.title,
+            role=data.role,
+            email=data.email,
+            profile_url=data.profile_url,
+            source_url=data.source_url,
+            orcid=data.orcid,
+            affiliation=data.affiliation,
+            is_professor=data.is_professor,
+        )
+        await self._repo.commit()
+        return researcher
+
+    async def upsert_researcher(self, data: ResearcherCreate) -> Researcher:
+        """Create or update an employee, deduplicating on profile_url then
+        (normalized name + chair_id). Used by the chair-discovery pipeline."""
+        researcher = await self._repo.upsert(
+            name=data.name,
+            chair_id=data.chair_id,
+            title=data.title,
+            role=data.role,
+            email=data.email,
+            profile_url=data.profile_url,
+            source_url=data.source_url,
             orcid=data.orcid,
             affiliation=data.affiliation,
             is_professor=data.is_professor,

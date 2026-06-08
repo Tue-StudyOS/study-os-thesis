@@ -46,6 +46,39 @@ class ChairRepository:
         await self._session.refresh(chair)
         return chair
 
+    async def get_by_name(self, name: str) -> Chair | None:
+        return await self._session.scalar(select(Chair).where(Chair.name == name))
+
+    async def upsert_by_name(
+        self,
+        *,
+        name: str,
+        short_description: str,
+        professor_title: str | None,
+        professor_name: str,
+        professor_user_id: int | None,
+        website_url: str | None,
+    ) -> Chair:
+        """Create a chair or update the existing one matched by name."""
+        existing = await self.get_by_name(name)
+        if existing is not None:
+            return await self.update(
+                existing,
+                short_description=short_description,
+                professor_title=professor_title,
+                professor_name=professor_name,
+                professor_user_id=professor_user_id,
+                website_url=website_url,
+            )
+        return await self.create(
+            name=name,
+            short_description=short_description,
+            professor_title=professor_title,
+            professor_name=professor_name,
+            professor_user_id=professor_user_id,
+            website_url=website_url,
+        )
+
     async def get_by_id(self, chair_id: int, *, load_documents: bool = False) -> Chair | None:
         stmt = select(Chair).where(Chair.id == chair_id)
         if load_documents:

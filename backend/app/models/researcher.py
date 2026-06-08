@@ -15,6 +15,15 @@ class Researcher(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
+    # Academic/job title as shown on the chair page, e.g. "Prof. Dr.", "PhD candidate".
+    title: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # Position within the chair, e.g. "Professor", "Research Associate", "PhD Student".
+    role: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    email: Mapped[str | None] = mapped_column(String(320), nullable=True)
+    # Personal profile page (used as a dedup key for discovered employees).
+    profile_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    # The page the employee was discovered on (provenance).
+    source_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     orcid: Mapped[str | None] = mapped_column(String(50), unique=True, nullable=True)
     affiliation: Mapped[str | None] = mapped_column(String(500), nullable=True)
     chair_id: Mapped[int | None] = mapped_column(ForeignKey("chairs.id", ondelete="SET NULL"), nullable=True, index=True)
