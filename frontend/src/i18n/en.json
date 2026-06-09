@@ -1,0 +1,25 @@
+{
+  "common": {
+    "language": "Language",
+    "english": "English",
+    "german": "Deutsch"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "languageDescription": "Choose your preferred language"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "chat": "Find Thesis",
+    "chairs": "Chair Explorer",
+    "proposals": "My Proposals",
+    "admin": "Admin",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome"
+  }
+}

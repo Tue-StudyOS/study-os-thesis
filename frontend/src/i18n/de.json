@@ -1,0 +1,25 @@
+{
+  "common": {
+    "language": "Sprache",
+    "english": "English",
+    "german": "Deutsch"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "language": "Sprache",
+    "languageDescription": "Wählen Sie Ihre bevorzugte Sprache"
+  },
+  "navigation": {
+    "dashboard": "Übersicht",
+    "chat": "Thesis finden",
+    "chairs": "Lehrstuhl-Explorer",
+    "proposals": "Meine Anträge",
+    "admin": "Admin",
+    "settings": "Einstellungen",
+    "logout": "Abmelden"
+  },
+  "dashboard": {
+    "title": "Übersicht",
+    "welcome": "Willkommen"
+  }
+}

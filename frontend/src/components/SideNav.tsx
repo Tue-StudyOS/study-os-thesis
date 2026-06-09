@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 type NavItem = {
   to: string;
@@ -9,21 +10,22 @@ type NavItem = {
   fill?: boolean;
 };
 
-const mainNavItems: NavItem[] = [
-  { to: "/dashboard", icon: "dashboard", label: "Dashboard" },
-  { to: "/chat", icon: "chat", label: "Find Thesis" },
-  { to: "/chairs", icon: "explore", label: "Lehrstuhl-Explorer" },
-  { to: "/proposals", icon: "description", label: "My Proposals" },
-];
-
-const footerNavItems: NavItem[] = [
-  { to: "/settings", icon: "settings", label: "Settings" },
-  { to: "/help", icon: "help", label: "Help" },
-];
-
 export default function SideNav() {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const mainNavItems: NavItem[] = [
+    { to: "/dashboard", icon: "dashboard", label: t("navigation.dashboard") },
+    { to: "/chat", icon: "chat", label: "Find Thesis" },
+    { to: "/chairs", icon: "explore", label: t("navigation.chairs") },
+    { to: "/proposals", icon: "description", label: t("navigation.proposals") },
+  ];
+
+  const footerNavItems: NavItem[] = [
+    { to: "/settings", icon: "settings", label: t("navigation.settings") },
+    { to: "/help", icon: "help", label: "Help" },
+  ];
 
   function handleLogout() {
     logout();
@@ -102,7 +104,7 @@ export default function SideNav() {
           className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors w-full text-left"
         >
           <span className="material-symbols-outlined">logout</span>
-          <span className="font-label-md text-label-md">Log out</span>
+          <span className="font-label-md text-label-md">{t("navigation.logout")}</span>
         </button>
       </div>
     </nav>

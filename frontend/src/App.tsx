@@ -11,6 +11,7 @@ import Proposals from "./pages/Proposals";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Admin from "./pages/Admin";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 /** Redirect to /login when unauthenticated; show spinner during hydration. */
@@ -71,6 +72,7 @@ export default function App() {
           <Route path="/chairs" element={<ChairExplorer />} />
           <Route path="/chairs/:chairParam" element={<ChairExplorer />} />
           <Route path="/proposals" element={<Proposals />} />
+          <Route path="/settings" element={<Settings />} />
           <Route
             path="/admin"
             element={
