@@ -63,10 +63,7 @@ class TestResearcherColumns:
         assert "chairs.id" in fk_targets
 
     def test_chair_id_is_indexed(self) -> None:
-        indexed_cols = {
-            frozenset(idx.columns.keys())
-            for idx in Researcher.__table__.indexes
-        }
+        indexed_cols = {frozenset(idx.columns.keys()) for idx in Researcher.__table__.indexes}
         assert frozenset(["chair_id"]) in indexed_cols
 
     def test_profile_url_is_not_in_orm_unique_constraint(self) -> None:

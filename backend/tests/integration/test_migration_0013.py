@@ -77,13 +77,9 @@ class TestMigration0013:
         assert _current_revision(sync_engine) == "0013"
 
         with sync_engine.begin() as conn:
-            conn.execute(
-                text("INSERT INTO researchers (name, profile_url, is_professor) VALUES ('A', 'https://example.com/a', false)")
-            )
+            conn.execute(text("INSERT INTO researchers (name, profile_url, is_professor) VALUES ('A', 'https://example.com/a', false)"))
             with pytest.raises(Exception, match="uq_researchers_profile_url"):
-                conn.execute(
-                    text("INSERT INTO researchers (name, profile_url, is_professor) VALUES ('B', 'https://example.com/a', false)")
-                )
+                conn.execute(text("INSERT INTO researchers (name, profile_url, is_professor) VALUES ('B', 'https://example.com/a', false)"))
 
     def test_null_profile_url_allows_duplicates(self, sync_engine) -> None:
         """NULL profile_url is excluded from the unique index — multiple NULLs are allowed."""
