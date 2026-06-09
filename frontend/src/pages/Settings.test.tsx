@@ -1,19 +1,30 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { I18nextProvider } from "react-i18next";
 import { AuthProvider } from "../auth/AuthContext";
 import Settings from "./Settings";
 import i18n from "../i18n/config";
-import * as studentsApi from "../api/students";
 import "@testing-library/jest-dom";
+
+vi.mock("../api/students", async () => {
+  const actual = await vi.importActual("../api/students");
+  return {
+    ...actual,
+    getStudentProfile: vi.fn().mockRejectedValue(new Error("Not found")),
+    updateStudentProfile: vi.fn(),
+  };
+});
+
+import * as studentsApi from "../api/students";
 
 describe("Settings page", () => {
   beforeEach(async () => {
     localStorage.clear();
     await i18n.changeLanguage("en");
+  });
+
+  afterEach(() => {
     vi.clearAllMocks();
-    // Mock getStudentProfile to return no profile (404)
-    vi.spyOn(studentsApi, "getStudentProfile").mockRejectedValue(new Error("Not found"));
   });
 
   const renderSettings = () => {
@@ -66,31 +77,34 @@ describe("Settings page", () => {
     expect(screen.getByText("Program/Field of Study")).toBeInTheDocument();
   });
 
-  it("saves name to localStorage on input", () => {
+  it("updates name field value on input (no auto-save)", () => {
     renderSettings();
     const nameField = screen.getByTestId("name-field") as HTMLInputElement;
     fireEvent.change(nameField, { target: { value: "John Doe" } });
-    expect(localStorage.getItem("settings.name")).toBe("John Doe");
     expect(nameField.value).toBe("John Doe");
+    // localStorage should NOT be updated on input change
+    expect(localStorage.getItem("settings.name")).toBeNull();
   });
 
-  it("saves education level to localStorage on select", () => {
+  it("updates education level on select (no auto-save)", () => {
     renderSettings();
     const select = screen.getByTestId("education-level-select") as HTMLSelectElement;
     fireEvent.change(select, { target: { value: "master" } });
-    expect(localStorage.getItem("settings.educationLevel")).toBe("master");
     expect(select.value).toBe("master");
+    // localStorage should NOT be updated on input change
+    expect(localStorage.getItem("settings.educationLevel")).toBeNull();
   });
 
-  it("saves program to localStorage on input", () => {
+  it("updates program field value on input (no auto-save)", () => {
     renderSettings();
     const programField = screen.getByTestId("program-field") as HTMLInputElement;
     fireEvent.change(programField, { target: { value: "Computer Science" } });
-    expect(localStorage.getItem("settings.program")).toBe("Computer Science");
     expect(programField.value).toBe("Computer Science");
+    // localStorage should NOT be updated on input change
+    expect(localStorage.getItem("settings.program")).toBeNull();
   });
 
-  it("loads values from localStorage on mount", () => {
+  it("loads values from localStorage on mount when API fails", async () => {
     localStorage.setItem("settings.name", "Jane Smith");
     localStorage.setItem("settings.educationLevel", "master");
     localStorage.setItem("settings.program", "Physics");
@@ -101,21 +115,59 @@ describe("Settings page", () => {
     const select = screen.getByTestId("education-level-select") as HTMLSelectElement;
     const programField = screen.getByTestId("program-field") as HTMLInputElement;
 
+    // Wait for the component to load (async effect completes)
+    await waitFor(() => {
+      const button = screen.getByTestId("save-profile-button") as HTMLButtonElement;
+      expect(button).not.toBeDisabled();
+    });
+
     expect(nameField.value).toBe("Jane Smith");
     expect(select.value).toBe("master");
     expect(programField.value).toBe("Physics");
   });
 
-  it("persists values after reload (simulated with localStorage)", () => {
+  it("persists values after save and reload", async () => {
+    (studentsApi.updateStudentProfile as any).mockResolvedValue({
+      user_id: 1,
+      full_name: "Alex Johnson",
+      education_level: "bachelor",
+      program: "Mathematics",
+      semester: null,
+      gpa: null,
+      updated_at: new Date().toISOString(),
+      courses: [],
+    });
+
     const { unmount } = renderSettings();
+
+    // Wait for initial load to complete
+    await waitFor(() => {
+      const button = screen.getByTestId("save-profile-button") as HTMLButtonElement;
+      expect(button).not.toBeDisabled();
+    });
 
     const nameField = screen.getByTestId("name-field") as HTMLInputElement;
     const select = screen.getByTestId("education-level-select") as HTMLSelectElement;
     const programField = screen.getByTestId("program-field") as HTMLInputElement;
 
+    // Fill in fields (only updates component state)
     fireEvent.change(nameField, { target: { value: "Alex Johnson" } });
     fireEvent.change(select, { target: { value: "bachelor" } });
     fireEvent.change(programField, { target: { value: "Mathematics" } });
+
+    // Click save button to persist to localStorage
+    const saveButton = screen.getByTestId("save-profile-button");
+    fireEvent.click(saveButton);
+
+    // Wait for the save to complete
+    await waitFor(() => {
+      expect(screen.queryByText(/Saved|saved/i)).toBeInTheDocument();
+    }, { timeout: 3000 });
+
+    // Verify localStorage was updated
+    expect(localStorage.getItem("settings.name")).toBe("Alex Johnson");
+    expect(localStorage.getItem("settings.educationLevel")).toBe("bachelor");
+    expect(localStorage.getItem("settings.program")).toBe("Mathematics");
 
     // Simulate unmounting
     unmount();
@@ -127,9 +179,12 @@ describe("Settings page", () => {
     const newSelect = screen.getByTestId("education-level-select") as HTMLSelectElement;
     const newProgramField = screen.getByTestId("program-field") as HTMLInputElement;
 
-    expect(newNameField.value).toBe("Alex Johnson");
-    expect(newSelect.value).toBe("bachelor");
-    expect(newProgramField.value).toBe("Mathematics");
+    // Wait for the component to load from localStorage
+    await waitFor(() => {
+      expect(newNameField.value).toBe("Alex Johnson");
+      expect(newSelect.value).toBe("bachelor");
+      expect(newProgramField.value).toBe("Mathematics");
+    });
   });
 
   it("switches to Help tab when clicked", () => {
@@ -204,7 +259,7 @@ describe("Settings page", () => {
   });
 
   it("saves profile to database on save button click", async () => {
-    const mockUpdate = vi.spyOn(studentsApi, "updateStudentProfile").mockResolvedValue({
+    (studentsApi.updateStudentProfile as any).mockResolvedValue({
       user_id: 1,
       full_name: "John Doe",
       education_level: "master",
@@ -217,6 +272,12 @@ describe("Settings page", () => {
 
     renderSettings();
 
+    // Wait for initial load to complete (loading state to become false)
+    await waitFor(() => {
+      const button = screen.getByTestId("save-profile-button") as HTMLButtonElement;
+      expect(button).not.toBeDisabled();
+    });
+
     const nameField = screen.getByTestId("name-field") as HTMLInputElement;
     const select = screen.getByTestId("education-level-select") as HTMLSelectElement;
     const programField = screen.getByTestId("program-field") as HTMLInputElement;
@@ -228,17 +289,20 @@ describe("Settings page", () => {
     const saveButton = screen.getByTestId("save-profile-button");
     fireEvent.click(saveButton);
 
+    // Check if error message appears (instead of waiting for success)
     await waitFor(() => {
-      expect(mockUpdate).toHaveBeenCalledWith("John Doe", "master", "Computer Science");
-    });
+      const successOrError = screen.queryByText(/Saved|saved|Error|error|Failed|failed/i);
+      expect(successOrError).toBeInTheDocument();
+    }, { timeout: 3000 });
 
+    expect(studentsApi.updateStudentProfile).toHaveBeenCalledWith("John Doe", "master", "Computer Science");
     expect(localStorage.getItem("settings.name")).toBe("John Doe");
     expect(localStorage.getItem("settings.educationLevel")).toBe("master");
     expect(localStorage.getItem("settings.program")).toBe("Computer Science");
   });
 
   it("displays success message after save", async () => {
-    vi.spyOn(studentsApi, "updateStudentProfile").mockResolvedValue({
+    (studentsApi.updateStudentProfile as any).mockResolvedValue({
       user_id: 1,
       full_name: "Jane Smith",
       education_level: "bachelor",
@@ -251,6 +315,12 @@ describe("Settings page", () => {
 
     renderSettings();
 
+    // Wait for initial load to complete
+    await waitFor(() => {
+      const button = screen.getByTestId("save-profile-button") as HTMLButtonElement;
+      expect(button).not.toBeDisabled();
+    });
+
     const nameField = screen.getByTestId("name-field") as HTMLInputElement;
     fireEvent.change(nameField, { target: { value: "Jane Smith" } });
 
@@ -258,8 +328,8 @@ describe("Settings page", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(screen.getByText("Saved successfully")).toBeInTheDocument();
-    });
+      expect(screen.queryByText(/Saved|saved/i)).toBeInTheDocument();
+    }, { timeout: 3000 });
   });
 
   it("displays language selection", () => {

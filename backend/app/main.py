@@ -92,6 +92,30 @@ async def _check_embed_dim(ollama_client: OllamaClient, settings: Settings) -> N
         )
 
 
+def _run_migrations() -> None:
+    """Run pending database migrations at startup."""
+    import os
+    import subprocess
+
+    try:
+        backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        result = subprocess.run(
+            ["alembic", "upgrade", "head"],
+            cwd=backend_dir,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        if result.returncode == 0:
+            _logger.info("Database migrations completed successfully")
+        else:
+            _logger.error("Migration failed: %s", result.stderr)
+            raise RuntimeError(f"Database migration failed: {result.stderr}")
+    except Exception as e:
+        _logger.error("Database migration error: %s", str(e))
+        raise RuntimeError(f"Database migration failed: {e!s}") from e
+
+
 @asynccontextmanager
 async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Startup / shutdown lifecycle."""
@@ -103,6 +127,9 @@ async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     _validate_settings()
     settings = get_settings()
+
+    # Run pending migrations
+    _run_migrations()
 
     # Build and store provider-specific clients for the app lifetime.
     chat_client = build_chat_client(settings)
