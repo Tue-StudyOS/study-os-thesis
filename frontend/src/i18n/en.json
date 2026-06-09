@@ -9,8 +9,67 @@
   },
   "settings": {
     "title": "Settings",
+    "tabs": {
+      "settings": "Settings",
+      "help": "Help"
+    },
     "language": "Language",
-    "languageDescription": "Choose your preferred language"
+    "languageDescription": "Choose your preferred language",
+    "help": {
+      "features": {
+        "title": "Features",
+        "dashboard": {
+          "title": "Dashboard",
+          "description": "View your academic profile and competency analysis. Upload your Transcript of Records to get AI-generated insights about your strengths and research readiness."
+        },
+        "findThesis": {
+          "title": "Find Thesis",
+          "description": "Chat with our AI assistant to discover research opportunities and thesis topics. Ask about current research trends, specific chairs, and get personalized recommendations based on your academic profile."
+        },
+        "chairExplorer": {
+          "title": "Chair Explorer",
+          "description": "Browse all available research chairs and their publications. Explore each chair's research focus and current projects to find the best fit for your interests."
+        },
+        "proposals": {
+          "title": "My Proposals",
+          "description": "View and manage your research proposals. See proposals suggested by the AI assistant and track their status as you develop your research idea."
+        }
+      },
+      "troubleshooting": {
+        "title": "Troubleshooting",
+        "transcriptNotProcessing": {
+          "question": "Why is my transcript not processing?",
+          "answer": "Make sure you've uploaded a valid PDF file. The file should be your official Transcript of Records. If the issue persists, try uploading again or contact support."
+        },
+        "noProposals": {
+          "question": "I don't see any proposals. What should I do?",
+          "answer": "Start a conversation in the 'Find Thesis' chat to discuss your interests with the AI assistant. It will generate proposal suggestions based on our conversation and your academic profile."
+        },
+        "aiResponse": {
+          "question": "The AI is giving me incorrect information. Is this normal?",
+          "answer": "The AI assistant can make mistakes. Always verify important information with your advisor or by checking the original sources. We're constantly improving the AI's accuracy."
+        }
+      },
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "whatIsCompetency": {
+          "question": "What is my competency profile?",
+          "answer": "Your competency profile is an AI-generated analysis of your skills and knowledge areas based on your courses. It helps identify your strengths and areas for improvement for research projects."
+        },
+        "howToStartProposal": {
+          "question": "How do I start developing a thesis proposal?",
+          "answer": "Use the 'Find Thesis' chat to discuss your interests, ask about research trends, and explore chair information. The AI will help you brainstorm and generate proposal ideas tailored to your profile."
+        },
+        "changeLanguage": {
+          "question": "Can I switch between languages?",
+          "answer": "Yes! Go to the Settings tab and select your preferred language. Your choice is saved automatically."
+        },
+        "contactSupport": {
+          "question": "How do I contact support?",
+          "answer": "If you encounter any issues or have questions not answered here, please reach out to your advisor or check your institution's support resources."
+        }
+      }
+    }
   },
   "navigation": {
     "dashboard": "Dashboard",

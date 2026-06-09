@@ -9,8 +9,67 @@
   },
   "settings": {
     "title": "Einstellungen",
+    "tabs": {
+      "settings": "Einstellungen",
+      "help": "Hilfe"
+    },
     "language": "Sprache",
-    "languageDescription": "Wählen Sie Ihre bevorzugte Sprache"
+    "languageDescription": "Wählen Sie Ihre bevorzugte Sprache",
+    "help": {
+      "features": {
+        "title": "Funktionen",
+        "dashboard": {
+          "title": "Übersicht",
+          "description": "Sehen Sie Ihr akademisches Profil und Ihre Kompetenzanalyse. Laden Sie Ihr Transcript of Records hoch, um AI-generierte Einblicke in Ihre Stärken und Forschungsbereitschaft zu erhalten."
+        },
+        "findThesis": {
+          "title": "Thesis finden",
+          "description": "Chatten Sie mit unserem AI-Assistenten, um Forschungsmöglichkeiten und Thesisthemen zu entdecken. Fragen Sie nach aktuellen Forschungstrends, spezifischen Lehrstühlen und erhalten Sie personalisierte Empfehlungen basierend auf Ihrem akademischen Profil."
+        },
+        "chairExplorer": {
+          "title": "Lehrstuhl-Explorer",
+          "description": "Durchsuchen Sie alle verfügbaren Forschungslehrstühle und deren Publikationen. Erkunden Sie den Forschungsfokus und aktuelle Projekte jedes Lehrstuhls, um den besten Fit für Ihre Interessen zu finden."
+        },
+        "proposals": {
+          "title": "Meine Anträge",
+          "description": "Sehen Sie sich Ihre Forschungsanträge an und verwalten Sie sie. Sehen Sie Vorschläge des AI-Assistenten und verfolgen Sie deren Status während Sie Ihre Forschungsidee entwickeln."
+        }
+      },
+      "troubleshooting": {
+        "title": "Fehlerbehebung",
+        "transcriptNotProcessing": {
+          "question": "Warum wird mein Transcript nicht verarbeitet?",
+          "answer": "Stellen Sie sicher, dass Sie eine gültige PDF-Datei hochgeladen haben. Die Datei sollte Ihr offizielles Transcript of Records sein. Wenn das Problem weiterhin besteht, versuchen Sie erneut hochzuladen oder kontaktieren Sie den Support."
+        },
+        "noProposals": {
+          "question": "Ich sehe keine Proposals. Was soll ich tun?",
+          "answer": "Starten Sie ein Gespräch im Chat 'Thesis finden', um Ihre Interessen mit dem AI-Assistenten zu besprechen. Er generiert Proposals basierend auf unserem Gespräch und Ihrem akademischen Profil."
+        },
+        "aiResponse": {
+          "question": "Die KI gibt mir falsche Informationen. Ist das normal?",
+          "answer": "Der AI-Assistent kann Fehler machen. Überprüfen Sie immer wichtige Informationen mit Ihrem Betreuer oder durch Überprüfung der Originalquellen. Wir verbessern laufend die Genauigkeit der KI."
+        }
+      },
+      "faq": {
+        "title": "Häufig gestellte Fragen",
+        "whatIsCompetency": {
+          "question": "Was ist mein Kompetenzprofil?",
+          "answer": "Ihr Kompetenzprofil ist eine AI-generierte Analyse Ihrer Fähigkeiten und Wissensbereiche basierend auf Ihren Kursen. Es hilft, Ihre Stärken und Verbesserungsbereiche für Forschungsprojekte zu identifizieren."
+        },
+        "howToStartProposal": {
+          "question": "Wie beginne ich mit der Entwicklung eines Thesisvorschlags?",
+          "answer": "Nutzen Sie den Chat 'Thesis finden', um über Ihre Interessen zu diskutieren, nach Forschungstrends zu fragen und Lehrstuhl-Informationen zu erkunden. Die KI hilft Ihnen, Ideen zu brainstormen und Proposals zu generieren."
+        },
+        "changeLanguage": {
+          "question": "Kann ich zwischen Sprachen wechseln?",
+          "answer": "Ja! Gehen Sie zum Tab Einstellungen und wählen Sie Ihre bevorzugte Sprache. Ihre Auswahl wird automatisch gespeichert."
+        },
+        "contactSupport": {
+          "question": "Wie kontaktiere ich den Support?",
+          "answer": "Wenn Sie auf Probleme stoßen oder Fragen haben, die hier nicht beantwortet werden, kontaktieren Sie bitte Ihren Betreuer oder überprüfen Sie die Support-Ressourcen Ihrer Institution."
+        }
+      }
+    }
   },
   "navigation": {
     "dashboard": "Übersicht",
