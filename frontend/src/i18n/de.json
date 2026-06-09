@@ -29,6 +29,10 @@
       "label": "Studienprogramm/Fachrichtung",
       "placeholder": "z.B. Informatik, Physik"
     },
+    "save": "Profil speichern",
+    "saving": "Wird gespeichert...",
+    "saved": "Erfolgreich gespeichert",
+    "saveFailed": "Profil konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
     "language": "Sprache",
     "languageDescription": "Wählen Sie Ihre bevorzugte Sprache",
     "help": {

@@ -10,6 +10,8 @@ export interface StudentCourse {
 
 export interface StudentProfile {
   user_id: number;
+  full_name: string | null;
+  education_level: string | null;
   program: string | null;
   semester: number | null;
   gpa: number | null;
@@ -19,6 +21,24 @@ export interface StudentProfile {
 
 export function getStudentProfile(): Promise<StudentProfile> {
   return api<StudentProfile>("/api/students/me");
+}
+
+/**
+ * Update student profile (name, education level, program).
+ */
+export function updateStudentProfile(
+  full_name?: string,
+  education_level?: string,
+  program?: string,
+): Promise<StudentProfile> {
+  const body: Record<string, string | null> = {};
+  if (full_name !== undefined) body.full_name = full_name || null;
+  if (education_level !== undefined) body.education_level = education_level || null;
+  if (program !== undefined) body.program = program || null;
+  return api<StudentProfile>("/api/students/profile", {
+    method: "PUT",
+    json: body,
+  });
 }
 
 /**

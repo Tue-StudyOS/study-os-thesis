@@ -14,6 +14,8 @@ class Student(Base):
     __tablename__ = "students"
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    full_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    education_level: Mapped[str | None] = mapped_column(String(20), nullable=True)
     program: Mapped[str | None] = mapped_column(String(255), nullable=True)
     semester: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
     # Credit-weighted average of German grades (1.0 best, 5.0 fail).

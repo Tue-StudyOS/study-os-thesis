@@ -56,5 +56,32 @@ class StudentRepository:
         await self._session.refresh(student)
         return student
 
+    async def update_profile(
+        self,
+        user_id: int,
+        *,
+        full_name: str | None = None,
+        education_level: str | None = None,
+        program: str | None = None,
+    ) -> Student:
+        """Update student profile fields (name, education level, program)."""
+        student = await self._session.get(Student, user_id)
+        if student is None:
+            student = Student(user_id=user_id)
+            self._session.add(student)
+
+        if full_name is not None:
+            student.full_name = full_name
+        if education_level is not None:
+            student.education_level = education_level
+        if program is not None:
+            student.program = program
+
+        student.updated_at = datetime.now(timezone.utc)
+
+        await self._session.flush()
+        await self._session.refresh(student, ["courses"])
+        return student
+
     async def commit(self) -> None:
         await self._session.commit()

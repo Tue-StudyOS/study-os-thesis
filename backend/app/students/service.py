@@ -86,6 +86,24 @@ class StudentService:
             raise NotFoundException("Student profile", user_id)
         return student
 
+    async def update_profile(
+        self,
+        user_id: int,
+        *,
+        full_name: str | None = None,
+        education_level: str | None = None,
+        program: str | None = None,
+    ) -> Student:
+        """Update student profile (name, education level, program)."""
+        student = await self._student_repo.update_profile(
+            user_id,
+            full_name=full_name,
+            education_level=education_level,
+            program=program,
+        )
+        await self._student_repo.commit()
+        return student
+
     async def upload_transcript(
         self,
         user_id: int,

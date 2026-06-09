@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import TopBar from "../components/TopBar";
 import { useLanguage } from "../i18n/useLanguage";
+import { getStudentProfile, updateStudentProfile } from "../api/students";
 
 type Tab = "settings" | "help";
 
@@ -12,34 +13,69 @@ export default function Settings() {
   const [name, setName] = useState("");
   const [educationLevel, setEducationLevel] = useState<"bachelor" | "master">("bachelor");
   const [program, setProgram] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Load values from localStorage on mount
+  // Load values from API and localStorage on mount
   useEffect(() => {
-    const savedName = localStorage.getItem("settings.name");
-    const savedEducationLevel = localStorage.getItem("settings.educationLevel");
-    const savedProgram = localStorage.getItem("settings.program");
+    const loadProfile = async () => {
+      try {
+        const profile = await getStudentProfile();
+        if (profile.full_name) setName(profile.full_name);
+        if (profile.education_level) setEducationLevel(profile.education_level as "bachelor" | "master");
+        if (profile.program) setProgram(profile.program);
+      } catch {
+        // If profile doesn't exist (404), fall back to localStorage
+        const savedName = localStorage.getItem("settings.name");
+        const savedEducationLevel = localStorage.getItem("settings.educationLevel");
+        const savedProgram = localStorage.getItem("settings.program");
 
-    if (savedName) setName(savedName);
-    if (savedEducationLevel) setEducationLevel(savedEducationLevel as "bachelor" | "master");
-    if (savedProgram) setProgram(savedProgram);
+        if (savedName) setName(savedName);
+        if (savedEducationLevel) setEducationLevel(savedEducationLevel as "bachelor" | "master");
+        if (savedProgram) setProgram(savedProgram);
+      } finally {
+        setLoading(false);
+      }
+    };
+    setLoading(true);
+    void loadProfile();
   }, []);
 
-  // Save name to localStorage
+  // Save to both database and localStorage
+  const saveProfile = async () => {
+    setIsSaving(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      await updateStudentProfile(name, educationLevel, program);
+      localStorage.setItem("settings.name", name);
+      localStorage.setItem("settings.educationLevel", educationLevel);
+      localStorage.setItem("settings.program", program);
+      setSuccess(t("settings.saved"));
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : t("settings.saveFailed");
+      setError(errorMsg);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Save name to database and localStorage
   const handleNameChange = (value: string) => {
     setName(value);
-    localStorage.setItem("settings.name", value);
   };
 
-  // Save education level to localStorage
+  // Save education level to database and localStorage
   const handleEducationLevelChange = (value: "bachelor" | "master") => {
     setEducationLevel(value);
-    localStorage.setItem("settings.educationLevel", value);
   };
 
-  // Save program to localStorage
+  // Save program to database and localStorage
   const handleProgramChange = (value: string) => {
     setProgram(value);
-    localStorage.setItem("settings.program", value);
   };
 
   return (
@@ -101,6 +137,7 @@ export default function Settings() {
                       placeholder={t("settings.name.placeholder")}
                       className="w-full px-4 py-3 rounded-lg border border-outline bg-surface text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
                       data-testid="name-field"
+                      disabled={isSaving}
                     />
                   </div>
 
@@ -114,6 +151,7 @@ export default function Settings() {
                       onChange={(e) => handleEducationLevelChange(e.target.value as "bachelor" | "master")}
                       className="w-full px-4 py-3 rounded-lg border border-outline bg-surface text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
                       data-testid="education-level-select"
+                      disabled={isSaving}
                     >
                       <option value="bachelor">{t("settings.educationLevel.bachelor")}</option>
                       <option value="master">{t("settings.educationLevel.master")}</option>
@@ -132,8 +170,31 @@ export default function Settings() {
                       placeholder={t("settings.program.placeholder")}
                       className="w-full px-4 py-3 rounded-lg border border-outline bg-surface text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
                       data-testid="program-field"
+                      disabled={isSaving}
                     />
                   </div>
+
+                  {/* Status Messages */}
+                  {error && (
+                    <div className="p-3 rounded-lg bg-error/10 border border-error text-error text-sm">
+                      {error}
+                    </div>
+                  )}
+                  {success && (
+                    <div className="p-3 rounded-lg bg-tertiary-container/20 border border-tertiary-container text-tertiary-container text-sm">
+                      {success}
+                    </div>
+                  )}
+
+                  {/* Save Button */}
+                  <button
+                    onClick={() => void saveProfile()}
+                    disabled={isSaving || loading}
+                    className="w-full px-4 py-3 rounded-lg bg-primary text-on-primary font-medium text-sm hover:bg-primary-dark disabled:bg-outline-variant disabled:text-on-surface-variant transition-colors"
+                    data-testid="save-profile-button"
+                  >
+                    {isSaving ? t("settings.saving") : t("settings.save")}
+                  </button>
                 </div>
               </div>
 

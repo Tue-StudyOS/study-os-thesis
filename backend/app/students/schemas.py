@@ -17,6 +17,31 @@ class StudentOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     user_id: int
+    full_name: str | None
+    education_level: str | None
+    program: str | None
+    semester: int | None
+    gpa: float | None
+    updated_at: datetime
+    courses: list[StudentCourseOut] = []
+
+
+class StudentProfileUpdate(BaseModel):
+    """Request body for updating student profile."""
+
+    full_name: str | None = None
+    education_level: str | None = None
+    program: str | None = None
+
+
+class StudentProfileResponse(BaseModel):
+    """Response for updated student profile."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    user_id: int
+    full_name: str | None
+    education_level: str | None
     program: str | None
     semester: int | None
     gpa: float | None

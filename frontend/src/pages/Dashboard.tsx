@@ -4,7 +4,6 @@ import TopBar from "../components/TopBar";
 import StatCard from "../components/StatCard";
 import SkillBar from "../components/SkillBar";
 import SkillRadar, { coursesToRadarData } from "../components/SkillRadar";
-import { useAuth } from "../auth/AuthContext";
 import { getStudentProfile, uploadTranscript, type StudentProfile } from "../api/students";
 import { pollJob } from "../api/jobs";
 
@@ -20,8 +19,6 @@ const SKILL_BAR_AXES = [
 
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
-  const firstName = user?.email?.split("@")[0] ?? "User";
 
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -114,7 +111,7 @@ export default function Dashboard() {
           <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <h2 className="font-display-lg text-display-lg text-primary tracking-tight max-w-3xl leading-tight">
-                {t("dashboard.welcome", { name: firstName })}
+                {t("dashboard.welcome", { name: profile?.full_name || "User" })}
                 <span className="text-on-surface-variant font-headline-lg text-headline-lg mt-2 block font-normal">
                   {t("dashboard.readyForProject")}
                 </span>

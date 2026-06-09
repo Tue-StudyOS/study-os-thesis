@@ -1,15 +1,19 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { I18nextProvider } from "react-i18next";
 import { AuthProvider } from "../auth/AuthContext";
 import Settings from "./Settings";
 import i18n from "../i18n/config";
+import * as studentsApi from "../api/students";
 import "@testing-library/jest-dom";
 
 describe("Settings page", () => {
   beforeEach(async () => {
     localStorage.clear();
     await i18n.changeLanguage("en");
+    vi.clearAllMocks();
+    // Mock getStudentProfile to return no profile (404)
+    vi.spyOn(studentsApi, "getStudentProfile").mockRejectedValue(new Error("Not found"));
   });
 
   const renderSettings = () => {
@@ -197,6 +201,65 @@ describe("Settings page", () => {
 
     expect(screen.getByTestId("settings-content")).toBeInTheDocument();
     expect(screen.getByText("Language")).toBeInTheDocument();
+  });
+
+  it("saves profile to database on save button click", async () => {
+    const mockUpdate = vi.spyOn(studentsApi, "updateStudentProfile").mockResolvedValue({
+      user_id: 1,
+      full_name: "John Doe",
+      education_level: "master",
+      program: "Computer Science",
+      semester: null,
+      gpa: null,
+      updated_at: new Date().toISOString(),
+      courses: [],
+    });
+
+    renderSettings();
+
+    const nameField = screen.getByTestId("name-field") as HTMLInputElement;
+    const select = screen.getByTestId("education-level-select") as HTMLSelectElement;
+    const programField = screen.getByTestId("program-field") as HTMLInputElement;
+
+    fireEvent.change(nameField, { target: { value: "John Doe" } });
+    fireEvent.change(select, { target: { value: "master" } });
+    fireEvent.change(programField, { target: { value: "Computer Science" } });
+
+    const saveButton = screen.getByTestId("save-profile-button");
+    fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(mockUpdate).toHaveBeenCalledWith("John Doe", "master", "Computer Science");
+    });
+
+    expect(localStorage.getItem("settings.name")).toBe("John Doe");
+    expect(localStorage.getItem("settings.educationLevel")).toBe("master");
+    expect(localStorage.getItem("settings.program")).toBe("Computer Science");
+  });
+
+  it("displays success message after save", async () => {
+    vi.spyOn(studentsApi, "updateStudentProfile").mockResolvedValue({
+      user_id: 1,
+      full_name: "Jane Smith",
+      education_level: "bachelor",
+      program: "Physics",
+      semester: null,
+      gpa: null,
+      updated_at: new Date().toISOString(),
+      courses: [],
+    });
+
+    renderSettings();
+
+    const nameField = screen.getByTestId("name-field") as HTMLInputElement;
+    fireEvent.change(nameField, { target: { value: "Jane Smith" } });
+
+    const saveButton = screen.getByTestId("save-profile-button");
+    fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(screen.getByText("Saved successfully")).toBeInTheDocument();
+    });
   });
 
   it("displays language selection", () => {

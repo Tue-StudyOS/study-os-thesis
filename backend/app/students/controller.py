@@ -15,7 +15,7 @@ from app.students.constants import (
     STUDENTS_API_TAG,
 )
 from app.students.deps import StudentServiceDep
-from app.students.schemas import StudentOut
+from app.students.schemas import StudentOut, StudentProfileUpdate, StudentProfileResponse
 
 router = APIRouter(prefix=STUDENTS_API_PREFIX, tags=[STUDENTS_API_TAG])
 
@@ -26,6 +26,21 @@ async def get_my_profile(
     student_service: StudentServiceDep,
 ) -> object:
     return await student_service.get_profile(current_user.id)
+
+
+@router.put("/profile", response_model=StudentProfileResponse)
+async def update_profile(
+    current_user: CurrentUserDep,
+    student_service: StudentServiceDep,
+    body: StudentProfileUpdate,
+) -> object:
+    """Update student profile (name, education level, program)."""
+    return await student_service.update_profile(
+        current_user.id,
+        full_name=body.full_name,
+        education_level=body.education_level,
+        program=body.program,
+    )
 
 
 @router.post("/me/transcript", status_code=status.HTTP_202_ACCEPTED)

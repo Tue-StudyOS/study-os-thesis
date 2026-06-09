@@ -29,6 +29,10 @@
       "label": "Program/Field of Study",
       "placeholder": "e.g., Computer Science, Physics"
     },
+    "save": "Save Profile",
+    "saving": "Saving...",
+    "saved": "Saved successfully",
+    "saveFailed": "Failed to save profile. Please try again.",
     "language": "Language",
     "languageDescription": "Choose your preferred language",
     "help": {
