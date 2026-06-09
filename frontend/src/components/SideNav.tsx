@@ -24,7 +24,6 @@ export default function SideNav() {
 
   const footerNavItems: NavItem[] = [
     { to: "/settings", icon: "settings", label: t("navigation.settings") },
-    { to: "/help", icon: "help", label: "Help" },
   ];
 
   function handleLogout() {

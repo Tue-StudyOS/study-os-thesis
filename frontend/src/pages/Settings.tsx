@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import TopBar from "../components/TopBar";
 import { useLanguage } from "../i18n/useLanguage";
@@ -9,6 +9,38 @@ export default function Settings() {
   const { t } = useTranslation();
   const { language, switchLanguage, availableLanguages } = useLanguage();
   const [activeTab, setActiveTab] = useState<Tab>("settings");
+  const [name, setName] = useState("");
+  const [educationLevel, setEducationLevel] = useState<"bachelor" | "master">("bachelor");
+  const [program, setProgram] = useState("");
+
+  // Load values from localStorage on mount
+  useEffect(() => {
+    const savedName = localStorage.getItem("settings.name");
+    const savedEducationLevel = localStorage.getItem("settings.educationLevel");
+    const savedProgram = localStorage.getItem("settings.program");
+
+    if (savedName) setName(savedName);
+    if (savedEducationLevel) setEducationLevel(savedEducationLevel as "bachelor" | "master");
+    if (savedProgram) setProgram(savedProgram);
+  }, []);
+
+  // Save name to localStorage
+  const handleNameChange = (value: string) => {
+    setName(value);
+    localStorage.setItem("settings.name", value);
+  };
+
+  // Save education level to localStorage
+  const handleEducationLevelChange = (value: "bachelor" | "master") => {
+    setEducationLevel(value);
+    localStorage.setItem("settings.educationLevel", value);
+  };
+
+  // Save program to localStorage
+  const handleProgramChange = (value: string) => {
+    setProgram(value);
+    localStorage.setItem("settings.program", value);
+  };
 
   return (
     <div className="flex flex-col h-full bg-background">
@@ -49,35 +81,93 @@ export default function Settings() {
 
           {/* Settings Tab */}
           {activeTab === "settings" && (
-            <div className="bg-surface rounded-lg p-6 shadow-sm border border-outline" data-testid="settings-content">
-              <h2 className="text-lg font-semibold text-on-surface mb-4">
-                {t("settings.language")}
-              </h2>
-              <p className="text-sm text-on-surface-variant mb-6">
-                {t("settings.languageDescription")}
-              </p>
+            <div className="space-y-6" data-testid="settings-content">
+              {/* User Profile Section */}
+              <div className="bg-surface rounded-lg p-6 shadow-sm border border-outline">
+                <h2 className="text-lg font-semibold text-on-surface mb-6">
+                  {t("settings.profile.title")}
+                </h2>
 
-              <div className="space-y-3">
-                {availableLanguages.map((lang) => (
-                  <button
-                    key={lang}
-                    onClick={() => switchLanguage(lang)}
-                    className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-colors ${
-                      language === lang
-                        ? "border-primary bg-primary-container text-on-primary-container"
-                        : "border-outline bg-surface text-on-surface hover:border-primary hover:bg-primary-container hover:bg-opacity-20"
-                    }`}
-                  >
-                    <span className="font-medium">
-                      {lang === "en" ? t("common.english") : t("common.german")}
-                    </span>
-                    {language === lang && (
-                      <span className="ml-2 text-xs">
-                        ✓ {t("common.language")}
+                <div className="space-y-5">
+                  {/* Name Field */}
+                  <div>
+                    <label className="block text-sm font-medium text-on-surface mb-2">
+                      {t("settings.name.label")} *
+                    </label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => handleNameChange(e.target.value)}
+                      placeholder={t("settings.name.placeholder")}
+                      className="w-full px-4 py-3 rounded-lg border border-outline bg-surface text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
+                      data-testid="name-field"
+                    />
+                  </div>
+
+                  {/* Education Level Dropdown */}
+                  <div>
+                    <label className="block text-sm font-medium text-on-surface mb-2">
+                      {t("settings.educationLevel.label")}
+                    </label>
+                    <select
+                      value={educationLevel}
+                      onChange={(e) => handleEducationLevelChange(e.target.value as "bachelor" | "master")}
+                      className="w-full px-4 py-3 rounded-lg border border-outline bg-surface text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
+                      data-testid="education-level-select"
+                    >
+                      <option value="bachelor">{t("settings.educationLevel.bachelor")}</option>
+                      <option value="master">{t("settings.educationLevel.master")}</option>
+                    </select>
+                  </div>
+
+                  {/* Program Field */}
+                  <div>
+                    <label className="block text-sm font-medium text-on-surface mb-2">
+                      {t("settings.program.label")}
+                    </label>
+                    <input
+                      type="text"
+                      value={program}
+                      onChange={(e) => handleProgramChange(e.target.value)}
+                      placeholder={t("settings.program.placeholder")}
+                      className="w-full px-4 py-3 rounded-lg border border-outline bg-surface text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
+                      data-testid="program-field"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Language Section */}
+              <div className="bg-surface rounded-lg p-6 shadow-sm border border-outline">
+                <h2 className="text-lg font-semibold text-on-surface mb-4">
+                  {t("settings.language")}
+                </h2>
+                <p className="text-sm text-on-surface-variant mb-6">
+                  {t("settings.languageDescription")}
+                </p>
+
+                <div className="space-y-3">
+                  {availableLanguages.map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => switchLanguage(lang)}
+                      className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-colors ${
+                        language === lang
+                          ? "border-primary bg-primary-container text-on-primary-container"
+                          : "border-outline bg-surface text-on-surface hover:border-primary hover:bg-primary-container hover:bg-opacity-20"
+                      }`}
+                    >
+                      <span className="font-medium">
+                        {lang === "en" ? t("common.english") : t("common.german")}
                       </span>
-                    )}
-                  </button>
-                ))}
+                      {language === lang && (
+                        <span className="ml-2 text-xs">
+                          ✓ {t("common.language")}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}

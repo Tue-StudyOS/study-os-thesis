@@ -13,6 +13,22 @@
       "settings": "Settings",
       "help": "Help"
     },
+    "profile": {
+      "title": "User Profile"
+    },
+    "name": {
+      "label": "Full Name",
+      "placeholder": "Enter your full name"
+    },
+    "educationLevel": {
+      "label": "Education Level",
+      "bachelor": "Bachelor",
+      "master": "Master"
+    },
+    "program": {
+      "label": "Program/Field of Study",
+      "placeholder": "e.g., Computer Science, Physics"
+    },
     "language": "Language",
     "languageDescription": "Choose your preferred language",
     "help": {

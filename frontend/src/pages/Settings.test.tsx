@@ -37,7 +37,95 @@ describe("Settings page", () => {
   it("displays Settings tab content by default", () => {
     renderSettings();
     expect(screen.getByTestId("settings-content")).toBeInTheDocument();
+    expect(screen.getByText("User Profile")).toBeInTheDocument();
     expect(screen.getByText("Language")).toBeInTheDocument();
+  });
+
+  it("renders name field", () => {
+    renderSettings();
+    expect(screen.getByTestId("name-field")).toBeInTheDocument();
+    expect(screen.getByText("Full Name *")).toBeInTheDocument();
+  });
+
+  it("renders education level dropdown with Bachelor and Master options", () => {
+    renderSettings();
+    const select = screen.getByTestId("education-level-select") as HTMLSelectElement;
+    expect(select).toBeInTheDocument();
+    expect(screen.getByText("Education Level")).toBeInTheDocument();
+    expect(select.options?.[0]?.text).toBe("Bachelor");
+    expect(select.options?.[1]?.text).toBe("Master");
+  });
+
+  it("renders program field", () => {
+    renderSettings();
+    expect(screen.getByTestId("program-field")).toBeInTheDocument();
+    expect(screen.getByText("Program/Field of Study")).toBeInTheDocument();
+  });
+
+  it("saves name to localStorage on input", () => {
+    renderSettings();
+    const nameField = screen.getByTestId("name-field") as HTMLInputElement;
+    fireEvent.change(nameField, { target: { value: "John Doe" } });
+    expect(localStorage.getItem("settings.name")).toBe("John Doe");
+    expect(nameField.value).toBe("John Doe");
+  });
+
+  it("saves education level to localStorage on select", () => {
+    renderSettings();
+    const select = screen.getByTestId("education-level-select") as HTMLSelectElement;
+    fireEvent.change(select, { target: { value: "master" } });
+    expect(localStorage.getItem("settings.educationLevel")).toBe("master");
+    expect(select.value).toBe("master");
+  });
+
+  it("saves program to localStorage on input", () => {
+    renderSettings();
+    const programField = screen.getByTestId("program-field") as HTMLInputElement;
+    fireEvent.change(programField, { target: { value: "Computer Science" } });
+    expect(localStorage.getItem("settings.program")).toBe("Computer Science");
+    expect(programField.value).toBe("Computer Science");
+  });
+
+  it("loads values from localStorage on mount", () => {
+    localStorage.setItem("settings.name", "Jane Smith");
+    localStorage.setItem("settings.educationLevel", "master");
+    localStorage.setItem("settings.program", "Physics");
+
+    renderSettings();
+
+    const nameField = screen.getByTestId("name-field") as HTMLInputElement;
+    const select = screen.getByTestId("education-level-select") as HTMLSelectElement;
+    const programField = screen.getByTestId("program-field") as HTMLInputElement;
+
+    expect(nameField.value).toBe("Jane Smith");
+    expect(select.value).toBe("master");
+    expect(programField.value).toBe("Physics");
+  });
+
+  it("persists values after reload (simulated with localStorage)", () => {
+    const { unmount } = renderSettings();
+
+    const nameField = screen.getByTestId("name-field") as HTMLInputElement;
+    const select = screen.getByTestId("education-level-select") as HTMLSelectElement;
+    const programField = screen.getByTestId("program-field") as HTMLInputElement;
+
+    fireEvent.change(nameField, { target: { value: "Alex Johnson" } });
+    fireEvent.change(select, { target: { value: "bachelor" } });
+    fireEvent.change(programField, { target: { value: "Mathematics" } });
+
+    // Simulate unmounting
+    unmount();
+
+    // Simulate remounting (new render after reload)
+    renderSettings();
+
+    const newNameField = screen.getByTestId("name-field") as HTMLInputElement;
+    const newSelect = screen.getByTestId("education-level-select") as HTMLSelectElement;
+    const newProgramField = screen.getByTestId("program-field") as HTMLInputElement;
+
+    expect(newNameField.value).toBe("Alex Johnson");
+    expect(newSelect.value).toBe("bachelor");
+    expect(newProgramField.value).toBe("Mathematics");
   });
 
   it("switches to Help tab when clicked", () => {

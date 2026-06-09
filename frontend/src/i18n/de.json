@@ -13,6 +13,22 @@
       "settings": "Einstellungen",
       "help": "Hilfe"
     },
+    "profile": {
+      "title": "Benutzerprofil"
+    },
+    "name": {
+      "label": "Vollständiger Name",
+      "placeholder": "Geben Sie Ihren vollständigen Namen ein"
+    },
+    "educationLevel": {
+      "label": "Bildungsniveau",
+      "bachelor": "Bachelor",
+      "master": "Master"
+    },
+    "program": {
+      "label": "Studienprogramm/Fachrichtung",
+      "placeholder": "z.B. Informatik, Physik"
+    },
     "language": "Sprache",
     "languageDescription": "Wählen Sie Ihre bevorzugte Sprache",
     "help": {
