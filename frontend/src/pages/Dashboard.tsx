@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import TopBar from "../components/TopBar";
 import StatCard from "../components/StatCard";
 import SkillBar from "../components/SkillBar";
@@ -18,6 +19,7 @@ const SKILL_BAR_AXES = [
 ] as const;
 
 export default function Dashboard() {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const firstName = user?.email?.split("@")[0] ?? "User";
 
@@ -39,7 +41,7 @@ export default function Dashboard() {
 
   async function handleFile(file: File) {
     if (!file.name.toLowerCase().endsWith(".pdf")) {
-      setUploadError("Bitte nur PDF-Dateien hochladen.");
+      setUploadError(t("dashboard.pdfOnly"));
       return;
     }
     setUploading(true);
@@ -63,14 +65,14 @@ export default function Dashboard() {
       } else if (job.status === "failure") {
         setUploadError(
           (typeof job.error === "string" && job.error) ||
-            "Transcript konnte nicht verarbeitet werden. Bitte erneut versuchen.",
+            t("dashboard.processingError"),
         );
       } else {
         // Polling timed out — the worker is still processing.
-        setUploadError("Verarbeitung dauert noch an. Bitte später neu laden.");
+        setUploadError(t("dashboard.processingStill"));
       }
     } catch (err) {
-      setUploadError(err instanceof Error ? err.message : "Upload fehlgeschlagen.");
+      setUploadError(err instanceof Error ? err.message : t("dashboard.uploadFailed"));
     } finally {
       setUploading(false);
     }
@@ -112,9 +114,9 @@ export default function Dashboard() {
           <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <h2 className="font-display-lg text-display-lg text-primary tracking-tight max-w-3xl leading-tight">
-                Willkommen zurück, {firstName}.
+                {t("dashboard.welcome", { name: firstName })}
                 <span className="text-on-surface-variant font-headline-lg text-headline-lg mt-2 block font-normal">
-                  Bereit für dein nächstes Forschungsprojekt?
+                  {t("dashboard.readyForProject")}
                 </span>
               </h2>
             </div>
@@ -125,7 +127,7 @@ export default function Dashboard() {
               >
                 auto_awesome
               </span>
-              <span className="font-label-md text-label-md text-on-surface">AI Engine Online</span>
+              <span className="font-label-md text-label-md text-on-surface">{t("dashboard.aiEngineOnline")}</span>
             </div>
           </div>
 
@@ -158,10 +160,10 @@ export default function Dashboard() {
                         <div className="w-8 h-8 border-2 border-outline-variant border-t-primary rounded-full animate-spin" />
                       </div>
                       <h3 className="font-title-lg text-title-lg text-on-surface font-semibold mb-2 relative z-10">
-                        Analysiere Transcript…
+                        {t("dashboard.analyzing")}
                       </h3>
                       <p className="font-body-sm text-body-sm text-on-surface-variant max-w-md relative z-10">
-                        Die KI extrahiert deine Kurse und berechnet dein Kompetenzprofil.
+                        {t("dashboard.aiExtracts")}
                       </p>
                     </>
                   ) : hasProfile ? (
@@ -172,14 +174,16 @@ export default function Dashboard() {
                         </span>
                       </div>
                       <h3 className="font-title-lg text-title-lg text-on-surface font-semibold mb-2 relative z-10">
-                        Transcript erfolgreich hochgeladen
+                        {t("dashboard.uploadedSuccess")}
                       </h3>
                       <p className="font-body-sm text-body-sm text-on-surface-variant max-w-md mb-1 relative z-10">
                         {profile.program && `${profile.program}${profile.semester ? ` · Semester ${profile.semester}` : ""} · `}
-                        Zuletzt aktualisiert: {new Date(profile.updated_at).toLocaleDateString("de-DE")}
+                        {t("dashboard.lastUpdated", {
+                          date: new Date(profile.updated_at).toLocaleDateString(i18n.language === "de" ? "de-DE" : "en-US")
+                        })}
                       </p>
                       <p className="font-body-sm text-body-sm text-on-surface-variant max-w-md mb-6 relative z-10">
-                        Klicke, um ein neues Transcript hochzuladen.
+                        {t("dashboard.clickToUpload")}
                       </p>
                     </>
                   ) : (
@@ -188,15 +192,14 @@ export default function Dashboard() {
                         <span className="material-symbols-outlined text-[32px]">upload_file</span>
                       </div>
                       <h3 className="font-title-lg text-title-lg text-on-surface font-semibold mb-2 relative z-10">
-                        Transcript of Records hochladen
+                        {t("dashboard.uploadTranscript")}
                       </h3>
                       <p className="font-body-sm text-body-sm text-on-surface-variant max-w-md mb-6 relative z-10">
-                        Ziehe dein PDF-Dokument hierher oder klicke, um eine Datei auszuwählen.
-                        Unsere AI analysiert deine akademische Historie in Sekunden.
+                        {t("dashboard.dragDrop")}
                       </p>
                       <button className="bg-surface border border-outline-variant text-primary font-label-md text-label-md py-2.5 px-6 rounded-lg flex items-center gap-2 hover:bg-surface-container-high transition-colors relative z-10 shadow-sm">
                         <span className="material-symbols-outlined text-[18px]">folder_open</span>
-                        Datei auswählen
+                        {t("dashboard.selectFile")}
                       </button>
                     </>
                   )}
@@ -212,7 +215,7 @@ export default function Dashboard() {
               {/* Quick Stats */}
               <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
                 <StatCard
-                  label="Aktueller Notendurchschnitt"
+                  label={t("dashboard.gpa")}
                   value={profileLoading ? "…" : profile?.gpa != null ? profile.gpa.toFixed(2) : "–"}
                   unit="GPA"
                   icon="grade"
@@ -220,7 +223,7 @@ export default function Dashboard() {
                     profile?.gpa != null ? (
                       <div className="flex items-center gap-1 text-tertiary-container font-label-md text-label-md bg-tertiary-fixed/20 w-fit px-2 py-1 rounded">
                         <span className="material-symbols-outlined text-[14px]">grade</span>
-                        Deutsch: {profile.gpa.toFixed(2)}
+                        {t("dashboard.german")}: {profile.gpa.toFixed(2)}
                       </div>
                     ) : undefined
                   }
@@ -229,27 +232,27 @@ export default function Dashboard() {
                 <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 ambient-shadow flex-1 flex flex-col justify-between">
                   <div>
                     <h4 className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-4">
-                      Akademischer Fortschritt
+                      {t("dashboard.academicProgress")}
                     </h4>
                     <div className="flex justify-between items-end mb-4 border-b border-outline-variant/30 pb-4">
                       <div>
                         <span className="block font-headline-md text-headline-md text-on-surface font-semibold">
                           {profileLoading ? "…" : totalCredits != null ? Math.round(totalCredits) : "–"}
                         </span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">Credits (ECTS)</span>
+                        <span className="font-body-sm text-body-sm text-on-surface-variant">{t("dashboard.credits")}</span>
                       </div>
                       <div className="text-right">
                         <span className="block font-headline-md text-headline-md text-on-surface font-semibold">
                           {profileLoading ? "…" : profile ? profile.courses.length : "–"}
                         </span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">Kurse</span>
+                        <span className="font-body-sm text-body-sm text-on-surface-variant">{t("dashboard.courseCount")}</span>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
                     <div className={`w-2 h-2 rounded-full ${hasProfile ? "bg-tertiary-container" : "bg-outline-variant"} animate-pulse`} />
                     <span className="font-label-md text-label-md text-on-surface-variant">
-                      {profileLoading ? "Lädt…" : hasProfile ? "Profil aktualisiert" : "Wartet auf Transcript"}
+                      {profileLoading ? t("dashboard.loading") : hasProfile ? t("dashboard.profileUpdated") : t("dashboard.waitingForTranscript")}
                     </span>
                   </div>
                 </div>
@@ -261,11 +264,11 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-title-lg text-title-lg text-primary font-semibold flex items-center gap-2">
                 <span className="material-symbols-outlined">radar</span>
-                Kompetenzprofil
+                {t("dashboard.competencyProfile")}
               </h3>
               <span className="bg-surface-container border border-outline-variant text-on-surface-variant font-label-md text-label-md px-3 py-1 rounded-full flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px]">auto_awesome</span>
-                AI Generiert
+                {t("dashboard.aiGenerated")}
               </span>
             </div>
 
@@ -275,11 +278,10 @@ export default function Dashboard() {
                 <div className="absolute inset-0 glass-panel z-20 flex flex-col items-center justify-center rounded-xl">
                   <span className="material-symbols-outlined text-[48px] text-primary/40 mb-4">lock</span>
                   <h4 className="font-headline-md text-headline-md text-primary mb-2 text-center">
-                    Profil noch unvollständig
+                    {t("dashboard.profileIncomplete")}
                   </h4>
                   <p className="font-body-md text-body-md text-on-surface-variant max-w-md text-center">
-                    Lade dein aktuelles Transcript of Records hoch, um deine detaillierte
-                    Kompetenzanalyse freizuschalten.
+                    {t("dashboard.uploadToUnlock")}
                   </p>
                 </div>
               )}
@@ -299,7 +301,7 @@ export default function Dashboard() {
                   <div className="mt-6 bg-surface-container border border-outline-variant/50 rounded-lg p-6">
                     <h4 className="font-title-lg text-title-lg text-primary mb-4 flex items-center gap-2">
                       <span className="material-symbols-outlined text-tertiary-container">lightbulb</span>
-                      Kurse aus deinem Transcript
+                      {t("dashboard.coursesFromTranscript")}
                     </h4>
                     <div className="max-h-48 overflow-y-auto space-y-1">
                       {profile.courses.map((c) => (

@@ -2,7 +2,10 @@
   "common": {
     "language": "Sprache",
     "english": "English",
-    "german": "Deutsch"
+    "german": "Deutsch",
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "success": "Erfolg"
   },
   "settings": {
     "title": "Einstellungen",
@@ -20,6 +23,73 @@
   },
   "dashboard": {
     "title": "Übersicht",
-    "welcome": "Willkommen"
+    "welcome": "Willkommen zurück, {{name}}.",
+    "readyForProject": "Bereit für dein nächstes Forschungsprojekt?",
+    "aiEngineOnline": "AI Engine Online",
+    "uploadTranscript": "Transcript of Records hochladen",
+    "dragDrop": "Ziehe dein PDF-Dokument hierher oder klicke, um eine Datei auszuwählen. Unsere AI analysiert deine akademische Historie in Sekunden.",
+    "selectFile": "Datei auswählen",
+    "pdfOnly": "Bitte laden Sie nur PDF-Dateien hoch.",
+    "processingError": "Transcript konnte nicht verarbeitet werden. Bitte erneut versuchen.",
+    "processingStill": "Verarbeitung dauert noch an. Bitte später neu laden.",
+    "uploadFailed": "Upload fehlgeschlagen.",
+    "analyzing": "Analysiere Transcript…",
+    "aiExtracts": "Die KI extrahiert deine Kurse und berechnet dein Kompetenzprofil.",
+    "uploadedSuccess": "Transcript erfolgreich hochgeladen",
+    "lastUpdated": "Zuletzt aktualisiert: {{date}}",
+    "clickToUpload": "Klicke, um ein neues Transcript hochzuladen.",
+    "gpa": "Aktueller Notendurchschnitt",
+    "academicProgress": "Akademischer Fortschritt",
+    "credits": "Credits (ECTS)",
+    "courseCount": "Kurse",
+    "loading": "Lädt…",
+    "profileUpdated": "Profil aktualisiert",
+    "waitingForTranscript": "Wartet auf Transcript",
+    "competencyProfile": "Kompetenzprofil",
+    "aiGenerated": "AI Generiert",
+    "profileIncomplete": "Profil noch unvollständig",
+    "uploadToUnlock": "Lade dein aktuelles Transcript of Records hoch, um deine detaillierte Kompetenzanalyse freizuschalten.",
+    "coursesFromTranscript": "Kurse aus deinem Transcript",
+    "german": "Deutsch"
+  },
+  "chat": {
+    "title": "Thesis finden",
+    "search": "Suche",
+    "noResults": "Keine Ergebnisse gefunden",
+    "loading": "Vorschläge werden geladen..."
+  },
+  "chairs": {
+    "title": "Lehrstuhl-Explorer",
+    "search": "Lehrstühle durchsuchen",
+    "noResults": "Keine Lehrstühle gefunden",
+    "allChairs": "Alle Lehrstühle"
+  },
+  "proposals": {
+    "title": "Meine Anträge",
+    "new": "Neuer Antrag",
+    "noProposals": "Noch keine Anträge",
+    "status": "Status",
+    "date": "Datum"
+  },
+  "admin": {
+    "title": "Admin-Panel",
+    "users": "Benutzer",
+    "system": "System",
+    "logs": "Protokolle"
+  },
+  "login": {
+    "title": "Anmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "register": "Noch kein Konto? Registrieren"
+  },
+  "register": {
+    "title": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "submit": "Registrieren",
+    "login": "Bereits registriert? Anmelden"
   }
 }

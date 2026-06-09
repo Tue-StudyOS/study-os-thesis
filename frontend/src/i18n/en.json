@@ -2,7 +2,10 @@
   "common": {
     "language": "Language",
     "english": "English",
-    "german": "Deutsch"
+    "german": "Deutsch",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
   },
   "settings": {
     "title": "Settings",
@@ -20,6 +23,73 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Welcome"
+    "welcome": "Welcome back, {{name}}.",
+    "readyForProject": "Ready for your next research project?",
+    "aiEngineOnline": "AI Engine Online",
+    "uploadTranscript": "Upload Transcript of Records",
+    "dragDrop": "Drag your PDF document here or click to select a file. Our AI analyzes your academic history in seconds.",
+    "selectFile": "Select File",
+    "pdfOnly": "Please upload PDF files only.",
+    "processingError": "Transcript could not be processed. Please try again.",
+    "processingStill": "Processing is still in progress. Please reload later.",
+    "uploadFailed": "Upload failed.",
+    "analyzing": "Analyzing Transcript…",
+    "aiExtracts": "The AI extracts your courses and calculates your competency profile.",
+    "uploadedSuccess": "Transcript uploaded successfully",
+    "lastUpdated": "Last updated: {{date}}",
+    "clickToUpload": "Click to upload a new transcript.",
+    "gpa": "Current GPA",
+    "academicProgress": "Academic Progress",
+    "credits": "Credits (ECTS)",
+    "courseCount": "Courses",
+    "loading": "Loading…",
+    "profileUpdated": "Profile updated",
+    "waitingForTranscript": "Waiting for transcript",
+    "competencyProfile": "Competency Profile",
+    "aiGenerated": "AI Generated",
+    "profileIncomplete": "Profile incomplete",
+    "uploadToUnlock": "Upload your current Transcript of Records to unlock your detailed competency analysis.",
+    "coursesFromTranscript": "Courses from your transcript",
+    "german": "German"
+  },
+  "chat": {
+    "title": "Find Thesis",
+    "search": "Search",
+    "noResults": "No results found",
+    "loading": "Loading proposals..."
+  },
+  "chairs": {
+    "title": "Chair Explorer",
+    "search": "Search chairs",
+    "noResults": "No chairs found",
+    "allChairs": "All Chairs"
+  },
+  "proposals": {
+    "title": "My Proposals",
+    "new": "New Proposal",
+    "noProposals": "No proposals yet",
+    "status": "Status",
+    "date": "Date"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "users": "Users",
+    "system": "System",
+    "logs": "Logs"
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "register": "Don't have an account? Register"
+  },
+  "register": {
+    "title": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "submit": "Register",
+    "login": "Already have an account? Login"
   }
 }
