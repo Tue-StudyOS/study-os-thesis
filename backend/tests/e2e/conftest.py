@@ -112,18 +112,47 @@ def _mock_chair_service():
     return svc
 
 
+# Global state for student service mock (shared across test calls within a session)
+_student_state = {
+    "user_id": 1,
+    "full_name": None,
+    "education_level": None,
+    "program": "CS",
+    "semester": 4,
+    "gpa": 1.7,
+    "courses": [],
+}
+
+
 def _mock_student_service():
     svc = AsyncMock()
-    fake_profile = SimpleNamespace(
-        user_id=1,
-        program="CS",
-        semester=4,
-        gpa=1.7,
-        updated_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
-        courses=[],
-    )
-    svc.get_profile.return_value = fake_profile
-    svc.upload_transcript.return_value = fake_profile
+
+    def _make_profile():
+        return SimpleNamespace(
+            user_id=_student_state["user_id"],
+            full_name=_student_state["full_name"],
+            education_level=_student_state["education_level"],
+            program=_student_state["program"],
+            semester=_student_state["semester"],
+            gpa=_student_state["gpa"],
+            updated_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
+            courses=_student_state["courses"],
+        )
+
+    svc.get_profile.return_value = _make_profile()
+    svc.upload_transcript.return_value = _make_profile()
+
+    async def mock_update_profile(user_id, *, full_name=None, education_level=None, program=None):
+        # Update state with provided values
+        if full_name is not None:
+            _student_state["full_name"] = full_name
+        if education_level is not None:
+            _student_state["education_level"] = education_level
+        if program is not None:
+            _student_state["program"] = program
+        return _make_profile()
+
+    svc.update_profile = mock_update_profile
     return svc
 
 
@@ -289,4 +318,21 @@ async def admin_client(_app, _celery_patch) -> AsyncIterator[AsyncClient]:
     transport = ASGITransport(app=_app)
     async with AsyncClient(transport=transport, base_url="http://test") as c:
         yield c
+    _app.dependency_overrides[get_current_user] = lambda: _student_user
+
+
+@pytest.fixture
+async def unauthenticated_client(_app, _celery_patch) -> AsyncIterator[AsyncClient]:
+    """HTTP client without authentication (will fail auth-required endpoints)."""
+    from app.auth.deps import get_current_user
+
+    # Clear the override to simulate no authentication
+    if get_current_user in _app.dependency_overrides:
+        del _app.dependency_overrides[get_current_user]
+
+    transport = ASGITransport(app=_app)
+    async with AsyncClient(transport=transport, base_url="http://test") as c:
+        yield c
+
+    # Restore the student user override
     _app.dependency_overrides[get_current_user] = lambda: _student_user
