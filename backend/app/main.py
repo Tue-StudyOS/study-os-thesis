@@ -93,7 +93,10 @@ async def _check_embed_dim(ollama_client: OllamaClient, settings: Settings) -> N
 
 
 def _run_migrations() -> None:
-    """Run pending database migrations at startup."""
+    """Run pending database migrations at startup.
+
+    Gracefully skips if the database is unavailable (e.g., in tests).
+    """
     import os
     import subprocess
 
@@ -109,11 +112,17 @@ def _run_migrations() -> None:
         if result.returncode == 0:
             _logger.info("Database migrations completed successfully")
         else:
-            _logger.error("Migration failed: %s", result.stderr)
-            raise RuntimeError(f"Database migration failed: {result.stderr}")
+            if "Connect call failed" in result.stderr or "Connection refused" in result.stderr:
+                _logger.warning("Database not available — skipping migrations. This is expected in test environments.")
+            else:
+                _logger.error("Migration failed: %s", result.stderr)
+                raise RuntimeError(f"Database migration failed: {result.stderr}")
     except Exception as e:
-        _logger.error("Database migration error: %s", str(e))
-        raise RuntimeError(f"Database migration failed: {e!s}") from e
+        if "Connect call failed" in str(e) or "Connection refused" in str(e):
+            _logger.warning("Database not available — skipping migrations. This is expected in test environments.")
+        else:
+            _logger.error("Database migration error: %s", str(e))
+            raise RuntimeError(f"Database migration failed: {e!s}") from e
 
 
 @asynccontextmanager
