@@ -229,6 +229,13 @@ dist/
 .DS_Store
 Thumbs.db
 
+# --- Claude Project Context (local only, never commit) ---
+PROJECT_CONTEXT.md
+update-context.sh
+COMBINED_PR_GUIDE.md
+ISSUE_ROUTER.md
+WORKFLOW.md
+
 # --- Project-local runtime ---
 # Backend log files
 backend/logs/
