@@ -6,6 +6,12 @@ import logging
 from typing import Any
 
 from app.scraper.constants.tasks import (
+    DISCOVER_CHAIR_EMPLOYEES_COMPLETE_EVENT,
+    DISCOVER_CHAIR_EMPLOYEES_DEFAULT_RETRY_DELAY_SECONDS,
+    DISCOVER_CHAIR_EMPLOYEES_MAX_RETRIES,
+    DISCOVER_CHAIR_EMPLOYEES_SOFT_TIME_LIMIT_SECONDS,
+    DISCOVER_CHAIR_EMPLOYEES_TASK_NAME,
+    DISCOVER_CHAIR_EMPLOYEES_TIME_LIMIT_SECONDS,
     ENRICH_PAPER_COMPLETE_EVENT,
     ENRICH_PAPER_DEFAULT_RETRY_DELAY_SECONDS,
     ENRICH_PAPER_MAX_RETRIES,
@@ -340,4 +346,108 @@ def enrich_paper(self: Any, paper_id: int, user_id: int, job_id: str, force: boo
         redis_url=settings.redis_url,
         work=lambda: _enrich_paper_work(paper_id, force, settings),
         success_event=ENRICH_PAPER_COMPLETE_EVENT,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Task: discover_chair_employees  (find team members on chair website)
+# ---------------------------------------------------------------------------
+
+
+async def _discover_chair_employees_work(
+    chair_id: int,
+    user_id: int,
+    llm_port: Any = None,
+    chair_repo: Any = None,
+    researcher_service: Any = None,
+    settings: Any = None,
+) -> dict:
+    """Discover researchers from a chair website and upsert them."""
+    from app.chairs.repository import ChairRepository
+    from app.db import SessionLocal
+    from app.exceptions import NotFoundException
+    from app.researchers.schemas import ResearcherCreate
+    from app.researchers.service import ResearcherService
+    from app.scraper.adapters.chair_discovery import ChairDiscoveryAdapter
+
+    async with SessionLocal() as session:
+        if chair_repo is None:
+            chair_repo = ChairRepository(session)
+        if researcher_service is None:
+            researcher_service = ResearcherService(session)
+        if llm_port is None:
+            from app.llm.factory import build_chat_client
+
+            if settings is None:
+                from app.config import get_settings
+
+                settings = get_settings()
+            llm_port = build_chat_client(settings)
+
+        chair = await chair_repo.get_by_id(chair_id)
+        if chair is None:
+            raise NotFoundException("Chair", chair_id)
+
+        if not chair.website_url:
+            logger.warning("discover_chair_employees: chair_id=%d has no website_url", chair_id)
+            return {"chair_id": chair_id, "discovered": 0, "error": "no_website_url"}
+
+        adapter = ChairDiscoveryAdapter(llm_port=llm_port)
+
+        try:
+            researchers = await adapter.discover_researchers(chair.website_url)
+        except Exception as e:
+            logger.error("discover_chair_employees: adapter failed for chair_id=%d: %s", chair_id, e)
+            return {"chair_id": chair_id, "discovered": 0, "error": str(e)}
+
+        discovered = 0
+        updated = 0
+        for researcher_info in researchers:
+            try:
+                data = ResearcherCreate(
+                    name=researcher_info.name,
+                    chair_id=chair_id,
+                    title=researcher_info.title,
+                    role=researcher_info.role,
+                    email=researcher_info.email,
+                    profile_url=researcher_info.profile_url,
+                    source_url=researcher_info.source_url,
+                )
+                result = await researcher_service.upsert_researcher(data)
+                if result.id is not None:
+                    discovered += 1
+                logger.info("discover_chair_employees: upserted researcher_id=%d chair_id=%d", result.id, chair_id)
+            except Exception as e:
+                logger.error("discover_chair_employees: upsert failed for %s in chair_id=%d: %s", researcher_info.name, chair_id, e)
+                continue
+
+        return {
+            "chair_id": chair_id,
+            "discovered": discovered,
+            "updated": updated,
+        }
+
+
+@celery_app.task(
+    bind=True,
+    name=DISCOVER_CHAIR_EMPLOYEES_TASK_NAME,
+    max_retries=DISCOVER_CHAIR_EMPLOYEES_MAX_RETRIES,
+    default_retry_delay=DISCOVER_CHAIR_EMPLOYEES_DEFAULT_RETRY_DELAY_SECONDS,
+    soft_time_limit=DISCOVER_CHAIR_EMPLOYEES_SOFT_TIME_LIMIT_SECONDS,
+    time_limit=DISCOVER_CHAIR_EMPLOYEES_TIME_LIMIT_SECONDS,
+)
+def discover_chair_employees(self: Any, chair_id: int, user_id: int, job_id: str) -> dict:
+    """Discover and upsert team members from a chair's website."""
+    from app.config import get_settings
+
+    settings = get_settings()
+    logger.info("discover_chair_employees: chair_id=%d job_id=%s", chair_id, job_id)
+
+    return execute_task(
+        self,
+        job_id=job_id,
+        user_id=user_id,
+        redis_url=settings.redis_url,
+        work=lambda: _discover_chair_employees_work(chair_id, user_id, settings=settings),
+        success_event=DISCOVER_CHAIR_EMPLOYEES_COMPLETE_EVENT,
     )

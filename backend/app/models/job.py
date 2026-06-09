@@ -19,6 +19,7 @@ class JobType(str, enum.Enum):
     generate_proposal = "generate_proposal"
     scrape_chair = "scrape_chair"
     scrape_researcher = "scrape_researcher"
+    discover_chair_employees = "discover_chair_employees"
     enrich_paper = "enrich_paper"
 
 

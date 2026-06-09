@@ -33,9 +33,14 @@ class EnrichedPaper(PaperCandidate):
 
 
 class ResearcherInfo(BaseModel):
-    """Researcher identity passed to paper-source adapters."""
+    """Researcher identity passed to paper-source adapters and chair-discovery."""
 
     name: str
     orcid: str | None = None
     affiliation: str | None = None
     chair_id: int | None = None
+    title: str | None = None
+    role: str | None = None
+    email: str | None = None
+    profile_url: str | None = None
+    source_url: str | None = None

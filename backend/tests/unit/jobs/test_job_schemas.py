@@ -21,6 +21,7 @@ class TestJobEnums:
             "generate_proposal",
             "scrape_chair",
             "scrape_researcher",
+            "discover_chair_employees",
             "enrich_paper",
         }
         actual = {e.value for e in JobType}
