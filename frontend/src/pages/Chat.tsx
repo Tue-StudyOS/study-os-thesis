@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../api/client";
 import TopBar from "../components/TopBar";
 import PaperCard, { type Paper } from "../components/PaperCard";
@@ -54,6 +55,7 @@ function formatTime(iso: string) {
 }
 
 export default function Chat() {
+  const { t } = useTranslation();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [active, setActive] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -175,7 +177,7 @@ export default function Chat() {
       if (status === "failure") {
         setError("The assistant could not complete this turn. Please try again.");
       } else if (status !== "success") {
-        setError("Still working on it — your reply will appear here once it's ready.");
+        setError(t("chat.stillWorking"));
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Send failed");
@@ -211,7 +213,7 @@ export default function Chat() {
               className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary text-on-primary font-label-md text-label-md hover:bg-primary/90 transition-colors text-[11px]"
             >
               <span className="material-symbols-outlined text-[14px]">add</span>
-              New
+              {t("chat.newButton")}
             </button>
             {sessions.map((s) => (
               <button
@@ -233,7 +235,7 @@ export default function Chat() {
             {active === null ? (
               <div className="flex flex-col items-center justify-center h-full gap-4">
                 <div className="w-8 h-8 border-2 border-outline-variant border-t-primary rounded-full animate-spin" />
-                <p className="font-body-sm text-on-surface-variant">Session wird geladen…</p>
+                <p className="font-body-sm text-on-surface-variant">{t("chat.sessionLoading")}</p>
               </div>
             ) : (
               <>
@@ -254,26 +256,23 @@ export default function Chat() {
                     </div>
                     <div className="bg-surface-container rounded-2xl rounded-tl-sm p-stack-md border border-outline-variant shadow-sm ai-glass-panel">
                       <div className="font-label-md text-label-md mb-unit ai-gradient-text-teal">
-                        ScholarAI Assistant
+                        {t("chat.assistantName")}
                       </div>
                       <p className="font-body-md text-body-md text-on-surface leading-relaxed">
-                        Hallo! Ich habe dein Transcript analysiert. Du hast starke
-                        Grundlagen in KI und Statistik. Worüber möchtest du heute
-                        mehr erfahren? Ich habe Zugriff auf aktuelle Publikationen
-                        und Lehrstuhl-Infos.
+                        {t("chat.greeting")}
                       </p>
                       <div className="flex flex-wrap gap-unit mt-stack-md">
                         <button
-                          onClick={() => setInput("Zeig mir aktuelle Forschungstrends")}
+                          onClick={() => setInput(t("chat.trendsSuggestion"))}
                           className="font-label-md text-[11px] px-3 py-1.5 rounded-full border border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary transition-colors bg-surface-container-lowest"
                         >
-                          Show research trends
+                          {t("chat.trendsSuggestion")}
                         </button>
                         <button
-                          onClick={() => setInput("Erkläre mir spezifische Lehrstühle")}
+                          onClick={() => setInput(t("chat.chairSuggestion"))}
                           className="font-label-md text-[11px] px-3 py-1.5 rounded-full border border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary transition-colors bg-surface-container-lowest"
                         >
-                          Explore specific Lehrstuhl
+                          {t("chat.chairSuggestion")}
                         </button>
                       </div>
                     </div>
@@ -308,7 +307,7 @@ export default function Chat() {
                     </div>
                     <div className="bg-surface-container rounded-2xl rounded-tl-sm p-stack-md border border-outline-variant shadow-sm ai-glass-panel">
                       <div className="font-label-md text-label-md mb-unit ai-gradient-text-teal">
-                        ScholarAI Assistant
+                        {t("chat.assistantName")}
                       </div>
                       <div className="flex gap-1 items-center">
                         <span className="w-2 h-2 bg-on-surface-variant rounded-full animate-bounce [animation-delay:0ms]" />
@@ -344,7 +343,7 @@ export default function Chat() {
                 }}
                 onKeyDown={handleKeyDown}
                 disabled={busy || active === null}
-                placeholder={active === null ? "Erstelle zuerst eine neue Session…" : "Forschungsfrage stellen… (Enter senden, Shift+Enter Zeilenumbruch)"}
+                placeholder={active === null ? t("chat.createSession") : t("chat.researchQuestion")}
                 rows={1}
                 className="flex-1 resize-none bg-surface-container border border-outline-variant focus:border-primary rounded-xl py-3 pl-4 pr-4 outline-none font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant transition-colors disabled:opacity-40"
                 style={{ minHeight: "48px", maxHeight: "160px", overflowY: "auto" }}
@@ -364,7 +363,7 @@ export default function Chat() {
             </form>
             <div className="mt-2 flex justify-between items-center px-1">
               <span className="font-label-md text-[10px] text-on-surface-variant uppercase tracking-wider">
-                AI kann Fehler machen. Wichtige Infos prüfen.
+                {t("chat.disclaimer")}
               </span>
             </div>
           </div>
@@ -374,7 +373,7 @@ export default function Chat() {
         <div className="hidden lg:flex col-span-4 flex-col gap-stack-md overflow-y-auto h-full pr-1">
           <h3 className="font-title-lg text-title-lg text-on-surface flex items-center gap-2 mb-unit shrink-0">
             <span className="material-symbols-outlined text-tertiary">trending_up</span>
-            Aktuelle Trends für dich
+            {t("chat.currentTrends")}
           </h3>
           {MOCK_PAPERS.map((paper) => (
             <PaperCard key={paper.id} paper={paper} />

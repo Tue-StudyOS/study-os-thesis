@@ -8,6 +8,7 @@
  * Scale: 0 (Unaware) → 4 (Expert), derived from German grades (1.0 best → 5.0 fail)
  */
 
+import { useTranslation } from "react-i18next";
 import type { StudentCourse } from "../api/students";
 
 const SIZE = 400;
@@ -171,6 +172,7 @@ interface SkillRadarProps {
 }
 
 export default function SkillRadar({ currentData }: SkillRadarProps) {
+  const { t } = useTranslation();
   const current = currentData ?? Array(N).fill(0);
 
   return (
@@ -262,23 +264,23 @@ export default function SkillRadar({ currentData }: SkillRadarProps) {
       {/* Legend */}
       <div className="flex-1 flex flex-col gap-6">
         <div className="flex flex-col gap-4 bg-surface-container-low p-6 rounded-lg">
-          <span className="font-title-lg text-primary font-semibold">Legende</span>
+          <span className="font-title-lg text-primary font-semibold">{t("dashboard.legend")}</span>
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <div className="w-4 h-4 rounded bg-error border border-error shrink-0" />
               <div>
-                <span className="block font-label-md text-on-surface">Aktueller Stand</span>
+                <span className="block font-label-md text-on-surface">{t("dashboard.currentLevel")}</span>
                 <span className="text-body-sm text-on-surface-variant">
-                  Basierend auf deinem Transcript
+                  {t("dashboard.basedOnTranscript")}
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-4 h-4 rounded bg-primary-container border border-surface-tint shrink-0" />
               <div>
-                <span className="block font-label-md text-on-surface">Zielprofil</span>
+                <span className="block font-label-md text-on-surface">{t("dashboard.targetProfile")}</span>
                 <span className="text-body-sm text-on-surface-variant">
-                  Anforderung für Master-Forschung
+                  {t("dashboard.masterRequirement")}
                 </span>
               </div>
             </div>
@@ -288,8 +290,7 @@ export default function SkillRadar({ currentData }: SkillRadarProps) {
         <div className="bg-tertiary-container/10 border border-tertiary-container/20 p-4 rounded-lg flex items-start gap-3">
           <span className="material-symbols-outlined text-tertiary-container mt-0.5">info</span>
           <p className="text-body-sm text-on-tertiary-container font-medium">
-            Die Achsen werden aus deinen Kursnamen abgeleitet. Lade dein Transcript hoch, um dein
-            persönliches Kompetenzprofil zu sehen.
+            {t("dashboard.radarInfo")}
           </p>
         </div>
       </div>

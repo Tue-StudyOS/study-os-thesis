@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import TopBar from "../components/TopBar";
 import { ChairDetailHero, ChairListView, professorName } from "../components/chairs";
 import { LatestPublicationsTable, PaperDetailPanel } from "../components/publications";
@@ -30,6 +31,7 @@ function ChairDetailPanel({
   onProposals: (id: number) => void;
   onPapers: (id: number) => void;
 }) {
+  const { t } = useTranslation();
   const [chair, setChair] = useState<Chair | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,9 +40,9 @@ function ChairDetailPanel({
     setLoading(true);
     getChair(chairId)
       .then(setChair)
-      .catch((e) => setError(e instanceof Error ? e.message : "Fehler"))
+      .catch((e) => setError(e instanceof Error ? e.message : t("chairs.error")))
       .finally(() => setLoading(false));
-  }, [chairId]);
+  }, [chairId, t]);
 
   return (
     <>
@@ -48,7 +50,7 @@ function ChairDetailPanel({
       <aside className="fixed right-0 top-0 z-50 flex h-full w-full max-w-[560px] flex-col overflow-hidden bg-surface shadow-2xl">
         <div className="flex h-[86px] items-center justify-between border-b border-outline-variant px-7">
           <h2 className="truncate pr-5 font-headline-md text-[28px] font-semibold text-on-surface">
-            {loading ? "Lädt..." : chair?.name ?? "Lehrstuhl"}
+            {loading ? t("chairs.loading") : chair?.name ?? t("chairs.chair")}
           </h2>
           <button
             onClick={onClose}
@@ -92,7 +94,7 @@ function ChairDetailPanel({
               )}
 
               <section>
-                <h3 className="font-title-lg text-[20px] font-semibold text-on-surface">Beschreibung</h3>
+                <h3 className="font-title-lg text-[20px] font-semibold text-on-surface">{t("chairs.description")}</h3>
                 <p className="mt-3 font-body-md text-[18px] leading-relaxed text-on-surface-variant">
                   {chair.short_description}
                 </p>
@@ -109,14 +111,14 @@ function ChairDetailPanel({
                 className="flex w-full items-center justify-center gap-3 rounded-[4px] bg-secondary-container px-4 py-4 font-label-md text-[14px] text-on-secondary-container hover:opacity-90"
               >
                 <span className="material-symbols-outlined text-[22px]">article</span>
-                Alle Papers ansehen
+                {t("chairs.viewPapers")}
               </button>
               <button
                 onClick={() => onProposals(chair.id)}
                 className="flex w-full items-center justify-center gap-3 rounded-[4px] bg-primary px-4 py-4 font-label-md text-[14px] text-on-primary hover:bg-primary-container hover:text-on-primary-container"
               >
                 <span className="material-symbols-outlined text-[22px]">description</span>
-                Proposals für diesen Lehrstuhl ansehen
+                {t("chairs.viewProposals")}
               </button>
             </div>
           </div>
@@ -127,6 +129,7 @@ function ChairDetailPanel({
 }
 
 export default function ChairExplorer() {
+  const { t } = useTranslation();
   const { chairParam } = useParams<{ chairParam: string }>();
   const [chairs, setChairs] = useState<Chair[]>([]);
   const [papers, setPapers] = useState<Paper[]>([]);
@@ -153,9 +156,9 @@ export default function ChairExplorer() {
         setChairs(nextChairs);
         setTheses(nextTheses);
       })
-      .catch((e) => setError(e instanceof Error ? e.message : "Fehler beim Laden der Lehrstühle"))
+      .catch((e) => setError(e instanceof Error ? e.message : t("chairs.loadChairsError")))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (chairs.length === 0) {
@@ -172,8 +175,8 @@ export default function ChairExplorer() {
       .then((counts) => {
         setPaperCountsByChair(Object.fromEntries(counts));
       })
-      .catch((e) => setError(e instanceof Error ? e.message : "Fehler beim Laden der Paper-Zahlen"));
-  }, [chairs]);
+      .catch((e) => setError(e instanceof Error ? e.message : t("chairs.loadPapersCountError")));
+  }, [chairs, t]);
 
   const filtered = useMemo(
     () =>
@@ -320,13 +323,13 @@ export default function ChairExplorer() {
               setSyncByChairId((current) =>
                 setChairSyncStatus(current, chairId, {
                   state: "error",
-                  error: e instanceof Error ? e.message : "Fehler beim Wiederherstellen des Sync-Jobs",
+                  error: e instanceof Error ? e.message : t("chairs.restoreSyncError"),
                 }),
               );
             });
         }
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Fehler beim Laden aktiver Sync-Jobs");
+        setError(e instanceof Error ? e.message : t("chairs.loadSyncJobsError"));
       }
     }
 
@@ -356,7 +359,7 @@ export default function ChairExplorer() {
   return (
     <div className="flex min-h-screen flex-col bg-surface-bright">
       <TopBar
-        title={featured?.name ?? "Lehrstuhl-Explorer"}
+        title={featured?.name ?? t("chairs.title")}
         showSearch
         searchValue={search}
         onSearchChange={setSearch}
@@ -395,8 +398,8 @@ export default function ChairExplorer() {
           {!loading && !error && chairs.length === 0 && (
             <div className="flex flex-col items-center justify-center gap-3 py-24 text-on-surface-variant">
               <span className="material-symbols-outlined text-[48px]">school</span>
-              <p className="font-body-lg">Noch keine Lehrstühle erfasst.</p>
-              <p className="font-body-sm">Admins können Lehrstühle über die Admin-Seite anlegen.</p>
+              <p className="font-body-lg">{t("chairs.noChairstFound")}</p>
+              <p className="font-body-sm">{t("chairs.adminCanCreate")}</p>
             </div>
           )}
 
@@ -405,10 +408,10 @@ export default function ChairExplorer() {
               <section className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                 <div>
                   <h1 className="font-serif text-[48px] font-bold leading-none text-on-surface md:text-[64px]">
-                    Lehrstuhl-Explorer
+                    {t("chairs.title")}
                   </h1>
                   <p className="mt-2 max-w-2xl font-body-md text-[16px] text-on-surface-variant">
-                    Browse all research chairs and open a focused repository dashboard for each chair.
+                    {t("chairs.browse")}
                   </p>
                 </div>
                 <span className="font-label-md text-[13px] text-on-surface-variant">
@@ -427,7 +430,7 @@ export default function ChairExplorer() {
 
           {!loading && !error && isChairDetailRoute && !featured && (
             <div className="rounded-[6px] border border-outline-variant bg-surface-container-lowest p-6 font-body-md text-on-surface-variant">
-              Chair not found.
+              {t("chairs.chairNotFound")}
             </div>
           )}
 

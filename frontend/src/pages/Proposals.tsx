@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import TopBar from "../components/TopBar";
 import { listTheses, listMyProposals, type Thesis, type ThesisDifficulty, type SkillsRequired } from "../api/theses";
 import { listChairs, type Chair } from "../api/chairs";
@@ -69,6 +70,7 @@ function ProposalCard({
   chairName?: string | undefined;
   featured?: boolean;
 }) {
+  const { t } = useTranslation();
   const src = SOURCE_CONFIG[thesis.source] ?? SOURCE_CONFIG.student;
 
   return (
@@ -130,7 +132,7 @@ function ProposalCard({
         {/* Footer */}
         <div className="flex gap-3 mt-4 pt-3 border-t border-outline-variant/50">
           <button className="flex-1 py-2 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors text-center">
-            Details ansehen
+            {t("proposals.viewDetails")}
           </button>
         </div>
       </div>
@@ -183,6 +185,7 @@ function ProposalGrid({
 type TabId = "all" | "mine";
 
 export default function Proposals() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const filterChairId = searchParams.get("chair_id") ? Number(searchParams.get("chair_id")) : null;
 
@@ -201,9 +204,9 @@ export default function Proposals() {
       listChairs().then(setChairs),
       listMyProposals().then(setMyProposals),
     ])
-      .catch((e) => setError(e instanceof Error ? e.message : "Fehler beim Laden"))
+      .catch((e) => setError(e instanceof Error ? e.message : t("proposals.loadError")))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   const chairMap = Object.fromEntries(chairs.map((c) => [c.id, c.name]));
 
@@ -231,10 +234,10 @@ export default function Proposals() {
         <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-1">
-              Forschungsvorschläge
+              {t("proposals.researchProposals")}
             </h2>
             <p className="font-body-md text-body-md text-on-surface-variant">
-              {activeChairName ? `Gefiltert nach: ${activeChairName}` : "Übersicht aller verfügbaren Themenvorschläge"}
+              {activeChairName ? t("proposals.filteredBy", { chairName: activeChairName }) : t("proposals.allProposals")}
             </p>
           </div>
           <div className="relative">
@@ -244,7 +247,7 @@ export default function Proposals() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Vorschläge durchsuchen…"
+              placeholder={t("proposals.search")}
               className="pl-10 pr-4 py-2 rounded-lg border border-outline-variant bg-surface focus:border-primary font-body-sm text-body-sm text-on-surface w-full md:w-64 transition-all outline-none"
             />
           </div>
@@ -260,7 +263,7 @@ export default function Proposals() {
                 : "border-transparent text-on-surface-variant hover:text-on-surface"
             }`}
           >
-            Alle Vorschläge
+            {t("proposals.allTab")}
           </button>
           <button
             onClick={() => setTab("mine")}
@@ -270,7 +273,7 @@ export default function Proposals() {
                 : "border-transparent text-on-surface-variant hover:text-on-surface"
             }`}
           >
-            Meine Vorschläge
+            {t("proposals.myTab")}
             {myProposals.length > 0 && (
               <span className="bg-primary text-on-primary text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                 {myProposals.length}
@@ -298,7 +301,7 @@ export default function Proposals() {
           <ProposalGrid
             theses={filterTheses(allTheses)}
             chairMap={chairMap}
-            emptyText="Noch keine Vorschläge verfügbar."
+            emptyText={t("proposals.noAvailable")}
           />
         )}
 
@@ -307,17 +310,16 @@ export default function Proposals() {
             {myProposals.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 gap-4 text-on-surface-variant text-center">
                 <span className="material-symbols-outlined text-[48px]">auto_awesome</span>
-                <p className="font-body-lg font-semibold text-on-surface">Noch keine generierten Vorschläge</p>
+                <p className="font-body-lg font-semibold text-on-surface">{t("proposals.noGenerated")}</p>
                 <p className="font-body-md max-w-md">
-                  Chatte mit dem AI-Assistenten und bitte ihn, Proposals für dich zu generieren.
-                  Diese erscheinen dann hier.
+                  {t("proposals.generateWithAI")}
                 </p>
               </div>
             ) : (
               <ProposalGrid
                 theses={filterTheses(myProposals)}
                 chairMap={chairMap}
-                emptyText="Keine Vorschläge für diesen Filter gefunden."
+                emptyText={t("proposals.noMatching")}
               />
             )}
           </div>
