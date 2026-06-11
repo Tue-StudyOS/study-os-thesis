@@ -3,8 +3,6 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import {
   getOnboardingProfile,
-  clearOnboardingPrefill,
-  getOnboardingPrefill,
   inferNameFromEmail,
   isLikelyInTuebingen,
   saveOnboardingProfile,
@@ -15,9 +13,8 @@ export default function Onboarding() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const existingProfile = getOnboardingProfile(user);
-  const [prefill] = useState(() => getOnboardingPrefill());
   const inferredName = useMemo(() => (user ? inferNameFromEmail(user.email) : ""), [user]);
-  const [displayName, setDisplayName] = useState(existingProfile?.displayName ?? prefill?.displayName ?? inferredName);
+  const [displayName, setDisplayName] = useState(existingProfile?.displayName ?? inferredName);
   const [degree, setDegree] = useState(existingProfile?.degree ?? "");
   const [semester, setSemester] = useState(existingProfile?.semester ?? "");
   const [livesInTuebingen, setLivesInTuebingen] = useState<TuebingenResidence>(
@@ -90,7 +87,6 @@ export default function Onboarding() {
       locationSource: locationSource ?? "manual",
       completedAt: new Date().toISOString(),
     });
-    clearOnboardingPrefill();
     navigate("/dashboard", { replace: true });
   }
 
@@ -124,8 +120,7 @@ export default function Onboarding() {
                 Richte dein Profil ein
               </h2>
               <p className="font-body-sm text-body-sm text-on-surface-variant">
-                Wir nutzen deine Uni-Anmeldung als Startpunkt und ergänzen die Angaben,
-                die ScholarAI für bessere Vorschläge braucht.
+                Ergänze die Angaben, die ScholarAI für bessere Vorschläge braucht.
               </p>
             </div>
           </div>

@@ -1,6 +1,3 @@
-import secrets
-
-from app.auth.university import AlmaCredentialVerifier, UniversityCredentialVerifier, university_subject_email
 from app.auth_core.security import create_access_token, hash_password, verify_password
 from app.config import Settings
 from app.exceptions import (
@@ -11,16 +8,15 @@ from app.exceptions import (
 )
 from app.models import User, UserRole
 from app.users.repository import UserRepository
-from app.auth.schemas import LoginRequest, RegisterRequest, TokenResponse, UniversityLoginRequest, UniversityTokenResponse
+from app.auth.schemas import LoginRequest, RegisterRequest, TokenResponse
 
 
 class AuthService:
     """Business logic for authentication and user registration."""
 
-    def __init__(self, user_repo: UserRepository, settings: Settings, university_verifier: UniversityCredentialVerifier | None = None) -> None:
+    def __init__(self, user_repo: UserRepository, settings: Settings) -> None:
         self._user_repo = user_repo
         self._settings = settings
-        self._university_verifier = university_verifier or AlmaCredentialVerifier()
 
     async def register(self, data: RegisterRequest) -> User:
         if data.role == UserRole.admin:
@@ -45,26 +41,6 @@ class AuthService:
             raise InvalidCredentialsException()
 
         return self._token_for_user(user)
-
-    async def university_login(self, data: UniversityLoginRequest) -> UniversityTokenResponse:
-        identity = self._university_verifier.verify(data.username, data.password)
-        subject_email = university_subject_email(identity.username)
-
-        user = await self._user_repo.get_by_email(subject_email)
-        if not user:
-            user = await self._user_repo.create(
-                email=subject_email,
-                password_hash=await hash_password(secrets.token_urlsafe(32)),
-                role=UserRole.student,
-            )
-            await self._user_repo.commit()
-
-        token = self._token_for_user(user)
-        return UniversityTokenResponse(
-            access_token=token.access_token,
-            university_username=identity.username,
-            display_name=identity.display_name,
-        )
 
     def _token_for_user(self, user: User) -> TokenResponse:
         token = create_access_token(

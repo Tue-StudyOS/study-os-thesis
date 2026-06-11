@@ -16,11 +16,6 @@ class LoginRequest(BaseModel):
     password: str = Field(min_length=8, max_length=128)
 
 
-class UniversityLoginRequest(BaseModel):
-    username: str = Field(min_length=1, max_length=128)
-    password: str = Field(min_length=1, max_length=256)
-
-
 class UserOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -33,8 +28,3 @@ class UserOut(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
-
-
-class UniversityTokenResponse(TokenResponse):
-    university_username: str
-    display_name: str | None = None

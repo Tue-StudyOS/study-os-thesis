@@ -15,7 +15,6 @@ type AuthValue = {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  universityLogin: (username: string, password: string) => Promise<{ displayName: string | null; universityUsername: string }>;
   register: (email: string, password: string, role: Role) => Promise<void>;
   logout: () => void;
   refresh: () => Promise<void>;
@@ -57,16 +56,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await refresh();
   }, [refresh]);
 
-  const universityLogin = useCallback(async (username: string, password: string) => {
-    const tok = await api<{ access_token: string; display_name: string | null; university_username: string }>("/api/auth/university-login", {
-      method: "POST",
-      json: { username, password },
-    });
-    setToken(tok.access_token);
-    await refresh();
-    return { displayName: tok.display_name, universityUsername: tok.university_username };
-  }, [refresh]);
-
   const register = useCallback(async (email: string, password: string, role: Role) => {
     await api("/api/auth/register", { method: "POST", json: { email, password, role } });
     await api<{ access_token: string }>("/api/auth/login", {
@@ -82,8 +71,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, loading, login, universityLogin, register, logout, refresh }),
-    [user, loading, login, universityLogin, register, logout, refresh],
+    () => ({ user, loading, login, register, logout, refresh }),
+    [user, loading, login, register, logout, refresh],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
