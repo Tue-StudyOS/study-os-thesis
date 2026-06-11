@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { saveOnboardingPrefill } from "../onboarding";
 
 export default function Login() {
-  const { login } = useAuth();
+  const { universityLogin } = useAuth();
   const nav = useNavigate();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -13,10 +14,12 @@ export default function Login() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
     setBusy(true);
     try {
-      await login(email, password);
-      nav("/dashboard");
+      const prefill = await universityLogin(username, password);
+      saveOnboardingPrefill(prefill);
+      nav("/onboarding");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -53,7 +56,7 @@ export default function Login() {
             Willkommen zurück
           </h2>
           <p className="font-body-sm text-body-sm text-on-surface-variant mb-6">
-            Melde dich an, um deine Forschungsreise fortzusetzen.
+            Melde dich mit deinen Uni-Zugangsdaten an.
           </p>
 
           {error && (
@@ -65,14 +68,14 @@ export default function Login() {
           <form onSubmit={onSubmit} className="flex flex-col gap-4">
             <div>
               <label className="block font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-2">
-                E-Mail
+                ZDV-Kennung
               </label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
-                placeholder="student@university.de"
+                autoComplete="username"
+                placeholder="zxabc12"
                 className="w-full border border-outline-variant rounded-lg py-3 px-4 font-body-md text-body-md text-on-surface bg-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-on-surface-variant/60"
               />
             </div>
@@ -86,6 +89,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
                 placeholder="••••••••"
                 className="w-full border border-outline-variant rounded-lg py-3 px-4 font-body-md text-body-md text-on-surface bg-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-on-surface-variant/60"
               />

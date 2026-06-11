@@ -15,10 +15,11 @@ export default function Register() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
     setBusy(true);
     try {
       await register(email, password, role);
-      nav("/dashboard");
+      nav("/onboarding");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
@@ -55,7 +56,7 @@ export default function Register() {
             Konto erstellen
           </h2>
           <p className="font-body-sm text-body-sm text-on-surface-variant mb-6">
-            Starte deine akademische Forschungsreise mit ScholarAI.
+            Erstelle ein lokales Konto für Entwicklung und Tests.
           </p>
 
           {error && (

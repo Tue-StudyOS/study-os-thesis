@@ -12,6 +12,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import Onboarding from "./pages/Onboarding";
+import { hasCompletedOnboarding } from "./onboarding";
 
 /** Redirect to /login when unauthenticated; show spinner during hydration. */
 function RequireAuth({ children }: { children: JSX.Element }) {
@@ -47,6 +49,15 @@ function RequireAdmin({ children }: { children: JSX.Element }) {
   return children;
 }
 
+/** Send first-time users through onboarding before the main app shell. */
+function RequireOnboarding({ children }: { children: JSX.Element }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!hasCompletedOnboarding(user)) return <Navigate to="/onboarding" replace />;
+  return children;
+}
+
 export default function App() {
   return (
     <ErrorBoundary>
@@ -58,11 +69,23 @@ export default function App() {
         {/* Root redirect */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
+        {/* First-run onboarding */}
+        <Route
+          path="/onboarding"
+          element={
+            <RequireAuth>
+              <Onboarding />
+            </RequireAuth>
+          }
+        />
+
         {/* Protected routes — all wrapped in AppShell (sidebar + topbar layout) */}
         <Route
           element={
             <RequireAuth>
-              <AppShell />
+              <RequireOnboarding>
+                <AppShell />
+              </RequireOnboarding>
             </RequireAuth>
           }
         >
