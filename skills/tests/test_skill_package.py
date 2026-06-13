@@ -90,8 +90,16 @@ def test_skill_privacy_and_evidence_rules_are_explicit() -> None:
 
     assert "Keep student-private data out of shared resources." in design_skill
     assert "Do not store transcripts, grades, GPA, or private profile data" in profile_skill
+    assert "Accept raw student input in any form" in profile_skill
+    assert "Interview the student in small batches of 3-5 questions." in profile_skill
+    assert "programming languages, ML frameworks, robotics/simulation tools" in profile_skill
+    assert "One question batch is not enough for normal use." in profile_skill
+    assert "Explicitly infer and summarize research skills" in profile_skill
+    assert "Transcript of Records" in profile_skill
+    assert "optional evidence sources" in profile_skill
     assert "Do not fabricate citation counts" in paper_skill
     assert "Do not invent openings, quotas, team sizes, citation counts, or willingness to supervise." in chair_skill
+    assert "do not answer with a chair shortlist" in chair_skill
 
 
 def test_student_facing_skills_reject_old_runtime_dependencies() -> None:
@@ -155,8 +163,14 @@ def test_static_acceptance_fixture_covers_full_student_flow() -> None:
     contact_skill = (SKILLS_DIR / "draft-thesis-contact" / "SKILL.md").read_text(encoding="utf-8")
 
     assert "matching keywords" in profile_skill
+    assert "research core" in profile_skill
+    assert "professional or research experience" in profile_skill
+    assert "Research Skills" in (SKILLS_DIR / "build-student-profile" / "references" / "student-profile-schema.md").read_text(encoding="utf-8")
     assert "Philipp Berens" in professor_index
     assert "native websearch/browser tools" in chair_skill
-    assert "ranked shortlist" in advisor_skill.lower()
+    assert "Shallow Profile Guardrail" in chair_skill
+    assert "proposal hooks" in advisor_skill.lower()
+    assert "research-proposal sketches" in directions_skill
     assert "conversation starter" in directions_skill
+    assert "proposal sketch" in contact_skill
     assert "first-contact" in contact_skill

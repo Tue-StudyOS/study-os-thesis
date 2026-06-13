@@ -1,6 +1,6 @@
 ---
 name: draft-thesis-contact
-description: Draft concise, high-signal first-contact messages to potential thesis advisors using a student profile, relevant papers, and chair fit evidence. Use when asked to write or improve an email to a professor, PhD student, postdoc, lab, chair, or thesis supervisor.
+description: Draft concise, high-signal first-contact messages to potential thesis advisors using a deep student profile, a concrete research-proposal sketch, relevant papers, and chair fit evidence. Use when asked to write or improve an email to a professor, PhD student, postdoc, lab, chair, or thesis supervisor.
 ---
 
 # Draft Thesis Contact
@@ -9,8 +9,8 @@ Write first-contact messages that help students avoid generic cold emails.
 
 ## Workflow
 
-1. Use the student's in-session profile, the selected chair/person, and 1-2 concrete evidence points.
-2. Draft a short email with a clear subject, specific motivation, relevant background, and a low-friction ask.
+1. Use the student's in-session profile, the selected chair/person, one concrete proposal sketch, and 1-2 evidence points.
+2. Draft a short email with a clear subject, specific motivation, relevant background, a tentative research question, and a low-friction ask.
 3. Keep claims modest. Do not imply the chair has an advertised topic unless a current official source explicitly says so.
 4. Offer a shorter variant when the first draft is too long.
 

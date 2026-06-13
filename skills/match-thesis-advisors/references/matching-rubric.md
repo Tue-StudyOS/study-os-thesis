@@ -2,11 +2,12 @@
 
 Rank candidates by these criteria:
 
-1. Research fit: overlap between student interests and chair/researcher areas.
-2. Method fit: overlap between student skills and methods used in recent papers.
-3. Evidence quality: official pages, OpenAlex IDs, DOI links, recent papers, and last-updated dates.
-4. Feasibility: thesis level, prerequisites, likely scope, and required tooling.
-5. Risk: stale data, ambiguous affiliation, missing recent papers, or overbroad topic match.
+1. Proposal fit: evidence that the chair's work can support a concrete research question for this student.
+2. Research taste fit: overlap between the student's curiosity, preferred contribution type, and chair/researcher areas.
+3. Method fit: overlap between student skills and methods used in recent papers.
+4. Evidence quality: official pages, OpenAlex IDs, DOI links, recent papers, and last-updated dates.
+5. Feasibility: thesis level, prerequisites, likely scope, and required tooling.
+6. Risk: stale data, ambiguous affiliation, missing recent papers, or overbroad topic match.
 
 Use qualitative labels:
 

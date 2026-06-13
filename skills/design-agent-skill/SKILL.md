@@ -30,12 +30,12 @@ Create small, portable Agent Skills that another coding agent can use without kn
 
 For thesis discovery, split the system into focused skills:
 
-- `build-student-profile` extracts interests, courses, skills, constraints, and thesis preferences from the active conversation.
+- `build-student-profile` interviews the student deeply enough to capture research taste, motivation, skills, and constraints.
 - `find-recent-papers` uses the professor seed index plus native web/search tools to find recent papers and explain thesis relevance.
 - `find-university-chairs` starts from the professor seed index, then uses native web/search tools to identify labs, teams, and research areas.
-- `match-thesis-advisors` combines the student profile, papers, and chair profiles into an evidence-based ranking.
-- `generate-thesis-directions` turns matches and papers into thesis directions or conversation starters.
-- `draft-thesis-contact` drafts concise, specific first-contact messages.
+- `match-thesis-advisors` combines the deep student profile, papers, and chair evidence into proposal-relevant advisor matches.
+- `generate-thesis-directions` turns matches and papers into precise research-proposal sketches and conversation starters.
+- `draft-thesis-contact` drafts concise, specific first-contact messages around one proposal sketch.
 - `update-openalex-paper-index` defines the maintenance workflow for monthly OpenAlex index generation.
 - Meta skills create or update the skill package itself.
 
