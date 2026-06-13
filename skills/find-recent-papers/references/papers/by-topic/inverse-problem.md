@@ -1,0 +1,14 @@
+# Papers For inverse-problem
+
+Last updated: 2026-06-13
+
+### Scalable Bayesian Inference for Nonlinear Conservation Laws
+- Year: 2026
+- Authors: Tim Weiland, Philipp Hennig
+- Source: arXiv (Cornell University)
+- DOI: https://doi.org/10.48550/arxiv.2605.31127
+- OpenAlex: https://openalex.org/W7163072508
+- URL: https://doi.org/10.48550/arxiv.2605.31127
+- Keywords: Nonlinear system; Inference; Inverse problem; Computer science; Gaussian process
+- Thesis angle: Use this paper as evidence for a thesis conversation; refine the angle with the supervisor.
+- Abstract: Nonlinear conservation laws are at the heart of many of the most important dynamical systems in science and engineering. In practical applications, such systems are often subject to various sources of uncertainty, e.g. due to sparse or noisy measurements. Inferring physical quantities and fields of interest then becomes an ill-posed problem which both classical numerical methods and modern deep learning-based methods struggle to treat appropriately. Recent work has framed classical numerical methods as Bayesian inference under Gaussian process priors, resulting in a physics-aware treatment of uncertainties. Following this line of work, we develop a novel numerically conservative method for uncertainty-aware simulations of nonlinear conservation laws. We use recent sparse approximation techniques to scale up to large-scale forward and inverse problems. For forward simulation, we inherit the accuracy of classical solvers while providing structured uncertainty quantification. On inverse problems, we recover posteriors over nonparametric source fields in seconds -- outperforming neural baselines that take minutes to produce a less accurate point estimate.
