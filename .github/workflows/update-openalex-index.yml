@@ -1,0 +1,57 @@
+name: Update OpenAlex skill indexes
+
+on:
+  schedule:
+    - cron: "0 3 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-openalex-skill-indexes
+  cancel-in-progress: false
+
+jobs:
+  update-openalex-index:
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Update Markdown indexes
+        run: python scripts/update_openalex_index.py --mailto "${OPENALEX_MAILTO:-}" --summary-file openalex-update-summary.md
+        env:
+          OPENALEX_MAILTO: ${{ secrets.OPENALEX_MAILTO }}
+
+      - name: Install test dependencies
+        run: python -m pip install pytest
+
+      - name: Run skill tests
+        run: python -m pytest
+
+      - name: Run optional LLM evals
+        if: ${{ env.OPENAI_API_KEY != '' }}
+        run: |
+          python -m pip install deepeval
+          RUN_DEEPEVAL=1 OPENAI_API_KEY="${OPENAI_API_KEY}" python -m pytest -m eval
+
+      - name: Upload update log
+        uses: actions/upload-artifact@v4
+        with:
+          name: openalex-update-summary
+          path: openalex-update-summary.md
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: chore/update-openalex-skill-indexes
+          title: "chore: update OpenAlex skill indexes"
+          commit-message: "chore: update OpenAlex skill indexes"
+          body: "Automated monthly refresh of bundled thesis-finder skill Markdown indexes."

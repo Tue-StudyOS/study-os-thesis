@@ -1,0 +1,42 @@
+name: Package skill artifact
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "skills-v*"
+
+permissions:
+  contents: read
+
+jobs:
+  package-skills:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install test dependencies
+        run: python -m pip install pytest
+
+      - name: Run skill tests
+        run: python -m pytest
+
+      - name: Build artifact
+        run: |
+          mkdir -p dist/study-os-thesis-skills
+          cp -R skills scripts dist/study-os-thesis-skills/
+          mkdir -p dist/study-os-thesis-skills/docs/research
+          cp docs/research/skill_architecture_summary.md dist/study-os-thesis-skills/docs/research/
+          cp docs/research/skill_distribution.md dist/study-os-thesis-skills/docs/research/
+          cp pytest.ini dist/study-os-thesis-skills/
+          tar -czf dist/study-os-thesis-skills.tar.gz -C dist study-os-thesis-skills
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: study-os-thesis-skills
+          path: dist/study-os-thesis-skills.tar.gz
