@@ -17,9 +17,10 @@ Create a private, in-session profile that downstream thesis-finder skills can us
 6. Probe for concrete evidence: favorite lectures, seminars, exercises, papers, projects, internships, work experience, frustrating topics, tools they enjoy, methods they want to learn, and what kind of result would make the thesis feel successful.
 7. Explicitly infer and summarize research skills, not only interests: technical execution, experimental design, literature reading, mathematical comfort, data handling, engineering maturity, communication, and domain knowledge.
 8. Continue until the profile is strong enough to generate proposals, or explicitly label the remaining uncertainty.
-9. Normalize the profile into concise sections using `references/student-profile-schema.md`.
-10. Mark confidence levels when information is inferred rather than explicitly stated.
-11. Keep the profile in the current conversation only. Do not write it to shared skill files.
+9. Capture the student's degree program and thesis level. Use `references/tuebingen-degree-programs.md` to recognize University of Tübingen programs and the level each implies (for example, Machine Learning is Master only).
+10. Normalize the profile into concise sections using `references/student-profile-schema.md`.
+11. Mark confidence levels when information is inferred rather than explicitly stated.
+12. Keep the profile in the current conversation only. Do not write it to shared skill files.
 
 ## Output
 
