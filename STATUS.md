@@ -1,55 +1,56 @@
 # Status — StudyOS Thesis-Finder
 
-> **Dies ist die einzige laufend aktualisierte Datei.** Hier sammeln wir Fortschritt, Blocker, Schwierigkeiten und Entscheidungen. Der stabile Gesamtplan steht in [MASTERPLAN.md](MASTERPLAN.md).
+> **This is the only continuously updated file.** Here we collect progress, blockers, difficulties, and decisions. The stable overall plan is in [MASTERPLAN.md](MASTERPLAN.md).
 >
-> **Konvention:** Beim Arbeiten an einem Schritt hier den Status ändern, Schwierigkeiten notieren und unten im Log eine datierte Zeile ergänzen. Nicht den Masterplan editieren.
+> **Convention:** When working on a step, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Letztes Update:** 2026-06-18
-
----
-
-## Aktuelle Phase
-
-**Phase 1 — Datenfundament.** Ziel: verifizierter Forscher-Baum (Prof → PhD → Paper) für die Pilot-Lehrstühle, dann skaliert auf 47 Profs.
+**Last update:** 2026-06-18
 
 ---
 
-## Step-Status
+## Current phase
 
-Legende: ⬜ offen · 🟨 in Arbeit · ✅ fertig · ⛔ blockiert
+**Phase 1 — Data Foundation.** Goal: a verified researcher tree (Prof → PhD → Paper) for the pilot chairs, then scaled to 47 profs.
 
-| # | Step | Status | Owner | Notizen / Schwierigkeiten |
+---
+
+## Step status
+
+Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
+
+| # | Step | Status | Owner | Notes / difficulties |
 |---|---|---|---|---|
-| 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) Author-IDs für alle 47 Profs | ⬜ | – | Aktuell nur 7/47 in `researchers/INDEX.md`. Disambiguierung ist die Hürde. |
-| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) Ground-Truth für 3 Pilot-Lehrstühle | ⬜ | – | Maßstab, um "keiner vergessen" messbar zu machen. |
-| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) PhD-Discovery pro Lehrstuhl | ⬜ | – | Schwerster Teil: OpenAlex hat keine Betreuer→PhD-Kante. |
-| 4 | [#48](https://github.com/Tue-StudyOS/study-os-thesis/issues/48) Baum-Schema + Integrität | ⬜ | – | PhD-Ebene fehlt im aktuellen Schema. |
-| 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) Paper-Scrape + Beschreibung pro Person | ⬜ | – | Beschreibung/Zusammenfassung = LLM-Schritt; Entscheidung Abstract vs. LLM offen. |
-| 6 | [#50](https://github.com/Tue-StudyOS/study-os-thesis/issues/50) Validierungs-Harness | ⬜ | – | Anomalie-Checks statt Vollprüfung; Golden Record als Anker. |
-| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) Automation (Cron + PR + Overrides) | ⬜ | – | Override-Schutz, damit Re-Scrape manuelle Fixes nicht zerstört. |
+| 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) Resolve author IDs for all 47 profs | ⬜ | – | Only 7/47 currently in `researchers/INDEX.md`. Disambiguation is the hurdle. |
+| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) Ground truth for 3 pilot chairs | ⬜ | – | Benchmark to make "none forgotten" measurable. |
+| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) PhD discovery per chair | ⬜ | – | Hardest part: OpenAlex has no supervisor→PhD edge. |
+| 4 | [#48](https://github.com/Tue-StudyOS/study-os-thesis/issues/48) Tree schema + integrity | ⬜ | – | PhD level is missing in the current schema. |
+| 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) Paper scrape + description per person | ⬜ | – | Description/summary = LLM step; abstract-vs-LLM decision still open. |
+| 6 | [#50](https://github.com/Tue-StudyOS/study-os-thesis/issues/50) Validation harness | ⬜ | – | Anomaly checks instead of full review; golden record as anchor. |
+| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) Automation (cron + PR + overrides) | ⬜ | – | Override protection so the re-scrape does not destroy manual fixes. |
 
-**Gate Phase 1 → 2:** Step 6 grün · Golden Record reproduzierbar · Pilot-Recall ≥ 90 %.
-
----
-
-## Offene Entscheidungen
-
-- **Datenquelle zur Laufzeit:** Scraper-DB zuerst oder Live-Websearch zuerst? → später optimieren, blockiert Phase 1 nicht.
-- **Beschreibung/Zusammenfassung:** Abstract übernehmen (gratis, deterministisch) vs. LLM-Summary (schöner, teurer)?
-- **Scrape-Kadenz:** alle 2 Wochen vs. monatlich?
+**Gate Phase 1 → 2:** Step 6 green · golden record reproducible · pilot recall ≥ 90%.
 
 ---
 
-## Bekannte Schwierigkeiten / Risiken
+## Open decisions
 
-- **PhD-Discovery-Recall** — 47 heterogene Team-Seiten; ohne Ground Truth nicht messbar (siehe Step 2 → 3).
-- **Name→ID-Disambiguierung** — häufige Namen, PhDs mit wenigen Papern.
-- **Manuelle Korrekturen** — dürfen beim Re-Scrape nicht überschrieben werden (Step 7).
-- **30-MB-Upload-Limit** der Skills-API im Blick behalten, wenn der Baum wächst.
-- **Personendaten (DSGVO)** — PhD-Namen + Forschung werden gebündelt; öffentliche akademische Daten, aber bewusst dokumentieren.
+- **Runtime data source:** scraper DB first or live web search first? → optimize later, does not block Phase 1.
+- **Description/summary:** reuse abstract (free, deterministic) vs. LLM summary (nicer, costs more)?
+- **Scrape cadence:** every 2 weeks vs. monthly?
+
+---
+
+## Known difficulties / risks
+
+- **PhD discovery recall** — 47 heterogeneous team pages; not measurable without ground truth (see Step 2 → 3).
+- **Name→ID disambiguation** — common names, PhDs with few papers.
+- **Manual corrections** — must not be overwritten on re-scrape (Step 7).
+- **30 MB upload limit** of the Skills API to watch as the tree grows.
+- **Personal data (GDPR)** — PhD names + research are bundled; public academic data, but document it consciously.
 
 ---
 
 ## Log
 
-- **2026-06-18** — Masterplan + Status + Workflow angelegt. Phase 1 definiert, 7 Issues erstellt. Ausgangslage: 8 Skills funktionsfähig, Daten erst 7/47 Profs, 0 PhDs.
+- **2026-06-18** — Translated Masterplan + Status to English. Reviewed teammate (Valentin) commit `688f08d`: added degree-program awareness to `build-student-profile` (`tuebingen-degree-programs.md`) — degree program → thesis level (ML = Master-only) → scope (Bachelor 4mo / Master 6mo). Logged as a Phase 2 item in the Masterplan; does not affect Phase 1.
+- **2026-06-18** — Added Masterplan + Status + workflow. Defined Phase 1, created 7 issues (#45–#51). Starting point: 8 working skills, data only 7/47 profs, 0 PhDs.

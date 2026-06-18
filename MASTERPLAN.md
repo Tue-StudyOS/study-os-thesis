@@ -1,101 +1,102 @@
 # Masterplan — StudyOS Thesis-Finder
 
-> **Zweck:** Die herausgezoomte Sicht auf das gesamte Vorhaben. Diese Datei ist ein **Lookup** — sie beschreibt *was* gebaut wird, *in welcher Reihenfolge* und *warum*. Sie ändert sich selten.
+> **Purpose:** The zoomed-out view of the whole effort. This file is a **lookup** — it describes *what* we build, *in what order*, and *why*. It changes rarely.
 >
-> **Den aktuellen Fortschritt, offene Schwierigkeiten und Tagesnotizen findest du in [STATUS.md](STATUS.md)** — das ist die einzige Datei, die laufend aktualisiert wird.
+> **For current progress, open difficulties, and notes see [STATUS.md](STATUS.md)** — that is the only file that is updated continuously.
 
 ---
 
-## 1. Was wir bauen
+## 1. What we build
 
-Einen Satz portabler **Claude Skills**, die einen Studenten von vagen Interessen bis zur vorbereiteten Kontaktaufnahme mit einem passenden Thesis-Betreuer führen — ohne Backend, DB oder UI, allein über kuratierte Markdown-Daten + Live-Recherche.
+A set of portable **Claude Skills** that take a student from vague interests to a prepared first contact with a fitting thesis supervisor — with no backend, DB, or UI, driven only by curated Markdown data + live research.
 
-Der Ablauf der Skills:
+The skill flow:
 
 ```
-roher Input ("ich mag Deep Learning + Robotik")
+raw input ("I like deep learning + robotics")
    │
-   ▼  build-student-profile        tiefes Interview → strukturiertes Profil (nur in-session)
-   ▼  find-university-chairs        passende Lehrstühle aus der Datenbank + Live-Websearch
-   ▼  match-thesis-advisors         ranked Betreuer nach Fit + Evidenz
-   ▼  find-recent-papers            relevante Paper als Beleg
-   ▼  generate-thesis-directions    konkrete Thesis-Richtungen + Proposal-Hooks
-   ▼  draft-thesis-contact          erste Kontakt-Mail
+   ▼  build-student-profile        deep interview → structured profile (in-session only)
+   ▼  find-university-chairs        matching chairs from the database + live web search
+   ▼  match-thesis-advisors         supervisors ranked by fit + evidence
+   ▼  find-recent-papers            relevant papers as evidence
+   ▼  generate-thesis-directions    concrete thesis directions + proposal hooks
+   ▼  draft-thesis-contact          first contact email
 ```
 
-Plus Wartungs-Skills: `update-openalex-paper-index` (Daten-Refresh) und `design-agent-skill` (Meta).
+Plus maintenance skills: `update-openalex-paper-index` (data refresh) and `design-agent-skill` (meta).
 
 ---
 
-## 2. Die Datenstruktur — der Baum
+## 2. The data structure — the tree
 
-Das Herzstück ist eine **Baumstruktur** als Markdown-Datenbank:
+The core is a **tree structure** as a Markdown database:
 
 ```
-Professor  (Themenbereich + Beschreibung)
-   └── PhD  (Themenbereich + Beschreibung)
-          └── Paper (mit Zusammenfassung)
+Professor  (topic area + description)
+   └── PhD  (topic area + description)
+          └── Paper (with summary)
 ```
 
-Jeder Professor hat einen Themenbereich und eine Beschreibung; darunter alle seine PhDs mit eigenem Themenbereich; darunter deren Paper mit Zusammenfassung. Alles als `.md` nach dem Scrapen gespeichert, referenziell verknüpft.
+Every professor has a topic area and a description; beneath them all their PhDs with their own topic area; beneath those their papers with a summary. Everything saved as `.md` after scraping, referentially linked.
 
 ---
 
-## 3. Leitprinzip der Reihenfolge
+## 3. Ordering principle
 
-**Erst die Daten korrekt, dann alles andere.** Downstream-Qualität (Matching, Proposals) ist nicht prüfbar, solange die Datenbasis falsch oder unvollständig ist. Deshalb ist Phase 1 (Datenfundament) ein hartes Gate vor Phase 2 (Optimierung).
+**Get the data correct first, then everything else.** Downstream quality (matching, proposals) cannot be verified while the data is wrong or incomplete. So Phase 1 (data foundation) is a hard gate before Phase 2 (optimization).
 
-**De-Risk-Strategie:** Nicht "alle 47 Profs perfekt" als Gate, sondern **Pilot mit 3 Lehrstühlen → Pipeline + Validierung beweisen → auf 47 skalieren.**
+**De-risk strategy:** Don't make "all 47 profs perfect" the gate — instead **pilot on 3 chairs → prove the pipeline + validation → scale to 47.**
 
 ---
 
-## 4. Phase 1 — Datenfundament (aktuelle Phase)
+## 4. Phase 1 — Data Foundation (current phase)
 
-Das Epic "verifizierter Forscher-Baum". Reihenfolge = Abhängigkeit.
+The "verified researcher tree" epic. Order = dependency.
 
-| # | Issue | Worum es geht |
+| # | Issue | What it is about |
 |---|---|---|
-| 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) | **Author-IDs für alle 47 Profs** auflösen (Name+URI → OpenAlex-ID, mit Disambiguierung) |
-| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) | **Ground-Truth-Liste** für 3 Pilot-Lehrstühle (manuelle PhD-Soll-Liste als Messmaßstab) |
-| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) | **PhD-Discovery pro Lehrstuhl** (Team-Seite + Co-Autor-Graph; keiner vergessen) |
-| 4 | [#48](https://github.com/Tue-StudyOS/study-os-thesis/issues/48) | **Baum-Schema** Prof→PhD→Paper + referenzielle Integrität |
-| 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) | **Paper-Scrape + Themenbereich/Beschreibung** pro Person, als Baum-MD |
-| 6 | [#50](https://github.com/Tue-StudyOS/study-os-thesis/issues/50) | **Validierungs-Harness** (Anomalie-Checks + Stichproben + Golden Record) |
-| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) | **Automation** (Cron alle 2 Wochen, PR-Output, Override-Schutz, lautes Scheitern) |
+| 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) | **Resolve author IDs for all 47 profs** (name+URI → OpenAlex ID, with disambiguation) |
+| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) | **Ground-truth roster** for 3 pilot chairs (manual PhD list as the measuring stick) |
+| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) | **PhD discovery per chair** (team page + co-author graph; none forgotten) |
+| 4 | [#48](https://github.com/Tue-StudyOS/study-os-thesis/issues/48) | **Tree schema** Prof→PhD→Paper + referential integrity |
+| 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) | **Paper scrape + topic/description** per person, as tree MD |
+| 6 | [#50](https://github.com/Tue-StudyOS/study-os-thesis/issues/50) | **Validation harness** (anomaly checks + sampling + golden record) |
+| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) | **Automation** (cron every 2 weeks, PR output, override protection, loud failure) |
 
-Abhängigkeitsgraph:
+Dependency graph:
 
 ```
-1 (Prof-IDs) ─┐
-2 (Ground Truth) ─→ 3 (PhD-Discovery) ─→ 5 (Paper+Beschreibung) ─→ 6 (Validierung) ─→ 7 (Automation)
-4 (Schema) ───────────────────────────────┘
-                                                                         ↓
-                                                        Gate: erst wenn 6 grün → Phase 2
+1 (Prof IDs) ─┐
+2 (ground truth) ─→ 3 (PhD discovery) ─→ 5 (papers+description) ─→ 6 (validation) ─→ 7 (automation)
+4 (schema) ────────────────────────────────┘
+                                                                       ↓
+                                                      Gate: only once 6 is green → Phase 2
 ```
 
-**Gate Phase 1 → Phase 2:** Issue 6 (Validierung) ist grün, Golden Record reproduzierbar, Pilot-Recall ≥ 90 %.
+**Gate Phase 1 → Phase 2:** Issue 6 (validation) is green, golden record reproducible, pilot recall ≥ 90%.
 
 ---
 
-## 5. Phase 2 — Skill-Optimierung (nach dem Gate)
+## 5. Phase 2 — Skill optimization (after the gate)
 
-Erst sinnvoll, wenn die Daten stimmen.
+Only sensible once the data is correct.
 
-- **Baseline messen** — aktuelle Eval-Scores einfrieren, bevor irgendetwas geändert wird.
-- **Eval-Set erweitern** — pro Kern-Skill mehrere Cases (Happy-Path, flaches Profil, fehlende Infos, Adversarial), statt 1.
-- **Few-shot-Beispiele** in die Kern-Skills (`build-student-profile`, `find-university-chairs`, `match-thesis-advisors`).
-- **Guardrails vereinheitlichen** (Shallow-Profile-Schutz überall).
-- **End-to-End-Flow-Eval** über die ganze Skill-Kette.
-- **Judge kalibrieren** gegen menschliches Urteil.
+- **Measure a baseline** — freeze current eval scores before changing anything.
+- **Expand the eval set** — several cases per core skill (happy path, shallow profile, missing info, adversarial) instead of 1.
+- **Few-shot examples** in the core skills (`build-student-profile`, `find-university-chairs`, `match-thesis-advisors`).
+- **Unify guardrails** (shallow-profile protection everywhere).
+- **End-to-end flow eval** across the whole skill chain.
+- **Calibrate the judge** against human judgement.
+- **Respect degree program / thesis level / scope** — groundwork already added by a teammate in `build-student-profile` (`references/tuebingen-degree-programs.md`): degree program → thesis level (e.g. Machine Learning is Master-only) → scope (Bachelor 4 months vs. Master 6 months). Proposal generation must honor this.
 
-## 6. Phase 3 — Cross-Platform (Stretch)
+## 6. Phase 3 — Cross-platform (stretch)
 
-Inhalt ist portabel, Mechanismus nicht. Reihenfolge: OpenAI Custom GPT (am nächsten am Skill-Erlebnis) → Gemini → generisches RAG. Erst nach Phase 2, da man optimierte Inhalte portiert, keine unfertigen.
+The content is portable, the mechanism is not. Order: OpenAI Custom GPT (closest to the skill experience) → Gemini → generic RAG. Only after Phase 2, since you port optimized content, not unfinished content.
 
 ---
 
-## 7. Wie dieser Plan benutzt wird
+## 7. How this plan is used
 
-- **MASTERPLAN.md** (diese Datei) = stabiler Lookup. Wird nur angepasst, wenn sich der Plan strukturell ändert.
-- **[STATUS.md](STATUS.md)** = lebendes Dokument. Hier landen Fortschritt, Blocker, Entscheidungen, Tagesnotizen. **Immer hier updaten, nicht im Masterplan.**
-- **GitHub Issues** = die ausführbaren Einheiten. Jedes Issue oben verlinkt; Details, Akzeptanzkriterien und Diskussion leben im Issue.
+- **MASTERPLAN.md** (this file) = stable lookup. Only adjusted when the plan changes structurally.
+- **[STATUS.md](STATUS.md)** = living document. Progress, blockers, decisions, notes land here. **Always update here, not in the Masterplan.**
+- **GitHub Issues** = the executable units. Each issue linked above; details, acceptance criteria, and discussion live in the issue.
