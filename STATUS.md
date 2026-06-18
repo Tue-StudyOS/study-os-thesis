@@ -20,13 +20,13 @@ Legende: ⬜ offen · 🟨 in Arbeit · ✅ fertig · ⛔ blockiert
 
 | # | Step | Status | Owner | Notizen / Schwierigkeiten |
 |---|---|---|---|---|
-| 1 | Author-IDs für alle 47 Profs | ⬜ | – | Aktuell nur 7/47 in `researchers/INDEX.md`. Disambiguierung ist die Hürde. |
-| 2 | Ground-Truth für 3 Pilot-Lehrstühle | ⬜ | – | Maßstab, um "keiner vergessen" messbar zu machen. |
-| 3 | PhD-Discovery pro Lehrstuhl | ⬜ | – | Schwerster Teil: OpenAlex hat keine Betreuer→PhD-Kante. |
-| 4 | Baum-Schema + Integrität | ⬜ | – | PhD-Ebene fehlt im aktuellen Schema. |
-| 5 | Paper-Scrape + Beschreibung pro Person | ⬜ | – | Beschreibung/Zusammenfassung = LLM-Schritt; Entscheidung Abstract vs. LLM offen. |
-| 6 | Validierungs-Harness | ⬜ | – | Anomalie-Checks statt Vollprüfung; Golden Record als Anker. |
-| 7 | Automation (Cron + PR + Overrides) | ⬜ | – | Override-Schutz, damit Re-Scrape manuelle Fixes nicht zerstört. |
+| 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) Author-IDs für alle 47 Profs | ⬜ | – | Aktuell nur 7/47 in `researchers/INDEX.md`. Disambiguierung ist die Hürde. |
+| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) Ground-Truth für 3 Pilot-Lehrstühle | ⬜ | – | Maßstab, um "keiner vergessen" messbar zu machen. |
+| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) PhD-Discovery pro Lehrstuhl | ⬜ | – | Schwerster Teil: OpenAlex hat keine Betreuer→PhD-Kante. |
+| 4 | [#48](https://github.com/Tue-StudyOS/study-os-thesis/issues/48) Baum-Schema + Integrität | ⬜ | – | PhD-Ebene fehlt im aktuellen Schema. |
+| 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) Paper-Scrape + Beschreibung pro Person | ⬜ | – | Beschreibung/Zusammenfassung = LLM-Schritt; Entscheidung Abstract vs. LLM offen. |
+| 6 | [#50](https://github.com/Tue-StudyOS/study-os-thesis/issues/50) Validierungs-Harness | ⬜ | – | Anomalie-Checks statt Vollprüfung; Golden Record als Anker. |
+| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) Automation (Cron + PR + Overrides) | ⬜ | – | Override-Schutz, damit Re-Scrape manuelle Fixes nicht zerstört. |
 
 **Gate Phase 1 → 2:** Step 6 grün · Golden Record reproduzierbar · Pilot-Recall ≥ 90 %.
 

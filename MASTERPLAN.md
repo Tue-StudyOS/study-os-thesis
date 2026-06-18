@@ -55,13 +55,13 @@ Das Epic "verifizierter Forscher-Baum". Reihenfolge = Abhängigkeit.
 
 | # | Issue | Worum es geht |
 |---|---|---|
-| 1 | _(Issue-Link folgt)_ | **Author-IDs für alle 47 Profs** auflösen (Name+URI → OpenAlex-ID, mit Disambiguierung) |
-| 2 | _(Issue-Link folgt)_ | **Ground-Truth-Liste** für 3 Pilot-Lehrstühle (manuelle PhD-Soll-Liste als Messmaßstab) |
-| 3 | _(Issue-Link folgt)_ | **PhD-Discovery pro Lehrstuhl** (Team-Seite + Co-Autor-Graph; keiner vergessen) |
-| 4 | _(Issue-Link folgt)_ | **Baum-Schema** Prof→PhD→Paper + referenzielle Integrität |
-| 5 | _(Issue-Link folgt)_ | **Paper-Scrape + Themenbereich/Beschreibung** pro Person, als Baum-MD |
-| 6 | _(Issue-Link folgt)_ | **Validierungs-Harness** (Anomalie-Checks + Stichproben + Golden Record) |
-| 7 | _(Issue-Link folgt)_ | **Automation** (Cron alle 2 Wochen, PR-Output, Override-Schutz, lautes Scheitern) |
+| 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) | **Author-IDs für alle 47 Profs** auflösen (Name+URI → OpenAlex-ID, mit Disambiguierung) |
+| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) | **Ground-Truth-Liste** für 3 Pilot-Lehrstühle (manuelle PhD-Soll-Liste als Messmaßstab) |
+| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) | **PhD-Discovery pro Lehrstuhl** (Team-Seite + Co-Autor-Graph; keiner vergessen) |
+| 4 | [#48](https://github.com/Tue-StudyOS/study-os-thesis/issues/48) | **Baum-Schema** Prof→PhD→Paper + referenzielle Integrität |
+| 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) | **Paper-Scrape + Themenbereich/Beschreibung** pro Person, als Baum-MD |
+| 6 | [#50](https://github.com/Tue-StudyOS/study-os-thesis/issues/50) | **Validierungs-Harness** (Anomalie-Checks + Stichproben + Golden Record) |
+| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) | **Automation** (Cron alle 2 Wochen, PR-Output, Override-Schutz, lautes Scheitern) |
 
 Abhängigkeitsgraph:
 
