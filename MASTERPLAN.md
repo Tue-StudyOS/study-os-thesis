@@ -57,11 +57,13 @@ The "verified researcher tree" epic. Order = dependency.
 |---|---|---|
 | 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) | **Resolve author IDs for all 47 profs** (name+URI → OpenAlex ID, with disambiguation) |
 | 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) | **Ground-truth roster** for 3 pilot chairs (manual PhD list as the measuring stick) |
-| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) | **PhD discovery per chair** (team page + co-author graph; none forgotten) |
-| 4 | [#48](https://github.com/Tue-StudyOS/study-os-thesis/issues/48) | **Tree schema** Prof→PhD→Paper + referential integrity |
+| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) | **PhD discovery per chair** (team page + co-author graph; none forgotten) — keep the mechanism as simple as possible |
+| 4 | [#48](https://github.com/Tue-StudyOS/stud
+
+y-os-thesis/issues/48) | **Tree schema** Prof→PhD→Paper + referential integrity |
 | 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) | **Paper scrape + topic/description** per person, as tree MD |
 | 6 | [#50](https://github.com/Tue-StudyOS/study-os-thesis/issues/50) | **Validation harness** (anomaly checks + sampling + golden record) |
-| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) | **Automation** (cron every 2 weeks, PR output, override protection, loud failure) |
+| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) | **Automation** — a mechanism the agents can run themselves to refresh their data (especially the chair info) and update the referential links accordingly |
 
 Dependency graph:
 
@@ -91,7 +93,7 @@ Only sensible once the data is correct.
 
 ## 6. Phase 3 — Cross-platform (stretch)
 
-The content is portable, the mechanism is not. Order: OpenAI Custom GPT (closest to the skill experience) → Gemini → generic RAG. Only after Phase 2, since you port optimized content, not unfinished content.
+The content is portable; the mechanism should be tested with Codex and Gemini CLI.
 
 ---
 
