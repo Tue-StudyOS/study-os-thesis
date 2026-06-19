@@ -81,3 +81,8 @@ the new version there, creates `skills-vX.Y.Z`, pushes the tag, and publishes
 the GitHub Release. The default branch is `release/skills`; protected branches
 such as `main` are refused. If the tag already exists, the workflow fails
 instead of moving or overwriting it.
+
+The release workflow uses the `study-os-release-bot` GitHub App, installed only
+on this repository, with `Contents: Read and write`. Store its credentials as
+`RELEASE_APP_ID` and `RELEASE_APP_PRIVATE_KEY` repository secrets. Branch and
+tag rulesets should grant bypass only to this app.

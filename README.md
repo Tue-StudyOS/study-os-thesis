@@ -91,4 +91,6 @@ artifact** manually and choosing a `patch`, `minor`, or `major` bump. The
 workflow checks out the release branch, updates `pyproject.toml`, commits the
 new version there, creates the `skills-vX.Y.Z` tag, and publishes the release
 artifacts. The default release branch is `release/skills`; `main` is not
-modified by the release workflow.
+modified by the release workflow. The workflow authenticates as the installed
+`study-os-release-bot` GitHub App via `RELEASE_APP_ID` and
+`RELEASE_APP_PRIVATE_KEY` repository secrets.

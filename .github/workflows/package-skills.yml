@@ -12,11 +12,6 @@ on:
           - patch
           - minor
           - major
-      release_branch:
-        description: "Branch that stores release version commits"
-        required: true
-        default: release/skills
-        type: string
   push:
     tags:
       - "skills-v*"
@@ -27,10 +22,20 @@ permissions:
 jobs:
   package-skills:
     runs-on: ubuntu-latest
+    env:
+      RELEASE_BRANCH: release/skills
     steps:
+      - name: Generate release app token
+        id: release_app
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ steps.release_app.outputs.token }}
 
       - uses: actions/setup-python@v5
         with:
@@ -39,7 +44,6 @@ jobs:
       - name: Checkout release branch
         if: github.event_name == 'workflow_dispatch'
         run: |
-          RELEASE_BRANCH="${{ inputs.release_branch }}"
           if [[ "${RELEASE_BRANCH}" == "main" || "${RELEASE_BRANCH}" == "master" ]]; then
             echo "Refusing to release from protected branch ${RELEASE_BRANCH}" >&2
             exit 1
@@ -133,7 +137,7 @@ jobs:
           git add pyproject.toml
           git commit -m "chore: release ${TAG_NAME}"
           git tag "${TAG_NAME}" HEAD
-          git push origin "HEAD:${{ inputs.release_branch }}"
+          git push origin "HEAD:${RELEASE_BRANCH}"
           git push origin "refs/tags/${TAG_NAME}"
 
       - name: Upload artifact
@@ -146,6 +150,8 @@ jobs:
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ steps.release_app.outputs.token }}
         with:
           tag_name: ${{ steps.release.outputs.tag }}
           files: |
