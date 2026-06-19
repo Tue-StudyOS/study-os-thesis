@@ -1,6 +1,6 @@
 [project]
 name = "study-os-thesis"
-version = "0.1.0"
+version = "0.1.1"
 description = "Portable thesis-advising agent skills and maintainer tooling"
 readme = "README.md"
 requires-python = ">=3.11"
