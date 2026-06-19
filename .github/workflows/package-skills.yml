@@ -44,6 +44,9 @@ jobs:
       - name: Checkout release branch
         if: github.event_name == 'workflow_dispatch'
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           if [[ "${RELEASE_BRANCH}" == "main" || "${RELEASE_BRANCH}" == "master" ]]; then
             echo "Refusing to release from protected branch ${RELEASE_BRANCH}" >&2
             exit 1
@@ -55,6 +58,8 @@ jobs:
           else
             git checkout -B "${RELEASE_BRANCH}"
           fi
+
+          git merge --no-edit "${GITHUB_SHA}"
 
       - name: Bump project version
         if: github.event_name == 'workflow_dispatch'
@@ -111,8 +116,6 @@ jobs:
             echo "Tag ${TAG_NAME} already exists on origin" >&2
             exit 1
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add pyproject.toml CHANGELOG.md
           git commit -m "chore: release ${TAG_NAME}"
           git tag "${TAG_NAME}" HEAD
