@@ -12,6 +12,28 @@ This project follows Semantic Versioning for the released skill package:
 
 ### Added
 
+- ...
+
+### Changed
+
+- ...
+
+### Fixed
+
+- ...
+
+### Removed
+
+- ...
+
+### Breaking Changes
+
+- None.
+
+## [0.1.2] - 2026-06-19
+
+### Added
+
 - Skill-only release artifacts as `.tar.gz` and `.zip`, containing only installable skill folders.
 - Automated release workflow with version bumping, release branch publishing, and GitHub App authentication.
 - Human-readable changelog workflow for GitHub Release notes.
