@@ -2,6 +2,11 @@ name: Package skill artifact
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Skill package version to release, matching pyproject.toml, for example 0.1.0"
+        required: true
+        type: string
   push:
     tags:
       - "skills-v*"
@@ -25,16 +30,46 @@ jobs:
       - name: Run skill tests
         run: python -m pytest -q
 
-      - name: Build skill-only release artifact
+      - name: Resolve release tag
+        id: release
         run: |
-          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
-            python scripts/build_skill_release.py --tag "${GITHUB_REF_NAME}"
+          PROJECT_VERSION="$(python - <<'PY'
+          from scripts.build_skill_release import read_project_version
+          print(read_project_version())
+          PY
+          )"
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            INPUT_VERSION="${{ inputs.version }}"
+            if [[ "${INPUT_VERSION}" != "${PROJECT_VERSION}" ]]; then
+              echo "Manual release version ${INPUT_VERSION} does not match pyproject.toml version ${PROJECT_VERSION}" >&2
+              exit 1
+            fi
+            TAG_NAME="skills-v${INPUT_VERSION}"
           else
-            python scripts/build_skill_release.py
+            TAG_NAME="${GITHUB_REF_NAME}"
           fi
+
+          echo "tag=${TAG_NAME}" >> "${GITHUB_OUTPUT}"
+
+      - name: Build skill-only release artifact
+        run: python scripts/build_skill_release.py --tag "${{ steps.release.outputs.tag }}"
 
       - name: Validate release artifact rules
         run: python -m pytest skills/tests/test_distribution_package.py -q
+
+      - name: Create and push release tag
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          TAG_NAME="${{ steps.release.outputs.tag }}"
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG_NAME}" >/dev/null 2>&1; then
+            echo "Tag ${TAG_NAME} already exists on origin" >&2
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "${TAG_NAME}" "${GITHUB_SHA}"
+          git push origin "refs/tags/${TAG_NAME}"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -45,9 +80,9 @@ jobs:
             dist/study-os-thesis-skills-v*.zip
 
       - name: Publish GitHub release
-        if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.release.outputs.tag }}
           files: |
             dist/study-os-thesis-skills-v*.tar.gz
             dist/study-os-thesis-skills-v*.zip

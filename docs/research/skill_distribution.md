@@ -73,3 +73,9 @@ Student-facing skills must use bundled Markdown data first and must not depend o
 
 Release tags must match the version in `pyproject.toml`: version `0.1.0` is
 released with tag `skills-v0.1.0`.
+
+Maintainers do not need to create the tag locally. In GitHub Actions, run
+**Package skill artifact**, enter the `pyproject.toml` version, and the workflow
+will validate the version, create `skills-vX.Y.Z`, push the tag, and publish the
+GitHub Release. If the tag already exists, the workflow fails instead of moving
+or overwriting it.

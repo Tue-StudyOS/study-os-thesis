@@ -85,3 +85,7 @@ study-os-thesis-skills-vX.Y.Z/
 The archive intentionally excludes maintainer files such as tests, scripts,
 docs, `AGENTS.md`, `CLAUDE.md`, and `pyproject.toml`. Copy the extracted skill
 folders directly into a client skills directory.
+
+Maintainers can publish a release from GitHub Actions by running **Package skill
+artifact** manually and entering the version from `pyproject.toml`. The workflow
+creates the `skills-vX.Y.Z` tag and publishes the release artifacts.
