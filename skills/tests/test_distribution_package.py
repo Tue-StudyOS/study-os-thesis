@@ -41,6 +41,7 @@ def test_release_artifact_contains_only_installable_skill_folders(tmp_path: Path
         ".github",
         "AGENTS.md",
         "CLAUDE.md",
+        "CHANGELOG.md",
         "Makefile",
         "MASTERPLAN.md",
         "README.md",

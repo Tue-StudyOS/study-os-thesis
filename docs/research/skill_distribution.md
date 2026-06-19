@@ -79,10 +79,16 @@ Actions, run **Package skill artifact** and choose `patch`, `minor`, or `major`.
 The workflow checks out the release branch, updates `pyproject.toml`, commits
 the new version there, creates `skills-vX.Y.Z`, pushes the tag, and publishes
 the GitHub Release. The default branch is `release/skills`; protected branches
-such as `main` are refused. If the tag already exists, the workflow fails
-instead of moving or overwriting it.
+such as `main` are refused. Before bumping, the workflow merges the selected
+workflow ref into `release/skills` so release tooling and docs are current. If
+the tag already exists, the workflow fails instead of moving or overwriting it.
 
 The release workflow uses the `study-os-release-bot` GitHub App, installed only
 on this repository, with `Contents: Read and write`. Store its credentials as
 `RELEASE_APP_ID` and `RELEASE_APP_PRIVATE_KEY` repository secrets. Branch and
 tag rulesets should grant bypass only to this app.
+
+Human-readable release notes come from `CHANGELOG.md`. Maintainer PRs should add
+their user-visible changes under `## [Unreleased]`. During release, the workflow
+finalizes that section into `## [X.Y.Z] - YYYY-MM-DD`, commits it with the
+version bump, and uses the finalized section as the GitHub Release body.

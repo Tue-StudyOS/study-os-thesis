@@ -86,6 +86,10 @@ The archive intentionally excludes maintainer files such as tests, scripts,
 docs, `AGENTS.md`, `CLAUDE.md`, and `pyproject.toml`. Copy the extracted skill
 folders directly into a client skills directory.
 
+Release notes are written for humans in [CHANGELOG.md](CHANGELOG.md). Maintainer
+PRs should update `## [Unreleased]`; the release workflow turns that section
+into the GitHub Release description.
+
 Maintainers can publish a release from GitHub Actions by running **Package skill
 artifact** manually and choosing a `patch`, `minor`, or `major` bump. The
 workflow checks out the release branch, updates `pyproject.toml`, commits the
