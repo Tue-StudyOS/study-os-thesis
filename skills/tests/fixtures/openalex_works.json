@@ -1,0 +1,52 @@
+{
+  "georg-martius": [
+    {
+      "id": "https://openalex.org/W1001",
+      "doi": "https://doi.org/10.1000/robot|pipe",
+      "title": "Robust Robot Policy Learning | Under Shift",
+      "publication_year": 2026,
+      "type": "article",
+      "primary_location": {"landing_page_url": "https://example.org/robot-policy", "source": {"display_name": "Robotics Journal"}},
+      "authorships": [{"author": {"display_name": "Georg Martius"}}, {"author": {"display_name": "A. Student"}}],
+      "concepts": [{"display_name": "Robotics"}, {"display_name": "Reinforcement Learning"}, {"display_name": "Machine Learning"}],
+      "abstract_inverted_index": {"Robust": [0], "robot": [1], "policies": [2], "under": [3], "shift": [4]}
+    },
+    {
+      "id": "https://openalex.org/W1001-DUP",
+      "doi": "https://doi.org/10.1000/robot|pipe",
+      "title": "Robust Robot Policy Learning Under Shift",
+      "publication_year": 2026,
+      "type": "article",
+      "primary_location": {"landing_page_url": "https://example.org/robot-policy-duplicate", "source": {"display_name": "Robotics Journal"}},
+      "authorships": [{"author": {"display_name": "Georg Martius"}}],
+      "concepts": [{"display_name": "Robotics"}],
+      "abstract_inverted_index": {"Duplicate": [0]}
+    }
+  ],
+  "philipp-hennig": [
+    {
+      "id": "https://openalex.org/W2001",
+      "doi": "",
+      "title": "Uncertainty-Aware Numerical Solvers",
+      "publication_year": 2025,
+      "type": "article",
+      "primary_location": {"landing_page_url": "https://example.org/numerics", "source": {"display_name": "Numerical ML"}},
+      "authorships": [{"author": {"display_name": "Philipp Hennig"}}],
+      "concepts": [{"display_name": "Probabilistic Numerics"}, {"display_name": "Uncertainty Quantification"}],
+      "abstract_inverted_index": {"Probabilistic": [0], "numerics": [1], "for": [2], "uncertainty": [3]}
+    }
+  ],
+  "matthias-bethge": [
+    {
+      "id": "https://openalex.org/W3001",
+      "doi": "https://doi.org/10.1000/neural",
+      "title": "Neural Data Analysis with Robust Vision Models",
+      "publication_year": 2025,
+      "type": "article",
+      "primary_location": {"landing_page_url": "https://example.org/neural-vision", "source": {"display_name": "Neural Computation"}},
+      "authorships": [{"author": {"display_name": "Matthias Bethge"}}],
+      "concepts": [{"display_name": "Neural Data Analysis"}, {"display_name": "Computer Vision"}],
+      "abstract_inverted_index": {"Robust": [0], "vision": [1], "models": [2], "for": [3], "neural": [4], "data": [5]}
+    }
+  ]
+}

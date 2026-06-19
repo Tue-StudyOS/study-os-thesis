@@ -103,4 +103,15 @@ Rules:
 
 ---
 
+## 6. Workflow: Masterplan & Status
+
+This project is tracked with two central files at the repo root:
+
+- **[MASTERPLAN.md](MASTERPLAN.md)** — the zoomed-out, stable lookup: what we build, in what order, and why. Phases, the Prof→PhD→Paper data tree, and links to all issues. **Read it first** to understand where any task fits. Only edit when the plan structurally changes.
+- **[STATUS.md](STATUS.md)** — the single living document. Progress, blockers, difficulties, decisions, and a dated log. **When you work on a step, update STATUS.md** (step status + a dated log line) — never put running progress in the Masterplan.
+
+Rule of thumb: Masterplan answers "what's the plan?", STATUS answers "where are we right now?". GitHub Issues hold the executable detail and discussion.
+
+---
+
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.

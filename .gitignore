@@ -240,3 +240,13 @@ backend/logs/
 *.db
 # uv lockfile is fine to commit; lock cache is not
 .uv-cache/
+
+# --- Local working files (not part of the repo) ---
+.claude-flow/
+.claude/
+*.docx
+COMBINED_PR_GUIDE.md
+ISSUE_ROUTER.md
+PROJECT_CONTEXT.md
+WORKFLOW.md
+update-context.sh
