@@ -60,32 +60,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         id: bump
         run: |
-          NEW_VERSION="$(python - <<'PY'
-          from pathlib import Path
-          import re
-
-          bump = "${{ inputs.bump }}"
-          pyproject = Path("pyproject.toml")
-          text = pyproject.read_text(encoding="utf-8")
-          match = re.search(r'(?m)^version = "(\d+)\.(\d+)\.(\d+)"$', text)
-          if not match:
-              raise SystemExit("pyproject.toml must contain a SemVer [project].version like 0.1.0")
-
-          major, minor, patch = map(int, match.groups())
-          if bump == "major":
-              major, minor, patch = major + 1, 0, 0
-          elif bump == "minor":
-              minor, patch = minor + 1, 0
-          elif bump == "patch":
-              patch += 1
-          else:
-              raise SystemExit(f"unsupported bump type: {bump}")
-
-          new_version = f"{major}.{minor}.{patch}"
-          pyproject.write_text(text[:match.start(1)] + new_version + text[match.end(1):], encoding="utf-8")
-          print(new_version)
-          PY
-          )"
+          NEW_VERSION="$(python scripts/bump_project_version.py "${{ inputs.bump }}")"
 
           echo "version=${NEW_VERSION}" >> "${GITHUB_OUTPUT}"
           echo "tag=skills-v${NEW_VERSION}" >> "${GITHUB_OUTPUT}"
