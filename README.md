@@ -42,6 +42,7 @@ and opens a PR.
 Skill tests are dependency-free (only `pytest`) and run from the repo root:
 
 ```bash
+python -m pip install -e ".[dev]"
 python -m pytest -q        # or: make check
 ```
 
@@ -68,3 +69,32 @@ study-os-thesis/
 ├── STATUS.md                living progress doc
 └── .github/workflows/       CI: skill tests, evals, packaging, monthly refresh
 ```
+
+## Release artifact
+
+GitHub releases tagged as `skills-vX.Y.Z` publish a skill-only archive:
+
+```text
+study-os-thesis-skills-vX.Y.Z/
+├── build-student-profile/
+│   ├── SKILL.md
+│   └── references/
+└── ...
+```
+
+The archive intentionally excludes maintainer files such as tests, scripts,
+docs, `AGENTS.md`, `CLAUDE.md`, and `pyproject.toml`. Copy the extracted skill
+folders directly into a client skills directory.
+
+Release notes are written for humans in [CHANGELOG.md](CHANGELOG.md). Maintainer
+PRs should update `## [Unreleased]`; the release workflow turns that section
+into the GitHub Release description.
+
+Maintainers can publish a release from GitHub Actions by running **Package skill
+artifact** manually and choosing a `patch`, `minor`, or `major` bump. The
+workflow checks out the release branch, updates `pyproject.toml`, commits the
+new version there, creates the `skills-vX.Y.Z` tag, and publishes the release
+artifacts. The default release branch is `release/skills`; `main` is not
+modified by the release workflow. The workflow authenticates as the installed
+`study-os-release-bot` GitHub App via `RELEASE_APP_ID` and
+`RELEASE_APP_PRIVATE_KEY` repository secrets.

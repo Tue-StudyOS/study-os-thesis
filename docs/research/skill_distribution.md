@@ -7,6 +7,7 @@ This is the minimal maintainer guide for the skill-only thesis finder.
 Run the DB-free skill test suite from the repository root:
 
 ```bash
+python -m pip install -e ".[dev]"
 python -m pytest
 ```
 
@@ -34,13 +35,60 @@ python scripts/update_openalex_index.py --fixture skills/tests/fixtures/openalex
 
 ## Distribution
 
-The release artifact contains only the portable skill package, scripts, tests, and docs needed after the old app runtime is removed.
+The release artifact contains only the portable skill folders needed at runtime.
+It intentionally excludes maintainer scripts, tests, docs, `AGENTS.md`,
+`CLAUDE.md`, and Python project configuration.
+
+Build locally:
+
+```bash
+python scripts/build_skill_release.py
+```
+
+The output is:
+
+```text
+dist/study-os-thesis-skills-vX.Y.Z.tar.gz
+dist/study-os-thesis-skills-vX.Y.Z.zip
+```
+
+Each archive expands without an outer `skills/` wrapper:
+
+```text
+study-os-thesis-skills-vX.Y.Z/
+├── build-student-profile/
+│   ├── SKILL.md
+│   └── references/
+└── ...
+```
 
 Target clients:
 
-- Codex: install or copy the skill folders into the configured skills location.
-- Claude Code: install or copy the skill folders into the configured skills/plugin location.
+- Codex: extract the release archive and copy the skill folders into the configured skills location.
+- Claude Code: extract the release archive and copy the skill folders into the configured skills/plugin location.
 - OpenCode-style clients: install the same `SKILL.md` folders if the client supports Agent Skills.
 - Other LLM surfaces: reuse the Markdown instructions and generated references as uploaded files or retrieval documents.
 
 Student-facing skills must use bundled Markdown data first and must not depend on the old UI, backend, database, Docker, Celery, or FastAPI runtime.
+
+Release tags must match the version in `pyproject.toml`: version `0.1.0` is
+released with tag `skills-v0.1.0`.
+
+Maintainers do not need to bump the version or create the tag locally. In GitHub
+Actions, run **Package skill artifact** and choose `patch`, `minor`, or `major`.
+The workflow checks out the release branch, updates `pyproject.toml`, commits
+the new version there, creates `skills-vX.Y.Z`, pushes the tag, and publishes
+the GitHub Release. The default branch is `release/skills`; protected branches
+such as `main` are refused. Before bumping, the workflow merges the selected
+workflow ref into `release/skills` so release tooling and docs are current. If
+the tag already exists, the workflow fails instead of moving or overwriting it.
+
+The release workflow uses the `study-os-release-bot` GitHub App, installed only
+on this repository, with `Contents: Read and write`. Store its credentials as
+`RELEASE_APP_ID` and `RELEASE_APP_PRIVATE_KEY` repository secrets. Branch and
+tag rulesets should grant bypass only to this app.
+
+Human-readable release notes come from `CHANGELOG.md`. Maintainer PRs should add
+their user-visible changes under `## [Unreleased]`. During release, the workflow
+finalizes that section into `## [X.Y.Z] - YYYY-MM-DD`, commits it with the
+version bump, and uses the finalized section as the GitHub Release body.

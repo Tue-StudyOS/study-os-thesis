@@ -1,0 +1,21 @@
+[project]
+name = "study-os-thesis"
+version = "0.1.0"
+description = "Portable thesis-advising agent skills and maintainer tooling"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+]
+eval = [
+  "deepeval",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["skills/tests"]
+markers = [
+  "eval: optional LLM quality evaluations; skipped unless explicitly enabled",
+]

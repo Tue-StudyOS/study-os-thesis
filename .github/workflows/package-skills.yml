@@ -2,41 +2,141 @@ name: Package skill artifact
 
 on:
   workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump to release"
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
   push:
     tags:
       - "skills-v*"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   package-skills:
     runs-on: ubuntu-latest
+    env:
+      RELEASE_BRANCH: release/skills
     steps:
+      - name: Generate release app token
+        id: release_app
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.release_app.outputs.token }}
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
 
-      - name: Install test dependencies
-        run: python -m pip install pytest
+      - name: Checkout release branch
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if [[ "${RELEASE_BRANCH}" == "main" || "${RELEASE_BRANCH}" == "master" ]]; then
+            echo "Refusing to release from protected branch ${RELEASE_BRANCH}" >&2
+            exit 1
+          fi
+
+          if git ls-remote --exit-code --heads origin "${RELEASE_BRANCH}" >/dev/null 2>&1; then
+            git fetch origin "${RELEASE_BRANCH}"
+            git checkout -B "${RELEASE_BRANCH}" "origin/${RELEASE_BRANCH}"
+          else
+            git checkout -B "${RELEASE_BRANCH}"
+          fi
+
+          git merge --no-edit "${GITHUB_SHA}"
+
+      - name: Bump project version
+        if: github.event_name == 'workflow_dispatch'
+        id: bump
+        run: |
+          NEW_VERSION="$(python scripts/bump_project_version.py "${{ inputs.bump }}")"
+
+          echo "version=${NEW_VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "tag=skills-v${NEW_VERSION}" >> "${GITHUB_OUTPUT}"
+
+      - name: Finalize changelog
+        if: github.event_name == 'workflow_dispatch'
+        run: python scripts/release_changelog.py --version "${{ steps.bump.outputs.version }}" --notes dist/release-notes.md
+
+      - name: Install dev dependencies
+        run: python -m pip install -e ".[dev]"
 
       - name: Run skill tests
-        run: python -m pytest
+        run: python -m pytest -q
 
-      - name: Build artifact
+      - name: Resolve release tag
+        id: release
         run: |
-          mkdir -p dist/study-os-thesis-skills
-          cp -R skills scripts dist/study-os-thesis-skills/
-          mkdir -p dist/study-os-thesis-skills/docs/research
-          cp docs/research/skill_architecture_summary.md dist/study-os-thesis-skills/docs/research/
-          cp docs/research/skill_distribution.md dist/study-os-thesis-skills/docs/research/
-          cp pytest.ini dist/study-os-thesis-skills/
-          tar -czf dist/study-os-thesis-skills.tar.gz -C dist study-os-thesis-skills
+          PROJECT_VERSION="$(python - <<'PY'
+          from scripts.build_skill_release import read_project_version
+          print(read_project_version())
+          PY
+          )"
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            BUMPED_VERSION="${{ steps.bump.outputs.version }}"
+            if [[ "${BUMPED_VERSION}" != "${PROJECT_VERSION}" ]]; then
+              echo "Bumped version ${BUMPED_VERSION} does not match pyproject.toml version ${PROJECT_VERSION}" >&2
+              exit 1
+            fi
+            TAG_NAME="${{ steps.bump.outputs.tag }}"
+          else
+            TAG_NAME="${GITHUB_REF_NAME}"
+          fi
+
+          echo "tag=${TAG_NAME}" >> "${GITHUB_OUTPUT}"
+
+      - name: Build skill-only release artifact
+        run: python scripts/build_skill_release.py --tag "${{ steps.release.outputs.tag }}"
+
+      - name: Validate release artifact rules
+        run: python -m pytest skills/tests/test_distribution_package.py -q
+
+      - name: Create and push release tag
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          TAG_NAME="${{ steps.release.outputs.tag }}"
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG_NAME}" >/dev/null 2>&1; then
+            echo "Tag ${TAG_NAME} already exists on origin" >&2
+            exit 1
+          fi
+          git add pyproject.toml CHANGELOG.md
+          git commit -m "chore: release ${TAG_NAME}"
+          git tag "${TAG_NAME}" HEAD
+          git push origin "HEAD:${RELEASE_BRANCH}"
+          git push origin "refs/tags/${TAG_NAME}"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: study-os-thesis-skills
-          path: dist/study-os-thesis-skills.tar.gz
+          path: |
+            dist/study-os-thesis-skills-v*.tar.gz
+            dist/study-os-thesis-skills-v*.zip
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ steps.release_app.outputs.token }}
+        with:
+          tag_name: ${{ steps.release.outputs.tag }}
+          body_path: dist/release-notes.md
+          files: |
+            dist/study-os-thesis-skills-v*.tar.gz
+            dist/study-os-thesis-skills-v*.zip
