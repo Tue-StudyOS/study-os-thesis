@@ -7,7 +7,7 @@ on:
       - "skills-v*"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   package-skills:
@@ -19,24 +19,35 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Install test dependencies
-        run: python -m pip install pytest
+      - name: Install dev dependencies
+        run: python -m pip install -e ".[dev]"
 
       - name: Run skill tests
-        run: python -m pytest
+        run: python -m pytest -q
 
-      - name: Build artifact
+      - name: Build skill-only release artifact
         run: |
-          mkdir -p dist/study-os-thesis-skills
-          cp -R skills scripts dist/study-os-thesis-skills/
-          mkdir -p dist/study-os-thesis-skills/docs/research
-          cp docs/research/skill_architecture_summary.md dist/study-os-thesis-skills/docs/research/
-          cp docs/research/skill_distribution.md dist/study-os-thesis-skills/docs/research/
-          cp pytest.ini dist/study-os-thesis-skills/
-          tar -czf dist/study-os-thesis-skills.tar.gz -C dist study-os-thesis-skills
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            python scripts/build_skill_release.py --tag "${GITHUB_REF_NAME}"
+          else
+            python scripts/build_skill_release.py
+          fi
+
+      - name: Validate release artifact rules
+        run: python -m pytest skills/tests/test_distribution_package.py -q
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: study-os-thesis-skills
-          path: dist/study-os-thesis-skills.tar.gz
+          path: |
+            dist/study-os-thesis-skills-v*.tar.gz
+            dist/study-os-thesis-skills-v*.zip
+
+      - name: Publish GitHub release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/study-os-thesis-skills-v*.tar.gz
+            dist/study-os-thesis-skills-v*.zip

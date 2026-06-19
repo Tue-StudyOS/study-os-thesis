@@ -42,6 +42,7 @@ and opens a PR.
 Skill tests are dependency-free (only `pytest`) and run from the repo root:
 
 ```bash
+python -m pip install -e ".[dev]"
 python -m pytest -q        # or: make check
 ```
 
@@ -68,3 +69,19 @@ study-os-thesis/
 ├── STATUS.md                living progress doc
 └── .github/workflows/       CI: skill tests, evals, packaging, monthly refresh
 ```
+
+## Release artifact
+
+GitHub releases tagged as `skills-vX.Y.Z` publish a skill-only archive:
+
+```text
+study-os-thesis-skills-vX.Y.Z/
+├── build-student-profile/
+│   ├── SKILL.md
+│   └── references/
+└── ...
+```
+
+The archive intentionally excludes maintainer files such as tests, scripts,
+docs, `AGENTS.md`, `CLAUDE.md`, and `pyproject.toml`. Copy the extracted skill
+folders directly into a client skills directory.

@@ -6,8 +6,9 @@ on:
     paths:
       - 'skills/**'
       - 'scripts/**'
-      - 'pytest.ini'
+      - 'pyproject.toml'
       - '.github/workflows/qa.yml'
+      - '.github/workflows/package-skills.yml'
 
 jobs:
   skill-test:
@@ -23,8 +24,8 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Install test dependencies
-        run: python -m pip install pytest
+      - name: Install dev dependencies
+        run: python -m pip install -e ".[dev]"
 
       - name: Run skill tests
         run: python -m pytest -q
