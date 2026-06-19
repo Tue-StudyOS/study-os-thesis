@@ -1,20 +1,12 @@
-.PHONY: audit audit-backend check check-backend check-skills format
+.PHONY: check check-skills evals
 
-RUFF := backend/.venv/bin/ruff
+# The web-app backend was removed in the skill-architecture pivot. The old
+# FastAPI/Celery/Postgres stack is archived on the legacy/web-app branch.
 
-check: check-backend check-skills
-
-audit: audit-backend
-
-audit-backend:
-	cd backend && uv run --group audit pip-audit --local --progress-spinner off
-
-check-backend:
-	$(RUFF) check backend
-	$(RUFF) format --check backend
+check: check-skills
 
 check-skills:
-	backend/.venv/bin/python -m pytest -q
+	python -m pytest -q
 
-format:
-	$(RUFF) format backend
+evals:
+	RUN_DEEPEVAL=1 python -m pytest -m eval -q
