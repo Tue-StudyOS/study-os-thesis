@@ -86,3 +86,8 @@ The release workflow uses the `study-os-release-bot` GitHub App, installed only
 on this repository, with `Contents: Read and write`. Store its credentials as
 `RELEASE_APP_ID` and `RELEASE_APP_PRIVATE_KEY` repository secrets. Branch and
 tag rulesets should grant bypass only to this app.
+
+Human-readable release notes come from `CHANGELOG.md`. Maintainer PRs should add
+their user-visible changes under `## [Unreleased]`. During release, the workflow
+finalizes that section into `## [X.Y.Z] - YYYY-MM-DD`, commits it with the
+version bump, and uses the finalized section as the GitHub Release body.
