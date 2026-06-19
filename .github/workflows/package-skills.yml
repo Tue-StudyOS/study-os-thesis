@@ -12,6 +12,11 @@ on:
           - patch
           - minor
           - major
+      release_branch:
+        description: "Branch that stores release version commits"
+        required: true
+        default: release/skills
+        type: string
   push:
     tags:
       - "skills-v*"
@@ -24,10 +29,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
+
+      - name: Checkout release branch
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          RELEASE_BRANCH="${{ inputs.release_branch }}"
+          if [[ "${RELEASE_BRANCH}" == "main" || "${RELEASE_BRANCH}" == "master" ]]; then
+            echo "Refusing to release from protected branch ${RELEASE_BRANCH}" >&2
+            exit 1
+          fi
+
+          if git ls-remote --exit-code --heads origin "${RELEASE_BRANCH}" >/dev/null 2>&1; then
+            git fetch origin "${RELEASE_BRANCH}"
+            git checkout -B "${RELEASE_BRANCH}" "origin/${RELEASE_BRANCH}"
+          else
+            git checkout -B "${RELEASE_BRANCH}"
+          fi
 
       - name: Bump project version
         if: github.event_name == 'workflow_dispatch'
@@ -110,7 +133,7 @@ jobs:
           git add pyproject.toml
           git commit -m "chore: release ${TAG_NAME}"
           git tag "${TAG_NAME}" HEAD
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git push origin "HEAD:${{ inputs.release_branch }}"
           git push origin "refs/tags/${TAG_NAME}"
 
       - name: Upload artifact

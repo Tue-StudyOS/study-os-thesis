@@ -88,5 +88,7 @@ folders directly into a client skills directory.
 
 Maintainers can publish a release from GitHub Actions by running **Package skill
 artifact** manually and choosing a `patch`, `minor`, or `major` bump. The
-workflow updates `pyproject.toml`, commits the new version, creates the
-`skills-vX.Y.Z` tag, and publishes the release artifacts.
+workflow checks out the release branch, updates `pyproject.toml`, commits the
+new version there, creates the `skills-vX.Y.Z` tag, and publishes the release
+artifacts. The default release branch is `release/skills`; `main` is not
+modified by the release workflow.
