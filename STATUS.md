@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a step, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-18
+**Last update:** 2026-06-24
 
 ---
 
@@ -21,7 +21,7 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 | # | Step | Status | Owner | Notes / difficulties |
 |---|---|---|---|---|
 | 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) Resolve author IDs for all 47 profs | ⬜ | – | Only 7/47 currently in `researchers/INDEX.md`. Disambiguation is the hurdle. |
-| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) Ground truth for 3 pilot chairs | ⬜ | – | Benchmark to make "none forgotten" measurable. |
+| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) Ground truth for 3 pilot chairs | 🟨 | – | Fixture drafted (Martius, von Luxburg, Geiger); auto-captured rosters pending human verification. |
 | 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) PhD discovery per chair | ⬜ | – | Hardest part: OpenAlex has no supervisor→PhD edge. |
 | 4 | [#48](https://github.com/Tue-StudyOS/study-os-thesis/issues/48) Tree schema + integrity | ⬜ | – | PhD level is missing in the current schema. |
 | 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) Paper scrape + description per person | ⬜ | – | Description/summary = LLM step; abstract-vs-LLM decision still open. |
@@ -52,5 +52,7 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 
 ## Log
 
+- **2026-06-24** — Opened PR #57 for the ground-truth fixture. Refined the classification convention (verified against live team pages): former PhDs/alumni excluded entirely; people under a chair's "Researcher" role handled like PhDs (active); postdocs included with status `postdoc` as recall targets; research engineers, group leaders and admin excluded. Martius now 20 active (no postdoc section on page); von Luxburg adds 5 postdocs (Bhattacharjee, Bordt, König, Thiessen, Waller); Geiger 15 active (no current postdoc section). Added profile URLs for the three Martius Researchers.
+- **2026-06-22** — Step 2 (#46) → in progress. Drafted `skills/tests/fixtures/ground_truth_phds.json` for the 3 pilot chairs (Martius / Autonomous Learning, von Luxburg / Theory of ML, Geiger / Autonomous Vision). Rosters auto-captured from official team pages: 17 active + 4 alumni (Martius), 3 active + 2 incoming + 1 associated (von Luxburg), 15 active (Geiger). Committed as WIP — entries still need human verification before the fixture is authoritative; no PR yet.
 - **2026-06-18** — Translated Masterplan + Status to English. Reviewed teammate (Valentin) commit `688f08d`: added degree-program awareness to `build-student-profile` (`tuebingen-degree-programs.md`) — degree program → thesis level (ML = Master-only) → scope (Bachelor 4mo / Master 6mo). Logged as a Phase 2 item in the Masterplan; does not affect Phase 1.
 - **2026-06-18** — Added Masterplan + Status + workflow. Defined Phase 1, created 7 issues (#45–#51). Starting point: 8 working skills, data only 7/47 profs, 0 PhDs.
