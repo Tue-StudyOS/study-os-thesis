@@ -1,0 +1,82 @@
+name: Codex Multi-Turn Evals
+
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "Assistant runner. Use fixture on GitHub-hosted runners; codex-* requires self-hosted Codex auth."
+        required: true
+        default: "fixture"
+        type: choice
+        options:
+          - fixture
+      user_runner:
+        description: "User simulator runner. Use fixture on GitHub-hosted runners."
+        required: true
+        default: "fixture"
+        type: choice
+        options:
+          - fixture
+      personas:
+        description: "all or comma-separated persona ids"
+        required: true
+        default: "all"
+      max_turns:
+        description: "Maximum total user/assistant turns per run"
+        required: true
+        default: "10"
+      judge_model:
+        description: "DeepEval judge model. Use an API model on GitHub-hosted runners; codex-* requires self-hosted Codex auth."
+        required: false
+        default: ""
+      run_deepeval:
+        description: "Run DeepEval LLM judges"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  multiturn-evals:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install deterministic test dependencies
+        run: python -m pip install pytest
+
+      - name: Install optional DeepEval dependency
+        if: ${{ inputs.run_deepeval }}
+        run: python -m pip install deepeval
+
+      - name: Run deterministic skill tests
+        run: python -m pytest -q
+
+      - name: Run Codex multi-turn evals
+        env:
+          RUN_DEEPEVAL: ${{ inputs.run_deepeval && '1' || '0' }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DEEPEVAL_JUDGE_MODEL: ${{ inputs.judge_model }}
+        run: >
+          python scripts/run_codex_multiturn_eval.py
+          --runner "${{ inputs.runner }}"
+          --user-runner "${{ inputs.user_runner }}"
+          --personas "${{ inputs.personas }}"
+          --max-turns "${{ inputs.max_turns }}"
+          --output-dir dist/codex-multiturn-evals
+
+      - name: Upload eval artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-multiturn-evals
+          path: dist/codex-multiturn-evals
+          if-no-files-found: error

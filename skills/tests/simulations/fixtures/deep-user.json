@@ -1,0 +1,42 @@
+{
+  "persona_id": "deep-user",
+  "scenario_id": "ml-master-thesis",
+  "runner": "fixture",
+  "model": "fixture",
+  "max_turns": 10,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hallo ich heisse Ben und bin im ML Master und suche eine Masterarbeit. Help."
+    },
+    {
+      "role": "assistant",
+      "content": "Hallo Ben. Ich starte mit Profilaufbau, damit spätere Vorschläge nicht generisch werden. Welche ML-Themen, Kurse, Projekte, Tools, Arbeitsweisen und No-gos sind für dich wichtig?"
+    },
+    {
+      "role": "user",
+      "content": "Ich mag Deep Learning, besonders Representation Learning und Computer Vision. In Advanced ML fand ich Generalisierung und Evaluation spannend. Ich habe ein PyTorch-Projekt zu Bildklassifikation gemacht und ein Seminar zu self-supervised learning besucht. Ich möchte empirisch arbeiten, aber nicht nur Leaderboard-Tuning machen. Reine Theorie und viel Hardware-Gefrickel wären eher nichts."
+    },
+    {
+      "role": "assistant",
+      "content": "Ich halte fest: empirisches Deep Learning, Representation Learning, Computer Vision, Evaluation/Generalisierung, PyTorch, Self-Supervised-Learning-Seminar, kein reines Leaderboard-Tuning, keine reine Theorie und wenig Hardware. Welche Art Ergebnis würde dich am Ende zufrieden machen: robuste Evaluation, neue Methode, Analyse/Interpretierbarkeit, oder ein anwendungsnaher Prototyp?"
+    },
+    {
+      "role": "user",
+      "content": "Robuste Evaluation und Analyse klingt am besten. Ich finde es interessant, wenn Modelle unter Distribution Shift oder mit wenigen Labels getestet werden. Ich könnte mir medizinische Bilder vorstellen, aber nur wenn der Datenschutz nicht alles blockiert. Öffentliche Datensätze wären mir lieber."
+    },
+    {
+      "role": "assistant",
+      "content": "Das schärft die Richtung deutlich: Evaluation von Representation Learning unter Distribution Shift oder Label-Knappheit, bevorzugt mit öffentlichen Bilddaten. Ich würde jetzt noch Zeitrahmen, gewünschte Betreuungskultur und mögliche Chair-Präferenzen klären, bevor wir konkrete Betreuer oder Paper als Evidenz heranziehen."
+    },
+    {
+      "role": "user",
+      "content": "Ich habe sechs Monate Zeit, will regelmäßiges Feedback, und fände eine Gruppe gut, die ML methodisch stark ist, aber reale Daten ernst nimmt."
+    },
+    {
+      "role": "assistant",
+      "content": "Vorläufiges Profil: Masterarbeit in empirischem ML, PyTorch, CV und self-supervised representation learning; bevorzugt robuste Evaluation unter Shift/Label-Knappheit auf öffentlichen Daten; sechs Monate; regelmäßiges Feedback; methodisch starke ML-Gruppe mit real-data Bezug. Nächster Schritt: passende Paper und Chair-Seiten prüfen, ohne anzunehmen, dass konkrete Themen oder Kapazitäten offen sind."
+    }
+  ],
+  "completion_reason": "fixture_complete"
+}
