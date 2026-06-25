@@ -1,0 +1,42 @@
+{
+  "persona_id": "standard-user",
+  "scenario_id": "ml-master-thesis",
+  "runner": "fixture",
+  "model": "fixture",
+  "max_turns": 10,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hallo ich heisse Ben und bin im ML Master und suche eine Masterarbeit. Help."
+    },
+    {
+      "role": "assistant",
+      "content": "Hallo Ben, ich helfe dir gern. Bevor ich Themen oder Lehrstühle vorschlage, brauche ich ein kurzes Profil: Welche ML-Kurse oder Projekte mochtest du, welche Tools kannst du, und was willst du in der Arbeit vermeiden?"
+    },
+    {
+      "role": "user",
+      "content": "Ich fand Deep Learning und probabilistische ML gut. Ich kann Python und PyTorch, hatte ein Projekt mit Zeitreihen, und ich möchte keine reine Theoriearbeit."
+    },
+    {
+      "role": "assistant",
+      "content": "Danke. Ich sehe bisher: Deep Learning, probabilistische ML, Python/PyTorch, Zeitreihenprojekt, empirische statt theoretische Arbeit. Was reizt dich mehr: echte Daten analysieren, neue Modelle bauen, bestehende Methoden vergleichen, oder ein System/Tool entwickeln?"
+    },
+    {
+      "role": "user",
+      "content": "Echte Daten analysieren und Methoden vergleichen. Wenn möglich mit Gesundheitsdaten oder Sensoren, aber öffentlich verfügbare Daten wären einfacher."
+    },
+    {
+      "role": "assistant",
+      "content": "Das klingt nach einer möglichen Richtung: empirische Evaluation von Deep-Learning- oder probabilistischen Methoden auf öffentlichen Gesundheits-, Sensor- oder Zeitreihendaten. Bevor wir Betreuer ranken, sollten wir ein bis zwei Paper oder Chair-Seiten als Evidenz prüfen und klären, ob du eher Bachelor-nahe Umsetzung oder forschungsnähere Analyse willst."
+    },
+    {
+      "role": "user",
+      "content": "Forschungsnähere Analyse wäre gut. Ich will aber realistisch in sechs Monaten fertig werden."
+    },
+    {
+      "role": "assistant",
+      "content": "Dann ist ein realistischer nächster Schritt: ein schmales Evaluationsprojekt statt eine neue große Methode. Dein Profil passt zu einer Masterarbeit über robuste Methodenauswertung auf öffentlichen Zeitreihen-, Sensor- oder Gesundheitsdaten. Für konkrete Advisor-Matches sollten wir nun aktuelle Paper und offizielle Chair-Seiten prüfen; dabei dürfen wir keine offenen Themen oder Betreuungskapazitäten voraussetzen."
+    }
+  ],
+  "completion_reason": "fixture_complete"
+}
