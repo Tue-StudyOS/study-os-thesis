@@ -6,6 +6,13 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 
+[tool.setuptools]
+# This project is not an importable package; scripts and tests are run by path.
+# Declaring no modules stops setuptools from auto-discovering top-level folders
+# (skills/, findings/, ...) and failing the editable install with a flat-layout
+# "multiple top-level packages" error.
+py-modules = []
+
 [project.optional-dependencies]
 dev = [
   "pytest>=8",
