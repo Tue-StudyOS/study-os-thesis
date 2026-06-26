@@ -299,6 +299,9 @@ Guardrails:
 - do not overwrite maintainer-owned seed indexes unless the skill explicitly
   allows it
 - run deterministic skill tests after generation
+- the builder is faculty-agnostic: use `--researchers-index`, `--chairs-index`,
+  and `--papers-dir` to target another faculty, and `--validate-only` to check
+  the tree's referential integrity (also enforced in CI)
 
 ## Evidence, Privacy, And Data Rules
 

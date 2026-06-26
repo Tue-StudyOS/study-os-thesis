@@ -25,13 +25,42 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[1]
 RESEARCHERS_INDEX = REPO_ROOT / "skills/find-university-chairs/references/researchers/INDEX.md"
 CHAIRS_INDEX = REPO_ROOT / "skills/find-university-chairs/references/chairs/INDEX.md"
-RESEARCHERS_DIR = RESEARCHERS_INDEX.parent
 PAPERS_DIR = REPO_ROOT / "skills/find-recent-papers/references/papers"
-PAPER_INDEX = PAPERS_DIR / "INDEX.md"
-TOPIC_DIR = PAPERS_DIR / "by-topic"
-YEAR_DIR = PAPERS_DIR / "by-year"
 OPENALEX_API = "https://api.openalex.org"
 DEFAULT_EXCLUDED_TYPES = {"book", "book-chapter", "editorial", "erratum", "letter", "paratext"}
+
+
+@dataclass(frozen=True)
+class BuildConfig:
+    """Locations of one faculty's Markdown tree.
+
+    Defaults point at the bundled Tuebingen data, but every path is
+    overridable so the same builder can assemble or validate the tree for
+    any other faculty without code changes.
+    """
+
+    researchers_index: Path = RESEARCHERS_INDEX
+    chairs_index: Path = CHAIRS_INDEX
+    papers_dir: Path = PAPERS_DIR
+
+    @property
+    def researchers_dir(self) -> Path:
+        return self.researchers_index.parent
+
+    @property
+    def paper_index(self) -> Path:
+        return self.papers_dir / "INDEX.md"
+
+    @property
+    def topic_dir(self) -> Path:
+        return self.papers_dir / "by-topic"
+
+    @property
+    def year_dir(self) -> Path:
+        return self.papers_dir / "by-year"
+
+
+DEFAULT_CONFIG = BuildConfig()
 
 
 @dataclass(frozen=True)
@@ -102,45 +131,79 @@ def split_table_row(line: str) -> list[str]:
     return cells
 
 
-def read_researchers(path: Path = RESEARCHERS_INDEX) -> list[Researcher]:
-    if not path.exists():
-        raise FileNotFoundError(f"researcher index missing: {path}")
+def read_table(path: Path) -> list[dict[str, str]]:
+    """Parse a GitHub-flavored Markdown table into header-keyed row dicts.
 
-    rows: list[Researcher] = []
+    Rows are keyed by (lower-cased) column name rather than position, so a
+    faculty may add or reorder columns without breaking the readers or the
+    referential-integrity validator. The first table row is treated as the
+    header; the `|---|` separator row is skipped.
+    """
+    if not path.exists():
+        raise FileNotFoundError(f"index missing: {path}")
+
+    header: list[str] | None = None
+    rows: list[dict[str, str]] = []
     for line in path.read_text(encoding="utf-8").splitlines():
-        if not line.startswith("|") or "---" in line or "slug" in line:
+        if not line.strip().startswith("|"):
             continue
         cells = split_table_row(line)
-        if len(cells) < 7:
+        if cells and all(set(cell) <= {"-", ":"} for cell in cells if cell):
+            continue  # separator row: |---|:--:|
+        if header is None:
+            header = [cell.strip().lower() for cell in cells]
             continue
-        slug, name, role, chair_slug, openalex_author_id, keywords, last_updated = cells[:7]
+        rows.append({name: (cells[index].strip() if index < len(cells) else "") for index, name in enumerate(header)})
+    return rows
+
+
+def _split_slugs(value: str) -> list[str]:
+    return [item.strip() for item in value.split(";") if item.strip()]
+
+
+def read_researchers(path: Path = RESEARCHERS_INDEX) -> list[Researcher]:
+    rows: list[Researcher] = []
+    for row in read_table(path):
+        slug = row.get("slug", "")
+        openalex_author_id = row.get("openalex_author_id", "")
         if not slug or not openalex_author_id:
             continue
         rows.append(
             Researcher(
                 slug=slug,
-                name=name,
-                role=role,
-                chair_slug=chair_slug,
+                name=row.get("name", ""),
+                role=row.get("role", ""),
+                chair_slug=row.get("chair_slug", ""),
                 openalex_author_id=openalex_author_id,
-                keywords=[item.strip() for item in keywords.split(";") if item.strip()],
-                last_updated=last_updated,
+                keywords=_split_slugs(row.get("keywords", "")),
+                last_updated=row.get("last_updated", ""),
             )
         )
     return rows
 
 
 def read_chair_slugs(path: Path = CHAIRS_INDEX) -> set[str]:
-    if not path.exists():
-        raise FileNotFoundError(f"chair index missing: {path}")
-    slugs: set[str] = set()
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if not line.startswith("|") or "---" in line or "slug" in line:
+    return {row["slug"] for row in read_table(path) if row.get("slug")}
+
+
+def read_chair_researcher_links(path: Path = CHAIRS_INDEX) -> dict[str, list[str]]:
+    return {row["slug"]: _split_slugs(row.get("researchers", "")) for row in read_table(path) if row.get("slug")}
+
+
+def read_paper_links(path: Path) -> list[dict[str, object]]:
+    papers: list[dict[str, object]] = []
+    for row in read_table(path):
+        title = row.get("title", "")
+        if not title:
             continue
-        cells = split_table_row(line)
-        if cells and cells[0]:
-            slugs.add(cells[0])
-    return slugs
+        papers.append(
+            {
+                "title": title,
+                "researchers": _split_slugs(row.get("researchers", "")),
+                "chairs": _split_slugs(row.get("chairs", "")),
+            }
+        )
+    return papers
 
 
 def validate_researcher_index(researchers: list[Researcher], chair_slugs: set[str]) -> list[str]:
@@ -155,6 +218,36 @@ def validate_researcher_index(researchers: list[Researcher], chair_slugs: set[st
             errors.append(f"{researcher.slug} references missing chair {researcher.chair_slug}")
         if not openalex_pattern.fullmatch(researcher.openalex_author_id):
             errors.append(f"{researcher.slug} has invalid OpenAlex author id {researcher.openalex_author_id}")
+    return errors
+
+
+def validate_references(config: BuildConfig = DEFAULT_CONFIG) -> list[str]:
+    """Faculty-agnostic referential-integrity check over a Markdown tree.
+
+    Confirms that every cross-reference resolves: researcher -> chair,
+    chair -> researcher, and paper -> researcher / chair. It reads tables by
+    column name, so faculty-specific extra columns do not affect it. Returns a
+    list of human-readable errors (empty when the tree is internally consistent).
+    """
+    researchers = read_researchers(config.researchers_index)
+    chair_slugs = read_chair_slugs(config.chairs_index)
+    researcher_slugs = {researcher.slug for researcher in researchers}
+
+    errors = validate_researcher_index(researchers, chair_slugs)
+
+    for chair_slug, member_slugs in read_chair_researcher_links(config.chairs_index).items():
+        for member in member_slugs:
+            if member not in researcher_slugs:
+                errors.append(f"chair {chair_slug} lists missing researcher {member}")
+
+    if config.paper_index.exists():
+        for paper in read_paper_links(config.paper_index):
+            for slug in paper["researchers"]:
+                if slug not in researcher_slugs:
+                    errors.append(f"paper '{paper['title']}' references missing person {slug}")
+            for slug in paper["chairs"]:
+                if slug not in chair_slugs:
+                    errors.append(f"paper '{paper['title']}' references missing chair {slug}")
     return errors
 
 
@@ -301,7 +394,7 @@ def format_paper_block(paper: Paper) -> str:
     )
 
 
-def write_researcher_profile(researcher: Researcher, papers: list[Paper], today: str) -> None:
+def write_researcher_profile(researcher: Researcher, papers: list[Paper], today: str, researchers_dir: Path) -> None:
     lines = [
         f"# {researcher.name}",
         "",
@@ -329,13 +422,13 @@ def write_researcher_profile(researcher: Researcher, papers: list[Paper], today:
             "- Missing data: Generated from OpenAlex metadata; source pages may have richer context.",
         ]
     )
-    (RESEARCHERS_DIR / f"{researcher.slug}.md").write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+    (researchers_dir / f"{researcher.slug}.md").write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
 
 
-def write_paper_indexes(papers: list[Paper], today: str) -> None:
-    PAPERS_DIR.mkdir(parents=True, exist_ok=True)
-    TOPIC_DIR.mkdir(parents=True, exist_ok=True)
-    YEAR_DIR.mkdir(parents=True, exist_ok=True)
+def write_paper_indexes(papers: list[Paper], today: str, config: BuildConfig = DEFAULT_CONFIG) -> None:
+    config.papers_dir.mkdir(parents=True, exist_ok=True)
+    config.topic_dir.mkdir(parents=True, exist_ok=True)
+    config.year_dir.mkdir(parents=True, exist_ok=True)
 
     rows = ["# Paper Index", "", f"Last updated: {today}", "", "| title | year | researchers | chairs | keywords | doi | openalex | updated |", "|---|---|---|---|---|---|---|---|"]
     for paper in papers:
@@ -355,7 +448,7 @@ def write_paper_indexes(papers: list[Paper], today: str) -> None:
             )
             + " |"
         )
-    PAPER_INDEX.write_text("\n".join(rows) + "\n", encoding="utf-8")
+    config.paper_index.write_text("\n".join(rows) + "\n", encoding="utf-8")
 
     by_year: dict[str, list[Paper]] = {}
     by_topic: dict[str, list[Paper]] = {}
@@ -367,20 +460,20 @@ def write_paper_indexes(papers: list[Paper], today: str) -> None:
     for year, year_papers in by_year.items():
         content = [f"# Papers From {year}", "", f"Last updated: {today}", ""]
         content.extend(format_paper_block(paper) + "\n" for paper in year_papers)
-        (YEAR_DIR / f"{year}.md").write_text("\n".join(content).rstrip() + "\n", encoding="utf-8")
+        (config.year_dir / f"{year}.md").write_text("\n".join(content).rstrip() + "\n", encoding="utf-8")
 
     for topic, topic_papers in by_topic.items():
         content = [f"# Papers For {topic}", "", f"Last updated: {today}", ""]
         content.extend(format_paper_block(paper) + "\n" for paper in topic_papers)
-        (TOPIC_DIR / f"{topic}.md").write_text("\n".join(content).rstrip() + "\n", encoding="utf-8")
+        (config.topic_dir / f"{topic}.md").write_text("\n".join(content).rstrip() + "\n", encoding="utf-8")
 
     topic_index = ["# Topic Paper Index", "", "| topic | file | paper_count | last_updated |", "|---|---|---|---|"]
     topic_index.extend(f"| {markdown_cell(topic)} | {markdown_cell(topic + '.md')} | {len(items)} | {today} |" for topic, items in sorted(by_topic.items()))
-    (TOPIC_DIR / "INDEX.md").write_text("\n".join(topic_index) + "\n", encoding="utf-8")
+    (config.topic_dir / "INDEX.md").write_text("\n".join(topic_index) + "\n", encoding="utf-8")
 
     year_index = ["# Year Paper Index", "", "| year | file | paper_count | last_updated |", "|---|---|---|---|"]
     year_index.extend(f"| {markdown_cell(year)} | {markdown_cell(year + '.md')} | {len(items)} | {today} |" for year, items in sorted(by_year.items(), reverse=True))
-    (YEAR_DIR / "INDEX.md").write_text("\n".join(year_index) + "\n", encoding="utf-8")
+    (config.year_dir / "INDEX.md").write_text("\n".join(year_index) + "\n", encoding="utf-8")
 
 
 def write_summary(path: Path, text: str) -> None:
@@ -397,18 +490,34 @@ def main_with_args(argv: list[str] | None = None) -> int:
     parser.add_argument("--summary-file", type=Path, default=Path("openalex-update-summary.md"))
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--retries", type=int, default=3)
+    parser.add_argument("--researchers-index", type=Path, default=RESEARCHERS_INDEX, help="researcher INDEX.md for the target faculty")
+    parser.add_argument("--chairs-index", type=Path, default=CHAIRS_INDEX, help="chair INDEX.md for the target faculty")
+    parser.add_argument("--papers-dir", type=Path, default=PAPERS_DIR, help="output directory for the paper tree")
+    parser.add_argument("--validate-only", action="store_true", help="check referential integrity of the tree and exit without fetching")
     args = parser.parse_args(argv)
 
-    researchers = read_researchers(RESEARCHERS_INDEX)
-    chair_slugs = read_chair_slugs(CHAIRS_INDEX)
-    validation_errors = validate_researcher_index(researchers, chair_slugs)
+    config = BuildConfig(
+        researchers_index=args.researchers_index,
+        chairs_index=args.chairs_index,
+        papers_dir=args.papers_dir,
+    )
+
+    if args.validate_only:
+        errors = validate_references(config)
+        for error in errors:
+            print(f"ERROR: {error}", file=sys.stderr)
+        return 2 if errors else 0
+
+    researchers = read_researchers(config.researchers_index)
+    chair_slugs = read_chair_slugs(config.chairs_index)
+    validation_errors = validate_references(config)
     if validation_errors:
         for error in validation_errors:
             print(f"ERROR: {error}", file=sys.stderr)
         return 2
 
     if not researchers:
-        summary = f"No researchers with OpenAlex IDs found in {RESEARCHERS_INDEX}"
+        summary = f"No researchers with OpenAlex IDs found in {config.researchers_index}"
         print(summary)
         write_summary(args.summary_file, summary)
         return 0
@@ -440,8 +549,8 @@ def main_with_args(argv: list[str] | None = None) -> int:
         return 0
 
     for researcher in researchers:
-        write_researcher_profile(researcher, papers_by_researcher.get(researcher.slug, []), today)
-    write_paper_indexes(unique_papers, today)
+        write_researcher_profile(researcher, papers_by_researcher.get(researcher.slug, []), today, config.researchers_dir)
+    write_paper_indexes(unique_papers, today, config)
     write_summary(args.summary_file, summary)
     print(summary)
     return 0

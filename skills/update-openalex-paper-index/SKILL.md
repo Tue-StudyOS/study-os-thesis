@@ -14,7 +14,13 @@ Regenerate optional Markdown paper data that maintainers can review. Student-fac
 3. Deduplicate by DOI, OpenAlex work ID, then normalized title.
 4. Write researcher profiles and paper indexes using `references/openalex-index-schema.md`.
 5. Preserve source links, dates, DOI/OpenAlex IDs, and `last_updated`.
-6. Run deterministic skill tests after generation.
+6. Check referential integrity with `python scripts/update_openalex_index.py --validate-only`.
+7. Run deterministic skill tests after generation.
+
+The builder is faculty-agnostic: pass `--researchers-index`, `--chairs-index`,
+and `--papers-dir` to build or validate the tree for any other faculty without
+code changes. See `references/openalex-index-schema.md` for the integrity rules
+and reuse commands.
 
 ## Output
 

@@ -57,3 +57,34 @@ Use compact entries in topic and year indexes:
 - Keywords:
 - Thesis angle:
 ```
+
+## Referential Integrity
+
+The tree is a graph of slugs: chair -> researcher -> paper. Run the builder's
+check to confirm every cross-reference resolves and to fail on any orphan:
+
+```bash
+python scripts/update_openalex_index.py --validate-only
+```
+
+It verifies that:
+
+- every researcher `chair_slug` resolves to a chair in the chair index
+- every chair `researchers` slug resolves to a researcher
+- every paper `researchers` and `chairs` slug resolves to an existing node
+
+Tables are parsed by **column name**, not position, so a faculty may add or
+reorder descriptive columns without breaking the readers or this check. Only the
+slug/link columns above are load-bearing.
+
+## Reusing The Builder For Another Faculty
+
+The same script builds or validates any faculty's tree. Point it at that
+faculty's files instead of the bundled Tuebingen defaults:
+
+```bash
+python scripts/update_openalex_index.py \
+  --researchers-index <faculty>/researchers/INDEX.md \
+  --chairs-index <faculty>/chairs/INDEX.md \
+  --papers-dir <faculty>/papers
+```
