@@ -1,104 +1,197 @@
 # Masterplan — StudyOS Thesis-Finder
 
-> **Purpose:** The zoomed-out view of the whole effort. This file is a **lookup** — it describes *what* we build, *in what order*, and *why*. It changes rarely.
+> **Purpose:** The zoomed-out view of the whole effort. This file is a
+> **lookup** — it describes *what* we build, *in what order*, and *why*. It
+> changes rarely.
 >
-> **For current progress, open difficulties, and notes see [STATUS.md](STATUS.md)** — that is the only file that is updated continuously.
+> **For current progress, open difficulties, and notes see [STATUS.md](STATUS.md)** —
+> that is the only file that is updated continuously.
 
 ---
 
 ## 1. What we build
 
-A set of portable **Claude Skills** that take a student from vague interests to a prepared first contact with a fitting thesis supervisor — with no backend, DB, or UI, driven only by curated Markdown data + live research.
+A public, portable **Agent Skill package** for thesis advising. The package
+takes a student from vague interests, coursework, skills, and constraints to
+evidence-based thesis directions and advisor-ready first-contact messages —
+with no required backend, database, or UI. It is driven by curated Markdown data
+plus live research when an agent has web/search tools.
 
-The skill flow:
+The durable product is:
 
-```
+- portable `skills/` folders with concise `SKILL.md` entrypoints
+- Markdown `references/` files for rubrics, schemas, indexes, examples, and
+  public source data
+- `AGENTS.md` as the maintainer and agent operating guide
+- lightweight scripts, tests, release tooling, and recurring data/eval
+  workflows
+- durable process findings under `findings/dev_process/`
+
+The student-facing skill flow:
+
+```text
 raw input ("I like deep learning + robotics")
-   │
-   ▼  build-student-profile        deep interview → structured profile (in-session only)
-   ▼  find-university-chairs        matching chairs from the database + live web search
-   ▼  match-thesis-advisors         supervisors ranked by fit + evidence
-   ▼  find-recent-papers            relevant papers as evidence
-   ▼  generate-thesis-directions    concrete thesis directions + proposal hooks
-   ▼  draft-thesis-contact          first contact email
+   |
+   v  build-student-profile        deep interview -> structured profile
+   v  find-recent-papers and/or
+      find-university-chairs        evidence from papers and chair data
+   v  match-thesis-advisors         supervisors ranked by fit + caveats
+   v  generate-thesis-directions    concrete proposal sketches
+   v  draft-thesis-contact          first-contact email
 ```
 
-Plus maintenance skills: `update-openalex-paper-index` (data refresh) and `design-agent-skill` (meta).
+Maintenance skills and process assets:
+
+- `design-agent-skill` is the meta-skill for creating, reviewing, or reshaping
+  any skill.
+- `update-openalex-paper-index` defines the paper-index maintenance workflow.
+- `AGENTS.md` must explain how future agents extend the package to other
+  faculties.
+- `findings/dev_process/` records important repo/product/process findings so
+  maintainers do not have to rediscover them.
 
 ---
 
-## 2. The data structure — the tree
+## 2. Current Findings
 
-The core is a **tree structure** as a Markdown database:
+As of 2026-06-25:
 
-```
-Professor  (topic area + description)
-   └── PhD  (topic area + description)
-          └── Paper (with summary)
-```
-
-Every professor has a topic area and a description; beneath them all their PhDs with their own topic area; beneath those their papers with a summary. Everything saved as `.md` after scraping, referentially linked.
-
----
-
-## 3. Ordering principle
-
-**Get the data correct first, then everything else.** Downstream quality (matching, proposals) cannot be verified while the data is wrong or incomplete. So Phase 1 (data foundation) is a hard gate before Phase 2 (optimization).
-
-**De-risk strategy:** Don't make "all 47 profs perfect" the gate — instead **pilot on 3 chairs → prove the pipeline + validation → scale to 47.**
+- The active GitHub issue backlog was reset to the Phase 1 data-foundation
+  issues `#45`-`#51`; old app/backend/UI issues were closed as superseded by
+  the skill-package pivot.
+- Current bundled data is partial: 47 professor seeds exist, but only 5 curated
+  chair profiles and 7 OpenAlex-linked professor/researcher rows are present.
+- A 3-chair pilot ground-truth fixture exists for PhD/doctoral-researcher recall,
+  but it still needs to become the measured validation anchor.
+- The README describes a monthly OpenAlex refresh workflow, but no scheduled
+  monthly data-refresh workflow exists yet.
+- Codex multi-turn eval scaffolding exists, but monthly eval snapshots are not
+  yet tied to data refreshes or baseline comparison.
+- The package needs explicit faculty-extension guidance, Markdown data-layout
+  policy, privacy/public-data policy, and a findings/dev-process log.
 
 ---
 
-## 4. Phase 1 — Data Foundation (current phase)
+## 3. The Data Structure — The Tree
 
-The "verified researcher tree" epic. Order = dependency.
+The core data product is a Markdown researcher tree:
+
+```text
+Professor / PI
+   -> PhD, doctoral researcher, postdoc, or other relevant researcher
+        -> Paper
+```
+
+Each person node should have a research area/topic description, source
+provenance, update date, and uncertainty/review status where needed. Every paper
+should reference a person slug and preserve traceable metadata such as DOI or
+OpenAlex ID, source, year/date, and summary/abstract policy.
+
+The tree must be:
+
+- reviewable as plain Markdown
+- internally linked with no orphaned Prof -> Researcher -> Paper references
+- safe for public release
+- refreshable without silently overwriting maintainer-owned corrections
+
+---
+
+## 4. Ordering Principle
+
+**Get the data correct first, then optimize the advising behavior.** Downstream
+matching and proposal generation cannot be trusted while chair, researcher, and
+paper data are incomplete or stale.
+
+De-risking strategy:
+
+- prove the pipeline on 3 pilot chairs
+- validate recall and integrity against ground truth
+- scale to all 47 professor seeds
+- only then broaden skill-behavior optimization
+
+---
+
+## 5. Phase 1 — Data Foundation (Current Phase)
+
+The current executable backlog is the verified researcher-tree epic.
 
 | # | Issue | What it is about |
 |---|---|---|
-| 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) | **Resolve author IDs for all 47 profs** (name+URI → OpenAlex ID, with disambiguation) |
-| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) | **Ground-truth roster** for 3 pilot chairs (manual PhD list as the measuring stick) |
-| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) | **PhD discovery per chair** (team page + co-author graph; none forgotten) — keep the mechanism as simple as possible |
-| 4 | [#48](https://github.com/Tue-StudyOS/stud
-
-y-os-thesis/issues/48) | **Tree schema** Prof→PhD→Paper + referential integrity |
-| 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) | **Paper scrape + topic/description** per person, as tree MD |
-| 6 | [#50](https://github.com/Tue-StudyOS/study-os-thesis/issues/50) | **Validation harness** (anomaly checks + sampling + golden record) |
-| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) | **Automation** — a mechanism the agents can run themselves to refresh their data (especially the chair info) and update the referential links accordingly |
+| 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) | Resolve OpenAlex author IDs for all 47 seed professors; flag ambiguous matches instead of guessing. |
+| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) | Build the hand-verified ground-truth roster for 3 pilot chairs. |
+| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) | Discover PhDs/researchers per chair from team pages and cross-check evidence. |
+| 4 | [#48](https://github.com/Tue-StudyOS/study-os-thesis/issues/48) | Define Prof -> Researcher/PhD -> Paper schema and referential integrity checks. |
+| 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) | Fetch papers and generate topic/description fields per person as tree Markdown. |
+| 6 | [#50](https://github.com/Tue-StudyOS/study-os-thesis/issues/50) | Add validation harness: structural checks, anomaly checks, sampling, golden record. |
+| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) | Add refresh automation: monthly/manual run, review PR, override protection, validation in loop. |
 
 Dependency graph:
 
-```
-1 (Prof IDs) ─┐
-2 (ground truth) ─→ 3 (PhD discovery) ─→ 5 (papers+description) ─→ 6 (validation) ─→ 7 (automation)
-4 (schema) ────────────────────────────────┘
-                                                                       ↓
-                                                      Gate: only once 6 is green → Phase 2
+```text
+1 (Prof IDs) ---------------------.
+2 (ground truth) -> 3 (PhD discovery) -> 5 (papers + descriptions) -> 6 (validation) -> 7 (automation)
+4 (tree schema) ------------------'
 ```
 
-**Gate Phase 1 → Phase 2:** Issue 6 (validation) is green, golden record reproducible, pilot recall ≥ 90%.
+Gate Phase 1 -> Phase 2:
+
+- validation harness is green
+- golden record is reproducible
+- pilot recall is at least 90%
+- generated Markdown has no broken Prof -> Researcher -> Paper references
+- refresh process does not overwrite manual corrections silently
 
 ---
 
-## 5. Phase 2 — Skill optimization (after the gate)
+## 6. Governance And Portability Track
 
-Only sensible once the data is correct.
+This track can run alongside Phase 1 because it makes the package maintainable
+for humans and future agents.
 
-- **Measure a baseline** — freeze current eval scores before changing anything.
-- **Expand the eval set** — several cases per core skill (happy path, shallow profile, missing info, adversarial) instead of 1.
-- **Few-shot examples** in the core skills (`build-student-profile`, `find-university-chairs`, `match-thesis-advisors`).
-- **Unify guardrails** (shallow-profile protection everywhere).
-- **End-to-end flow eval** across the whole skill chain.
-- **Calibrate the judge** against human judgement.
-- **Respect degree program / thesis level / scope** — groundwork already added by a teammate in `build-student-profile` (`references/tuebingen-degree-programs.md`): degree program → thesis level (e.g. Machine Learning is Master-only) → scope (Bachelor 4 months vs. Master 6 months). Proposal generation must honor this.
-
-## 6. Phase 3 — Cross-platform (stretch)
-
-The content is portable; the mechanism should be tested with Codex and Gemini CLI.
+- **Faculty extension:** `AGENTS.md` must explain how to adapt the package to a
+  new faculty or program, starting with `skills/design-agent-skill`.
+- **Markdown data filesystem:** document which files are generated, curated,
+  protected by manual overrides, and used as eval snapshots.
+- **Public-data and privacy policy:** document what public academic data may be
+  bundled and what student-private or sensitive data must never be stored.
+- **Findings/dev-process log:** important architecture, process, data, eval, and
+  issue-triage findings must be recorded under `findings/dev_process/`.
+- **Monthly snapshots:** data refreshes and multi-turn evals should produce
+  reviewable artifacts so regressions can be traced to skill changes or data
+  changes.
 
 ---
 
-## 7. How this plan is used
+## 7. Phase 2 — Skill Optimization
 
-- **MASTERPLAN.md** (this file) = stable lookup. Only adjusted when the plan changes structurally.
-- **[STATUS.md](STATUS.md)** = living document. Progress, blockers, decisions, notes land here. **Always update here, not in the Masterplan.**
-- **GitHub Issues** = the executable units. Each issue linked above; details, acceptance criteria, and discussion live in the issue.
+Only start broad skill optimization after the Phase 1 data gate.
+
+- Measure a baseline before changing core skill behavior.
+- Expand evals across happy path, shallow profile, missing info, adversarial
+  prompts, and end-to-end flow.
+- Add few-shot examples only where evals show repeated failure.
+- Unify shallow-profile guardrails across the student-facing skills.
+- Calibrate LLM-as-judge results against human review.
+- Ensure degree program, thesis level, and scope constraints are respected in
+  matching and proposal generation.
+
+---
+
+## 8. Phase 3 — Cross-Platform
+
+The content should remain portable across capable coding-agent clients. Test the
+package with Codex, Claude, Gemini CLI, and similar tools where practical. Avoid
+client-specific metadata unless there is a documented portable fallback.
+
+---
+
+## 9. How This Plan Is Used
+
+- `MASTERPLAN.md` = stable structural plan. Change it only when the product goal,
+  phase structure, or major workflow changes.
+- `STATUS.md` = living progress document. Update status, blockers, decisions,
+  and dated logs there.
+- `AGENTS.md` = operating instructions for future agents and maintainers.
+- `findings/dev_process/` = durable discoveries about repo process, architecture,
+  data maintenance, evals, or governance.
+- GitHub Issues = executable work units with acceptance criteria.

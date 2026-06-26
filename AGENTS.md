@@ -16,6 +16,34 @@ Treat these files as the source of truth. Future work should make the skills
 clearer, more portable, better evidenced, and easier for students and
 maintainers to use.
 
+## Findings And Dev Process Log
+
+Important repo findings must be recorded under `findings/dev_process/`.
+
+Use this log for durable process and product learnings that future humans or
+agents should not have to rediscover, including:
+
+- architecture or product-scope decisions
+- stale, incorrect, or misleading documentation
+- issue-triage decisions and backlog resets
+- data-pipeline constraints or recurring scrape failures
+- eval, CI, release, or maintenance-process learnings
+- privacy, evidence, or public-data policy decisions
+- recurring failure modes that should change future work
+
+Each finding entry should be a Markdown file named
+`YYYY-MM-DD-short-topic.md` and include:
+
+- date
+- context
+- finding
+- implication
+- follow-up or linked issue
+
+Do not put private student data, transcripts, CVs, grades, contact drafts, or
+temporary scratch notes in `findings/dev_process/`. Use `STATUS.md` for current
+progress tracking; use findings only for durable lessons and decisions.
+
 ## Core Rule: Use The Meta-Skill First
 
 All new skills and all substantial redesigns of existing skills must start with
@@ -271,6 +299,9 @@ Guardrails:
 - do not overwrite maintainer-owned seed indexes unless the skill explicitly
   allows it
 - run deterministic skill tests after generation
+- the builder is faculty-agnostic: use `--researchers-index`, `--chairs-index`,
+  and `--papers-dir` to target another faculty, and `--validate-only` to check
+  the tree's referential integrity (also enforced in CI)
 
 ## Evidence, Privacy, And Data Rules
 
