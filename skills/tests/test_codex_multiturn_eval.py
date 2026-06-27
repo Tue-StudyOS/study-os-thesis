@@ -12,6 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SIM_DIR = REPO_ROOT / "skills" / "tests" / "simulations"
 RUNNER_PATH = REPO_ROOT / "scripts" / "run_codex_multiturn_eval.py"
 PERSONAS = {"terse-user", "deep-user", "standard-user"}
+DISCOVERY_ARMS = {"neuro-student-skill", "neuro-student-baseline"}
 
 
 def _load_runner():
@@ -119,6 +120,69 @@ def test_user_simulator_prompt_is_student_only() -> None:
     assert "Hidden profile:" in prompt
     assert "Disclosure rules:" in prompt
     assert "Anti-behavior:" in prompt
+
+
+def test_discovery_scenario_resources_exist() -> None:
+    assert (SIM_DIR / "scenarios" / "medicine-discovery-skill.md").is_file()
+    assert (SIM_DIR / "scenarios" / "medicine-discovery-baseline.md").is_file()
+    assert (SIM_DIR / "personas" / "neuro-student.md").is_file()
+    for arm in DISCOVERY_ARMS:
+        fixture_path = SIM_DIR / "fixtures" / f"{arm}.json"
+        assert fixture_path.is_file(), f"Missing fixture: {fixture_path}"
+        data = json.loads(fixture_path.read_text(encoding="utf-8"))
+        assert data["persona_id"] == "neuro-student"
+        assert data["arm"] in {"skill", "baseline"}
+        assert data["turns"]
+        assert data["turns"][0]["role"] == "user"
+
+
+def test_coverage_scoring_detects_chair_names() -> None:
+    runner = _load_runner()
+    chairs = runner.MEDICINE_GROUND_TRUTH
+    turns_with_gasser = [
+        {"role": "user", "content": "Wer forscht zu Parkinson?"},
+        {"role": "assistant", "content": "Prof. Dr. Thomas Gasser arbeitet zu Parkinson."},
+    ]
+    result = runner.score_coverage(turns_with_gasser, chairs)
+    assert result["surfaced_count"] == 1
+    assert result["total"] == 6
+    assert result["recall"] == round(1 / 6, 3)
+    assert "Prof. Dr. Thomas Gasser" in result["surfaced"]
+
+    turns_empty = [{"role": "user", "content": "Hallo"}, {"role": "assistant", "content": "Hallo!"}]
+    empty = runner.score_coverage(turns_empty, chairs)
+    assert empty["surfaced_count"] == 0
+    assert empty["recall"] == 0.0
+
+
+def test_skill_arm_fixture_has_higher_coverage_than_baseline() -> None:
+    runner = _load_runner()
+    skill_data = json.loads((SIM_DIR / "fixtures" / "neuro-student-skill.json").read_text())
+    baseline_data = json.loads((SIM_DIR / "fixtures" / "neuro-student-baseline.json").read_text())
+    skill_cov = runner.score_coverage(skill_data["turns"], runner.MEDICINE_GROUND_TRUTH)
+    base_cov = runner.score_coverage(baseline_data["turns"], runner.MEDICINE_GROUND_TRUTH)
+    assert skill_cov["recall"] > base_cov["recall"], (
+        f"Skill recall ({skill_cov['recall']}) must exceed baseline ({base_cov['recall']})"
+    )
+    assert skill_cov["surfaced_count"] >= 2
+
+
+def test_skill_arm_fixture_passes_structure_check() -> None:
+    runner = _load_runner()
+    skill_data = json.loads((SIM_DIR / "fixtures" / "neuro-student-skill.json").read_text())
+    assert runner.score_structure(skill_data["turns"])
+
+
+def test_discovery_comparison_writes_artifact(tmp_path: Path) -> None:
+    runner = _load_runner()
+    result = runner.run_discovery_comparison(tmp_path)
+    assert (tmp_path / "comparison.json").is_file()
+    assert (tmp_path / "comparison.md").is_file()
+    md = (tmp_path / "comparison.md").read_text(encoding="utf-8")
+    assert "Skill" in md
+    assert "Baseline" in md
+    assert "Recall" in md
+    assert result["arms"]["skill"]["coverage"]["recall"] > result["arms"]["baseline"]["coverage"]["recall"]
 
 
 def test_fixture_user_runner_preserves_scripted_turns() -> None:
