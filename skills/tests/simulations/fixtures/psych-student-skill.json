@@ -1,0 +1,43 @@
+{
+  "persona_id": "psych-student",
+  "scenario_id": "psychology-discovery-skill",
+  "runner": "fixture",
+  "model": "fixture",
+  "arm": "skill",
+  "max_turns": 12,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hallo, ich studiere Psychologie im Master und interessiere mich für eine Masterarbeit im Bereich kognitive Neurowissenschaften und Entscheidungsforschung. Wer forscht dazu in Tübingen?"
+    },
+    {
+      "role": "assistant",
+      "content": "Hallo! Gerne helfe ich dir. Magst du kurz einordnen, was dich genau reizt — eher die neuronalen Korrelate von Wahrnehmung und Aufmerksamkeit (fMRI, MEG), oder mehr die Verhaltensbasis von Entscheidungen unter Unsicherheit (Computational Modeling, Experimente)?"
+    },
+    {
+      "role": "user",
+      "content": "Beides interessiert mich, aber der Schwerpunkt liegt auf fMRI und Aufmerksamkeit — wie das Gehirn selektiv Information verarbeitet. Ich habe in meiner Bachelorarbeit mit EEG gearbeitet und kenne MATLAB und Python."
+    },
+    {
+      "role": "assistant",
+      "content": "Gut, das ist ein klares Profil. Noch eine Frage: Bevorzugst du eher Grundlagenforschung zu neuronalen Mechanismen, oder interessieren dich auch klinische Anwendungen (z.B. Kognition bei ADHS oder Essstörungen)? Und gibt es Themen, die du explizit ausschließen möchtest?"
+    },
+    {
+      "role": "user",
+      "content": "Grundlage klar — neuronale Mechanismen, Wahrnehmung, kognitive Kontrolle. Keine reine Entwicklungspsychologie und keine Therapie-Evaluation."
+    },
+    {
+      "role": "assistant",
+      "content": "Danke. Hier ist eine Übersicht der passenden Arbeitsbereiche im Fachbereich Psychologie, Tübingen (Stand: 2026-06-27):\n\n**[Interesse: Visuelle Wahrnehmung / fMRI / Kognitive Neurowissenschaften]**\n\n- **Prof. Dr. Andreas Bartels** — Visuelle und Kognitive Neurowissenschaften, Tübingen\n  Schwerpunkt: Neuronale Mechanismen visueller Wahrnehmung, Bewusstsein, natürliches Sehen, fMRI.\n  *Sehr gut zu dir:* direkte Überschneidung mit fMRI, Wahrnehmung und selektiver Aufmerksamkeit.\n  URL: https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/psychologie/arbeitsbereiche/visuelle-und-kognitive-neurowissenschaften/\n\n---\n\n**[Interesse: Kognitive Neuropsychologie / Numerische Kognition]**\n\n- **Prof. Dr. Hans-Christoph Nürk** — Diagnostik und Kognitive Neuropsychologie, Tübingen\n  Schwerpunkt: Numerische Kognition, Dyskalkulie, neuropsychologische Tests, kognitive Entwicklung.\n  *Gut zu dir:* experimentelle kognitive Paradigmen, Verhaltensmaße kombiniert mit neuropsychologischen Methoden.\n  URL: https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/psychologie/arbeitsbereiche/diagnostik-und-kognitive-neuropsychologie/\n\n---\n\n**[Interesse: Sprachverarbeitung / ERP-Methodik]**\n\n- **Prof. Dr. Claudia Friedrich** — Entwicklung der Sprachverarbeitung, Tübingen\n  Schwerpunkt: Sprachentwicklung, ERP-Studien, neuronale Korrelate der Sprachverarbeitung.\n  *Methodisch relevant:* deine EEG/ERP-Erfahrung ist hier direkt verwendbar.\n\n---\n\n**[Interesse: Gedächtnis / Angewandte Kognition]**\n\n- **Prof. Dr. Markus Huff** — Angewandte Kognitionspsychologie, Tübingen\n  Schwerpunkt: Gedächtnis, Multimedia-Lernen, mentale Simulation, räumliche Kognition.\n  *Gut zu dir:* experimentell-kognitive Ansätze mit Verhaltensmaßen und kognitiver Theorie.\n  URL: https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/psychologie/arbeitsbereiche/angewandte-kognitionspsychologie/\n\n---\n\n**[Randbereich: Emotion / Selbstregulation — falls Entscheidung + Affekt]**\n\n- **Prof. Dr. Jennifer Svaldi** — Klinische Psychologie und Psychotherapie, Tübingen\n  Schwerpunkt: Emotionsregulation, Essstörungen, kognitive Mechanismen von Impulsivität.\n  *Bedingt passend:* Falls du Entscheidungsforschung unter emotionalem Einfluss (Affect-as-information, Impulsivität) ansiehst.\n  URL: https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/psychologie/arbeitsbereiche/klinische-psychologie-und-psychotherapie/\n\n- **Prof. Dr. Caterina Gawrilow** — Differentielle Psychologie / Entwicklungspsychologie, Tübingen\n  Schwerpunkt: Exekutivfunktionen, ADHS, Selbstregulation über die Lebensspanne.\n  *Relevant:* Exekutivfunktionen und kognitive Kontrolle haben direkte Schnittmengen mit Entscheidungsforschung.\n\n---\n\n**Empfehlung:** Bartels ist für deinen fMRI/Wahrnehmungs-Fokus eindeutig am stärksten. Nürk und Huff für experimentell-kognitive Ansätze. Soll ich eine Kontakt-E-Mail für einen dieser Arbeitsbereiche formulieren?"
+    },
+    {
+      "role": "user",
+      "content": "Perfekt, das hilft sehr! Bartels klingt ideal. Gibt es noch weitere, die ich auf dem Schirm haben sollte?"
+    },
+    {
+      "role": "assistant",
+      "content": "Alle sechs oben aufgeführten Arbeitsbereiche (Bartels, Nürk, Friedrich, Huff, Svaldi, Gawrilow) decken das Spektrum des Fachbereichs Psychologie für deinen Interessensbereich ab. Darüber hinaus gibt es am Tübingen AI Center und im BCCN Schnittstellen zu Computational Neuroscience — dort forscht z.B. Matthias Bethge zu neuronalen Repräsentationen. Wenn du einen stärker computationalen Schwerpunkt setzt, wäre das eine Erweiterung. Aber innerhalb des Psychologie-Fachbereichs ist Bartels der klare Anlaufpunkt."
+    }
+  ],
+  "completion_reason": "fixture_complete"
+}
