@@ -135,9 +135,20 @@ When a task is **truly finished** (done-when criteria met, committed), end the c
    - the key files to read first (build plan, MASTERPLAN, STATUS, relevant references/skills)
    - what the previous task produced and where
    - the concrete done-when criteria
+   - **which model to use** and any effort note (see table below)
    - a reminder to commit in small steps and to emit its own handoff prompt at the end
 
 The point: I can paste the prompt into a fresh conversation and the next task continues with full context.
+
+### Model selection per task type
+
+| Task type | Recommended model | Rationale |
+|---|---|---|
+| Document writing / reference files (Tasks B, C, F) | `claude-sonnet-4-6` | Fast, cheap, sufficient for structured writing |
+| Skill rewrites, complex code changes (Tasks A, D, E, G) | `claude-sonnet-4-6` | Good enough; use Opus only if first pass is weak |
+| Eval interpretation, tricky judgment calls (Task H) | `claude-opus-4-8` | Nuanced analysis benefits from stronger reasoning |
+
+Default: **Sonnet 4.6** unless the task needs heavy cross-file reasoning or judgment. Note the model in the handoff prompt so the next agent starts with the right one.
 
 ---
 
