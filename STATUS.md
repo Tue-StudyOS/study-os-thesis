@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-27 (Task E)
+**Last update:** 2026-06-27 (Task F)
 
 ---
 
@@ -31,7 +31,7 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 | C | Search-strategy reference (profile → queries) | ✅ | Domi | Created `search-strategy.md`: profile→query-variable mapping, 18 query skeletons, two-pass strategy, quality filters, dedup rules, no-go exclusion, faculty routing table, two worked examples (Ethical AI/Education + Clinical Neuroscience). |
 | D | Rework `find-university-chairs` into universal discovery skill | ✅ | Domi | Rewrote SKILL.md: faculty-agnostic description, 6-dimension profile gate, faculty routing via search-strategy.md §2, two-pass search (backbone crawl + live enrichment), quality filters/dedup/no-go exclusion, MAP output grouped by interest dimension with pros/cons, dated evidence, conversation starter, coverage caveat. No seed-list dependency. |
 | E | Retire DB assets (match-thesis-advisors, openalex index, seed data → eval) | ✅ | Domi | Deleted match-thesis-advisors + update-openalex-paper-index; moved CS seed data to skills/tests/eval_ground_truth/cs_seed/; fixed seed-path refs in find-recent-papers + design-agent-skill. grep confirms no runtime DB deps remain. |
-| F | Eval ground truth for 3–4 faculties + metric | ⬜ | – | Recall target ≥70%; reuse CS curated data. |
+| F | Eval ground truth for 3–4 faculties + metric | ✅ | Domi | 4 faculties: CS (cs_seed/), Medicine (6 chairs), Psychology (6 chairs), WiSo (7 chairs). README defines recall metric + ≥70% target. |
 | G | Wire discovery into Max's multiturn harness (skill vs. baseline) | ⬜ | – | Port from `eval/auto_eval_agents` (ed341a7). Depends on D, F. |
 | H | Run eval, measure coverage & skill-vs-baseline delta, document | ⬜ | – | Depends on G. Be honest about weak spots. |
 
@@ -69,6 +69,17 @@ sample.
 ---
 
 ## Log
+
+- **2026-06-27** — Task F done. Created eval ground truth for 4 faculties under
+  `skills/tests/eval_ground_truth/`: Medicine (6 Hertie Institute professors, sample
+  interest: neurodegenerative diseases + clinical brain research), Psychology (6
+  Fachbereich Psychologie chairs, sample interest: cognitive neuroscience + decision-
+  making), WiSo (7 chairs across Politikwissenschaft + Wirtschaftswissenschaft, sample
+  interest: comparative politics + political economy). CS already covered by cs_seed/.
+  Wrote README.md defining the recall metric: recall = surfaced / total ground-truth
+  chairs, ≥70% target, step-by-step scoring guide, and what counts as "surfaced".
+  All names verified against official uni-tuebingen.de and hih-tuebingen.de pages on
+  2026-06-27. Four commits (one per faculty file + one for README).
 
 - **2026-06-27** — Task E done. Deleted `skills/match-thesis-advisors/` and
   `skills/update-openalex-paper-index/` (4 files; git history preserves them).
