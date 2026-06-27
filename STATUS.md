@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-27 (Task F)
+**Last update:** 2026-06-27 (Task G)
 
 ---
 
@@ -32,7 +32,7 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 | D | Rework `find-university-chairs` into universal discovery skill | ✅ | Domi | Rewrote SKILL.md: faculty-agnostic description, 6-dimension profile gate, faculty routing via search-strategy.md §2, two-pass search (backbone crawl + live enrichment), quality filters/dedup/no-go exclusion, MAP output grouped by interest dimension with pros/cons, dated evidence, conversation starter, coverage caveat. No seed-list dependency. |
 | E | Retire DB assets (match-thesis-advisors, openalex index, seed data → eval) | ✅ | Domi | Deleted match-thesis-advisors + update-openalex-paper-index; moved CS seed data to skills/tests/eval_ground_truth/cs_seed/; fixed seed-path refs in find-recent-papers + design-agent-skill. grep confirms no runtime DB deps remain. |
 | F | Eval ground truth for 3–4 faculties + metric | ✅ | Domi | 4 faculties: CS (cs_seed/), Medicine (6 chairs), Psychology (6 chairs), WiSo (7 chairs). README defines recall metric + ≥70% target. |
-| G | Wire discovery into Max's multiturn harness (skill vs. baseline) | ⬜ | – | Port from `eval/auto_eval_agents` (ed341a7). Depends on D, F. |
+| G | Wire discovery into Max's multiturn harness (skill vs. baseline) | ✅ | Domi | Harness already existed in branch. Added medicine-discovery scenario (skill + baseline arms), neuro-student persona, scripted fixtures, coverage/relevance/structure scoring, `--discovery-comparison` CLI flag. 12/12 tests pass; fixture run: skill 83% recall vs. 0% baseline. |
 | H | Run eval, measure coverage & skill-vs-baseline delta, document | ⬜ | – | Depends on G. Be honest about weak spots. |
 
 **Gate Phase 1 → 2:** skill runs end-to-end with no DB · ground truth for ≥3
@@ -69,6 +69,17 @@ sample.
 ---
 
 ## Log
+
+- **2026-06-27** — Task G done. Ported (already present) harness and extended it for discovery eval:
+  Added `neuro-student` persona (Neurowissenschaften MSc, Parkinson's/Alzheimer's interest);
+  `medicine-discovery-skill` and `medicine-discovery-baseline` scenarios; scripted fixture
+  conversations for both arms; extended rubric with `discovery_coverage`, `discovery_relevance`,
+  `discovery_structure` metrics; added `score_coverage()`, `score_relevance()`, `score_structure()`,
+  `run_discovery_comparison()`, `--discovery-comparison` CLI flag to the runner.
+  5 new tests added (12/12 total pass). First fixture run: skill arm 83% recall (5/6 HIH chairs),
+  baseline 0% recall — gap +83pp. Comparison artifact written to
+  `dist/codex-multiturn-evals/discovery-comparison/comparison.md`.
+  Note: harness fixture mode requires no Codex/API; live Codex runs need `--runner codex-*`.
 
 - **2026-06-27** — Task F done. Created eval ground truth for 4 faculties under
   `skills/tests/eval_ground_truth/`: Medicine (6 Hertie Institute professors, sample
