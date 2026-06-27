@@ -31,12 +31,10 @@ Create small, portable Agent Skills that another coding agent can use without kn
 For thesis discovery, split the system into focused skills:
 
 - `build-student-profile` interviews the student deeply enough to capture research taste, motivation, skills, and constraints.
-- `find-recent-papers` uses the professor seed index plus native web/search tools to find recent papers and explain thesis relevance.
-- `find-university-chairs` starts from the professor seed index, then uses native web/search tools to identify labs, teams, and research areas.
-- `match-thesis-advisors` combines the deep student profile, papers, and chair evidence into proposal-relevant advisor matches.
-- `generate-thesis-directions` turns matches and papers into precise research-proposal sketches and conversation starters.
+- `find-recent-papers` uses native web/search tools to find recent papers and explain thesis relevance.
+- `find-university-chairs` uses live web search (faculty backbone + enrichment queries) to identify labs, teams, and research areas across all faculties.
+- `generate-thesis-directions` turns discovery results and papers into precise research-proposal sketches and conversation starters.
 - `draft-thesis-contact` drafts concise, specific first-contact messages around one proposal sketch.
-- `update-openalex-paper-index` defines the maintenance workflow for monthly OpenAlex index generation.
 - Meta skills create or update the skill package itself.
 
-Student-facing skills must not depend on a database, API, Docker service, FastAPI app, or the old UI. Use the bundled professor seed index as the primary local source, then use native web/search tools when the active agent provides them. If browsing is unavailable, say what can and cannot be inferred from the seed list alone.
+Student-facing skills must not depend on a database, API, Docker service, FastAPI app, or the old UI. Use native web/search tools when the active agent provides them. If browsing is unavailable, say so explicitly.
