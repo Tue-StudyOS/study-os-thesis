@@ -1,0 +1,43 @@
+{
+  "persona_id": "neuro-student",
+  "scenario_id": "medicine-discovery-skill",
+  "runner": "fixture",
+  "model": "fixture",
+  "arm": "skill",
+  "max_turns": 12,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hallo, ich studiere Neurowissenschaften im Master und suche eine Masterarbeit im Bereich Neurodegeneration — Parkinson, Alzheimer. Kann mir jemand helfen?"
+    },
+    {
+      "role": "assistant",
+      "content": "Hallo! Gerne helfe ich dir dabei, passende Betreuer zu finden. Bevor ich konkrete Vorschläge mache, brauche ich noch ein bisschen mehr Kontext über dich. Was interessiert dich bei der Neurodegeneration am meisten: eher die molekularen Mechanismen (Protein-Aggregation, Genetik), klinisch-translationale Ansätze, oder Bildgebung und Diagnostik?"
+    },
+    {
+      "role": "user",
+      "content": "Eher molekular — Protein-Aggregation, wie alpha-Synuclein oder Amyloid-beta sich ausbreiten. Finde ich spannend."
+    },
+    {
+      "role": "assistant",
+      "content": "Gut, das ist ein klarer Schwerpunkt. Hast du schon Laborerfahrung — Zellkultur, Histologie, Western Blot — oder eher rechnerische/Bioinformatik-Erfahrung? Und gibt es Methoden oder Themen, die du ausdrücklich vermeiden möchtest?"
+    },
+    {
+      "role": "user",
+      "content": "Beides ein bisschen: Bachelorarbeit mit GROMACS-Simulationen für fehlgefaltete Proteine, plus 3 Monate Wet-Lab (Zellkultur, Immunhistochemie). Keine reine Klinik und kein reines Epidemiology-Thema ohne Mechanismus bitte."
+    },
+    {
+      "role": "assistant",
+      "content": "Perfekt, das ergibt ein solides Profil: Neurowissenschaften MSc, Schwerpunkt molekulare Neurodegeneration (alpha-Synuclein, Amyloid-beta, prionartige Ausbreitung), Erfahrung in MD-Simulation und Wet-Lab, keine reine Klinik oder Epidemiologie. Ich suche jetzt passende Lehrstühle am Hertie Institute for Clinical Brain Research (HIH) in Tübingen.\n\n**Option-Map — Neurodegeneration Tübingen (Stand: 2026-06-27)**\n\n---\n\n**[Interesse: Parkinson / alpha-Synuclein / Genetik]**\n\n- **Prof. Dr. Thomas Gasser** — Abteilung Neurodegeneration, HIH Tübingen  \n  Schwerpunkt: Parkinson-Genetik, mitochondriale Dysfunktion, alpha-Synuclein-Aggregation.  \n  *Gut zu dir:* direkte Überschneidung mit deinem Protein-Aggregations-Interesse; Wet-Lab- und Simulations-Hintergrund verwendbar.  \n  *Caveat:* Große Gruppe — Kapazität vorab anfragen.  \n  URL: https://www.hih-tuebingen.de/en/research/neurodegenerative-diseases/\n\n---\n\n**[Interesse: Alzheimer / Amyloid-beta / prionartige Ausbreitung]**\n\n- **Prof. Dr. Mathias Jucker** — Abteilung Zelluläre Neurologie, HIH Tübingen  \n  Schwerpunkt: Alzheimer-Pathologie, prionartige Ausbreitung von Protein-Aggregaten, Amyloid-beta.  \n  *Sehr gut zu dir:* exakt dein Mechanismus-Interesse (Ausbreitung fehlgefalteter Proteine); IHC-Erfahrung direkt verwertbar.  \n  URL: https://www.hih-tuebingen.de/en/research/cellular-neurology/\n\n---\n\n**[Randthema: Kanal-Neurologie / verwandte Genetik-Methoden]**\n\n- **Prof. Dr. Holger Lerche** — Neurologie und Epileptologie, HIH Tübingen  \n  Schwerpunkt: Channelopathien, Epilepsiegenetik, Ionenkanal-Dysfunktion.  \n  *Weniger direkt* zur Neurodegeneration, aber genetische Methoden überlappen.  \n  URL: https://www.hih-tuebingen.de/en/research/neurology-epileptology/\n\n---\n\n**Nächster Schritt:** Schau dir die HIH-Seiten von Gasser und Jucker an (Links oben). Prüf ob aktuelle Projekte oder MSc-Ausschreibungen gelistet sind. Wenn nichts ausgeschrieben ist, würde ich eine kurze Kontakt-E-Mail (3–4 Sätze: Wer du bist, dein Aggregations-Interesse, dein Wet-Lab/Sim-Hintergrund, dass du eine Masterarbeit suchst) empfehlen."
+    },
+    {
+      "role": "user",
+      "content": "Super, Gasser und Jucker klingen sehr gut. Gibt es noch weitere am HIH, die passen könnten?"
+    },
+    {
+      "role": "assistant",
+      "content": "Ja, noch zwei weitere die je nach genauerem Fokus passen könnten:\n\n- **Prof. Dr. Ulf Ziemann** — Neurologie und Schlaganfall, HIH Tübingen. Fokus: Neuromodulation (TMS/TES), Schlaganfall-Recovery, kortikale Plastizität. Weniger direkt zur Protein-Aggregation, aber falls dich kortikale Netzwerkmechanismen in der Neurodegeneration interessieren.\n- **Prof. Dr. Markus Siegel** — Neuronale Dynamik und MEG, HIH Tübingen. Fokus: Gehirnoszillationen, MEG-Methodik, neuronale Mechanismen von Wahrnehmung und Kognition. Eher Grundlagenforschung; MEG-Methodenkenntnisse wären nötig.\n\nFür deinen Aggregations- und Mechanismus-Fokus bleiben Gasser und Jucker die stärkste Übereinstimmung. Soll ich eine Muster-E-Mail für den Erstkontakt formulieren?"
+    }
+  ],
+  "completion_reason": "fixture_complete"
+}
