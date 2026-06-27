@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-27
+**Last update:** 2026-06-27 (Task D)
 
 ---
 
@@ -29,7 +29,7 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 | A | Conversation discipline in `build-student-profile` | ✅ | Domi | One-question rule + precise-answer instruction + no-search gate added to SKILL.md. |
 | B | Faculty backbone reference (Tübingen listing URLs) | ✅ | Domi | All 7 faculties + ZITh covered; ≥1 official listing URL each, 6 spot-checked live. |
 | C | Search-strategy reference (profile → queries) | ✅ | Domi | Created `search-strategy.md`: profile→query-variable mapping, 18 query skeletons, two-pass strategy, quality filters, dedup rules, no-go exclusion, faculty routing table, two worked examples (Ethical AI/Education + Clinical Neuroscience). |
-| D | Rework `find-university-chairs` into universal discovery skill | ⬜ | – | Map output, pros/cons, coverage caveat; drop seed-list. Depends on B, C. |
+| D | Rework `find-university-chairs` into universal discovery skill | ✅ | Domi | Rewrote SKILL.md: faculty-agnostic description, 6-dimension profile gate, faculty routing via search-strategy.md §2, two-pass search (backbone crawl + live enrichment), quality filters/dedup/no-go exclusion, MAP output grouped by interest dimension with pros/cons, dated evidence, conversation starter, coverage caveat. No seed-list dependency. |
 | E | Retire DB assets (match-thesis-advisors, openalex index, seed data → eval) | ⬜ | – | Do after D so replacement exists. |
 | F | Eval ground truth for 3–4 faculties + metric | ⬜ | – | Recall target ≥70%; reuse CS curated data. |
 | G | Wire discovery into Max's multiturn harness (skill vs. baseline) | ⬜ | – | Port from `eval/auto_eval_agents` (ed341a7). Depends on D, F. |
@@ -69,6 +69,16 @@ sample.
 ---
 
 ## Log
+
+- **2026-06-27** — Task D done. Rewrote `skills/find-university-chairs/SKILL.md` into a
+  faculty-agnostic thesis-option discovery skill. Key changes: (1) description updated
+  to cover all disciplines; (2) hard profile gate — all 6 dimensions required, else
+  defers to build-student-profile; (3) faculty routing via search-strategy.md §2;
+  (4) Pass 1 backbone crawl via tuebingen-faculty-backbone.md; (5) Pass 2 live
+  enrichment using query skeletons from search-strategy.md §3–4; (6) quality filters,
+  dedup rules, no-go exclusion (§5–7); (7) MAP output grouped by interest dimension
+  with pros/cons, dated evidence, conversation starter, no-go flags; (8) honest
+  coverage caveat; (9) all runtime references to seed files removed.
 
 - **2026-06-27** — Task C done. Created
   `skills/find-university-chairs/references/search-strategy.md`: a reusable
