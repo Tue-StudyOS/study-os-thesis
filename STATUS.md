@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-27 (Task D)
+**Last update:** 2026-06-27 (Task E)
 
 ---
 
@@ -30,7 +30,7 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 | B | Faculty backbone reference (Tübingen listing URLs) | ✅ | Domi | All 7 faculties + ZITh covered; ≥1 official listing URL each, 6 spot-checked live. |
 | C | Search-strategy reference (profile → queries) | ✅ | Domi | Created `search-strategy.md`: profile→query-variable mapping, 18 query skeletons, two-pass strategy, quality filters, dedup rules, no-go exclusion, faculty routing table, two worked examples (Ethical AI/Education + Clinical Neuroscience). |
 | D | Rework `find-university-chairs` into universal discovery skill | ✅ | Domi | Rewrote SKILL.md: faculty-agnostic description, 6-dimension profile gate, faculty routing via search-strategy.md §2, two-pass search (backbone crawl + live enrichment), quality filters/dedup/no-go exclusion, MAP output grouped by interest dimension with pros/cons, dated evidence, conversation starter, coverage caveat. No seed-list dependency. |
-| E | Retire DB assets (match-thesis-advisors, openalex index, seed data → eval) | ⬜ | – | Do after D so replacement exists. |
+| E | Retire DB assets (match-thesis-advisors, openalex index, seed data → eval) | ✅ | Domi | Deleted match-thesis-advisors + update-openalex-paper-index; moved CS seed data to skills/tests/eval_ground_truth/cs_seed/; fixed seed-path refs in find-recent-papers + design-agent-skill. grep confirms no runtime DB deps remain. |
 | F | Eval ground truth for 3–4 faculties + metric | ⬜ | – | Recall target ≥70%; reuse CS curated data. |
 | G | Wire discovery into Max's multiturn harness (skill vs. baseline) | ⬜ | – | Port from `eval/auto_eval_agents` (ed341a7). Depends on D, F. |
 | H | Run eval, measure coverage & skill-vs-baseline delta, document | ⬜ | – | Depends on G. Be honest about weak spots. |
@@ -69,6 +69,17 @@ sample.
 ---
 
 ## Log
+
+- **2026-06-27** — Task E done. Deleted `skills/match-thesis-advisors/` and
+  `skills/update-openalex-paper-index/` (4 files; git history preserves them).
+  Moved curated CS seed data (professors/, chairs/, researchers/) from
+  `skills/find-university-chairs/references/` to
+  `skills/tests/eval_ground_truth/cs_seed/` — now eval-only ground truth for
+  Task F. Fixed two stale runtime references: `find-recent-papers/SKILL.md`
+  (dead path to professors/INDEX.md) and `design-agent-skill/SKILL.md`
+  (references to retired skills + seed-index-as-runtime-source).
+  Final `grep -ri "backend|database|celery|fastapi|seed list" skills/` shows
+  only prohibition statements, negations, and test files — no runtime deps.
 
 - **2026-06-27** — Task D done. Rewrote `skills/find-university-chairs/SKILL.md` into a
   faculty-agnostic thesis-option discovery skill. Key changes: (1) description updated
