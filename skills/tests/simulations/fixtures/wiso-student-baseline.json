@@ -1,0 +1,35 @@
+{
+  "persona_id": "wiso-student",
+  "scenario_id": "wiso-discovery-baseline",
+  "runner": "fixture",
+  "model": "fixture",
+  "arm": "baseline",
+  "max_turns": 8,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hallo, ich studiere Politikwissenschaft im Master und suche eine Masterarbeit zu vergleichender Politik und politischer Ökonomie — europäische Integration, internationale Institutionen, Wohlfahrtsstaaten. Wer forscht dazu in Tübingen?"
+    },
+    {
+      "role": "assistant",
+      "content": "Hallo! Das ist ein sehr breites und interessantes Themenfeld. Die Wirtschafts- und Sozialwissenschaftliche Fakultät (WiSo) der Universität Tübingen bietet gute Möglichkeiten in diesem Bereich. Ich empfehle dir, die Seite des Instituts für Politikwissenschaft unter https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftliche-fakultaet/faecher/fachbereich-sozialwissenschaften/politikwissenschaft/ zu besuchen und die dort aufgeführten Lehrstühle und Arbeitsbereiche zu erkunden. Für politische Ökonomie gibt es zudem den Fachbereich Wirtschaftswissenschaft, der ebenfalls zur WiSo-Fakultät gehört."
+    },
+    {
+      "role": "user",
+      "content": "Welche Professoren sollte ich direkt ansprechen?"
+    },
+    {
+      "role": "assistant",
+      "content": "In Tübingen gibt es im Bereich vergleichende Politik und politische Ökonomie verschiedene Lehrende. Ich empfehle dir, auf den Webseiten des Instituts für Politikwissenschaft die aktuellen Mitarbeiterlisten durchzugehen — dort findest du Informationen zu den Forschungsschwerpunkten der einzelnen Professorinnen und Professoren. Für europäische Integration und internationale Institutionen ist es sinnvoll, die Lehrenden zu identifizieren, die Veranstaltungen zu diesen Themen anbieten. Das Vorlesungsverzeichnis kann dir dabei helfen."
+    },
+    {
+      "role": "user",
+      "content": "Ich habe Erfahrung mit qualitativen Methoden und Prozessanalyse — passt das gut zu den Gruppen dort?"
+    },
+    {
+      "role": "assistant",
+      "content": "Ja, qualitative Methoden und Prozessanalyse sind klassische Werkzeuge der vergleichenden Politikwissenschaft und in den meisten politikwissenschaftlichen Arbeitsgruppen gefragt. In Tübingen wird sowohl qualitative als auch quantitative Forschung betrieben. Mit deiner Methodenkompetenz bist du für verschiedene Gruppen interessant. Am besten schaust du dir die Publikationslisten der Professoren auf den Institutsseiten an, um zu sehen, wer qualitativ arbeitet und welche Themen aktuell erforscht werden."
+    }
+  ],
+  "completion_reason": "fixture_complete"
+}

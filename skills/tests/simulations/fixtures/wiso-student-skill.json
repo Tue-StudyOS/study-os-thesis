@@ -1,0 +1,43 @@
+{
+  "persona_id": "wiso-student",
+  "scenario_id": "wiso-discovery-skill",
+  "runner": "fixture",
+  "model": "fixture",
+  "arm": "skill",
+  "max_turns": 12,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hallo, ich studiere Politikwissenschaft im Master und suche eine Masterarbeit zu vergleichender Politik und politischer Ökonomie — europäische Integration, internationale Institutionen, Wohlfahrtsstaaten. Wer forscht dazu in Tübingen?"
+    },
+    {
+      "role": "assistant",
+      "content": "Hallo! Gerne. Magst du kurz einordnen, welcher Aspekt dich am meisten reizt: eher die vergleichende Analyse politischer Systeme (demokratische Legitimation, Governance), internationale Beziehungen und EU-Außenpolitik, oder politische Ökonomie (Makroökonomie, Wirtschaftsgeschichte, Kapitalismusvergleich)?"
+    },
+    {
+      "role": "user",
+      "content": "Vor allem EU-Governance und vergleichende Politik — europäische Integration, demokratische Legitimation, auch internationale Institutionen. Politische Ökonomie würde ich einschließen, wenn Bezug zur EU besteht. Ich habe Erfahrung mit qualitativen Methoden, Prozessanalyse und ein bisschen quantitativer Sozialforschung."
+    },
+    {
+      "role": "assistant",
+      "content": "Gut. Noch eine Frage: Interessierst du dich auch für Außenpolitik und Sicherheitsforschung (z.B. Konflikt, Friedensforschung, militärische Interventionen), oder liegt der Fokus eher auf den Binnenstrukturen der EU und vergleichender Innenpolitik? Und gibt es Themen, die du ausschließen möchtest?"
+    },
+    {
+      "role": "user",
+      "content": "Beides ist grundsätzlich interessant. Friedensforschung und internationale Institutionen würde ich einschließen. Ich möchte aber keine reine Wirtschaftsgeschichte ohne Politikbezug schreiben."
+    },
+    {
+      "role": "assistant",
+      "content": "Perfekt. Hier ist eine Übersicht der passenden Lehrstühle an der WiSo-Fakultät, Tübingen (Stand: 2026-06-27):\n\n**[Interesse: EU-Außenpolitik / Internationale Beziehungen]**\n\n- **Prof. Dr. Thomas Diez** — Politikwissenschaft, Internationale Beziehungen und Europäische Außenpolitik, Tübingen\n  Schwerpunkt: Europäische Außenpolitik, Konflikttransformation, EU-Türkei-Beziehungen, Grenzen und Identität.\n  *Sehr gut zu dir:* direkte Überschneidung mit EU-Außenpolitik und internationalen Institutionen.\n  URL: https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftliche-fakultaet/faecher/fachbereich-sozialwissenschaften/politikwissenschaft/\n\n---\n\n**[Interesse: Vergleichende Politik / EU-Governance / Demokratie]**\n\n- **Prof. Dr. Gabriele Abels** — Vergleichende Politik und Europäische Integration, Tübingen\n  Schwerpunkt: Politische Systeme Deutschlands und der EU, demokratische Legitimation, europäisches Regieren.\n  *Sehr gut zu dir:* exakter Schwerpunkt auf EU-Governance und demokratischer Legitimation.\n  URL: https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftliche-fakultaet/faecher/fachbereich-sozialwissenschaften/politikwissenschaft/institut/lehrende/comparative-politics-and-european-integration-professor-abels/\n\n---\n\n**[Interesse: Vergleichende Politik außerhalb OECD / Autokratie]**\n\n- **Prof. Dr. Oliver Schlumberger** — Vorderer Orient und Vergleichende Politikwissenschaft, Tübingen\n  Schwerpunkt: Vergleichende Politik außerhalb OECD, Naher Osten, Autoritarismus, politische Transformation.\n  *Bedingt passend:* vergleichende Methodik überlappen, falls Fokus auf nicht-westliche Governance-Modelle.\n  URL: https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftliche-fakultaet/faecher/fachbereich-sozialwissenschaften/politikwissenschaft/institut/lehrende/vorderer-orient-und-vergleichende-politikwissenschaft-professor-schlumberger/\n\n---\n\n**[Interesse: Friedensforschung / Internationale Institutionen]**\n\n- **Prof. Dr. Andreas Hasenclever** — Friedens- und Konfliktforschung, Tübingen\n  Schwerpunkt: Militärische Interventionen, religiöse Konflikte, demokratischer Frieden, internationale Institutionen.\n  *Gut zu dir:* internationale Institutionen und Friedensforschung direkt relevant.\n\n---\n\n**[Interesse: Politische Ökonomie / EU-Wirtschaftspolitik]**\n\n- **Prof. Dr. Hans-Jürgen Bieling** — Internationale Politische Ökonomie, Tübingen\n  Schwerpunkt: Europäische Integration, Geld- und Finanzpolitik, Arbeits- und Sozialpolitik, politische Ökonomie des Kapitalismus.\n  *Sehr gut zu dir:* Politische Ökonomie der EU-Integration direkt in deinem Interessensgebiet.\n\n---\n\n**[Randbereich: Makroökonomie / Wirtschaftspolitik]**\n\n- **Prof. Dr. Gernot Müller** — Fachbereich Wirtschaftswissenschaft, Makroökonomie, Tübingen\n  Schwerpunkt: Offene Volkswirtschaft, Fiskalpolitik, Konjunkturzyklen, internationale Finanzen.\n  *Bedingt passend:* für politische Ökonomie mit starkem Makrobezug (Fiskalpolitik, Eurozone).\n\n- **Prof. Dr. Jörg Baten** — Wirtschaftsgeschichte, Tübingen\n  Schwerpunkt: Langfristige Wirtschaftsentwicklung, historische Ungleichheit, Humankapital, Cliometrie.\n  *Weniger direkt:* stärker historisch als politikwissenschaftlich — nur wenn du einen historischen Längsschnitt planst.\n\n---\n\n**Empfehlung:** Für EU-Governance und vergleichende Politik sind Abels und Diez die stärkste Übereinstimmung. Hasenclever und Bieling für internationale Institutionen und politische Ökonomie. Soll ich für einen dieser Lehrstühle eine Kontakt-E-Mail formulieren?"
+    },
+    {
+      "role": "user",
+      "content": "Ausgezeichnet, das ist sehr hilfreich! Abels und Bieling klingen besonders gut. Gibt es noch weitere Optionen?"
+    },
+    {
+      "role": "assistant",
+      "content": "Alle oben aufgeführten Professorinnen und Professoren (Diez, Abels, Schlumberger, Hasenclever, Bieling, Müller, Baten) decken das Spektrum der WiSo-Fakultät für dein Profil ab. Hasenclever ist noch eine starke Option, falls du internationale Institutionen und Friedensforschung einschließen möchtest. Für einen reineren Politikwissenschafts-Fokus würde ich zunächst Abels, Diez und Hasenclever kontaktieren, dann Bieling für politische Ökonomie der EU."
+    }
+  ],
+  "completion_reason": "fixture_complete"
+}
