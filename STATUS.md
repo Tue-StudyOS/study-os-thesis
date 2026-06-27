@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-26
+**Last update:** 2026-06-27
 
 ---
 
@@ -27,7 +27,7 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 | Task | Step | Status | Owner | Notes / difficulties |
 |---|---|---|---|---|
 | A | Conversation discipline in `build-student-profile` | ✅ | Domi | One-question rule + precise-answer instruction + no-search gate added to SKILL.md. |
-| B | Faculty backbone reference (Tübingen listing URLs) | ⬜ | – | Needs web; cover every faculty, not just CS. |
+| B | Faculty backbone reference (Tübingen listing URLs) | ✅ | Domi | All 7 faculties + ZITh covered; ≥1 official listing URL each, 6 spot-checked live. |
 | C | Search-strategy reference (profile → queries) | ⬜ | – | The core IP. Depends on B. |
 | D | Rework `find-university-chairs` into universal discovery skill | ⬜ | – | Map output, pros/cons, coverage caveat; drop seed-list. Depends on B, C. |
 | E | Retire DB assets (match-thesis-advisors, openalex index, seed data → eval) | ⬜ | – | Do after D so replacement exists. |
@@ -69,6 +69,16 @@ sample.
 ---
 
 ## Log
+
+- **2026-06-27** — Task B done. Created
+  `skills/find-university-chairs/references/tuebingen-faculty-backbone.md`: a
+  reviewable table of all 7 Tübingen faculties + the Center for Islamic Theology,
+  each with ≥1 official `uni-tuebingen.de` listing URL (Medicine on
+  `medizin.uni-tuebingen.de`), page language, how chairs are listed, and a
+  2026-06-27 last-checked date. Documented the two/three-level
+  faculty→Fachbereich→chair nesting and per-department drill-down pattern. Spot-checked
+  6 URLs live (faculties index, science & humanities Fachbereiche, WiSo Fächer, law
+  Lehrstühle, Protestant-theology Lehrstühle) — all resolve and list real units.
 
 - **2026-06-27** — Task A done. Edited `skills/build-student-profile/SKILL.md`: added one-question-per-turn rule, precise-answer instruction, and no-search gate (all six profile dimensions required before discovery). Surgical changes only; no other behavior modified.
 
