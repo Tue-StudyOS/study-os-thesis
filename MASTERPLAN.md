@@ -11,187 +11,161 @@
 
 ## 1. What we build
 
-A public, portable **Agent Skill package** for thesis advising. The package
-takes a student from vague interests, coursework, skills, and constraints to
-evidence-based thesis directions and advisor-ready first-contact messages —
-with no required backend, database, or UI. It is driven by curated Markdown data
-plus live research when an agent has web/search tools.
+A public, portable **Agent Skill package** that simplifies the *cold start* of
+the thesis search. It takes a student from vague interests, coursework, skills,
+and constraints to a **clear map of the possibilities** — which chairs, groups,
+people, and (later) companies fit them — so they know what exists and where to go
+next.
+
+**Core principle: no runtime database, no backend.** The skill encodes *how*
+Claude interviews the student and *how* it searches the live web. It works for
+**all faculties of the University of Tübingen** immediately and stays correct
+because it reads the live web, not a curated store that rots. This is a deliberate
+choice: the system must be **maintenance-free** — no one will keep a database
+fresh after this project.
+
+The agent gives a **targeted direction and clarifies options**. It does not do the
+whole job, write the thesis, or guarantee complete coverage. "Good enough,"
+honestly stated, beats a precise database that decays.
 
 The durable product is:
 
 - portable `skills/` folders with concise `SKILL.md` entrypoints
-- Markdown `references/` files for rubrics, schemas, indexes, examples, and
-  public source data
+- Markdown `references/` files that encode search strategy, the Tübingen faculty
+  backbone, rubrics, and schemas
 - `AGENTS.md` as the maintainer and agent operating guide
-- lightweight scripts, tests, release tooling, and recurring data/eval
-  workflows
-- durable process findings under `findings/dev_process/`
+- an eval harness that compares the skill against a plain-Claude baseline
+- durable findings under `findings/`
 
 The student-facing skill flow:
 
 ```text
-raw input ("I like deep learning + robotics")
+raw input ("I like deep learning + healthcare, hate hardware setup")
    |
-   v  build-student-profile        deep interview -> structured profile
-   v  find-recent-papers and/or
-      find-university-chairs        evidence from papers and chair data
-   v  match-thesis-advisors         supervisors ranked by fit + caveats
-   v  generate-thesis-directions    concrete proposal sketches
-   v  draft-thesis-contact          first-contact email
+   v  build-student-profile      ordered interview (one question, max two per turn)
+   v  discover-thesis-options    profile -> search templates -> faculty backbone + live web -> MAP of options
+   v  draft-thesis-contact       (optional) first-contact message for a chosen option
 ```
 
-Maintenance skills and process assets:
+Maintenance / meta assets:
 
 - `design-agent-skill` is the meta-skill for creating, reviewing, or reshaping
   any skill.
-- `update-openalex-paper-index` defines the paper-index maintenance workflow.
-- `AGENTS.md` must explain how future agents extend the package to other
-  faculties.
-- `findings/dev_process/` records important repo/product/process findings so
-  maintainers do not have to rediscover them.
+- `find-recent-papers` is an optional evidence tool; `generate-thesis-directions`
+  is optional and de-emphasized — we deliver a *map*, not finished proposals.
+- `AGENTS.md` explains how future agents extend the package (e.g. companies, other
+  universities).
 
 ---
 
-## 2. Current Findings
+## 2. Why no database
 
-As of 2026-06-25:
+| Database approach (former direction) | Database-less approach (this plan) |
+|---|---|
+| Goes stale within months | Always current (live web) |
+| CS Tübingen only | All faculties, immediately |
+| Needs GitHub Actions to refresh | Zero ongoing maintenance |
+| Only covers what is curated | Covers what is publicly visible |
+| Does not scale to companies | Companies use the same principle |
 
-- The active GitHub issue backlog was reset to the Phase 1 data-foundation
-  issues `#45`-`#51`; old app/backend/UI issues were closed as superseded by
-  the skill-package pivot.
-- Current bundled data is partial: 47 professor seeds exist, but only 5 curated
-  chair profiles and 7 OpenAlex-linked professor/researcher rows are present.
-- A 3-chair pilot ground-truth fixture exists for PhD/doctoral-researcher recall,
-  but it still needs to become the measured validation anchor.
-- The README describes a monthly OpenAlex refresh workflow, but no scheduled
-  monthly data-refresh workflow exists yet.
-- Codex multi-turn eval scaffolding exists, but monthly eval snapshots are not
-  yet tied to data refreshes or baseline comparison.
-- The package needs explicit faculty-extension guidance, Markdown data-layout
-  policy, privacy/public-data policy, and a findings/dev-process log.
+The skill is the intelligence; the data comes from the world. Curated chair/prof
+data is kept **only as an evaluation ground truth**, never as a runtime source.
 
 ---
 
-## 3. The Data Structure — The Tree
+## 3. The core IP — how the skill searches
 
-The core data product is a Markdown researcher tree:
+The value over "just ask Claude" lives in two references the discovery skill
+carries:
 
-```text
-Professor / PI
-   -> PhD, doctoral researcher, postdoc, or other relevant researcher
-        -> Paper
-```
+1. **Search strategy** — the reusable mapping from profile dimensions (interests,
+   methods, domain, thesis style, no-gos) to precise web queries, plus quality
+   filters, dedup rules, and profile→faculty routing.
+2. **Faculty backbone** — the official `uni-tuebingen.de` listing pages per
+   faculty, crawled first so discovery starts from the real org structure and not
+   only from SEO-strong pages.
 
-Each person node should have a research area/topic description, source
-provenance, update date, and uncertainty/review status where needed. Every paper
-should reference a person slug and preserve traceable metadata such as DOI or
-OpenAlex ID, source, year/date, and summary/abstract policy.
-
-The tree must be:
-
-- reviewable as plain Markdown
-- internally linked with no orphaned Prof -> Researcher -> Paper references
-- safe for public release
-- refreshable without silently overwriting maintainer-owned corrections
+The discovery is **two-pass**: (1) crawl the backbone to get the structured chair
+set per relevant faculty; (2) enrich with live queries for topics, recent work,
+and openings. Output is a **map of options** grouped by interest dimension, each
+with relevance rationale, pros/cons & difficulties, dated evidence, and a
+conversation starter — ending with an honest coverage caveat.
 
 ---
 
-## 4. Ordering Principle
+## 4. Ordering principle
 
-**Get the data correct first, then optimize the advising behavior.** Downstream
-matching and proposal generation cannot be trusted while chair, researcher, and
-paper data are incomplete or stale.
-
-De-risking strategy:
-
-- prove the pipeline on 3 pilot chairs
-- validate recall and integrity against ground truth
-- scale to all 47 professor seeds
-- only then broaden skill-behavior optimization
+**Prove the university arm first, then extend.** Companies are a structurally
+harder, chaotic discovery problem; they wait until the core is empirically shown
+to work. Within the university arm: build the search references, then the skill,
+then measure it against a small hand-curated ground truth and against a
+plain-Claude baseline.
 
 ---
 
-## 5. Phase 1 — Data Foundation (Current Phase)
+## 5. Phase 1 — University discovery (current phase)
 
-The current executable backlog is the verified researcher-tree epic.
+The executable backlog (full detail in
+[findings/no_db_universal_skill/2026-06-26-build-plan.md](findings/no_db_universal_skill/2026-06-26-build-plan.md)).
+Each task is one agent run.
 
-| # | Issue | What it is about |
+| Task | What it is about | Depends on |
 |---|---|---|
-| 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) | Resolve OpenAlex author IDs for all 47 seed professors; flag ambiguous matches instead of guessing. |
-| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) | Build the hand-verified ground-truth roster for 3 pilot chairs. |
-| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) | Discover PhDs/researchers per chair from team pages and cross-check evidence. |
-| 4 | [#48](https://github.com/Tue-StudyOS/study-os-thesis/issues/48) | Define Prof -> Researcher/PhD -> Paper schema and referential integrity checks. |
-| 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) | Fetch papers and generate topic/description fields per person as tree Markdown. |
-| 6 | [#50](https://github.com/Tue-StudyOS/study-os-thesis/issues/50) | Add validation harness: structural checks, anomaly checks, sampling, golden record. |
-| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) | Add refresh automation: monthly/manual run, review PR, override protection, validation in loop. |
+| A | Conversation discipline in `build-student-profile` (one question, max two per turn; precise answers) | – |
+| B | Faculty backbone reference: official Tübingen faculty/chair listing URLs | – |
+| C | Search-strategy reference: profile → precise queries, two-pass, filters, faculty routing | B |
+| D | Rework `find-university-chairs` into the faculty-agnostic discovery skill (map output, no DB) | B, C |
+| E | Retire DB assets (`match-thesis-advisors`, `update-openalex-paper-index`, seed data → eval-only) | D |
+| F | Eval ground truth for 3–4 faculties + coverage metric | – |
+| G | Wire discovery into Max's multiturn eval harness (skill vs. plain-Claude baseline) | D, F |
+| H | Run the eval, measure coverage and the skill-vs-baseline delta, document | G |
 
 Dependency graph:
 
 ```text
-1 (Prof IDs) ---------------------.
-2 (ground truth) -> 3 (PhD discovery) -> 5 (papers + descriptions) -> 6 (validation) -> 7 (automation)
-4 (tree schema) ------------------'
+A (interview) ----------------------------------.
+B (backbone) -> C (search strategy) -> D (skill) -> E (retire DB)
+                                          \         \
+F (ground truth) --------------------------+-------- G (harness) -> H (results)
 ```
 
-Gate Phase 1 -> Phase 2:
+Gate Phase 1 → Phase 2:
 
-- validation harness is green
-- golden record is reproducible
-- pilot recall is at least 90%
-- generated Markdown has no broken Prof -> Researcher -> Paper references
-- refresh process does not overwrite manual corrections silently
-
----
-
-## 6. Governance And Portability Track
-
-This track can run alongside Phase 1 because it makes the package maintainable
-for humans and future agents.
-
-- **Faculty extension:** `AGENTS.md` must explain how to adapt the package to a
-  new faculty or program, starting with `skills/design-agent-skill`.
-- **Markdown data filesystem:** document which files are generated, curated,
-  protected by manual overrides, and used as eval snapshots.
-- **Public-data and privacy policy:** document what public academic data may be
-  bundled and what student-private or sensitive data must never be stored.
-- **Findings/dev-process log:** important architecture, process, data, eval, and
-  issue-triage findings must be recorded under `findings/dev_process/`.
-- **Monthly snapshots:** data refreshes and multi-turn evals should produce
-  reviewable artifacts so regressions can be traced to skill changes or data
-  changes.
+- discovery skill runs end-to-end on a sample profile with no DB dependency
+- ground truth exists for ≥3 faculties with a defined coverage metric
+- the harness reports coverage and a skill-vs-plain-Claude comparison
+- coverage meets the agreed starting target (≥70%) on the ground-truth sample
 
 ---
 
-## 7. Phase 2 — Skill Optimization
+## 6. Phase 2 — Company discovery (later)
 
-Only start broad skill optimization after the Phase 1 data gate.
-
-- Measure a baseline before changing core skill behavior.
-- Expand evals across happy path, shallow profile, missing info, adversarial
-  prompts, and end-to-end flow.
-- Add few-shot examples only where evals show repeated failure.
-- Unify shallow-profile guardrails across the student-facing skills.
-- Calibrate LLM-as-judge results against human review.
-- Ensure degree program, thesis level, and scope constraints are respected in
-  matching and proposal generation.
+Add external-company thesis discovery only after the university arm is proven. The
+likely approach is a **one-time** curated list (e.g. companies in
+Baden-Württemberg) tagged by area/hashtags — the one acceptable static asset,
+because there is no clean live-search equivalent. New startups are a known later
+gap.
 
 ---
 
-## 8. Phase 3 — Cross-Platform
+## 7. Phase 3 — Distribution & cross-platform
 
-The content should remain portable across capable coding-agent clients. Test the
-package with Codex, Claude, Gemini CLI, and similar tools where practical. Avoid
-client-specific metadata unless there is a documented portable fallback.
+- **Distribution channels:** Fachschaft Informatik, Hennig-GitHub, Ersti-Heft,
+  and ideally surfacing on the university site / "How to find a thesis" pages so
+  students who google the problem find the skill.
+- **Cross-platform:** keep the content portable across capable coding-agent
+  clients (Codex, Claude, Gemini CLI). Avoid client-specific metadata without a
+  documented portable fallback.
 
 ---
 
-## 9. How This Plan Is Used
+## 8. How this plan is used
 
 - `MASTERPLAN.md` = stable structural plan. Change it only when the product goal,
   phase structure, or major workflow changes.
-- `STATUS.md` = living progress document. Update status, blockers, decisions,
-  and dated logs there.
+- `STATUS.md` = living progress document. Update status, blockers, decisions, and
+  dated logs there.
+- `findings/no_db_universal_skill/` = the concept, risks, exact build plan, and
+  eval results for this direction.
 - `AGENTS.md` = operating instructions for future agents and maintainers.
-- `findings/dev_process/` = durable discoveries about repo process, architecture,
-  data maintenance, evals, or governance.
-- GitHub Issues = executable work units with acceptance criteria.
+- GitHub Issues = executable work units mirroring Tasks A–H.

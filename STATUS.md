@@ -2,57 +2,90 @@
 
 > **This is the only continuously updated file.** Here we collect progress, blockers, difficulties, and decisions. The stable overall plan is in [MASTERPLAN.md](MASTERPLAN.md).
 >
-> **Convention:** When working on a step, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
+> **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-24
+**Last update:** 2026-06-26
 
 ---
 
 ## Current phase
 
-**Phase 1 — Data Foundation.** Goal: a verified researcher tree (Prof → PhD → Paper) for the pilot chairs, then scaled to 47 profs.
+**Phase 1 — University discovery (database-less).** Goal: a faculty-agnostic
+discovery skill that maps a student's interests to Tübingen thesis options via
+live search, measured against a small ground truth and a plain-Claude baseline.
+
+Direction details: [findings/no_db_universal_skill/](findings/no_db_universal_skill/)
+· exact build plan:
+[2026-06-26-build-plan.md](findings/no_db_universal_skill/2026-06-26-build-plan.md).
 
 ---
 
-## Step status
+## Task status
 
 Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 
-| # | Step | Status | Owner | Notes / difficulties |
+| Task | Step | Status | Owner | Notes / difficulties |
 |---|---|---|---|---|
-| 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) Resolve author IDs for all 47 profs | ⬜ | – | Only 7/47 currently in `researchers/INDEX.md`. Disambiguation is the hurdle. |
-| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) Ground truth for 3 pilot chairs | 🟨 | – | Fixture drafted (Martius, von Luxburg, Geiger); auto-captured rosters pending human verification. |
-| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) PhD discovery per chair | ⬜ | – | Hardest part: OpenAlex has no supervisor→PhD edge. |
-| 4 | [#48](https://github.com/Tue-StudyOS/study-os-thesis/issues/48) Tree schema + integrity | ⬜ | – | PhD level is missing in the current schema. |
-| 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) Paper scrape + description per person | ⬜ | – | Description/summary = LLM step; abstract-vs-LLM decision still open. |
-| 6 | [#50](https://github.com/Tue-StudyOS/study-os-thesis/issues/50) Validation harness | ⬜ | – | Anomaly checks instead of full review; golden record as anchor. |
-| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) Automation (cron + PR + overrides) | ⬜ | – | Override protection so the re-scrape does not destroy manual fixes. |
+| A | Conversation discipline in `build-student-profile` | ⬜ | – | One question (max two) per turn; instruct precise answers. |
+| B | Faculty backbone reference (Tübingen listing URLs) | ⬜ | – | Needs web; cover every faculty, not just CS. |
+| C | Search-strategy reference (profile → queries) | ⬜ | – | The core IP. Depends on B. |
+| D | Rework `find-university-chairs` into universal discovery skill | ⬜ | – | Map output, pros/cons, coverage caveat; drop seed-list. Depends on B, C. |
+| E | Retire DB assets (match-thesis-advisors, openalex index, seed data → eval) | ⬜ | – | Do after D so replacement exists. |
+| F | Eval ground truth for 3–4 faculties + metric | ⬜ | – | Recall target ≥70%; reuse CS curated data. |
+| G | Wire discovery into Max's multiturn harness (skill vs. baseline) | ⬜ | – | Port from `eval/auto_eval_agents` (ed341a7). Depends on D, F. |
+| H | Run eval, measure coverage & skill-vs-baseline delta, document | ⬜ | – | Depends on G. Be honest about weak spots. |
 
-**Gate Phase 1 → 2:** Step 6 green · golden record reproducible · pilot recall ≥ 90%.
+**Gate Phase 1 → 2:** skill runs end-to-end with no DB · ground truth for ≥3
+faculties · harness reports coverage + baseline comparison · coverage ≥70% on the
+sample.
 
 ---
 
 ## Open decisions
 
-- **Runtime data source:** scraper DB first or live web search first? → optimize later, does not block Phase 1.
-- **Description/summary:** reuse abstract (free, deterministic) vs. LLM summary (nicer, costs more)?
-- **Scrape cadence:** every 2 weeks vs. monthly?
+- **Coverage target:** start at ≥70% recall on the ground truth — revisit after
+  first eval (Task H).
+- **Discovery skill name:** reworking `find-university-chairs` in place for now;
+  consider a faculty-agnostic rename once companies arrive (Phase 2).
+- **Company list source (Phase 2):** which existing tagged list for
+  Baden-Württemberg, and the bundling format — deferred until the university arm
+  is proven.
 
 ---
 
 ## Known difficulties / risks
 
-- **PhD discovery recall** — 47 heterogeneous team pages; not measurable without ground truth (see Step 2 → 3).
-- **Name→ID disambiguation** — common names, PhDs with few papers.
-- **Manual corrections** — must not be overwritten on re-scrape (Step 7).
-- **30 MB upload limit** of the Skills API to watch as the tree grows.
-- **Personal data (GDPR)** — PhD names + research are bundled; public academic data, but document it consciously.
+- **Web-search coverage gaps** — chairs with weak/outdated web presence are
+  silently missed. Mitigation: faculty-backbone crawl (Task B) + honest in-output
+  caveat.
+- **Beating plain Claude** — must be shown empirically, not assumed (Tasks G/H).
+- **Profile must actually steer the search** — if the interview doesn't change the
+  queries, the skill adds nothing (Tasks C/D).
+- **Company discovery is a different, harder problem** — deliberately deferred to
+  Phase 2.
+- **Personal data (GDPR)** — surfaced researcher names + areas are public academic
+  data; nothing student-private is ever stored (profile stays in-context only).
 
 ---
 
 ## Log
 
-- **2026-06-24** — Opened PR #57 for the ground-truth fixture. Refined the classification convention (verified against live team pages): former PhDs/alumni excluded entirely; people under a chair's "Researcher" role handled like PhDs (active); postdocs included with status `postdoc` as recall targets; research engineers, group leaders and admin excluded. Martius now 20 active (no postdoc section on page); von Luxburg adds 5 postdocs (Bhattacharjee, Bordt, König, Thiessen, Waller); Geiger 15 active (no current postdoc section). Added profile URLs for the three Martius Researchers.
-- **2026-06-22** — Step 2 (#46) → in progress. Drafted `skills/tests/fixtures/ground_truth_phds.json` for the 3 pilot chairs (Martius / Autonomous Learning, von Luxburg / Theory of ML, Geiger / Autonomous Vision). Rosters auto-captured from official team pages: 17 active + 4 alumni (Martius), 3 active + 2 incoming + 1 associated (von Luxburg), 15 active (Geiger). Committed as WIP — entries still need human verification before the fixture is authoritative; no PR yet.
-- **2026-06-18** — Translated Masterplan + Status to English. Reviewed teammate (Valentin) commit `688f08d`: added degree-program awareness to `build-student-profile` (`tuebingen-degree-programs.md`) — degree program → thesis level (ML = Master-only) → scope (Bachelor 4mo / Master 6mo). Logged as a Phase 2 item in the Masterplan; does not affect Phase 1.
-- **2026-06-18** — Added Masterplan + Status + workflow. Defined Phase 1, created 7 issues (#45–#51). Starting point: 8 working skills, data only 7/47 profs, 0 PhDs.
+- **2026-06-26** — Pivoted to the database-less, university-wide direction.
+  Created branch `feat/no-db-universal-skill` off
+  `codex/chair-discovery-eval-from-valentin`. Wrote
+  [VISION_NO_DB.md](VISION_NO_DB.md) and the findings set under
+  `findings/no_db_universal_skill/` (concept-and-risks, exact build plan).
+  Rewrote MASTERPLAN around Phase 1 = university discovery (Tasks A–H) and reset
+  this STATUS. Located Max's multiturn eval harness on branch
+  `eval/auto_eval_agents` (commit `ed341a7`) for the skill-vs-baseline comparison.
+  Old DB data-foundation epic (issues #45–#51) is superseded; to be closed and
+  replaced by issues mirroring Tasks A–H.
+
+---
+
+## Archived: former DB data-foundation phase (superseded 2026-06-26)
+
+The previous Phase 1 built a scraped researcher tree (Prof → PhD → Paper) for CS
+Tübingen with monthly refresh automation (issues #45–#51). It is superseded by the
+database-less direction. The curated 3-pilot-chair ground truth and CS chair data
+are retained as **eval-only** material (Task F). History remains in git.

@@ -107,10 +107,37 @@ Rules:
 
 This project is tracked with two central files at the repo root:
 
-- **[MASTERPLAN.md](MASTERPLAN.md)** — the zoomed-out, stable lookup: what we build, in what order, and why. Phases, the Prof→PhD→Paper data tree, and links to all issues. **Read it first** to understand where any task fits. Only edit when the plan structurally changes.
-- **[STATUS.md](STATUS.md)** — the single living document. Progress, blockers, difficulties, decisions, and a dated log. **When you work on a step, update STATUS.md** (step status + a dated log line) — never put running progress in the Masterplan.
+- **[MASTERPLAN.md](MASTERPLAN.md)** — the zoomed-out, stable lookup: what we build, in what order, and why. Phases and the task list (A–H). **Read it first** to understand where any task fits. Only edit when the plan structurally changes.
+- **[STATUS.md](STATUS.md)** — the single living document. Progress, blockers, difficulties, decisions, and a dated log. **When you work on a task, update STATUS.md** (task status + a dated log line) — never put running progress in the Masterplan.
 
-Rule of thumb: Masterplan answers "what's the plan?", STATUS answers "where are we right now?". GitHub Issues hold the executable detail and discussion.
+Rule of thumb: Masterplan answers "what's the plan?", STATUS answers "where are we right now?". The exact, agent-runnable task list lives in `findings/no_db_universal_skill/2026-06-26-build-plan.md`.
+
+We work **without GitHub issues** — just for ourselves. Track work through STATUS.md and the build plan, not issues.
+
+---
+
+## 7. Commits & Conversation Handoff
+
+We work task-by-task (Tasks A–H in the build plan), one task per conversation.
+
+### Commit rhythm
+- Make **frequent small commits** as you complete meaningful sub-steps of a task — not one giant commit at the end.
+- Each commit message must reasonably describe **what was done** (conventional-commit subject + a short body when useful).
+- Commit only when a sub-step is coherent and the tree is in a sane state.
+
+### End-of-task handoff (mandatory)
+When a task is **truly finished** (done-when criteria met, committed), end the conversation by producing two things:
+
+1. **Next-step explanation** — a short, plain description of what the next task is and how this task's output feeds into it.
+2. **A ready-to-paste handoff prompt** for the next conversation, inside a fenced code block, that gives the next agent everything it needs to continue seamlessly **without re-reading this whole conversation**. It must include:
+   - the active branch
+   - which task it is (letter + one-line goal) and its dependencies
+   - the key files to read first (build plan, MASTERPLAN, STATUS, relevant references/skills)
+   - what the previous task produced and where
+   - the concrete done-when criteria
+   - a reminder to commit in small steps and to emit its own handoff prompt at the end
+
+The point: I can paste the prompt into a fresh conversation and the next task continues with full context.
 
 ---
 
