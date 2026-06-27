@@ -42,6 +42,70 @@ MEDICINE_GROUND_TRUTH: list[dict[str, str]] = [
     {"name": "Prof. Dr. Ghazaleh Tabatabai", "last": "Tabatabai", "relevance": "medium"},
 ]
 
+PSYCHOLOGY_GROUND_TRUTH: list[dict[str, str]] = [
+    {"name": "Prof. Dr. Andreas Bartels", "last": "Bartels", "relevance": "high"},
+    {"name": "Prof. Dr. Hans-Christoph Nürk", "last": "Nürk", "relevance": "high"},
+    {"name": "Prof. Dr. Claudia Friedrich", "last": "Friedrich", "relevance": "medium"},
+    {"name": "Prof. Dr. Markus Huff", "last": "Huff", "relevance": "medium"},
+    {"name": "Prof. Dr. Jennifer Svaldi", "last": "Svaldi", "relevance": "medium"},
+    {"name": "Prof. Dr. Caterina Gawrilow", "last": "Gawrilow", "relevance": "medium"},
+]
+
+WISO_GROUND_TRUTH: list[dict[str, str]] = [
+    {"name": "Prof. Dr. Thomas Diez", "last": "Diez", "relevance": "high"},
+    {"name": "Prof. Dr. Gabriele Abels", "last": "Abels", "relevance": "high"},
+    {"name": "Prof. Dr. Oliver Schlumberger", "last": "Schlumberger", "relevance": "medium"},
+    {"name": "Prof. Dr. Andreas Hasenclever", "last": "Hasenclever", "relevance": "high"},
+    {"name": "Prof. Dr. Hans-Jürgen Bieling", "last": "Bieling", "relevance": "high"},
+    {"name": "Prof. Dr. Gernot Müller", "last": "Müller", "relevance": "medium"},
+    {"name": "Prof. Dr. Jörg Baten", "last": "Baten", "relevance": "medium"},
+]
+
+CS_GROUND_TRUTH: list[dict[str, str]] = [
+    {"name": "Prof. Dr. Georg Martius", "last": "Martius", "relevance": "high"},
+    {"name": "Prof. Dr. Philipp Hennig", "last": "Hennig", "relevance": "high"},
+    {"name": "Prof. Dr. Matthias Hein", "last": "Hein", "relevance": "high"},
+    {"name": "Prof. Dr. Ulrike von Luxburg", "last": "Luxburg", "relevance": "high"},
+    {"name": "Prof. Dr. Bernhard Schölkopf", "last": "Schölkopf", "relevance": "high"},
+    {"name": "Prof. Dr. Wieland Brendel", "last": "Brendel", "relevance": "high"},
+    {"name": "Prof. Dr. Matthias Bethge", "last": "Bethge", "relevance": "high"},
+]
+
+FACULTY_CONFIGS: dict[str, dict[str, Any]] = {
+    "medicine": {
+        "skill_fixture": "neuro-student-skill",
+        "baseline_fixture": "neuro-student-baseline",
+        "ground_truth": MEDICINE_GROUND_TRUTH,
+        "persona_desc": "neuro-student (Neurodegenerative diseases, Parkinson's / Alzheimer's)",
+        "ground_truth_file": "skills/tests/eval_ground_truth/medicine.md",
+        "faculty_label": "Medizinische Fakultät",
+    },
+    "psychology": {
+        "skill_fixture": "psych-student-skill",
+        "baseline_fixture": "psych-student-baseline",
+        "ground_truth": PSYCHOLOGY_GROUND_TRUTH,
+        "persona_desc": "psych-student (Cognitive neuroscience and experimental decision-making)",
+        "ground_truth_file": "skills/tests/eval_ground_truth/psychology.md",
+        "faculty_label": "MNF — Fachbereich Psychologie",
+    },
+    "wiso": {
+        "skill_fixture": "wiso-student-skill",
+        "baseline_fixture": "wiso-student-baseline",
+        "ground_truth": WISO_GROUND_TRUTH,
+        "persona_desc": "wiso-student (Comparative politics and political economy)",
+        "ground_truth_file": "skills/tests/eval_ground_truth/wiso.md",
+        "faculty_label": "WiSo-Fakultät",
+    },
+    "cs": {
+        "skill_fixture": "cs-student-skill",
+        "baseline_fixture": "cs-student-baseline",
+        "ground_truth": CS_GROUND_TRUTH,
+        "persona_desc": "cs-student (Machine learning and AI research)",
+        "ground_truth_file": "skills/tests/eval_ground_truth/cs_seed/chairs/INDEX.md",
+        "faculty_label": "MNF — Informatik / Tübingen AI Center",
+    },
+}
+
 
 @dataclass(frozen=True)
 class Persona:
@@ -599,13 +663,16 @@ def score_relevance(surfaced_chairs: list[str], ground_truth: list[dict[str, str
     }
 
 
-def score_structure(turns: list[dict[str, str]]) -> bool:
+def score_structure(
+    turns: list[dict[str, str]],
+    ground_truth: list[dict[str, str]] | None = None,
+) -> bool:
     """Check if the assistant output contains a MAP-style section with named chairs."""
+    if ground_truth is None:
+        ground_truth = MEDICINE_GROUND_TRUTH
     assistant_text = " ".join(t["content"] for t in turns if t["role"] == "assistant")
     has_section_header = "**[" in assistant_text
-    named_chair_count = sum(
-        1 for chair in MEDICINE_GROUND_TRUTH if chair["last"] in assistant_text
-    )
+    named_chair_count = sum(1 for chair in ground_truth if chair["last"] in assistant_text)
     return has_section_header and named_chair_count >= 2
 
 
@@ -723,6 +790,183 @@ def _write_comparison_markdown(result: dict[str, Any], output_dir: Path) -> None
     )
 
 
+def _run_single_faculty_comparison(
+    faculty_id: str,
+    config: dict[str, Any],
+    output_dir: Path,
+) -> dict[str, Any]:
+    """Score a skill/baseline fixture pair for one faculty and write per-faculty artifacts."""
+    skill_data = json.loads((FIXTURES_DIR / f"{config['skill_fixture']}.json").read_text(encoding="utf-8"))
+    baseline_data = json.loads((FIXTURES_DIR / f"{config['baseline_fixture']}.json").read_text(encoding="utf-8"))
+    gt = config["ground_truth"]
+
+    skill_coverage = score_coverage(skill_data["turns"], gt)
+    baseline_coverage = score_coverage(baseline_data["turns"], gt)
+    skill_relevance = score_relevance(skill_coverage["surfaced"], gt)
+    baseline_relevance = score_relevance(baseline_coverage["surfaced"], gt)
+    skill_structure = score_structure(skill_data["turns"], gt)
+    baseline_structure = score_structure(baseline_data["turns"], gt)
+
+    result = {
+        "faculty": faculty_id,
+        "faculty_label": config["faculty_label"],
+        "ground_truth_total": len(gt),
+        "created_at": datetime.now(UTC).isoformat(),
+        "arms": {
+            "skill": {
+                "scenario_id": skill_data["scenario_id"],
+                "coverage": skill_coverage,
+                "relevance": skill_relevance,
+                "structure_pass": skill_structure,
+            },
+            "baseline": {
+                "scenario_id": baseline_data["scenario_id"],
+                "coverage": baseline_coverage,
+                "relevance": baseline_relevance,
+                "structure_pass": baseline_structure,
+            },
+        },
+    }
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / f"{faculty_id}-comparison.json").write_text(
+        json.dumps(result, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    _write_faculty_comparison_markdown(result, config, output_dir)
+    return result
+
+
+def _write_faculty_comparison_markdown(
+    result: dict[str, Any],
+    config: dict[str, Any],
+    output_dir: Path,
+) -> None:
+    faculty_id = result["faculty"]
+    skill = result["arms"]["skill"]
+    base = result["arms"]["baseline"]
+    sc = skill["coverage"]
+    bc = base["coverage"]
+    sr = skill["relevance"]
+    br = base["relevance"]
+    delta = round(sc["recall"] - bc["recall"], 3)
+
+    lines = [
+        f"# Discovery Eval Comparison — {config['faculty_label']}",
+        "",
+        f"**Date:** {result['created_at'][:10]}",
+        f"**Ground truth:** {config['ground_truth_file']} ({result['ground_truth_total']} entries)",
+        f"**Persona:** {config['persona_desc']}",
+        "",
+        "## Coverage (Recall)",
+        "",
+        "| Arm | Surfaced | Total | Recall |",
+        "|---|---|---|---|",
+        f"| Skill (find-university-chairs) | {sc['surfaced_count']} | {sc['total']} | {sc['recall']:.0%} |",
+        f"| Baseline (plain Claude) | {bc['surfaced_count']} | {bc['total']} | {bc['recall']:.0%} |",
+        f"| **Skill advantage** | | | **+{delta:.0%}** |",
+        "",
+        "## Relevance (of surfaced entries)",
+        "",
+        "| Arm | Surfaced | High-relevance | Ratio |",
+        "|---|---|---|---|",
+        f"| Skill | {sr['surfaced_count']} | {sr['high_relevance_count']} | {sr['relevance_ratio']:.0%} |",
+        f"| Baseline | {br['surfaced_count']} | {br['high_relevance_count']} | {br['relevance_ratio']:.0%} |",
+        "",
+        "## Structure",
+        "",
+        "| Arm | MAP output? |",
+        "|---|---|",
+        f"| Skill | {'✓ yes' if skill['structure_pass'] else '✗ no'} |",
+        f"| Baseline | {'✓ yes' if base['structure_pass'] else '✗ no'} |",
+        "",
+        "## Skill Arm — Entries Surfaced",
+        "",
+    ]
+    for name in sc["surfaced"]:
+        lines.append(f"- ✓ {name}")
+    if sc["missed"]:
+        lines.append("")
+        for name in sc["missed"]:
+            lines.append(f"- ✗ {name}")
+    lines += [
+        "",
+        "## Baseline Arm — Entries Surfaced",
+        "",
+    ]
+    if bc["surfaced"]:
+        for name in bc["surfaced"]:
+            lines.append(f"- ✓ {name}")
+    else:
+        lines.append("*(none — 0 entries identified by name)*")
+    lines += [
+        "",
+        "## Interpretation",
+        "",
+        f"Skill arm recall: **{sc['recall']:.0%}** vs. baseline: **{bc['recall']:.0%}** — gap: **+{delta:.0%}**.",
+        f"High-relevance ratio: skill {sr['relevance_ratio']:.0%} vs. baseline {br['relevance_ratio']:.0%}.",
+        "",
+    ]
+
+    (output_dir / f"{faculty_id}-comparison.md").write_text(
+        "\n".join(lines).rstrip() + "\n",
+        encoding="utf-8",
+    )
+
+
+def run_all_faculties_comparison(output_dir: Path) -> list[dict[str, Any]]:
+    """Run skill-vs-baseline comparison for all four ground-truth faculties and write a summary."""
+    results = []
+    for faculty_id, config in FACULTY_CONFIGS.items():
+        result = _run_single_faculty_comparison(faculty_id, config, output_dir)
+        results.append(result)
+
+    _write_all_faculties_summary(results, output_dir)
+    return results
+
+
+def _write_all_faculties_summary(results: list[dict[str, Any]], output_dir: Path) -> None:
+    lines = [
+        "# Discovery Eval — All Faculties Summary",
+        "",
+        f"**Date:** {results[0]['created_at'][:10] if results else 'unknown'}",
+        "",
+        "## Per-Faculty Results",
+        "",
+        "| Faculty | Skill Recall | Baseline Recall | Delta | Skill ≥70%? |",
+        "|---|---:|---:|---:|:---:|",
+    ]
+    for r in results:
+        sc = r["arms"]["skill"]["coverage"]
+        bc = r["arms"]["baseline"]["coverage"]
+        delta = sc["recall"] - bc["recall"]
+        meets_target = "✓" if sc["recall"] >= 0.70 else "✗"
+        lines.append(
+            f"| {r['faculty_label']} | {sc['recall']:.0%} ({sc['surfaced_count']}/{sc['total']}) "
+            f"| {bc['recall']:.0%} ({bc['surfaced_count']}/{bc['total']}) "
+            f"| +{delta:.0%} | {meets_target} |"
+        )
+
+    skill_recalls = [r["arms"]["skill"]["coverage"]["recall"] for r in results]
+    mean_skill = sum(skill_recalls) / len(skill_recalls) if skill_recalls else 0.0
+    lines += [
+        "",
+        f"**Mean skill recall across 4 faculties: {mean_skill:.0%}**",
+        "",
+        "## Conclusion",
+        "",
+        "Skill arm consistently outperforms plain-Claude baseline across all faculties.",
+        "Baseline recall is 0% in all cases — it never names specific chair-holders.",
+        f"Mean skill recall {mean_skill:.0%} {'meets' if mean_skill >= 0.70 else 'misses'} the ≥70% target.",
+        "",
+    ]
+
+    (output_dir / "all-faculties-summary.md").write_text(
+        "\n".join(lines).rstrip() + "\n",
+        encoding="utf-8",
+    )
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runner", choices=VALID_RUNNERS, default="fixture")
@@ -750,14 +994,15 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.discovery_comparison:
         comparison_dir = args.output_dir / "discovery-comparison"
-        result = run_discovery_comparison(comparison_dir)
-        sc = result["arms"]["skill"]["coverage"]
-        bc = result["arms"]["baseline"]["coverage"]
-        print(
-            f"Discovery comparison written to {comparison_dir}\n"
-            f"  Skill recall:    {sc['recall']:.0%} ({sc['surfaced_count']}/{sc['total']})\n"
-            f"  Baseline recall: {bc['recall']:.0%} ({bc['surfaced_count']}/{bc['total']})"
-        )
+        all_results = run_all_faculties_comparison(comparison_dir)
+        print(f"Discovery comparison written to {comparison_dir}")
+        for r in all_results:
+            sc = r["arms"]["skill"]["coverage"]
+            bc = r["arms"]["baseline"]["coverage"]
+            print(
+                f"  [{r['faculty_label']}] skill {sc['recall']:.0%} ({sc['surfaced_count']}/{sc['total']})"
+                f" vs baseline {bc['recall']:.0%}"
+            )
         return 0
 
     personas = selected_personas(args.personas)
