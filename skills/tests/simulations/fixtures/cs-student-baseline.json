@@ -1,0 +1,35 @@
+{
+  "persona_id": "cs-student",
+  "scenario_id": "cs-discovery-baseline",
+  "runner": "fixture",
+  "model": "fixture",
+  "arm": "baseline",
+  "max_turns": 8,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hallo, ich studiere Informatik im Master mit Schwerpunkt Machine Learning. Ich suche eine Masterarbeit im Bereich ML und KI-Forschung in Tübingen — am liebsten etwas mit probabilistischer Modellierung, Robustheit oder Repräsentationslernen. Wer forscht dazu?"
+    },
+    {
+      "role": "assistant",
+      "content": "Hallo! Tübingen ist ein sehr starker Standort für Machine Learning und KI-Forschung. Das Tübingen AI Center bündelt viele der führenden Gruppen in diesem Bereich — ich empfehle dir, die Webseite unter https://tuebingen.ai/ zu besuchen und die dort aufgeführten Forschungsgruppen zu erkunden. Zusätzlich gibt es am Max-Planck-Institut für Intelligente Systeme wichtige Grundlagenforschungsgruppen. Am Informatik-Fachbereich der Universität Tübingen gibt es ebenfalls aktive ML-Gruppen."
+    },
+    {
+      "role": "user",
+      "content": "Welche Professoren sollte ich konkret kontaktieren?"
+    },
+    {
+      "role": "assistant",
+      "content": "Für probabilistische Modellierung, Robustheit und Repräsentationslernen gibt es in Tübingen eine Reihe starker Forschungsgruppen. Ich empfehle dir, zunächst die Lehrstuhlseiten des Informatik-Fachbereichs unter https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/informatik/lehrstuehle/ zu durchsuchen, um die aktuellen Professoren und ihre Schwerpunkte zu finden. Außerdem kannst du auf Google Scholar nach Tübinger Autoren in deinen Interessengebieten suchen, um zu sehen, wer aktiv publiziert."
+    },
+    {
+      "role": "user",
+      "content": "Ich kenne PyTorch gut und habe Statistik-Grundlagen — passt das für die Gruppen dort?"
+    },
+    {
+      "role": "assistant",
+      "content": "Ja, PyTorch-Kenntnisse und solide Statistikgrundlagen sind in fast allen ML-Forschungsgruppen sehr gefragt. In Tübingen gibt es sowohl theorieorientierte Gruppen, die starke Statistik-Kenntnisse schätzen, als auch angewandte ML-Gruppen, in denen PyTorch-Implementierungskompetenz wichtig ist. Mit diesem Hintergrund bist du für viele der Gruppen am Tübingen AI Center und am Informatik-Fachbereich gut aufgestellt. Am besten schaust du dir die Forschungsseiten und Publikationslisten der Lehrstühle an, um die beste Übereinstimmung mit deinen spezifischen Interessen zu finden."
+    }
+  ],
+  "completion_reason": "fixture_complete"
+}

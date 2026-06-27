@@ -1,0 +1,43 @@
+{
+  "persona_id": "cs-student",
+  "scenario_id": "cs-discovery-skill",
+  "runner": "fixture",
+  "model": "fixture",
+  "arm": "skill",
+  "max_turns": 12,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hallo, ich studiere Informatik im Master mit Schwerpunkt Machine Learning. Ich suche eine Masterarbeit im Bereich ML und KI-Forschung in Tübingen — am liebsten etwas mit probabilistischer Modellierung, Robustheit oder Repräsentationslernen. Wer forscht dazu?"
+    },
+    {
+      "role": "assistant",
+      "content": "Hallo! Gerne helfe ich dir. Magst du kurz einordnen, was dich methodisch am meisten reizt: eher probabilistische Methoden und Unsicherheitsquantifizierung (Bayes, Gaussian Processes), robuste und theoriebasierte ML, oder eher visuelle Systeme und neuronale Repräsentationen?"
+    },
+    {
+      "role": "user",
+      "content": "Vor allem probabilistische Modellierung und Unsicherheit, aber ich finde auch theoretische ML interessant — z.B. Generalisierung, Robustheit. Ich habe PyTorch-Erfahrung, kenne Statistik gut, und bin offen für angewandte wie theoretische Arbeiten."
+    },
+    {
+      "role": "assistant",
+      "content": "Gut. Noch eine Frage: Interessiert dich auch Kausalität und Repräsentationslernen (z.B. aus einer Grundlagenforschungsperspektive bei MPI), oder eher autonomes Lernen und Robotik? Und gibt es Themen, die du explizit ausschließen möchtest?"
+    },
+    {
+      "role": "user",
+      "content": "Kausalität und Grundlagenforschung klingen spannend. Robotik könnte auch interessant sein, wenn der ML-Aspekt stark ist. Ich möchte keine reine Systemsentwicklung oder Software-Engineering ohne ML-Forschungsbezug."
+    },
+    {
+      "role": "assistant",
+      "content": "Perfekt. Hier ist eine Übersicht der relevanten Lehrstühle und Forschungsgruppen in Tübingen (Stand: 2026-06-27):\n\n**[Interesse: Probabilistische Numerik / Unsicherheitsquantifizierung]**\n\n- **Prof. Dr. Philipp Hennig** — Methods of Machine Learning, Universität Tübingen\n  Schwerpunkt: Probabilistische Numerik, Machine Learning unter Unsicherheit, Gaussian Processes, Scientific Computing.\n  *Sehr gut zu dir:* exakte Überschneidung mit probabilistischer Modellierung und Unsicherheitsquantifizierung.\n  URL: https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/informatik/lehrstuehle/methoden-des-maschinellen-lernens/\n\n---\n\n**[Interesse: Theoretische ML / Robustheit / Graphenlernen]**\n\n- **Prof. Dr. Matthias Hein** — Machine Learning, Universität Tübingen\n  Schwerpunkt: Robustheit neuronaler Netze, Graphenlernen, Theorie des maschinellen Lernens.\n  *Sehr gut zu dir:* Robustheit und ML-Theorie direkt in deinem Interessensfeld.\n\n- **Prof. Dr. Ulrike von Luxburg** — Machine Learning, Universität Tübingen\n  Schwerpunkt: Statistische Lerntheorie, Clusteranalyse, algorithmische Fairness, Spektralmethoden.\n  *Gut zu dir:* theoretisch-statistische ML mit starkem Methoden-Fokus.\n\n---\n\n**[Interesse: Kausalität / Repräsentationslernen / Kernel-Methoden]**\n\n- **Prof. Dr. Bernhard Schölkopf** — Empirical Inference, MPI für Intelligente Systeme / Tübingen AI Center\n  Schwerpunkt: Kausalität, Kernel-Methoden, Repräsentationslernen, Machine Learning Grundlagenforschung.\n  *Sehr gut zu dir:* Kausalität und Repräsentationslernen aus Grundlagenforschungsperspektive.\n  URL: https://is.mpg.de/person/bs\n\n---\n\n**[Interesse: Neuronale Datenanalyse / Computer Vision / Robustheit]**\n\n- **Prof. Dr. Wieland Brendel** — Neural Intelligence, Universität Tübingen / Tübingen AI Center\n  Schwerpunkt: Robustheit neuronaler Netze, Computer Vision, neuronal inspiriertes Lernen.\n  *Gut zu dir:* Robustheit und neuronale Repräsentationen.\n\n- **Prof. Dr. Matthias Bethge** — Neural Intelligence, Universität Tübingen\n  Schwerpunkt: Computational Neuroscience, visuelle Wahrnehmung, Repräsentationslernen, neuronale Datenanalyse.\n  *Gut zu dir:* Repräsentationslernen aus einem computationellen Neurowissenschafts-Winkel.\n  URL: https://bethgelab.org\n\n---\n\n**[Interesse: Autonomes Lernen / Robotik mit starkem ML-Fokus]**\n\n- **Prof. Dr. Georg Martius** — Autonomous Learning, Universität Tübingen\n  Schwerpunkt: Reinforcement Learning, Repräsentationslernen, autonome Systeme, Robotik.\n  *Gut zu dir:* Repräsentationslernen und RL in autonomen Systemen, wenn du Anwendung in Robotik interessiert.\n  URL: https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/informatik/lehrstuehle/autonomous-learning/\n\n---\n\n**Empfehlung:** Für probabilistische Modellierung ist Hennig die klarste Überschneidung. Für Robustheit und ML-Theorie Hein und von Luxburg. Für Kausalität und Grundlagenforschung Schölkopf (MPI). Soll ich dir helfen, eine Kontakt-E-Mail zu formulieren?"
+    },
+    {
+      "role": "user",
+      "content": "Excellent, Hennig und Schölkopf klingen sehr gut! Gibt es noch weitere Gruppen?"
+    },
+    {
+      "role": "assistant",
+      "content": "Du hast bereits alle zentralen Gruppen in der Übersicht: Hennig (probabilistische ML), Hein und von Luxburg (theoretische ML/Robustheit), Schölkopf (Kausalität/Repräsentationslernen), Brendel und Bethge (neuronale Darstellungen/Computer Vision), und Martius (autonomes Lernen/Robotik). Das sind die sieben Kernforscherinnen und -forscher an der Schnittstelle von ML-Grundlagenforschung und Tübingen. Darüber hinaus gibt es am Tübingen AI Center noch weitere Kooperationspartner — aber diese sieben sind die direkten Anlaufstellen für eine Masterarbeit."
+    }
+  ],
+  "completion_reason": "fixture_complete"
+}
