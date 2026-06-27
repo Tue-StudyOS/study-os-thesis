@@ -28,7 +28,7 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 |---|---|---|---|---|
 | A | Conversation discipline in `build-student-profile` | ✅ | Domi | One-question rule + precise-answer instruction + no-search gate added to SKILL.md. |
 | B | Faculty backbone reference (Tübingen listing URLs) | ✅ | Domi | All 7 faculties + ZITh covered; ≥1 official listing URL each, 6 spot-checked live. |
-| C | Search-strategy reference (profile → queries) | ⬜ | – | The core IP. Depends on B. |
+| C | Search-strategy reference (profile → queries) | ✅ | Domi | Created `search-strategy.md`: profile→query-variable mapping, 18 query skeletons, two-pass strategy, quality filters, dedup rules, no-go exclusion, faculty routing table, two worked examples (Ethical AI/Education + Clinical Neuroscience). |
 | D | Rework `find-university-chairs` into universal discovery skill | ⬜ | – | Map output, pros/cons, coverage caveat; drop seed-list. Depends on B, C. |
 | E | Retire DB assets (match-thesis-advisors, openalex index, seed data → eval) | ⬜ | – | Do after D so replacement exists. |
 | F | Eval ground truth for 3–4 faculties + metric | ⬜ | – | Recall target ≥70%; reuse CS curated data. |
@@ -69,6 +69,19 @@ sample.
 ---
 
 ## Log
+
+- **2026-06-27** — Task C done. Created
+  `skills/find-university-chairs/references/search-strategy.md`: a reusable
+  instruction set that turns a student profile into precise queries for all
+  Tübingen faculties. Contains: (1) profile dimension → query variable mapping
+  (interests/methods/domain/thesis-style/skills/no-gos); (2) faculty routing
+  table (18 interest rows → primary + secondary faculty); (3) two-pass strategy
+  (Pass 1: backbone crawl via `tuebingen-faculty-backbone.md` to get structured
+  chair set; Pass 2: live enrichment for relevance, recency, openings); (4) 18
+  query skeleton templates in 5 categories; (5) quality filters (source authority,
+  date evidence, specificity); (6) dedup rules; (7) no-go exclusion table with
+  detection signals; (8) required output structure; (9) two worked examples
+  (Ethical AI/Education, Clinical Neuroscience) that can be followed by hand.
 
 - **2026-06-27** — Task B done. Created
   `skills/find-university-chairs/references/tuebingen-faculty-backbone.md`: a
