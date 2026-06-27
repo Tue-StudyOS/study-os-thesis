@@ -26,7 +26,7 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 
 | Task | Step | Status | Owner | Notes / difficulties |
 |---|---|---|---|---|
-| A | Conversation discipline in `build-student-profile` | ⬜ | – | One question (max two) per turn; instruct precise answers. |
+| A | Conversation discipline in `build-student-profile` | ✅ | Domi | One-question rule + precise-answer instruction + no-search gate added to SKILL.md. |
 | B | Faculty backbone reference (Tübingen listing URLs) | ⬜ | – | Needs web; cover every faculty, not just CS. |
 | C | Search-strategy reference (profile → queries) | ⬜ | – | The core IP. Depends on B. |
 | D | Rework `find-university-chairs` into universal discovery skill | ⬜ | – | Map output, pros/cons, coverage caveat; drop seed-list. Depends on B, C. |
@@ -69,6 +69,8 @@ sample.
 ---
 
 ## Log
+
+- **2026-06-27** — Task A done. Edited `skills/build-student-profile/SKILL.md`: added one-question-per-turn rule, precise-answer instruction, and no-search gate (all six profile dimensions required before discovery). Surgical changes only; no other behavior modified.
 
 - **2026-06-26** — Pivoted to the database-less, university-wide direction.
   Created branch `feat/no-db-universal-skill` off
