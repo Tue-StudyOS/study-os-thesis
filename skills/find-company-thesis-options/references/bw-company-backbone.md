@@ -12,7 +12,7 @@ from dominating results.
 - **Primary source:** Cyber Valley Industry Partners and Start-up Network (publicly
   announced members 2019–2024), supplemented by manual curation of established BW R&D
   companies across non-AI sectors.
-- **Compiled:** 2026-06-28. Annual review recommended — startup entries are especially
+- **Compiled:** 2026-06-28 (rev. 2026-06-28, Phase-3 gap-fill). Annual review recommended — startup entries are especially
   volatile; verify `last verified` dates older than 12 months before relying on them.
 
 ## What this list is NOT
@@ -51,8 +51,12 @@ resolve to R&D or careers content. Marked ✓ in the tables below.
 | 6 | NEURA Robotics GmbH | https://jobs.neura-robotics.com/ |
 | 7 | ZF Friedrichshafen AG | https://www.zf.com/mobile/en/careers/your_application/theses_at_zf/theses.html |
 | 8 | Karl Storz GmbH & Co. KG | https://career.karlstorz.com/go/Bachelor-Masterarbeiten/9154101/ |
-| 9 | Aleph Alpha GmbH | https://jobs.ashbyhq.com/AlephAlpha |
+| 9 | Cohere (formerly Aleph Alpha GmbH) | https://cohere.com/careers ⚠ transitioning — see Caveats |
 | 10 | sereact GmbH | https://sereact.ai/careers |
+| 11 | IONOS Group SE | https://jobs.ionos.de/career/all-jobs ✓ |
+| 12 | Haufe Group GmbH & Co. KG | https://jobs.haufegroup.com/young-talents ✓ |
+| 13 | GFT Technologies SE | https://jobs.gft.com/go/germany/4411601/ ✓ |
+| 14 | Schwarz IT GmbH & Co. KG | https://it.schwarz/en/karriere/einstieg ✓ |
 
 ---
 
@@ -67,7 +71,7 @@ main site if the direct URL is stale.
 
 | Company | Sector tags | Size | City | Careers / Research URL | Last verified |
 |---|---|---|---|---|---|
-| Aleph Alpha GmbH | AI/ML, NLP, LLMs | startup | Heidelberg | https://jobs.ashbyhq.com/AlephAlpha ✓ | 2026-06-28 |
+| Cohere GmbH (formerly Aleph Alpha GmbH) ⚠ | AI/ML, NLP, LLMs | corporate | Heidelberg | https://cohere.com/careers | 2026-06-28 |
 | NEURA Robotics GmbH | robotics, AI/ML | startup | Metzingen | https://jobs.neura-robotics.com/ ✓ | 2026-06-28 |
 | sereact GmbH | robotics, AI/ML | startup | Stuttgart | https://sereact.ai/careers ✓ | 2026-06-28 |
 | Vialytics GmbH | AI/ML, mobility | startup | Stuttgart | https://www.vialytics.de/karriere | 2026-06-28 |
@@ -183,6 +187,10 @@ operates its main German R&D site in Mannheim (BW).
 | SAP SE | enterprise software, AI/ML | corporate | Walldorf | https://jobs.sap.com/content/Studierende/?locale=de_DE ✓ | 2026-06-28 |
 | TeamViewer AG | software, cloud | corporate | Göppingen | https://www.teamviewer.com/en/company/careers/ | 2026-06-28 |
 | MHP Management- und IT-Beratung GmbH | consulting, AI/ML | corporate | Ludwigsburg | https://www.mhp.com/de/karriere.html | 2026-06-28 |
+| IONOS Group SE | cloud, software | corporate | Karlsruhe | https://jobs.ionos.de/career/all-jobs ✓ | 2026-06-28 |
+| Haufe Group GmbH & Co. KG | software, HR-tech | SME | Freiburg | https://jobs.haufegroup.com/young-talents ✓ | 2026-06-28 |
+| GFT Technologies SE | fintech, software | corporate | Stuttgart | https://jobs.gft.com/go/germany/4411601/ ✓ | 2026-06-28 |
+| Schwarz IT GmbH & Co. KG | software, supply-chain | corporate | Neckarsulm | https://it.schwarz/en/karriere/einstieg ✓ | 2026-06-28 |
 
 ---
 
@@ -225,3 +233,7 @@ not a formal portal.
   research groups are excluded — they are academic-sector actors covered by
   `find-university-chairs`. Job boards (LinkedIn, StepStone, Indeed) are never used as
   backbone sources.
+- **Aleph Alpha → Cohere (April 2026):** Aleph Alpha GmbH was acquired by Cohere in April
+  2026 ($20B valuation). The combined entity retains a Heidelberg headquarters (dual HQ
+  Toronto / Heidelberg). The original Ashby careers URL (`jobs.ashbyhq.com/AlephAlpha`) is
+  likely stale; use https://cohere.com/careers and filter for the Heidelberg office.
