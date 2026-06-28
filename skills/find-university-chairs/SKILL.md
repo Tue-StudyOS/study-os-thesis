@@ -145,6 +145,11 @@ End the map with the **coverage caveat**:
 - Prefer `uni-tuebingen.de` or `medizin.uni-tuebingen.de` pages. Accept personal faculty
   pages and `arxiv.org` / `biorxiv.org` preprints as secondary evidence.
 - Do not invent thesis openings, team sizes, citation counts, or willingness to supervise.
+- **Never invent or guess URLs.** Every URL in the output must have been retrieved and
+  confirmed reachable during this run. If a URL was not opened and verified, do not include it.
+- **Every URL is verified twice:** once when first found (Pass 1 or Pass 2 enrichment) and
+  once in the existence/activity check (sub-pass 2f). A URL that was not reachable on either
+  check must not appear in the output without a `⚠ URL not confirmed` flag.
 - Distinguish active research areas (with dated publications) from broad topic descriptions.
 - Mark evidence older than 3 years as stale and flag it.
 - Do not use any bundled professor, chair, or researcher seed files as a runtime source.

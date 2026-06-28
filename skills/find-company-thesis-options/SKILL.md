@@ -211,6 +211,11 @@ Produce a **map of options** grouped by interest dimension (not by company secto
   as a secondary authority for Cyber Valley members. Accept `arxiv.org` / `ieee.org` for
   publication evidence only.
 - **Never invent thesis openings, contact names, team sizes, or R&D topics.**
+- **Never invent or guess URLs.** Every URL in the output must have been retrieved and
+  confirmed reachable during this run. If a URL was not opened and verified, do not include it.
+- **Every URL is verified twice:** once when first found (Pass 1 backbone or Pass 2 enrichment)
+  and once in the existence/activity check (sub-pass 2e). A URL that was not reachable on
+  either check must not appear in the output without a `⚠ URL not confirmed` flag.
 - **Never name a thesis coordinator or R&D contact unless they appear on the company's own
   public page.** Company organizational information is less structured than university faculty
   pages — inferring from a LinkedIn profile or a conference attendance list is not sufficient.
@@ -286,3 +291,5 @@ Before delivering the option map, verify:
 - [ ] The output is grouped by student interest dimension, not by backbone section
 - [ ] The map-level coverage caveat is present at the top of the output
 - [ ] No no-go entry was silently dropped (discards are noted; ambiguous cases are annotated)
+- [ ] Every URL in the output was opened and confirmed reachable during this run (no invented or unverified URLs)
+- [ ] Every URL was checked at least twice: once when found, once in the existence check (2e)
