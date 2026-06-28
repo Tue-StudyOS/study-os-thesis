@@ -94,6 +94,11 @@ using the query skeletons in §4:
   Use the contact queries from §4.3. Never infer or guess a contact name.
 - **2d — Recency evidence:** confirm R&D activity from 2022 or later. Use the recency
   queries from §4.4. Flag evidence older than 3 years as stale.
+- **2e — Existence / activity check:** open the company's main domain and confirm it is
+  still active. Check: page reachable (not 404 or parked), careers or research section
+  exists, at least one signal (news, job posting, publication, press release) from 2024
+  or later. If the company appears inactive, acquired, or renamed, mark the entry
+  `⚠ existence not confirmed — verify before outreach` and rank it last. Do not silently drop it.
 
 If a company's main domain is not indexed (`site:` returns nothing), use the fallback
 queries from §4.5 before concluding the entry has weak web presence.

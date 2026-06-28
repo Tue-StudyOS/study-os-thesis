@@ -86,6 +86,11 @@ queries from [`references/search-strategy.md` §3](references/search-strategy.md
   the professor listed there. Never borrow a name from a search result that describes a
   *different* group with a similar name (e.g. HIH "Sektion Neuropsychologie" ≠
   FB-Psychologie "Diagnostik und Kognitive Neuropsychologie"). Link to the evidence page.
+- **2f** Existence / activity check — **required for every entry:** open the chair or lab's
+  own page and confirm it is still active. Check for: page reachable (not 404), at least one
+  publication, event, or news item from 2024 or later, and a named PI still listed.
+  If the page is gone or shows no activity since 2023, mark the entry
+  `⚠ activity not confirmed — verify before outreach` and rank it last. Do not silently drop it.
 
 Use the exact query skeletons from
 [`references/search-strategy.md` §4](references/search-strategy.md).
