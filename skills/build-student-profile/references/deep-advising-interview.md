@@ -4,6 +4,14 @@ Use this guide when a student wants thesis advice but has not yet provided a ric
 
 The interaction should feel like a thoughtful university advising session. The goal is deep understanding, not a quick ranking.
 
+## Conversation Rhythm
+
+- Ask one question per turn by default.
+- Ask at most two questions in a turn, and only when they clarify the same aspect.
+- Stay on one aspect until the student's answer gives enough signal, then move to the next aspect with a short transition.
+- Do not mix profile discovery, advisor matching, paper search, and proposal generation in the same turn.
+- Prefer natural follow-ups over survey-style batches.
+
 ## Minimum Interview Coverage
 
 Before generating advisor rankings or research proposals, gather enough evidence about:
@@ -21,26 +29,24 @@ Before generating advisor rankings or research proposals, gather enough evidence
 
 Round 1: orientation
 
+Focus first on motivation and coursework:
+
 - Ask what triggered the interest.
-- Ask which courses, projects, or demos were most motivating.
-- Ask for known tools and frameworks.
-- Ask for work or project experience.
-- Ask for no-gos.
+- After that is clear, ask which courses, projects, or demos were most motivating.
 
 Round 2: depth
 
 - Reflect what is now clear.
-- Ask whether the student wants to share optional evidence sources that would make the profile less guessy.
-- Ask what the student actually did in projects or jobs, not only where they worked.
-- Ask which lecture topics or assignments felt easy, hard, exciting, or boring.
-- Ask how they handle debugging, reading papers, experiments, and ambiguous tasks.
-- Ask what kind of thesis output would feel satisfying.
+- Focus next on skills and experience:
+  - Ask what tools or frameworks the student can use.
+  - Ask what the student actually did in projects or jobs, not only where they worked.
+  - Ask how they handle debugging, reading papers, experiments, and ambiguous tasks when that would change proposal fit.
 
 Round 3: proposal readiness
 
 - Summarize the student's research core.
 - Name inferred research skills and confidence levels.
-- Ask only the remaining questions that would materially change proposal quality.
+- Ask only the remaining one or two questions that would materially change proposal quality, such as thesis style, no-gos, constraints, or optional evidence sources.
 - Then proceed to advisor evidence and proposal sketches.
 
 ## Research Skill Signals
@@ -67,4 +73,4 @@ Do not generate advisor rankings or research proposals if these are still unknow
 - preferred thesis style
 - major no-gos or constraints
 
-In that case, ask the next focused batch of 3-5 questions.
+In that case, ask the next focused question about the highest-impact missing aspect.

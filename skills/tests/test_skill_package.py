@@ -11,6 +11,7 @@ EXPECTED_SKILLS = {
     "build-student-profile",
     "design-agent-skill",
     "draft-thesis-contact",
+    "find-linkedin-company-theses",
     "find-recent-papers",
     "find-university-chairs",
     "generate-thesis-directions",
@@ -91,9 +92,10 @@ def test_skill_privacy_and_evidence_rules_are_explicit() -> None:
     assert "Keep student-private data out of shared resources." in design_skill
     assert "Do not store transcripts, grades, GPA, or private profile data" in profile_skill
     assert "Accept raw student input in any form" in profile_skill
-    assert "Interview the student in small batches of 3-5 questions." in profile_skill
+    assert "Interview the student one aspect at a time." in profile_skill
+    assert "never more than two questions in a single turn" in profile_skill
     assert "programming languages, ML frameworks, robotics/simulation tools" in profile_skill
-    assert "One question batch is not enough for normal use." in profile_skill
+    assert "Keep the conversation natural" in profile_skill
     assert "Explicitly infer and summarize research skills" in profile_skill
     assert "Transcript of Records" in profile_skill
     assert "optional evidence sources" in profile_skill
@@ -108,6 +110,63 @@ def test_student_facing_skills_reject_old_runtime_dependencies() -> None:
     for skill_name in student_facing_skills:
         skill_text = (SKILLS_DIR / skill_name / "SKILL.md").read_text(encoding="utf-8")
         assert "Do not depend on the old UI, backend API, database, Docker, Celery, or FastAPI app." in skill_text
+
+
+def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> None:
+    skill_text = (SKILLS_DIR / "find-linkedin-company-theses" / "SKILL.md").read_text(encoding="utf-8")
+
+    assert "Use the full in-session student profile for processing and ranking, not only keyword matches." in skill_text
+    assert "thesis level or target degree, concrete courses or project evidence, practical skills/tools" in skill_text
+    assert "use `build-student-profile` first" in skill_text
+    assert "Do not ask for a search-parameter checklist yet." in skill_text
+    assert "Do not search, rank, or produce company thesis leads until the profile is strong enough" in skill_text
+    assert "Once the profile is strong enough, summarize the profile signals" in skill_text
+    assert "use `find-university-chairs` and `match-thesis-advisors` for the university/chair lane" in skill_text
+    assert "Only skip one lane if the user explicitly asks for company-only or university-only results." in skill_text
+    assert "base location and radius in km" in skill_text
+    assert "sectors or company types to exclude" in skill_text
+    assert "normal web search tool" in skill_text
+    assert "Do not use a Markdown database" in skill_text
+    assert "references/ranking-rubric.md" in skill_text
+    assert "profile-first gate" in skill_text
+    assert "parallel university/company comparison" in skill_text
+    assert "Exclude ordinary jobs, internships, and working-student roles" in skill_text
+    assert "eligible ranked shortlist and an excluded or not-recommended list" in skill_text
+    assert "Do not let a strong technology match override hard mismatches" in skill_text
+    assert "company-career mirror" in skill_text
+    assert "Scorecard covering thesis level, profile fit, feasibility gap" in skill_text
+    assert "Evidence tier, evidence source, and access date" in skill_text
+    assert "not a thesis, generic job/internship, location or work-mode mismatch" in skill_text
+    assert "Act like a thesis-oriented study advisor first and a search assistant second." in skill_text
+    assert "Treat company thesis search as a parallel complement to university/chair matching" in skill_text
+    assert "Do not turn a shallow request into a generic Google/LinkedIn search." in skill_text
+    assert "Do not run a live search before the student profile and search intake are complete" in skill_text
+    assert "Do not skip the university/chair lane when the user asks broadly for thesis options" in skill_text
+    assert "The main agent must merge evidence and rank centrally using the full student profile." in skill_text
+
+
+def test_linkedin_company_theses_rubric_covers_release_ready_ranking() -> None:
+    rubric_text = (SKILLS_DIR / "find-linkedin-company-theses" / "references" / "ranking-rubric.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "Profile-First Gate" in rubric_text
+    assert "Do not use this skill as a generic LinkedIn or Google search shortcut." in rubric_text
+    assert "Ask one focused advising question by default." in rubric_text
+    assert "Parallel University/Company Search" in rubric_text
+    assert "University/chair lane: use `find-university-chairs` and `match-thesis-advisors`" in rubric_text
+    assert "Company lane: use public LinkedIn-indexed and company-career evidence" in rubric_text
+    assert "Cross-lane comparison and next actions." in rubric_text
+    assert "Hard Exclusion Criteria" in rubric_text
+    assert "ordinary job, internship, trainee role, or working-student role" in rubric_text
+    assert "Do not let a strong technology match override a hard exclusion." in rubric_text
+    assert "Scorecard" in rubric_text
+    assert "Thesis contribution" in rubric_text
+    assert "Company-thesis readiness" in rubric_text
+    assert "Evidence Tiers" in rubric_text
+    assert "`A`: Opened public LinkedIn page or company career page confirms the thesis details." in rubric_text
+    assert "Company-Career Mirror Search" in rubric_text
+    assert "compensation/workload, academic supervision, university-company process" in rubric_text
 
 
 def test_required_markdown_database_indexes_exist() -> None:

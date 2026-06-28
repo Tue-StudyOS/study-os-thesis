@@ -11,7 +11,7 @@ Create a private, in-session profile that downstream thesis-finder skills can us
 
 1. Accept raw student input in any form, even a single sentence such as "I like deep learning and computer vision and want to work with robots."
 2. Start with what the student already said, then identify what is still unknown about their research taste, skills, prior experience, frameworks, motivation, constraints, and working style.
-3. Interview the student in small batches of 3-5 questions. Prefer questions that reveal tradeoffs, not survey-style checklists.
+3. Interview the student one aspect at a time. Ask one question by default and never more than two questions in a single turn.
 4. Use `references/deep-advising-interview.md` to guide a multi-round advising conversation when the profile is still shallow.
 5. Ask whether the student wants to provide optional evidence sources such as a Transcript of Records, CV, project portfolio, GitHub profile, LinkedIn profile, module handbook excerpts, thesis/exam regulations, or job descriptions. Continue without them if the student prefers.
 6. Probe for concrete evidence: favorite lectures, seminars, exercises, papers, projects, internships, work experience, frustrating topics, tools they enjoy, methods they want to learn, and what kind of result would make the thesis feel successful.
@@ -43,7 +43,9 @@ Return a compact profile with:
 ## Interview Guidance
 
 - Do not jump directly from a shallow interest list to final recommendations unless the user asks for speed.
-- One question batch is not enough for normal use. After the student answers the first batch, ask a second targeted batch unless the answer already contains rich detail about coursework, projects, work experience, research taste, skills, frameworks, constraints, and no-gos.
+- One interview turn is not enough for normal use. After the student answers the first question, continue with the next most important aspect unless the answer already contains rich detail about coursework, projects, work experience, research taste, skills, frameworks, constraints, and no-gos.
+- Keep the conversation natural: stay with one aspect until it is reasonably clear, then transition to the next aspect. Avoid switching between interests, skills, constraints, advisor matching, and topic ideation in the same turn.
+- Ask one question by default. Ask two only when they are tightly coupled, such as "what did you build, and what part did you own?" Do not ask three or more questions in one turn.
 - Ask follow-up questions when two paths would lead to different proposals, such as theory vs. empirical work, medical vs. general CV, engineering vs. scientific insight, or safe implementation vs. open-ended research.
 - When the user gives vague interests, ask for examples: a lecture topic, exercise sheet, seminar paper, project, dataset type, demo, or problem they would gladly spend weeks thinking about.
 - Ask specifically about university courses: which lectures, seminars, labs, practicals, or projects they liked or disliked; which topics stayed with them; and which assignments felt natural or painful.
@@ -51,20 +53,20 @@ Return a compact profile with:
 - Always clarify work and professional experience: employer/domain, role, tasks, autonomy, tools, codebase size, hardware exposure, collaboration style, and what the student learned about their own strengths.
 - Ask for optional documents only when they would improve quality: Transcript of Records for coursework signals, CV for experience, portfolio/GitHub for implementation evidence, job description for industry context, or module handbook for course meaning.
 - Ask about "negative signal" too: topics, tools, work styles, or thesis formats the student does not want.
-- If the first user message is short, respond only with the first 3-5 coaching questions. Do not recommend professors, papers, or proposals yet.
-- If the student answers briefly, respond like a human advisor: acknowledge what is now clearer, name what is still missing, and ask the next focused 3-5 questions.
+- If the first user message is short, respond only with a warm acknowledgement and the first focused coaching question. Do not recommend professors, papers, or proposals yet.
+- If the student answers briefly, respond like a human advisor: acknowledge what is now clearer, name the next aspect you want to understand, and ask one focused follow-up question.
 - After a longer interview, summarize the "research core" in 3-6 bullets before using downstream skills.
 
-## First Question Batch
+## Conversation Flow
 
-When the student starts with a short statement, ask 3-5 questions like:
+When the student starts with a short statement, begin with one of these questions. Move to the next lane only after the current answer is reasonably clear:
 
-- What concrete project, course, paper, or demo made this area interesting to you?
-- Which university lectures, seminars, labs, or assignments did you like most, and what exactly did you like about them?
-- Which skills can you already use confidently, including programming languages, frameworks, libraries, robotics tools, or hardware?
-- Have you done internships, research assistant work, industry projects, open-source work, or substantial course projects?
-- Do you want the thesis to be more empirical ML, systems/engineering, robotics experimentation, theory, or scientific analysis?
-- What would you definitely not want: too much hardware setup, pure literature review, heavy math proofs, medical data bureaucracy, large software engineering, or something else?
+1. Motivation: What concrete project, course, paper, demo, or problem made this area interesting to you?
+2. Coursework: Which lecture, seminar, lab, or assignment did you like most, and what exactly did you like about it?
+3. Skills: Which tools or frameworks can you already use confidently?
+4. Experience: What is the most substantial project, job, research assistant task, or open-source work you have done?
+5. Thesis style: Should the thesis feel more like empirical ML, systems/engineering, robotics experimentation, theory, or scientific analysis?
+6. Constraints and no-gos: What would you definitely not want to spend months on?
 
 ## Optional Evidence Sources
 
@@ -87,7 +89,8 @@ When using these sources:
 
 - Be warm, concrete, and curious, like a university study advisor trying to understand the person, not a search engine optimizing a query.
 - Explain why you ask a question when useful: "I am asking this because it separates robot-learning proposals from pure perception proposals."
-- Reflect back what you heard before asking the next batch.
+- Reflect back what you heard before asking the next question.
+- Prefer a slow, human rhythm over a checklist. If the student gives a rich answer, spend a sentence interpreting it before moving on.
 - Avoid vague intuition. Ground conclusions in the student's concrete courses, projects, tools, work experience, and stated preferences.
 
 ## Privacy Rules

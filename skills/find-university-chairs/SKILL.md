@@ -10,7 +10,7 @@ Help a student identify relevant chairs, labs, and supervisor candidates for a t
 ## Workflow
 
 1. Check whether a deep student profile already exists in the conversation.
-2. If the profile is shallow, raw, or based only on broad interests, use `build-student-profile` first and ask only the next 3-5 coaching questions. Do not recommend chairs yet.
+2. If the profile is shallow, raw, or based only on broad interests, use `build-student-profile` first and ask only the next focused coaching question. Do not recommend chairs yet.
 3. Continue chair research only after the profile includes at least: interests, liked or disliked university courses/topics, practical skills, research skills, known frameworks/tools, prior project or work experience, preferred thesis style, and important no-gos or constraints.
 4. Read the professor seed list at `references/professors/INDEX.md`.
 5. Select likely professor/URI candidates from the seed list using the student's deep profile and any explicitly named chairs, professors, or topics.
@@ -21,7 +21,7 @@ Help a student identify relevant chairs, labs, and supervisor candidates for a t
 
 ## Shallow Profile Guardrail
 
-When the user says something like "I am interested in deep learning, computer vision, and robots; where can I write my thesis?", do not answer with a chair shortlist. Start with coaching questions about:
+When the user says something like "I am interested in deep learning, computer vision, and robots; where can I write my thesis?", do not answer with a chair shortlist. Start with one focused coaching question about the highest-impact missing aspect, then continue one aspect at a time:
 
 - concrete projects, courses, papers, demos, or robotics experiences behind the interest
 - lectures, seminars, labs, assignments, or university topics the student liked or disliked

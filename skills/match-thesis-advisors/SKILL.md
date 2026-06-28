@@ -9,7 +9,7 @@ Rank possible thesis advisors by combining the student's in-session research pro
 
 ## Workflow
 
-1. Build or reuse a deep student profile. If the user only gave broad interests or one short answer batch, use `build-student-profile` first and ask the next 3-5 coaching questions.
+1. Build or reuse a deep student profile. If the user only gave broad interests or one short answer, use `build-student-profile` first and ask the next focused coaching question.
 2. Read `../find-university-chairs/references/professors/INDEX.md` for professor names and official starting URIs.
 3. Use `find-university-chairs` and `find-recent-papers` to gather current public evidence with the active agent's native websearch/browser tools.
 4. Score candidates qualitatively by proposal fit, research taste fit, evidence freshness, prerequisite fit, and risk.
@@ -32,7 +32,7 @@ End with 2-3 backup directions if the top matches are too competitive or uncerta
 
 ## Rules
 
-- Do not produce advisor rankings from a shallow profile or after only one brief question batch. Ask profile-building questions first.
+- Do not produce advisor rankings from a shallow profile or after only one brief profile turn. Ask the next focused profile-building question first.
 - Do not invent supervision capacity, open topics, quotas, team sizes, citations, or willingness to supervise.
 - Distinguish "strong research fit" from "confirmed available thesis topic".
 - Do not treat old bundled chair, researcher, or paper profiles as the primary source.
