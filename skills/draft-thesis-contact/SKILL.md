@@ -18,6 +18,8 @@ Write first-contact messages that help students avoid generic cold emails.
 
 Return:
 
+- a clear "AI-generated draft" label on the output so the student reviews and
+  personalizes it before sending
 - subject line
 - email draft
 - one-sentence rationale for why the email is specific

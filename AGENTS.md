@@ -207,6 +207,7 @@ Outputs:
 - 2-4 proposal sketches with working title, research question, motivation,
   methods/data/evaluation, advisor fit, prerequisites, feasibility risks, and a
   first meeting question
+- a clear "AI-generated" label on the set of sketches
 
 Guardrails:
 
@@ -234,6 +235,7 @@ Inputs:
 
 Outputs:
 
+- a clear "AI-generated draft" label on the output
 - subject line
 - email draft
 - short rationale for why the email is specific
