@@ -1,3 +1,37 @@
+# Thesis-Option Finder
+
+Helps Tübingen students (and students at Baden-Württemberg universities) discover
+where to write their thesis — at a Tübingen university chair or at a company in
+Baden-Württemberg. No login, no database, no sign-up required.
+
+## How to use
+
+Open this repository in any capable coding agent — Claude Code, Codex, or Gemini
+CLI — and type:
+
+```
+thesis-finder
+```
+
+The skill interviews you (a few quick questions) about your research interests,
+courses, and constraints, then produces a short map of chairs or companies that
+match your profile.
+
+## What you get
+
+- A relevant subset of Tübingen chairs or BW companies matched to your profile
+- A brief research-fit rationale and conversation starters for each option
+- An optional first-contact email draft (`draft-thesis-contact`)
+
+## What this does NOT do
+
+- Does not write your thesis
+- Does not guarantee any chair or company has an open topic
+- Is not an official university portal — openings and supervision capacity must
+  be confirmed directly with the chair or company
+
+---
+
 # study-os-thesis
 
 A set of portable **agent skills** that take a student from vague interests to a
