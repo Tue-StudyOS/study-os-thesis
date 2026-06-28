@@ -39,12 +39,12 @@ Extract the six dimensions from the profile. For each of **Interests**, **Method
 **Domain** note both a German and an English term. These populate the query slots
 `{TOPIC_DE}`, `{TOPIC_EN}`, `{METHOD_DE}`, `{METHOD_EN}`, `{DOMAIN_DE}`, `{DOMAIN_EN}`,
 `{NOGO_TERM}` as defined in
-[`references/search-strategy.md §1`](references/search-strategy.md).
+[`references/search-strategy.md` §1](references/search-strategy.md).
 
 ### Step 3 — Route to relevant faculties
 
 Use the **faculty routing table** in
-[`references/search-strategy.md §2`](references/search-strategy.md) to identify the
+[`references/search-strategy.md` §2](references/search-strategy.md) to identify the
 1–3 relevant faculties / departments for the student's interest+domain combination.
 Do not start a global keyword search across all of `uni-tuebingen.de`.
 
@@ -74,7 +74,7 @@ ELLIS / Cyber Valley legs listed in the backbone file's drill-down table. Treat 
 ### Step 5 — Pass 2: live enrichment per chair
 
 For each chair in the candidate set (or the top subset if > 20), run the enrichment
-queries from [`references/search-strategy.md §3`](references/search-strategy.md):
+queries from [`references/search-strategy.md` §3](references/search-strategy.md):
 
 - **2a** relevance check — is this chair actively working on the student's topic?
 - **2b** recency — date evidence from 2022 or later
@@ -82,13 +82,13 @@ queries from [`references/search-strategy.md §3`](references/search-strategy.md
 - **2d** method fit — optional; use when the student has a specific method requirement
 - **2e** PI verification — **required before naming any person as chair-holder:** open
   the unit's own staff / team page (or run the person-verification query from
-  [`references/search-strategy.md §4.6`](references/search-strategy.md)) and confirm
+  [`references/search-strategy.md` §4.6](references/search-strategy.md)) and confirm
   the professor listed there. Never borrow a name from a search result that describes a
   *different* group with a similar name (e.g. HIH "Sektion Neuropsychologie" ≠
   FB-Psychologie "Diagnostik und Kognitive Neuropsychologie"). Link to the evidence page.
 
 Use the exact query skeletons from
-[`references/search-strategy.md §4`](references/search-strategy.md).
+[`references/search-strategy.md` §4](references/search-strategy.md).
 
 ### Step 6 — Apply filters and dedup
 
@@ -99,7 +99,7 @@ personal page; merge faculty listing + interfaculty listing for the same group).
 ### Step 7 — Apply no-go exclusion
 
 Before ranking, discard chairs that violate the student's no-gos using the exclusion
-table in [`references/search-strategy.md §7`](references/search-strategy.md).
+table in [`references/search-strategy.md` §7](references/search-strategy.md).
 If a no-go *might* apply (ambiguous), keep the chair and annotate it with a
 `⚠ possible conflict with no-go: {NOGO}` note rather than silently dropping it.
 

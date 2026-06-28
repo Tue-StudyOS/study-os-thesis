@@ -37,7 +37,7 @@ If any is missing or the student has only given a one-liner ("I like AI"), invok
 ### Step 2 — Extract query variables
 
 Extract the six dimensions from the profile. Using the mapping table in
-[`references/company-search-strategy.md §1`](references/company-search-strategy.md),
+[`references/company-search-strategy.md` §1](references/company-search-strategy.md),
 populate these query variables:
 
 - `{TOPIC_DE}`, `{TOPIC_EN}` — from Interests (both language forms)
@@ -54,7 +54,7 @@ These inform the backbone filter and the pros/difficulties annotation.
 
 1. Open [`references/bw-company-backbone.md`](references/bw-company-backbone.md) in full.
 2. Apply the interest-to-tag mapping from
-   [`references/company-search-strategy.md §2.1`](references/company-search-strategy.md):
+   [`references/company-search-strategy.md` §2.1](references/company-search-strategy.md):
    identify which backbone sections and rows match the student's interest and domain tags.
 3. Apply the filtering logic from §2.2:
    - **Include** entries whose sector tags intersect the student's mapped tags.
@@ -80,7 +80,7 @@ If < 5, broaden by one secondary tag or relax the size filter.
 ### Step 4 — Pass 2: live enrichment per company
 
 For each candidate from Step 3, run the enrichment sub-passes from
-[`references/company-search-strategy.md §3`](references/company-search-strategy.md)
+[`references/company-search-strategy.md` §3](references/company-search-strategy.md)
 using the query skeletons in §4:
 
 - **2a — R&D focus:** does the company's own page confirm they work on the student's topic?
@@ -101,7 +101,7 @@ queries from §4.5 before concluding the entry has weak web presence.
 ### Step 5 — Apply quality filters and dedup
 
 Apply the quality filters from
-[`references/company-search-strategy.md §5`](references/company-search-strategy.md):
+[`references/company-search-strategy.md` §5](references/company-search-strategy.md):
 
 - Prefer the company's own domain over job-board aggregators. Never use StepStone, Indeed,
   or Glassdoor as the source of a thesis signal.

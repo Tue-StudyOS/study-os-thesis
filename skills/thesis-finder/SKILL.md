@@ -1,6 +1,6 @@
 ---
 name: thesis-finder
-description: Entry-point orchestrator for thesis discovery. Routes to university chair discovery (find-university-chairs), company thesis discovery (find-company-thesis-options), or both, based on student choice. Requires a complete 6-dimension student profile from build-student-profile before routing.
+description: Entry-point orchestrator for thesis discovery. Routes to university chair discovery (find-university-chairs), company thesis discovery (find-company-thesis-options), or both, based on student choice. Requires a complete 6-dimension student profile from build-student-profile before routing. Use when a student is ready to look for where to write their thesis and wants to be routed to the right discovery skill(s).
 ---
 
 # Thesis Finder
