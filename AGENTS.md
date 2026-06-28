@@ -272,6 +272,65 @@ Guardrails:
   allows it
 - run deterministic skill tests after generation
 
+## Extending To A New Faculty
+
+The durable product is a portable skill package, not a Tuebingen machine-learning
+helper. To adapt it to another faculty, program, university, or discipline, reuse
+the portable core workflow and replace only the faculty-specific public reference
+data. Do not invent a new structure for each faculty.
+
+### Start With The Meta-Skill
+
+Every new faculty package, like every substantial skill redesign, begins with
+`skills/design-agent-skill` (see `## Core Rule: Use The Meta-Skill First`). Read
+`skills/design-agent-skill/SKILL.md`, then validate the result against
+`skills/design-agent-skill/references/skill-authoring-rules.md`.
+
+### Minimum Inputs For A New Faculty Package
+
+Gather these before writing or adapting any files:
+
+- target faculty or program
+- student-workflow differences (e.g. thesis levels, scope, program rules)
+- seed chair/professor source (where the new seed list comes from)
+- public data sources (official faculty/lab pages, OpenAlex, DBLP, publisher
+  pages)
+- which skills need changes vs. which core skills are reused unchanged
+- privacy and evidence constraints for that faculty's data
+
+### Reusable Core vs. Faculty-Specific Data
+
+The student-facing core skills are faculty-agnostic and are reused as-is:
+`build-student-profile`, `find-recent-papers`, `find-university-chairs`,
+`match-thesis-advisors`, `generate-thesis-directions`, and
+`draft-thesis-contact`, plus the maintenance skill `update-openalex-paper-index`.
+What changes per faculty is the **public reference data** they read, not the
+workflow. Touch a `SKILL.md` only when a faculty's workflow genuinely differs,
+and keep that change as narrow as possible.
+
+### Expected Markdown Structure For Faculty References
+
+Mirror the existing schemas; do not reinvent them:
+
+- professor seed index — `references/professors/INDEX.md` with `name | uri`
+  columns only (no emails or extra metadata)
+- chairs and labs — `references/chairs/INDEX.md` plus per-chair files following
+  `skills/find-university-chairs/references/chair-profile-schema.md`
+- researchers — `references/researchers/INDEX.md` plus per-person files following
+  `skills/update-openalex-paper-index/references/openalex-index-schema.md`
+- program or degree reference, when the faculty needs one — model it on
+  `skills/build-student-profile/references/tuebingen-degree-programs.md`
+
+### Source Of Truth And Guardrails
+
+The durable, reviewable source-of-truth files are `skills/*/SKILL.md`, the
+`references/` data, `MASTERPLAN.md`, `STATUS.md`, and `AGENTS.md`.
+
+Keep the guidance portable: do not add client-specific instructions unless there
+is a portable fallback. All faculty reference data must be public, reviewable,
+and dated, with uncertainty labelled. Never request or store private student
+data in shared files (see `## Evidence, Privacy, And Data Rules`).
+
 ## Evidence, Privacy, And Data Rules
 
 - Keep student-private data in the active session only.
