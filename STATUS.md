@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-28 (CI/engineering-hygiene fix — full pytest suite + release build now GREEN; see latest log entry)
+**Last update:** 2026-06-28 (thesis-finder made true single entry point — inline profile building, no separate skill invocation needed)
 
 ---
 
@@ -218,6 +218,12 @@ WiSo 100%/100%; real +65pp over baseline confirmed in Task I).
   chairs, ≥70% target, step-by-step scoring guide, and what counts as "surfaced".
   All names verified against official uni-tuebingen.de and hih-tuebingen.de pages on
   2026-06-27. Four commits (one per faculty file + one for README).
+
+- **2026-06-28** — `thesis-finder` made true single entry point. Step 1 now builds
+  the student profile inline (one question per turn) instead of deferring to
+  `build-student-profile`. Updated AGENTS.md (Student Workflow + thesis-finder
+  guardrails), README.md (skill flow diagram), and thesis-finder/SKILL.md frontmatter
+  + description. `build-student-profile` remains available as a standalone skill.
 
 - **2026-06-27** — Task E done. Deleted `skills/match-thesis-advisors/` and
   `skills/update-openalex-paper-index/` (4 files; git history preserves them).

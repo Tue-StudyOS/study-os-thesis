@@ -57,12 +57,10 @@ This means the skills never go stale in the way a database does. A student runni
 ## Skill flow
 
 ```
-build-student-profile
-    │  structured interview (one question per turn)
+thesis-finder                ← single entry point
+    │  inline interview if no profile yet (one question per turn)
     │  → 6-dimension profile: interests · methods · domain · thesis style · skills · no-gos
-    ▼
-thesis-finder
-    │  checks profile completeness, asks which track
+    │  asks which track
     ├──▶ find-university-chairs
     │       Pass 1: filter official faculty listing pages (backbone)
     │       Pass 2: live enrichment per chair / research group

@@ -65,16 +65,18 @@ authors are unavailable.
 
 ## Student Workflow
 
-Start with `thesis-finder` — it checks for a profile, asks which track you
-want, and routes to the right discovery skill automatically. Or invoke the
-skills individually in this order:
+Start with `thesis-finder` — it builds your profile through a short inline interview if needed,
+asks which track you want, and routes to the right discovery skill automatically.
+One skill, end to end.
 
-1. `thesis-finder` (entry point — routes to all other skills after profile check)
-2. `build-student-profile`
-3. `find-university-chairs` (university track)
-   `find-company-thesis-options` (company track)
+1. `thesis-finder` (single entry point — inline profile interview + routing)
+2. `find-university-chairs` (university track, invoked by thesis-finder)
+   `find-company-thesis-options` (company track, invoked by thesis-finder)
    (both may be run in sequence)
-4. `draft-thesis-contact` (optional — drafts a first-contact email for any option you choose)
+3. `draft-thesis-contact` (optional — drafts a first-contact email for any option you choose)
+
+`build-student-profile` can still be invoked standalone when you only want to build or
+update a profile without immediately searching for options.
 
 Do not skip directly to chair rankings, thesis proposals, or contact emails
 from a shallow profile. Good thesis advice starts with understanding the
@@ -121,17 +123,18 @@ needs a single command that sequences profiling, track selection, and discovery.
 
 Inputs:
 
-- a student profile in context (built by `build-student-profile`), or none yet
+- any student statement, or nothing (profile is built inline if missing)
 - student's choice of track: university, company, or both
 
 Outputs:
 
+- a complete 6-dimension student profile (built inline or confirmed from context)
 - delegates to `find-university-chairs` and/or `find-company-thesis-options`
 - after delivery, offers `draft-thesis-contact` as an optional next step
 
 Guardrails:
 
-- if no profile is present, defer: "Run `build-student-profile` first, then return here"
+- if no profile is present, build it inline (one question per turn); do not defer to a separate skill
 - never duplicates discovery logic from the routed-to skills
 - does not merge or re-rank outputs from the two tracks
 

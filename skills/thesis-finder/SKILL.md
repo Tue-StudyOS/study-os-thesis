@@ -1,25 +1,28 @@
 ---
 name: thesis-finder
-description: Entry-point orchestrator for thesis discovery. Routes to university chair discovery (find-university-chairs), company thesis discovery (find-company-thesis-options), or both, based on student choice. Requires a complete 6-dimension student profile from build-student-profile before routing. Use when a student is ready to look for where to write their thesis and wants to be routed to the right discovery skill(s).
+description: Single entry point for thesis discovery. Builds the student profile through an inline interview if not yet present, then routes to university chair discovery (find-university-chairs), company thesis discovery (find-company-thesis-options), or both, based on student choice. Use when a student wants to find where to write their thesis — no prior skill invocation needed.
 ---
 
 # Thesis Finder
 
-Single entry point for thesis-option discovery. This skill checks for a student profile and
-routes to the appropriate discovery skill(s). It contains no discovery logic itself.
+Single entry point for thesis-option discovery. This skill builds the student profile inline
+if needed, then routes to the appropriate discovery skill(s). It contains no discovery logic itself.
 
-## Step 1 — Profile check
+## Step 1 — Build or check student profile
 
-Check whether the current conversation contains a complete student profile from
-`build-student-profile` covering all six dimensions:
+Check whether the current conversation already contains a complete 6-dimension student profile:
 
 1. Interests, 2. Methods, 3. Domain, 4. Thesis style, 5. Skills, 6. No-gos
 
-**If any dimension is missing or shallow:** stop and say:
+**If the profile is already complete:** proceed to Step 2.
 
-> "Run `build-student-profile` first to complete your profile, then return here."
+**If the profile is missing or any dimension is shallow:** build it now through a short interview.
+- Ask **one question per turn** (at most two when tightly coupled).
+- Use `../build-student-profile/references/deep-advising-interview.md` to guide the conversation.
+- Ask for optional evidence sources (transcript, CV, GitHub) once, naturally.
+- Continue until all six dimensions are covered.
 
-Do not proceed until all six dimensions are present.
+Do not proceed to Step 2 until all six dimensions are present.
 
 ## Step 2 — Ask which track
 
