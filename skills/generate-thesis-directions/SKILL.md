@@ -18,6 +18,9 @@ Turn evidence from a deep student profile, papers, and chair matches into precis
 
 ## Output
 
+Label the set of sketches with a clear "AI-generated" note so the student treats
+them as drafts to review and discuss, not finished or official proposals.
+
 For each proposal include:
 
 - working title

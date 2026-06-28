@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a step, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-18
+**Last update:** 2026-06-28
 
 ---
 
@@ -52,5 +52,7 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 
 ## Log
 
+- **2026-06-28** — Faculty extension, first-test refinement: a sociology test run produced a clean seed index but the data was orphaned — `find-university-chairs`, `find-recent-papers`, and `match-thesis-advisors` hardcoded the single `references/professors/INDEX.md`. Made the three reader skills faculty-aware (read `references/<faculty>/professors/INDEX.md` matching the student's field, falling back to the default ML/CS index) and documented the `references/<faculty>/` namespace + selection/fallback in `AGENTS.md`. Tests green.
+- **2026-06-28** — Issue #58 (docs): added an "Extending To A New Faculty" workflow to `AGENTS.md` — meta-skill-first rule, minimum inputs, reusable-core vs. faculty-specific data split, expected reference structure (reusing existing schemas), and source-of-truth/portability/privacy guardrails. Docs-only; not a Phase-1 step row.
 - **2026-06-18** — Translated Masterplan + Status to English. Reviewed teammate (Valentin) commit `688f08d`: added degree-program awareness to `build-student-profile` (`tuebingen-degree-programs.md`) — degree program → thesis level (ML = Master-only) → scope (Bachelor 4mo / Master 6mo). Logged as a Phase 2 item in the Masterplan; does not affect Phase 1.
 - **2026-06-18** — Added Masterplan + Status + workflow. Defined Phase 1, created 7 issues (#45–#51). Starting point: 8 working skills, data only 7/47 profs, 0 PhDs.

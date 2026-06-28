@@ -10,7 +10,7 @@ Rank possible thesis advisors by combining the student's in-session research pro
 ## Workflow
 
 1. Build or reuse a deep student profile. If the user only gave broad interests or one short answer batch, use `build-student-profile` first and ask the next 3-5 coaching questions.
-2. Read `../find-university-chairs/references/professors/INDEX.md` for professor names and official starting URIs.
+2. Read the professor seed list for the student's faculty — `../find-university-chairs/references/<faculty>/professors/INDEX.md` when one exists (e.g. `.../sociology/professors/INDEX.md`), otherwise the default `../find-university-chairs/references/professors/INDEX.md` — for professor names and official starting URIs.
 3. Use `find-university-chairs` and `find-recent-papers` to gather current public evidence with the active agent's native websearch/browser tools.
 4. Score candidates qualitatively by proposal fit, research taste fit, evidence freshness, prerequisite fit, and risk.
 5. Return a ranked shortlist with reasons, caveats, backup options, and proposal hooks.
