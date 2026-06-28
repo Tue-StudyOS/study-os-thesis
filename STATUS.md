@@ -4,19 +4,22 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-28 (Task I live validation run — AMBER verdict)
+**Last update:** 2026-06-28 (Phase 2 kick-off — decisions resolved, build plan written)
 
 ---
 
 ## Current phase
 
-**Phase 1 — University discovery (database-less).** Goal: a faculty-agnostic
-discovery skill that maps a student's interests to Tübingen thesis options via
-live search, measured against a small ground truth and a plain-Claude baseline.
+**Phase 2 — Company discovery (database-less).** Goal: extend the Phase 1 principle
+to BW companies — same 6-dimension profile, same two-pass discovery, curated company
+backbone instead of faculty backbone. Target: a student can discover thesis options at
+~100–130 BW companies with ≥70% recall live.
 
-Direction details: [findings/no_db_universal_skill/](findings/no_db_universal_skill/)
-· exact build plan:
-[2026-06-26-build-plan.md](findings/no_db_universal_skill/2026-06-26-build-plan.md).
+Phase 1 is **complete and GREEN** (all 4 faculties ≥70% live recall; gate passed
+2026-06-28). Phase 1 build plan: [2026-06-26-build-plan.md](findings/no_db_universal_skill/2026-06-26-build-plan.md).
+
+Phase 2 decisions: [2026-06-28-phase2-company-decisions.md](findings/no_db_universal_skill/2026-06-28-phase2-company-decisions.md)
+· Phase 2 build plan: [2026-06-28-phase2-build-plan.md](findings/no_db_universal_skill/2026-06-28-phase2-build-plan.md)
 
 ---
 
@@ -42,17 +45,32 @@ AND a meaningful live margin over plain Claude ✅ **GREEN** (Task I-fix: all 4
 faculties ≥70% primary and strict; Psych 100%/83%, CS 100%/100%, Med 100%/83%,
 WiSo 100%/100%; real +65pp over baseline confirmed in Task I).
 
+### Phase 2 — Company discovery
+
+| Task | Step | Status | Owner | Notes / difficulties |
+|---|---|---|---|---|
+| 2-A | BW company backbone reference (~100–130 entries, Cyber Valley + manual BW R&D additions) | ⬜ | – | – |
+| 2-B | Company search strategy (profile → backbone filter + live enrichment queries) | ⬜ | – | Depends on 2-A |
+| 2-C | Build `find-company-thesis-options` skill | ⬜ | – | Depends on 2-A, 2-B |
+| 2-D | Eval ground truth for companies (3 profiles × 5–8 companies each) | ⬜ | – | Parallel-safe |
+| 2-E | Live validation (real recall + baseline, ≥70% target per profile) | ⬜ | – | Depends on 2-C, 2-D |
+
+**Gate Phase 2 → 3:** skill runs end-to-end · ground truth for ≥3 profiles · live recall ≥70% all profiles · meaningful live margin over plain Claude.
+
 ---
 
 ## Open decisions
 
-- **Coverage target:** start at ≥70% recall on the ground truth — revisit after
-  first eval (Task H).
-- **Discovery skill name:** reworking `find-university-chairs` in place for now;
-  consider a faculty-agnostic rename once companies arrive (Phase 2).
-- **Company list source (Phase 2):** which existing tagged list for
-  Baden-Württemberg, and the bundling format — deferred until the university arm
-  is proven.
+- **Coverage target:** ≥70% recall — confirmed as the standing target (Task H
+  and Task I validated it; same target adopted for Phase 2).
+- **Discovery skill name:** `find-university-chairs` stays as-is. Phase 2
+  introduces `find-company-thesis-options` as a parallel skill. No rename planned.
+  *(resolved 2026-06-28)*
+- **Company list source (Phase 2):** Cyber Valley Industry Partners (primary,
+  ~80–100 AI/ML entries) + ~20–30 manual BW R&D additions (automotive, medtech,
+  software, industrial, energy). Bundled as a tagged Markdown reference file.
+  Full rationale: `findings/no_db_universal_skill/2026-06-28-phase2-company-decisions.md`.
+  *(resolved 2026-06-28)*
 
 ---
 
@@ -72,6 +90,16 @@ WiSo 100%/100%; real +65pp over baseline confirmed in Task I).
 ---
 
 ## Log
+
+- **2026-06-28** — Phase 2 kick-off **done**. Resolved two open STATUS.md decisions: (1) company
+  backbone source → Cyber Valley Industry Partners + ~20–30 manual BW R&D additions, tagged
+  Markdown file, ~100–130 entries; (2) output schema → company option map with always-present
+  fields (name, sector, size, location, relevance, pros/difficulties, contact path) and
+  may-be-missing fields (thesis signal, coordinator name), stronger coverage caveat than uni
+  version. Wrote `2026-06-28-phase2-company-decisions.md` and `2026-06-28-phase2-build-plan.md`
+  (Tasks 2-A through 2-E with ready-to-paste agent prompts). Discovery skill name decision
+  closed: `find-university-chairs` stays as-is, new `find-company-thesis-options` is a parallel
+  skill. Phase 2 task table added to STATUS. Commits: `ce04977`, `STATUS update`.
 
 - **2026-06-28** — Task I-fix **done** (two bugs from Task I corrected). (1) Added 2e PI-verification step to SKILL.md Step 5: each named professor must be confirmed on the unit's own staff page before attribution; added §4.6 person-verification query skeletons to search-strategy.md. (2) Added MPI-IS (`is.mpg.de/departments`) and ELLIS/Cyber Valley as first-class Pass-1 sources to SKILL.md Step 4, search-strategy.md §2, and backbone drill-down table. Re-validated Psychology and CS live (no peeking): Psych primary 100%/strict 83%, CS primary 100%/strict 100% — both clear ≥70%. **Phase-1 gate is now GREEN.** Full results: `findings/no_db_universal_skill/2026-06-28-I-fix-revalidation.md`. Commit: `c1cc302`.
 
