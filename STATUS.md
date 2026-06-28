@@ -4,22 +4,24 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-28 (Phase 2 kick-off — decisions resolved, build plan written)
+**Last update:** 2026-06-28 (Phase 3 complete — smoke test GREEN, branch ready for review/merge)
 
 ---
 
 ## Current phase
 
-**Phase 2 — Company discovery (database-less).** Goal: extend the Phase 1 principle
-to BW companies — same 6-dimension profile, same two-pass discovery, curated company
-backbone instead of faculty backbone. Target: a student can discover thesis options at
-~100–130 BW companies with ≥70% recall live.
+**Phase 3 — Orchestration & Distribution: COMPLETE.** Backbone maintenance, entry-point skill,
+distribution artifacts, and smoke test are all done. Branch `feat/no-db-universal-skill` is
+ready for review/merge.
 
 Phase 1 is **complete and GREEN** (all 4 faculties ≥70% live recall; gate passed
 2026-06-28). Phase 1 build plan: [2026-06-26-build-plan.md](findings/no_db_universal_skill/2026-06-26-build-plan.md).
 
 Phase 2 decisions: [2026-06-28-phase2-company-decisions.md](findings/no_db_universal_skill/2026-06-28-phase2-company-decisions.md)
 · Phase 2 build plan: [2026-06-28-phase2-build-plan.md](findings/no_db_universal_skill/2026-06-28-phase2-build-plan.md)
+
+Phase 3 build plan: [2026-06-28-phase3-build-plan.md](findings/no_db_universal_skill/2026-06-28-phase3-build-plan.md)
+· Phase 3 smoke test: [2026-06-28-phase3-smoke-test.md](findings/no_db_universal_skill/2026-06-28-phase3-smoke-test.md)
 
 ---
 
@@ -57,6 +59,25 @@ WiSo 100%/100%; real +65pp over baseline confirmed in Task I).
 
 **Gate Phase 2 → 3:** skill runs end-to-end ✅ · ground truth for ≥3 profiles ✅ · live recall ≥70% all profiles ✅ · meaningful live margin over plain Claude ✅ **GREEN** (Task 2-E: all 3 profiles 100%; +26pp mean over baseline; no DB dependency confirmed).
 
+### Phase 3 — Orchestration & Distribution
+
+| Task | Step | Status | Owner | Notes / difficulties |
+|---|---|---|---|---|
+| 3-A | Backbone maintenance (Aleph Alpha fix + §5 expansion) | ✅ | Domi | Aleph Alpha → Cohere entry updated; §5 expanded to 7 entries (added IONOS, Haufe, GFT, Schwarz IT). |
+| 3-B | Create `thesis-finder/SKILL.md` entry point | ✅ | Domi | Thin orchestrator: profile check → track question → routes to find-university-chairs / find-company-thesis-options / both; offers draft-thesis-contact as next step. |
+| 3-C | Update `AGENTS.md` + `README.md` for distribution | ✅ | Domi | AGENTS.md: new student workflow, thesis-finder + find-company-thesis-options documented, retired skills annotated. README: student-facing top section (≤200 words) added. |
+| 3-D | End-to-end smoke test + STATUS.md update | ✅ | Domi | C1 trace passes all steps; no dead references found. Full trace in `2026-06-28-phase3-smoke-test.md`. |
+
+**Gate Phase 3 (all criteria):**
+- Backbone: Aleph Alpha corrected; §5 ≥6 entries ✅
+- `thesis-finder/SKILL.md` routes correctly for all three student choices ✅
+- `AGENTS.md` reflects current skill set (no retired skills in active workflow) ✅
+- `README.md` has student-readable top section ✅
+- Smoke test passes with no dead references ✅
+- STATUS.md closed with gate verdict ✅
+
+**Overall Phase 3 gate: GREEN.** Branch `feat/no-db-universal-skill` is in a coherent state and ready for review/merge. Post-Phase-3 human actions: hand off to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope of this branch).
+
 ---
 
 ## Open decisions
@@ -90,6 +111,8 @@ WiSo 100%/100%; real +65pp over baseline confirmed in Task I).
 ---
 
 ## Log
+
+- **2026-06-28** — Phase 3 **complete — gate GREEN.** (3-A) Backbone updated: Aleph Alpha entry replaced with "Cohere GmbH (formerly Aleph Alpha GmbH) ⚠" plus merger caveat; §5 Software/Enterprise expanded from 3 to 7 entries (added IONOS, Haufe, GFT, Schwarz IT). (3-B) `skills/thesis-finder/SKILL.md` created as thin 4-step orchestrator: profile check → track choice → route to find-university-chairs / find-company-thesis-options / both → offer draft-thesis-contact. (3-C) `AGENTS.md` student workflow updated to current skill set; find-company-thesis-options and thesis-finder fully documented; retired skills (match-thesis-advisors, update-openalex-paper-index) annotated as retired. README.md got a student-facing top section (what it is, how to use it, what it gives, what it doesn't). (3-D) Smoke test traced C1 profile through all 15 steps across both tracks — all PASS; zero dead references. Phase 3 gate: all 6 criteria GREEN. Branch ready for review/merge. Distribution to Fachschaft/Hennig/Ersti-Heft is the next human action. Commits: see git log.
 
 - **2026-06-28** — Phase 2 kick-off **done**. Resolved two open STATUS.md decisions: (1) company
   backbone source → Cyber Valley Industry Partners + ~20–30 manual BW R&D additions, tagged
