@@ -126,7 +126,7 @@ or if the chair URL is not site-searchable:
 
 **2b — Recent activity (date evidence):**
 ```
-"{CHAIR_NAME}" OR "{LAB_NAME}" Tübingen "{TOPIC_DE}" 2023 OR 2024 OR 2025
+"{CHAIR_NAME}" OR "{LAB_NAME}" Tübingen "{TOPIC_DE}" 2023 OR 2024 OR 2025 OR 2026 OR 2026
 ```
 
 **2c — Thesis openings:**
@@ -188,20 +188,20 @@ site:uni-tuebingen.de "{TOPIC_DE}" (Masterarbeit OR Abschlussarbeit OR Bachelora
 "{PROF_NAME}" Tübingen (Masterarbeit OR thesis OR "open positions")
 
 # German-language opening announcement
-"Universität Tübingen" "{TOPIC_DE}" "Abschlussarbeit" OR "Themenvorschlag" 2024 OR 2025
+"Universität Tübingen" "{TOPIC_DE}" "Abschlussarbeit" OR "Themenvorschlag" 2024 OR 2025 OR 2026
 ```
 
 ### 4.4 Recency-confirming queries (Pass 2b)
 
 ```
 # Recent publications from a chair
-"{CHAIR_NAME}" OR "{PROF_NAME}" Tübingen "{TOPIC_DE}" 2023 OR 2024 OR 2025
+"{CHAIR_NAME}" OR "{PROF_NAME}" Tübingen "{TOPIC_DE}" 2023 OR 2024 OR 2025 OR 2026 OR 2026
 
 # Recent papers via faculty publication list
 site:uni-tuebingen.de "{CHAIR_NAME}" Publikationen OR Veröffentlichungen
 
 # Preprints (for ML/neuroscience groups)
-"Universität Tübingen" "{TOPIC_EN}" site:arxiv.org OR site:biorxiv.org 2024 OR 2025
+"Universität Tübingen" "{TOPIC_EN}" site:arxiv.org OR site:biorxiv.org 2024 OR 2025 OR 2026
 ```
 
 ### 4.5 Interfaculty institute queries
@@ -357,13 +357,13 @@ End with an **honest coverage caveat:**
 site:uni-tuebingen.de "NLP" OR "natural language processing" Bildung OR education Forschungsgruppe
 
 # Relevance check — ML fairness
-"Universität Tübingen" Informatik "Fairness" OR "KI-Ethik" OR "responsible AI" 2023 OR 2024 OR 2025
+"Universität Tübingen" Informatik "Fairness" OR "KI-Ethik" OR "responsible AI" 2023 OR 2024 OR 2025 OR 2026 OR 2026
 
 # WiSo education
 "Universität Tübingen" Erziehungswissenschaft "Lerntechnologie" OR "educational technology" Forschung
 
 # Thesis openings
-site:uni-tuebingen.de "NLP" OR "Bildungstechnologie" (Masterarbeit OR Abschlussarbeit) 2024 OR 2025
+site:uni-tuebingen.de "NLP" OR "Bildungstechnologie" (Masterarbeit OR Abschlussarbeit) 2024 OR 2025 OR 2026
 
 # Recency
 "Universität Tübingen" Informatik "NLP" OR "maschinelles Lernen" 2024 site:arxiv.org OR site:uni-tuebingen.de
@@ -424,7 +424,7 @@ site:uni-tuebingen.de Psychologie "fMRT" OR "fMRI" OR "Neuroimaging" Forschungsg
 "BCCN Tübingen" OR "Bernstein Center Tübingen" "fMRI" OR "computational neuroscience" 2023 OR 2024
 
 # Thesis openings
-site:uni-tuebingen.de Psychologie OR Neurologie "fMRT" (Masterarbeit OR Abschlussarbeit) 2024 OR 2025
+site:uni-tuebingen.de Psychologie OR Neurologie "fMRT" (Masterarbeit OR Abschlussarbeit) 2024 OR 2025 OR 2026
 
 # Recency via preprints
 "Universität Tübingen" "fMRI" OR "neuroimaging" "psychiatric" site:biorxiv.org OR site:arxiv.org 2024

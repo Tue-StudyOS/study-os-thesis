@@ -127,7 +127,7 @@ site:{COMPANY_DOMAIN} (Masterarbeit OR Abschlussarbeit OR "thesis" OR "student p
 If this returns nothing, run the broader fallback:
 
 ```
-"{COMPANY_NAME}" (Masterarbeit OR Abschlussarbeit OR "Abschlussarbeit schreiben") 2023 OR 2024 OR 2025
+"{COMPANY_NAME}" (Masterarbeit OR Abschlussarbeit OR "Abschlussarbeit schreiben") 2023 OR 2024 OR 2025 OR 2026
 ```
 
 **2c — Contact path (careers portal URL or named contact):**
@@ -141,13 +141,13 @@ Only surface a named contact if they appear on the company's own page. Never inf
 **2d — Recency evidence (has the R&D work been active recently?):**
 
 ```
-site:{COMPANY_DOMAIN} "{TOPIC_EN}" 2022 OR 2023 OR 2024 OR 2025
+site:{COMPANY_DOMAIN} "{TOPIC_EN}" 2022 OR 2023 OR 2024 OR 2025 OR 2026 OR 2025 OR 2026
 ```
 
 or via publications / press:
 
 ```
-"{COMPANY_NAME}" "{TOPIC_EN}" research 2023 OR 2024 OR 2025
+"{COMPANY_NAME}" "{TOPIC_EN}" research 2023 OR 2024 OR 2025 OR 2026
 ```
 
 ---
@@ -170,7 +170,7 @@ site:{COMPANY_DOMAIN} "research" OR "R&D" OR "Forschung" lab OR center OR Zentru
 "Cyber Valley" "{COMPANY_NAME}" "{TOPIC_EN}"
 
 # For companies with published papers
-"{COMPANY_NAME}" "{TOPIC_EN}" site:arxiv.org OR site:ieeexplore.ieee.org 2023 OR 2024 OR 2025
+"{COMPANY_NAME}" "{TOPIC_EN}" site:arxiv.org OR site:ieeexplore.ieee.org 2023 OR 2024 OR 2025 OR 2026
 ```
 
 ### 4.2 Thesis signal queries
@@ -209,13 +209,13 @@ site:{COMPANY_DOMAIN} "contact" OR "Kontakt" team OR founder OR CEO OR CTO
 
 ```
 # Recent activity on company's own domain
-site:{COMPANY_DOMAIN} "{TOPIC_EN}" 2023 OR 2024 OR 2025
+site:{COMPANY_DOMAIN} "{TOPIC_EN}" 2023 OR 2024 OR 2025 OR 2026
 
 # Press release or news confirming recent R&D activity
 "{COMPANY_NAME}" "{TOPIC_EN}" Forschung OR research press OR news 2024 OR 2025
 
 # For AI/ML companies: Cyber Valley announcements
-site:cybervalley.de "{COMPANY_NAME}" 2023 OR 2024 OR 2025
+site:cybervalley.de "{COMPANY_NAME}" 2023 OR 2024 OR 2025 OR 2026
 ```
 
 ### 4.5 Fallback queries (when site: returns nothing)
@@ -224,7 +224,7 @@ Use when a company has a weak web presence or their R&D pages are not indexed.
 
 ```
 # Direct name search with thesis term
-"{COMPANY_NAME}" Masterarbeit OR "Masterarbeit Thema" 2023 OR 2024 OR 2025
+"{COMPANY_NAME}" Masterarbeit OR "Masterarbeit Thema" 2023 OR 2024 OR 2025 OR 2026
 
 # LinkedIn company page (read-only; acceptable as a fallback signal source)
 site:linkedin.com/company "{COMPANY_NAME}" Masterarbeit OR "master thesis" OR Abschlussarbeit
@@ -422,7 +422,7 @@ site:sap.com karriere studenten Abschlussarbeit Ansprechpartner
 site:respeak.io research OR technology OR NLP OR "speech recognition"
 
 # Thesis signal
-"Respeak" Masterarbeit OR thesis 2023 OR 2024 OR 2025
+"Respeak" Masterarbeit OR thesis 2023 OR 2024 OR 2025 OR 2026
 — Fallback: site:linkedin.com/company "respeak" Masterarbeit
 
 # Recency
@@ -513,14 +513,14 @@ site:zeiss.com/career studenten OR Hochschule Ansprechpartner OR contact
 site:eye2you.org research OR technology OR "retinal" OR "fundus" OR "deep learning"
 
 # Thesis signal
-"eye2you" Masterarbeit OR thesis 2023 OR 2024 OR 2025
+"eye2you" Masterarbeit OR thesis 2023 OR 2024 OR 2025 OR 2026
 — Fallback: site:linkedin.com/company "eye2you" Masterarbeit
 
 # Contact path
 site:eye2you.org contact OR Kontakt OR team
 
 # Recency
-"eye2you" "retinal" OR "fundus" site:arxiv.org OR site:researchgate.net 2022 OR 2023 OR 2024
+"eye2you" "retinal" OR "fundus" site:arxiv.org OR site:researchgate.net 2022 OR 2023 OR 2024 OR 2025 OR 2026
 ```
 
 *Heidelberg Engineering GmbH (Heidelberg)*
@@ -544,11 +544,11 @@ site:heidelbergengineering.com Masterarbeit OR "student" OR career
 site:cytolytics.de technology OR research OR "cell" OR "pathology" OR "deep learning"
 
 # Thesis signal
-"Cytolytics" Masterarbeit OR thesis 2023 OR 2024 OR 2025
+"Cytolytics" Masterarbeit OR thesis 2023 OR 2024 OR 2025 OR 2026
 — Fallback: site:cybervalley.de "Cytolytics"
 
 # Recency
-site:cytolytics.de 2022 OR 2023 OR 2024
+site:cytolytics.de 2022 OR 2023 OR 2024 OR 2025 OR 2026
 ```
 
 ---

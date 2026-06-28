@@ -20,7 +20,8 @@ Check whether the current conversation already contains a complete 6-dimension s
 - Ask **one question per turn** (at most two when tightly coupled).
 - Use `../build-student-profile/references/deep-advising-interview.md` to guide the conversation.
 - Ask for optional evidence sources (transcript, CV, GitHub) once, naturally.
-- Continue until all six dimensions are covered.
+- **Tools and libraries are not asked as a standalone question.** Infer them from courses, projects, and experience mentioned. Only note them explicitly if the student volunteers them.
+- Continue until the five core dimensions are covered: interests, methods, domain, thesis style, no-gos.
 
 Do not proceed to Step 2 until all six dimensions are present.
 
@@ -39,9 +40,9 @@ Wait for the student's answer before continuing.
 
 | Choice | Action |
 |--------|--------|
-| **(a)** | Invoke `find-university-chairs` |
-| **(b)** | Invoke `find-company-thesis-options` |
-| **(c)** | Invoke `find-university-chairs` first; deliver its option map. Then invoke `find-company-thesis-options`; deliver its option map under a `---` separator and a `## Company Thesis Options (Baden-Württemberg)` header. No cross-ranking between the two maps. |
+| **(a)** | Invoke `find-university-chairs`, then deliver its option map. |
+| **(b)** | Invoke `find-company-thesis-options`, then deliver its option map. |
+| **(c)** | Invoke `find-university-chairs` **and** `find-company-thesis-options` — complete **both** searches before delivering any output. Then deliver both option maps together: university map first, a `---` separator, then the company map under `## Company Thesis Options (Baden-Württemberg)`. No cross-ranking between the two maps. |
 
 ## Step 4 — Offer next step
 
