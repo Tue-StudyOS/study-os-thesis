@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-28 (Phase 3 complete — smoke test GREEN, branch ready for review/merge)
+**Last update:** 2026-06-28 (CI/engineering-hygiene fix — full pytest suite + release build now GREEN; see latest log entry)
 
 ---
 
@@ -111,6 +111,32 @@ WiSo 100%/100%; real +65pp over baseline confirmed in Task I).
 ---
 
 ## Log
+
+- **2026-06-28** — **CI / engineering-hygiene fix.** Review found the deterministic
+  package suite was actually **RED**: `python -m pytest -q` (run by `qa.yml` and
+  `package-skills.yml`) reported **9 failures**, and the release artifact could not be
+  built. Earlier "gate GREEN" verdicts only ran the eval-harness tests
+  (`test_codex_multiturn_eval.py`, 12/12) + a manual smoke trace — the package/release
+  tests were never run after the no-DB pivot. Two root causes fixed: (1) **Real skill
+  bugs** — `find-university-chairs` (6×) and `find-company-thesis-options` (4×) embedded
+  section anchors *inside* the backtick of a `references/…` link
+  (`` `references/…md §1` ``), which broke `build_skill_release.py`'s reference validator
+  (`BuildError`) and `test_referenced_skill_resources_exist`; moved the ` §N` outside the
+  backtick. `thesis-finder` description lacked the `Use when …` trigger; added it.
+  (2) **Stale DB-era tests** — `test_skill_package.py` was never migrated from the pre-pivot
+  world: `EXPECTED_SKILLS` still listed the deleted `match-thesis-advisors` /
+  `update-openalex-paper-index` and omitted `thesis-finder` / `find-company-thesis-options`;
+  `test_required_markdown_database_indexes_exist` and the professor-seed-index test asserted
+  the very `professors/INDEX.md` the pivot removed; privacy/evidence assertions checked
+  pre-Task-A/D wording. Migrated the suite to the no-DB contract (corrected skill set;
+  replaced the inverted DB-index tests with `test_discovery_skills_carry_no_runtime_seed_data`,
+  which guards that seed dirs stay *out* of the runtime skill; updated the static-acceptance
+  fixture to the current build-profile → thesis-finder → discovery → contact/directions flow).
+  The CI **architecture** (qa / package-skills / codex-multiturn-evals workflows + the
+  release builder) fits the portable-skill product and was kept as-is. Result:
+  `pytest -q` → **29 passed, 8 skipped**; `build_skill_release.py` produces tar.gz + zip
+  with the correct 8 skills. Files changed: 2 discovery SKILL.md, thesis-finder SKILL.md,
+  `test_skill_package.py`.
 
 - **2026-06-28** — Phase 3 **complete — gate GREEN.** (3-A) Backbone updated: Aleph Alpha entry replaced with "Cohere GmbH (formerly Aleph Alpha GmbH) ⚠" plus merger caveat; §5 Software/Enterprise expanded from 3 to 7 entries (added IONOS, Haufe, GFT, Schwarz IT). (3-B) `skills/thesis-finder/SKILL.md` created as thin 4-step orchestrator: profile check → track choice → route to find-university-chairs / find-company-thesis-options / both → offer draft-thesis-contact. (3-C) `AGENTS.md` student workflow updated to current skill set; find-company-thesis-options and thesis-finder fully documented; retired skills (match-thesis-advisors, update-openalex-paper-index) annotated as retired. README.md got a student-facing top section (what it is, how to use it, what it gives, what it doesn't). (3-D) Smoke test traced C1 profile through all 15 steps across both tracks — all PASS; zero dead references. Phase 3 gate: all 6 criteria GREEN. Branch ready for review/merge. Distribution to Fachschaft/Hennig/Ersti-Heft is the next human action. Commits: see git log.
 
