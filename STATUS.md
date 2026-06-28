@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-27 (Task H)
+**Last update:** 2026-06-28 (Task H reassessed — fixture-only; Task I opened)
 
 ---
 
@@ -33,11 +33,13 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 | E | Retire DB assets (match-thesis-advisors, openalex index, seed data → eval) | ✅ | Domi | Deleted match-thesis-advisors + update-openalex-paper-index; moved CS seed data to skills/tests/eval_ground_truth/cs_seed/; fixed seed-path refs in find-recent-papers + design-agent-skill. grep confirms no runtime DB deps remain. |
 | F | Eval ground truth for 3–4 faculties + metric | ✅ | Domi | 4 faculties: CS (cs_seed/), Medicine (6 chairs), Psychology (6 chairs), WiSo (7 chairs). README defines recall metric + ≥70% target. |
 | G | Wire discovery into Max's multiturn harness (skill vs. baseline) | ✅ | Domi | Harness already existed in branch. Added medicine-discovery scenario (skill + baseline arms), neuro-student persona, scripted fixtures, coverage/relevance/structure scoring, `--discovery-comparison` CLI flag. 12/12 tests pass; fixture run: skill 83% recall vs. 0% baseline. |
-| H | Run eval, measure coverage & skill-vs-baseline delta, document | ✅ | Domi | Mean skill recall 96% across 4 faculties (medicine 83%, others 100%). Baseline 0% all faculties. Gate criteria met. |
+| H | Run eval, measure coverage & skill-vs-baseline delta, document | ✅ | Domi | **Fixture-mode only.** Mean skill recall 96%, baseline 0% — but both arms were hand-scripted, so the gap is circular and does NOT validate live behavior. See Task I. |
+| I | **Live validation** — real recall + real baseline with live WebSearch | ⬜ | – | Required before Phase 2. Protocol: `findings/no_db_universal_skill/2026-06-28-live-validation-protocol.md`. No-peeking rules apply. |
 
-**Gate Phase 1 → 2:** skill runs end-to-end with no DB · ground truth for ≥3
-faculties · harness reports coverage + baseline comparison · coverage ≥70% on the
-sample.
+**Gate Phase 1 → 2 (REVISED):** skill runs end-to-end with no DB ✅ · ground
+truth for ≥3 faculties ✅ · harness plumbing works ✅ · **live** coverage ≥70%
+AND a meaningful live margin over plain Claude ⬜ (Task I — fixture numbers do not
+count toward this gate).
 
 ---
 
@@ -69,6 +71,17 @@ sample.
 ---
 
 ## Log
+
+- **2026-06-28** — Reassessed Task H. The eval ran in fixture mode only: the
+  skill-arm conversations were hand-authored with the ground-truth names already
+  in them, and the baseline arm was a scripted strawman (its "0%" run actually
+  gave reasonable advice, e.g. naming the HIH). The 96%-vs-0% gap is therefore
+  circular and does not validate live skill behaviour or a real advantage over
+  plain Claude. Revised the Phase 1→2 gate to require a **live** measurement.
+  Opened Task I (live validation) with a no-peeking protocol at
+  `findings/no_db_universal_skill/2026-06-28-live-validation-protocol.md`.
+  Decision: do Task I before Phase 2 (companies), so we don't build on an
+  unvalidated university arm.
 
 - **2026-06-27** — Task H done. Created fixture pairs for psychology (6 chairs), WiSo (7 chairs),
   and CS/ML (7 researchers) using scripted conversations. Extended the runner with
