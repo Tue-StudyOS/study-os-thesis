@@ -41,7 +41,7 @@ under-returns actual chairs.
 
 | Student interest / domain | Primary faculty / Fachbereich | Possible secondary |
 |---|---|---|
-| Machine learning, AI, NLP, computer vision, data science | Science → FB Informatik | Science → FB Mathematik (if theory-leaning) |
+| Machine learning, AI, NLP, computer vision, data science | Science → FB Informatik **+ MPI for Intelligent Systems + ELLIS / Cyber Valley** (Pass 1 must crawl all three; FB-Informatik alone misses MPI-IS-affiliated groups) | Science → FB Mathematik (if theory-leaning) |
 | Computational social science / computational linguistics | Science → FB Informatik | Humanities → FB4 Neuphilologie |
 | Pure mathematics, statistics, algorithms, combinatorics | Science → FB Mathematik | Science → FB Informatik |
 | Psychology, cognitive science, decision-making, learning | Science → FB Psychologie | WiSo → Erziehungswissenschaft |
@@ -71,8 +71,11 @@ search *both* primary faculties; the two-pass strategy handles this.
 
 **Interfaculty institutes:** For AI / neuroscience / brain research, always add
 the Science interfaculty page
-(`uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/interfakultaere-institute-und-zentren.html`)
-and the BCCN/Tübingen-AI-Center entry points as a third leg alongside the primary faculty.
+(`uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/interfakultaere-institute-und-zentren.html`),
+the BCCN/Tübingen-AI-Center entry points, **and the MPI for Intelligent Systems**
+(`https://is.mpg.de/departments`) as explicit Pass-1 sources alongside the primary
+faculty. MPI-IS hosts key ML/AI groups (Empirical Inference, Autonomous Learning,
+etc.) that do not appear on FB-Informatik's `forschung.html` page.
 
 ---
 
@@ -213,6 +216,28 @@ site:uni-tuebingen.de "KI-Zentrum" OR "AI Center" "{TOPIC_DE}" OR "{TOPIC_EN}"
 # Other cross-faculty centers
 "Universität Tübingen" "Zentrum" "{TOPIC_DE}" Forschungsgruppe
 ```
+
+### 4.6 Person-verification queries (required before naming a PI)
+
+Use these **before attributing a professor to a unit** found in Pass 1 or Pass 2a.
+The goal: confirm the named person appears on *that specific unit's own page*, not
+just in a search result that mentions both a similar unit name and the person elsewhere.
+
+```
+# Confirm the head of a specific Arbeitsbereich (German-language page)
+"{ARBEITSBEREICH_NAME}" "Leiter" OR "Leiterin" OR "Mitarbeiter" site:uni-tuebingen.de
+
+# Name + unit co-occurrence on the official faculty page
+"{PROF_NAME}" "{ARBEITSBEREICH_NAME}" site:uni-tuebingen.de
+
+# English-language staff page
+"{ARBEITSBEREICH_NAME}" Tübingen "team" OR "staff" OR "people" "{PROF_NAME}"
+```
+
+**Verification rule:** a person is confirmed for a unit only when one of these queries
+returns a page from *that unit's own domain or staff listing* naming the person as
+Leiter/Leiterin or group head. A result that names the person alongside a *different*
+group with a similar name does not count.
 
 ---
 

@@ -65,6 +65,12 @@ relevant faculty, anchored to the real org structure rather than SEO results.
 Also check the **interfaculty institutes** page for AI, neuroscience, or cross-faculty
 interests (backbone file, row "interfaculty institutes & centers").
 
+**For AI / ML / neuroscience interests:** the FB-Informatik `forschung.html` page alone
+is insufficient — it does not list MPI-IS-affiliated groups (Schölkopf, Martius, etc.).
+Before running any topic queries, also crawl the MPI for Intelligent Systems and
+ELLIS / Cyber Valley legs listed in the backbone file's drill-down table. Treat these as
+**first-class Pass-1 sources**, not optional enrichment.
+
 ### Step 5 — Pass 2: live enrichment per chair
 
 For each chair in the candidate set (or the top subset if > 20), run the enrichment
@@ -74,6 +80,12 @@ queries from [`references/search-strategy.md §3`](references/search-strategy.md
 - **2b** recency — date evidence from 2022 or later
 - **2c** thesis openings — explicit Masterarbeit / Abschlussarbeit signals
 - **2d** method fit — optional; use when the student has a specific method requirement
+- **2e** PI verification — **required before naming any person as chair-holder:** open
+  the unit's own staff / team page (or run the person-verification query from
+  [`references/search-strategy.md §4.6`](references/search-strategy.md)) and confirm
+  the professor listed there. Never borrow a name from a search result that describes a
+  *different* group with a similar name (e.g. HIH "Sektion Neuropsychologie" ≠
+  FB-Psychologie "Diagnostik und Kognitive Neuropsychologie"). Link to the evidence page.
 
 Use the exact query skeletons from
 [`references/search-strategy.md §4`](references/search-strategy.md).

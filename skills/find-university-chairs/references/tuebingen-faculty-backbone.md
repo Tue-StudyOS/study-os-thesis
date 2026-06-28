@@ -62,6 +62,8 @@ reach chairs. Pattern examples (not exhaustive):
 | Department | Chair-level listing example |
 |---|---|
 | Informatik (Computer Science) | https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/informatik/forschung.html (research groups / Arbeitsbereiche) |
+| MPI for Intelligent Systems *(required for ML/AI; not on FB-Informatik page)* | https://is.mpg.de/departments — lists all MPI-IS departments/groups (Empirical Inference, Autonomous Learning, Perceiving Systems, etc.); crawl this **in Pass 1** for any AI/ML persona alongside FB-Informatik |
+| ELLIS Tübingen / Tübingen AI Center / Cyber Valley *(required for ML/AI)* | https://uni-tuebingen.de/forschung/zentren-und-institute/ki-zentrum-tuebingen/ and https://cyber-valley.de/en/research/groups — lists faculty participating in the Cyber Valley / ELLIS network; covers groups not on the FB-Informatik page |
 | Mathematik | https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/mathematik/fachbereich/forschung-arbeitsbereiche/ |
 
 General rule for a `Fachbereich` under `.../fachbereiche/<name>/`: look for a
