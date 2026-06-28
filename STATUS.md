@@ -34,14 +34,13 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 | F | Eval ground truth for 3–4 faculties + metric | ✅ | Domi | 4 faculties: CS (cs_seed/), Medicine (6 chairs), Psychology (6 chairs), WiSo (7 chairs). README defines recall metric + ≥70% target. |
 | G | Wire discovery into Max's multiturn harness (skill vs. baseline) | ✅ | Domi | Harness already existed in branch. Added medicine-discovery scenario (skill + baseline arms), neuro-student persona, scripted fixtures, coverage/relevance/structure scoring, `--discovery-comparison` CLI flag. 12/12 tests pass; fixture run: skill 83% recall vs. 0% baseline. |
 | H | Run eval, measure coverage & skill-vs-baseline delta, document | ✅ | Domi | **Fixture-mode only.** Mean skill recall 96%, baseline 0% — but both arms were hand-scripted, so the gap is circular and does NOT validate live behavior. See Task I. |
-| I | **Live validation** — real recall + real baseline with live WebSearch | 🟨 | Domi | **AMBER.** Ran all 4 faculties × 2 arms live, no peeking. Primary recall mean ~82% (skill) vs ~17% (real baseline), +65pp; strict person-level recall ~65%. Med/WiSo 100%, but Psych 67% and CS 60% miss 70%. Bugs: Psych PI misattribution (Karnath≠Nürk); CS under-crawls MPI-IS. Results: `findings/no_db_universal_skill/2026-06-28-live-eval-results.md`. Two skill fixes due before closing. |
+| I | **Live validation** — real recall + real baseline with live WebSearch | ✅ | Domi | **GREEN (after I-fix).** Initial run AMBER: Psych 67%, CS 60%. Fixed: (1) PI attribution discipline (2e verification step); (2) MPI-IS/ELLIS explicit Pass-1 crawl leg. Re-validated Psych (primary 100%, strict 83%) and CS (primary 100%, strict 100%) live. All 4 faculties ≥70%. Results: `findings/no_db_universal_skill/2026-06-28-I-fix-revalidation.md`. |
 
 **Gate Phase 1 → 2 (REVISED):** skill runs end-to-end with no DB ✅ · ground
 truth for ≥3 faculties ✅ · harness plumbing works ✅ · **live** coverage ≥70%
-AND a meaningful live margin over plain Claude 🟨 **AMBER** (Task I: aggregate
-mean 82% ≥70% and +65pp over real baseline ✅, but Psychology 67% & CS 60% miss
-the per-faculty bar and strict person-level recall is ~65% — two skill fixes due
-before this turns green).
+AND a meaningful live margin over plain Claude ✅ **GREEN** (Task I-fix: all 4
+faculties ≥70% primary and strict; Psych 100%/83%, CS 100%/100%, Med 100%/83%,
+WiSo 100%/100%; real +65pp over baseline confirmed in Task I).
 
 ---
 
@@ -73,6 +72,8 @@ before this turns green).
 ---
 
 ## Log
+
+- **2026-06-28** — Task I-fix **done** (two bugs from Task I corrected). (1) Added 2e PI-verification step to SKILL.md Step 5: each named professor must be confirmed on the unit's own staff page before attribution; added §4.6 person-verification query skeletons to search-strategy.md. (2) Added MPI-IS (`is.mpg.de/departments`) and ELLIS/Cyber Valley as first-class Pass-1 sources to SKILL.md Step 4, search-strategy.md §2, and backbone drill-down table. Re-validated Psychology and CS live (no peeking): Psych primary 100%/strict 83%, CS primary 100%/strict 100% — both clear ≥70%. **Phase-1 gate is now GREEN.** Full results: `findings/no_db_universal_skill/2026-06-28-I-fix-revalidation.md`. Commit: `c1cc302`.
 
 - **2026-06-28** — Task I (live validation) **run**. Built one persona per faculty
   from the *sample interest* only, then ran the discovery skill end-to-end with live
