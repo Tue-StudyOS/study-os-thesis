@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-28 (Task H reassessed — fixture-only; Task I opened)
+**Last update:** 2026-06-28 (Task I live validation run — AMBER verdict)
 
 ---
 
@@ -34,12 +34,14 @@ Legend: ⬜ open · 🟨 in progress · ✅ done · ⛔ blocked
 | F | Eval ground truth for 3–4 faculties + metric | ✅ | Domi | 4 faculties: CS (cs_seed/), Medicine (6 chairs), Psychology (6 chairs), WiSo (7 chairs). README defines recall metric + ≥70% target. |
 | G | Wire discovery into Max's multiturn harness (skill vs. baseline) | ✅ | Domi | Harness already existed in branch. Added medicine-discovery scenario (skill + baseline arms), neuro-student persona, scripted fixtures, coverage/relevance/structure scoring, `--discovery-comparison` CLI flag. 12/12 tests pass; fixture run: skill 83% recall vs. 0% baseline. |
 | H | Run eval, measure coverage & skill-vs-baseline delta, document | ✅ | Domi | **Fixture-mode only.** Mean skill recall 96%, baseline 0% — but both arms were hand-scripted, so the gap is circular and does NOT validate live behavior. See Task I. |
-| I | **Live validation** — real recall + real baseline with live WebSearch | ⬜ | – | Required before Phase 2. Protocol: `findings/no_db_universal_skill/2026-06-28-live-validation-protocol.md`. No-peeking rules apply. |
+| I | **Live validation** — real recall + real baseline with live WebSearch | 🟨 | Domi | **AMBER.** Ran all 4 faculties × 2 arms live, no peeking. Primary recall mean ~82% (skill) vs ~17% (real baseline), +65pp; strict person-level recall ~65%. Med/WiSo 100%, but Psych 67% and CS 60% miss 70%. Bugs: Psych PI misattribution (Karnath≠Nürk); CS under-crawls MPI-IS. Results: `findings/no_db_universal_skill/2026-06-28-live-eval-results.md`. Two skill fixes due before closing. |
 
 **Gate Phase 1 → 2 (REVISED):** skill runs end-to-end with no DB ✅ · ground
 truth for ≥3 faculties ✅ · harness plumbing works ✅ · **live** coverage ≥70%
-AND a meaningful live margin over plain Claude ⬜ (Task I — fixture numbers do not
-count toward this gate).
+AND a meaningful live margin over plain Claude 🟨 **AMBER** (Task I: aggregate
+mean 82% ≥70% and +65pp over real baseline ✅, but Psychology 67% & CS 60% miss
+the per-faculty bar and strict person-level recall is ~65% — two skill fixes due
+before this turns green).
 
 ---
 
@@ -71,6 +73,25 @@ count toward this gate).
 ---
 
 ## Log
+
+- **2026-06-28** — Task I (live validation) **run**. Built one persona per faculty
+  from the *sample interest* only, then ran the discovery skill end-to-end with live
+  `WebSearch`/`WebFetch` (skill arm) and a clean no-skill prompt (baseline arm) for
+  medicine, psychology, wiso, cs — **all 8 arm outputs written before opening any
+  ground-truth chair list** (no peeking; artifacts in `dist/live-validation/`).
+  **Results:** primary recall (README name-surfacing) mean **~82%** skill vs **~17%**
+  real baseline (+65pp); per-faculty Med 100%, WiSo 100%, Psych 67%, CS 60%. Strict
+  person-level recall mean **~65%** (Psych only 17%). Real baseline is **not 0%** —
+  plain Claude names Ziemann/Schlumberger/Abels/Hein — so the fixture's 96%-vs-0% was
+  doubly optimistic. Honest defects: (1) Psychology PI **misattribution** — named
+  Karnath for "Diagnostik und Kognitive Neuropsychologie" when it's **Hans-Christoph
+  Nürk**; (2) CS **under-crawls MPI-IS** — missed Schölkopf (Empirical Inference) and
+  Martius (Autonomous Learning). Profile steering visibly works (demoted oncology /
+  IR / globalization-ethics correctly). **Verdict: AMBER** — aggregate gate met and
+  the skill genuinely beats plain Claude, but Psych & CS miss 70% and need two skill
+  fixes (person-attribution discipline; explicit MPI-IS/ELLIS crawl leg) before the
+  gate turns green. Full writeup:
+  `findings/no_db_universal_skill/2026-06-28-live-eval-results.md`.
 
 - **2026-06-28** — Reassessed Task H. The eval ran in fixture mode only: the
   skill-arm conversations were hand-authored with the ground-truth names already
