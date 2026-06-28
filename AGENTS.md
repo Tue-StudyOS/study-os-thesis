@@ -314,14 +314,23 @@ and keep that change as narrow as possible.
 
 Mirror the existing schemas; do not reinvent them:
 
-- professor seed index — `references/professors/INDEX.md` with `name | uri`
-  columns only (no emails or extra metadata)
+- professor seed index — keep the default ML/CS faculty at
+  `references/professors/INDEX.md`; put each additional faculty at
+  `references/<faculty>/professors/INDEX.md` (e.g.
+  `references/sociology/professors/INDEX.md`). Use `name | uri` columns only (no
+  emails or extra metadata)
 - chairs and labs — `references/chairs/INDEX.md` plus per-chair files following
   `skills/find-university-chairs/references/chair-profile-schema.md`
 - researchers — `references/researchers/INDEX.md` plus per-person files following
   `skills/update-openalex-paper-index/references/openalex-index-schema.md`
 - program or degree reference, when the faculty needs one — model it on
   `skills/build-student-profile/references/tuebingen-degree-programs.md`
+
+The reader skills (`find-university-chairs`, `find-recent-papers`,
+`match-thesis-advisors`) select the seed index matching the student's
+faculty/field and fall back to the default `references/professors/INDEX.md` when
+no faculty-specific index exists. A new faculty is only wired up once its seed
+index follows this `references/<faculty>/professors/INDEX.md` layout.
 
 ### Source Of Truth And Guardrails
 

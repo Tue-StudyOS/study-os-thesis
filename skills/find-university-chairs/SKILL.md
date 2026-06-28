@@ -12,7 +12,7 @@ Help a student identify relevant chairs, labs, and supervisor candidates for a t
 1. Check whether a deep student profile already exists in the conversation.
 2. If the profile is shallow, raw, or based only on broad interests, use `build-student-profile` first and ask only the next 3-5 coaching questions. Do not recommend chairs yet.
 3. Continue chair research only after the profile includes at least: interests, liked or disliked university courses/topics, practical skills, research skills, known frameworks/tools, prior project or work experience, preferred thesis style, and important no-gos or constraints.
-4. Read the professor seed list at `references/professors/INDEX.md`.
+4. Read the professor seed list for the student's faculty. Default to `references/professors/INDEX.md` (the ML/CS faculty). If the student belongs to another faculty that has its own seed index — a `professors/INDEX.md` inside that faculty's subfolder, e.g. a `sociology/` namespace — read that faculty's index instead.
 5. Select likely professor/URI candidates from the seed list using the student's deep profile and any explicitly named chairs, professors, or topics.
 6. Use the active agent's native websearch/browser tools on those URIs to identify the research group, team members, research areas, and recent publications.
 7. Rank candidates by proposal fit, research taste fit, evidence quality, source freshness, and thesis-preparation value.
