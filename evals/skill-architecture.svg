@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="390" viewBox="0 0 820 390">
+<defs><marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#9CA3AF"/></marker></defs>
+<rect width="820" height="390" fill="white"/>
+<text x="410.0" y="26.0" text-anchor="middle" font-size="15" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Skill Architecture — Student Thesis Journey</text>
+<text x="410.0" y="44.0" text-anchor="middle" font-size="11" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Skill invocation graph · reference files · data sources</text>
+<text x="88.0" y="162.0" text-anchor="middle" font-size="9" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">① PROFILE</text>
+<text x="264.0" y="162.0" text-anchor="middle" font-size="9" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">② ROUTE</text>
+<text x="461.0" y="74.0" text-anchor="middle" font-size="9" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">③ DISCOVER</text>
+<text x="467.0" y="254.0" text-anchor="middle" font-size="9" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">③ DISCOVER</text>
+<text x="680.0" y="162.0" text-anchor="middle" font-size="9" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">④ DRAFT</text>
+<path d="M 164,196 L 205,196" fill="none" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M 315,182 C 348,182 348,108 378,108" fill="none" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M 315,208 C 348,208 348,288 378,288" fill="none" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M 544,108 C 576,108 576,190 605,190" fill="none" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ah)"/>
+<path d="M 556,288 C 582,288 582,210 605,210" fill="none" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="12.0" y="170.0" width="152.0" height="52.0" fill="#EFF6FF" rx="8" stroke="#3B82F6" stroke-width="1.5"/>
+<text x="88.0" y="193.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">build-student-</text>
+<text x="88.0" y="209.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">profile</text>
+<rect x="205.0" y="170.0" width="118.0" height="52.0" fill="#F5F3FF" rx="8" stroke="#8B5CF6" stroke-width="1.5"/>
+<text x="264.0" y="201.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">thesis-finder</text>
+<rect x="378.0" y="82.0" width="166.0" height="52.0" fill="#F0FDF4" rx="8" stroke="#10B981" stroke-width="1.5"/>
+<text x="461.0" y="105.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">find-university-</text>
+<text x="461.0" y="121.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">chairs</text>
+<rect x="482.0" y="112.0" width="58.0" height="18.0" fill="#D1FAE5" rx="9" stroke="#6EE7B7" stroke-width="1"/>
+<text x="511.0" y="124.0" text-anchor="middle" font-size="8" fill="#065F46" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">⚡ live web</text>
+<rect x="378.0" y="262.0" width="178.0" height="52.0" fill="#F0FDF4" rx="8" stroke="#10B981" stroke-width="1.5"/>
+<text x="467.0" y="285.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">find-company-</text>
+<text x="467.0" y="301.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">thesis-options</text>
+<rect x="494.0" y="292.0" width="58.0" height="18.0" fill="#D1FAE5" rx="9" stroke="#6EE7B7" stroke-width="1"/>
+<text x="523.0" y="304.0" text-anchor="middle" font-size="8" fill="#065F46" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">⚡ live web</text>
+<rect x="605.0" y="170.0" width="150.0" height="52.0" fill="#FFF7ED" rx="8" stroke="#F59E0B" stroke-width="1.5"/>
+<text x="680.0" y="193.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">draft-thesis-</text>
+<text x="680.0" y="209.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">contact</text>
+<rect x="32.0" y="228.0" width="112.0" height="20.0" fill="#EFF6FF" rx="10" stroke="#BFDBFE" stroke-width="1"/><text x="88.0" y="241.0" text-anchor="middle" font-size="9" fill="#1D4ED8" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">profile-schema.md</text>
+<rect x="345.5" y="140.0" width="118.0" height="20.0" fill="#EFF6FF" rx="10" stroke="#BFDBFE" stroke-width="1"/><text x="404.5" y="153.0" text-anchor="middle" font-size="9" fill="#1D4ED8" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">faculty-backbone.md</text>
+<rect x="468.5" y="140.0" width="108.0" height="20.0" fill="#EFF6FF" rx="10" stroke="#BFDBFE" stroke-width="1"/><text x="522.5" y="153.0" text-anchor="middle" font-size="9" fill="#1D4ED8" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">search-strategy.md</text>
+<rect x="322.0" y="320.0" width="130.0" height="20.0" fill="#EFF6FF" rx="10" stroke="#BFDBFE" stroke-width="1"/><text x="387.0" y="333.0" text-anchor="middle" font-size="9" fill="#1D4ED8" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">bw-company-backbone.md</text>
+<rect x="457.0" y="320.0" width="155.0" height="20.0" fill="#EFF6FF" rx="10" stroke="#BFDBFE" stroke-width="1"/><text x="534.5" y="333.0" text-anchor="middle" font-size="9" fill="#1D4ED8" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">company-search-strategy.md</text>
+<line x1="12.0" y1="352.0" x2="590.0" y2="352.0" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="12.0" y="368.0" text-anchor="start" font-size="9" fill="#9CA3AF" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Also available: find-recent-papers (background papers) · generate-thesis-directions (proposal sketches) · design-agent-skill (meta)</text>
+</svg>

@@ -1,0 +1,92 @@
+{
+  "skills": [
+    {
+      "name": "build-student-profile",
+      "fm_valid": true,
+      "use_when": true,
+      "desc_len_ok": true,
+      "has_refs": true,
+      "ref_count": 3,
+      "links_ok": true,
+      "no_db": "pass",
+      "evidence": "exempt"
+    },
+    {
+      "name": "thesis-finder",
+      "fm_valid": true,
+      "use_when": true,
+      "desc_len_ok": true,
+      "has_refs": false,
+      "ref_count": 0,
+      "links_ok": true,
+      "no_db": "exempt",
+      "evidence": "exempt"
+    },
+    {
+      "name": "find-university-chairs",
+      "fm_valid": true,
+      "use_when": true,
+      "desc_len_ok": true,
+      "has_refs": true,
+      "ref_count": 3,
+      "links_ok": true,
+      "no_db": "pass",
+      "evidence": "pass"
+    },
+    {
+      "name": "find-company-thesis-options",
+      "fm_valid": true,
+      "use_when": true,
+      "desc_len_ok": true,
+      "has_refs": true,
+      "ref_count": 2,
+      "links_ok": true,
+      "no_db": "pass",
+      "evidence": "pass"
+    },
+    {
+      "name": "generate-thesis-directions",
+      "fm_valid": true,
+      "use_when": true,
+      "desc_len_ok": true,
+      "has_refs": true,
+      "ref_count": 2,
+      "links_ok": true,
+      "no_db": "pass",
+      "evidence": "pass"
+    },
+    {
+      "name": "draft-thesis-contact",
+      "fm_valid": true,
+      "use_when": true,
+      "desc_len_ok": true,
+      "has_refs": true,
+      "ref_count": 1,
+      "links_ok": true,
+      "no_db": "pass",
+      "evidence": "pass"
+    },
+    {
+      "name": "find-recent-papers",
+      "fm_valid": true,
+      "use_when": true,
+      "desc_len_ok": true,
+      "has_refs": true,
+      "ref_count": 60,
+      "links_ok": true,
+      "no_db": "pass",
+      "evidence": "pass"
+    },
+    {
+      "name": "design-agent-skill",
+      "fm_valid": true,
+      "use_when": true,
+      "desc_len_ok": true,
+      "has_refs": true,
+      "ref_count": 1,
+      "links_ok": true,
+      "no_db": "exempt",
+      "evidence": "exempt"
+    }
+  ]
+}
