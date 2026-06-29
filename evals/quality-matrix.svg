@@ -1,158 +1,203 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="780" height="417" viewBox="0 0 780 417">
-<rect width="780" height="417" fill="white"/>
-<text x="390.0" y="26.0" text-anchor="middle" font-size="15" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Skill Quality Properties</text>
-<text x="390.0" y="44.0" text-anchor="middle" font-size="11" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Checked directly from SKILL.md file contents — no API call required</text>
-<rect x="20.0" y="65.0" width="794.0" height="48.0" fill="#F9FAFB" rx="6" stroke="#E5E7EB" stroke-width="1"/>
-<text x="255.0" y="87.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Frontmatter</text>
-<text x="341.0" y="87.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Use-when</text>
-<text x="427.0" y="79.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Desc</text>
-<text x="427.0" y="93.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">≤1024</text>
-<text x="513.0" y="79.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Ref</text>
-<text x="513.0" y="93.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">files</text>
-<text x="599.0" y="79.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">No</text>
-<text x="599.0" y="93.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">broken links</text>
-<text x="685.0" y="79.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">No-DB</text>
-<text x="685.0" y="93.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">rule</text>
-<text x="771.0" y="79.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Evidence</text>
-<text x="771.0" y="93.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">rules</text>
-<text x="116.0" y="87.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Skill</text>
-<line x1="20.0" y1="113.0" x2="814.0" y2="113.0" stroke="#E5E7EB" stroke-width="1"/>
-<text x="28.0" y="133.0" text-anchor="start" font-size="11" fill="#111827" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">build-student-profile</text>
-<rect x="239.0" y="119.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="255.0" y="134.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="325.0" y="119.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="341.0" y="134.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="411.0" y="119.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="427.0" y="134.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="497.0" y="119.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="513.0" y="134.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="583.0" y="119.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="599.0" y="134.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="669.0" y="119.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="685.0" y="134.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="755.0" y="119.0" width="32.0" height="20.0" fill="#F3F4F6" rx="4" stroke="#D1D5DB" stroke-width="1"/>
-<text x="771.0" y="134.0" text-anchor="middle" font-size="12" fill="#9CA3AF" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">—</text>
-<rect x="20.0" y="145.0" width="794.0" height="32.0" fill="#F9FAFB"/>
-<line x1="20.0" y1="145.0" x2="814.0" y2="145.0" stroke="#E5E7EB" stroke-width="1"/>
-<text x="28.0" y="165.0" text-anchor="start" font-size="11" fill="#111827" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">thesis-finder</text>
-<rect x="239.0" y="151.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="255.0" y="166.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="325.0" y="151.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="341.0" y="166.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="411.0" y="151.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="427.0" y="166.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="497.0" y="151.0" width="32.0" height="20.0" fill="#FEE2E2" rx="4" stroke="#EF4444" stroke-width="1"/>
-<text x="513.0" y="166.0" text-anchor="middle" font-size="12" fill="#991B1B" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✗</text>
-<rect x="583.0" y="151.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="599.0" y="166.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="669.0" y="151.0" width="32.0" height="20.0" fill="#F3F4F6" rx="4" stroke="#D1D5DB" stroke-width="1"/>
-<text x="685.0" y="166.0" text-anchor="middle" font-size="12" fill="#9CA3AF" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">—</text>
-<rect x="755.0" y="151.0" width="32.0" height="20.0" fill="#F3F4F6" rx="4" stroke="#D1D5DB" stroke-width="1"/>
-<text x="771.0" y="166.0" text-anchor="middle" font-size="12" fill="#9CA3AF" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">—</text>
-<line x1="20.0" y1="177.0" x2="814.0" y2="177.0" stroke="#E5E7EB" stroke-width="1"/>
-<text x="28.0" y="197.0" text-anchor="start" font-size="11" fill="#111827" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">find-university-chairs</text>
-<rect x="239.0" y="183.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="255.0" y="198.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="325.0" y="183.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="341.0" y="198.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="411.0" y="183.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="427.0" y="198.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="497.0" y="183.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="513.0" y="198.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="583.0" y="183.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="599.0" y="198.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="669.0" y="183.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="685.0" y="198.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="755.0" y="183.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="771.0" y="198.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="20.0" y="209.0" width="794.0" height="32.0" fill="#F9FAFB"/>
-<line x1="20.0" y1="209.0" x2="814.0" y2="209.0" stroke="#E5E7EB" stroke-width="1"/>
-<text x="28.0" y="229.0" text-anchor="start" font-size="11" fill="#111827" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">find-company-thesis-options</text>
-<rect x="239.0" y="215.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="255.0" y="230.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="325.0" y="215.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="341.0" y="230.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="411.0" y="215.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="427.0" y="230.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="497.0" y="215.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="513.0" y="230.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="583.0" y="215.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="599.0" y="230.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="669.0" y="215.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="685.0" y="230.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="755.0" y="215.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="771.0" y="230.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<line x1="20.0" y1="241.0" x2="814.0" y2="241.0" stroke="#E5E7EB" stroke-width="1"/>
-<text x="28.0" y="261.0" text-anchor="start" font-size="11" fill="#111827" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">generate-thesis-directions</text>
-<rect x="239.0" y="247.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="255.0" y="262.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="325.0" y="247.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="341.0" y="262.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="411.0" y="247.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="427.0" y="262.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="497.0" y="247.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="513.0" y="262.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="583.0" y="247.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="599.0" y="262.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="669.0" y="247.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="685.0" y="262.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="755.0" y="247.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="771.0" y="262.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="20.0" y="273.0" width="794.0" height="32.0" fill="#F9FAFB"/>
-<line x1="20.0" y1="273.0" x2="814.0" y2="273.0" stroke="#E5E7EB" stroke-width="1"/>
-<text x="28.0" y="293.0" text-anchor="start" font-size="11" fill="#111827" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">draft-thesis-contact</text>
-<rect x="239.0" y="279.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="255.0" y="294.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="325.0" y="279.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="341.0" y="294.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="411.0" y="279.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="427.0" y="294.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="497.0" y="279.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="513.0" y="294.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="583.0" y="279.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="599.0" y="294.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="669.0" y="279.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="685.0" y="294.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="755.0" y="279.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="771.0" y="294.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<line x1="20.0" y1="305.0" x2="814.0" y2="305.0" stroke="#E5E7EB" stroke-width="1"/>
-<text x="28.0" y="325.0" text-anchor="start" font-size="11" fill="#111827" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">find-recent-papers</text>
-<rect x="239.0" y="311.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="255.0" y="326.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="325.0" y="311.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="341.0" y="326.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="411.0" y="311.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="427.0" y="326.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="497.0" y="311.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="513.0" y="326.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="583.0" y="311.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="599.0" y="326.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="669.0" y="311.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="685.0" y="326.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="755.0" y="311.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="771.0" y="326.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="20.0" y="337.0" width="794.0" height="32.0" fill="#F9FAFB"/>
-<line x1="20.0" y1="337.0" x2="814.0" y2="337.0" stroke="#E5E7EB" stroke-width="1"/>
-<text x="28.0" y="357.0" text-anchor="start" font-size="11" fill="#111827" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">design-agent-skill</text>
-<rect x="239.0" y="343.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="255.0" y="358.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="325.0" y="343.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="341.0" y="358.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="411.0" y="343.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="427.0" y="358.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="497.0" y="343.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="513.0" y="358.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="583.0" y="343.0" width="32.0" height="20.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="599.0" y="358.0" text-anchor="middle" font-size="12" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<rect x="669.0" y="343.0" width="32.0" height="20.0" fill="#F3F4F6" rx="4" stroke="#D1D5DB" stroke-width="1"/>
-<text x="685.0" y="358.0" text-anchor="middle" font-size="12" fill="#9CA3AF" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">—</text>
-<rect x="755.0" y="343.0" width="32.0" height="20.0" fill="#F3F4F6" rx="4" stroke="#D1D5DB" stroke-width="1"/>
-<text x="771.0" y="358.0" text-anchor="middle" font-size="12" fill="#9CA3AF" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">—</text>
-<line x1="20.0" y1="369.0" x2="814.0" y2="369.0" stroke="#E5E7EB" stroke-width="1"/>
-<rect x="28.0" y="383.0" width="22.0" height="16.0" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
-<text x="39.0" y="395.0" text-anchor="middle" font-size="11" fill="#065F46" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓</text>
-<text x="56.0" y="395.0" text-anchor="start" font-size="10" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">property verified</text>
-<rect x="220.0" y="383.0" width="22.0" height="16.0" fill="#F3F4F6" rx="4" stroke="#D1D5DB" stroke-width="1"/>
-<text x="231.0" y="395.0" text-anchor="middle" font-size="11" fill="#9CA3AF" font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">—</text>
-<text x="248.0" y="395.0" text-anchor="start" font-size="10" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">not applicable (meta/router skill)</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="550" viewBox="0 0 900 550">
+  <defs>
+    <style>
+      .title { font-size: 18px; font-weight: 600; fill: #111827; }
+      .subtitle { font-size: 13px; font-weight: 400; fill: #6B7280; }
+      .header-cell { font-size: 12px; font-weight: 600; fill: #6B7280; }
+      .skill-name { font-size: 12px; font-weight: 500; fill: #111827; }
+      .note { font-size: 11px; fill: #9CA3AF; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="550" fill="#FFFFFF"/>
+
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" class="title">Skill Quality Properties</text>
+  <text x="450" y="56" text-anchor="middle" class="subtitle">Checked directly from SKILL.md — no API call required</text>
+
+  <!-- Header row background -->
+  <rect x="30" y="75" width="840" height="50" fill="#F9FAFB" rx="6" stroke="#E5E7EB" stroke-width="1"/>
+
+  <!-- Headers -->
+  <text x="100" y="105" text-anchor="middle" class="header-cell">Skill Name</text>
+  <text x="220" y="105" text-anchor="middle" class="header-cell">Frontmatter</text>
+  <text x="310" y="105" text-anchor="middle" class="header-cell">Use-when</text>
+  <text x="385" y="105" text-anchor="middle" class="header-cell">Description</text>
+  <text x="475" y="105" text-anchor="middle" class="header-cell">Ref Files</text>
+  <text x="560" y="105" text-anchor="middle" class="header-cell">No Broken Links</text>
+  <text x="670" y="105" text-anchor="middle" class="header-cell">No-DB Rule</text>
+  <text x="770" y="105" text-anchor="middle" class="header-cell">Evidence Rules</text>
+
+  <!-- Separator line -->
+  <line x1="30" y1="125" x2="870" y2="125" stroke="#E5E7EB" stroke-width="1"/>
+
+  <!-- Row 1: build-student-profile -->
+  <g>
+    <rect x="30" y="125" width="840" height="50" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1"/>
+    <text x="40" y="155" class="skill-name">build-student-profile</text>
+
+    <!-- Frontmatter ✓ -->
+    <rect x="195" y="138" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="220" y="156" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <!-- Use-when ✓ -->
+    <rect x="285" y="138" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="310" y="156" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <!-- Description ✓ -->
+    <rect x="360" y="138" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="385" y="156" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <!-- Ref Files ✓ -->
+    <rect x="450" y="138" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="475" y="156" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <!-- No Broken Links ✓ -->
+    <rect x="535" y="138" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="560" y="156" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <!-- No-DB Rule ✓ -->
+    <rect x="645" y="138" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="670" y="156" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <!-- Evidence Rules — -->
+    <rect x="745" y="138" width="50" height="24" fill="#F3F4F6" rx="4" stroke="#D1D5DB" stroke-width="1"/>
+    <text x="770" y="156" text-anchor="middle" font-size="16" fill="#9CA3AF" font-weight="700">—</text>
+  </g>
+
+  <!-- Row 2: thesis-finder -->
+  <g>
+    <rect x="30" y="175" width="840" height="50" fill="#F9FAFB" stroke="#E5E7EB" stroke-width="1"/>
+    <text x="40" y="205" class="skill-name">thesis-finder</text>
+
+    <!-- Frontmatter ✓ -->
+    <rect x="195" y="188" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="220" y="206" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <!-- Use-when ✓ -->
+    <rect x="285" y="188" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="310" y="206" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <!-- Description ✓ -->
+    <rect x="360" y="188" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="385" y="206" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <!-- Ref Files ✗ -->
+    <rect x="450" y="188" width="50" height="24" fill="#FEE2E2" rx="4" stroke="#EF4444" stroke-width="1"/>
+    <text x="475" y="206" text-anchor="middle" font-size="16" fill="#991B1B" font-weight="700">✗</text>
+
+    <!-- No Broken Links ✓ -->
+    <rect x="535" y="188" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="560" y="206" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <!-- No-DB Rule — -->
+    <rect x="645" y="188" width="50" height="24" fill="#F3F4F6" rx="4" stroke="#D1D5DB" stroke-width="1"/>
+    <text x="670" y="206" text-anchor="middle" font-size="16" fill="#9CA3AF" font-weight="700">—</text>
+
+    <!-- Evidence Rules — -->
+    <rect x="745" y="188" width="50" height="24" fill="#F3F4F6" rx="4" stroke="#D1D5DB" stroke-width="1"/>
+    <text x="770" y="206" text-anchor="middle" font-size="16" fill="#9CA3AF" font-weight="700">—</text>
+  </g>
+
+  <!-- Row 3: find-university-chairs -->
+  <g>
+    <rect x="30" y="225" width="840" height="50" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1"/>
+    <text x="40" y="255" class="skill-name">find-university-chairs</text>
+
+    <!-- All checks ✓ -->
+    <rect x="195" y="238" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="220" y="256" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="285" y="238" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="310" y="256" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="360" y="238" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="385" y="256" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="450" y="238" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="475" y="256" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="535" y="238" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="560" y="256" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="645" y="238" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="670" y="256" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="745" y="238" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="770" y="256" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+  </g>
+
+  <!-- Row 4: find-company-thesis-options -->
+  <g>
+    <rect x="30" y="275" width="840" height="50" fill="#F9FAFB" stroke="#E5E7EB" stroke-width="1"/>
+    <text x="40" y="305" class="skill-name">find-company-thesis-options</text>
+
+    <!-- All checks ✓ -->
+    <rect x="195" y="288" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="220" y="306" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="285" y="288" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="310" y="306" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="360" y="288" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="385" y="306" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="450" y="288" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="475" y="306" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="535" y="288" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="560" y="306" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="645" y="288" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="670" y="306" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="745" y="288" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="770" y="306" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+  </g>
+
+  <!-- Row 5: draft-thesis-contact -->
+  <g>
+    <rect x="30" y="325" width="840" height="50" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1"/>
+    <text x="40" y="355" class="skill-name">draft-thesis-contact</text>
+
+    <!-- All checks ✓ -->
+    <rect x="195" y="338" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="220" y="356" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="285" y="338" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="310" y="356" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="360" y="338" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="385" y="356" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="450" y="338" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="475" y="356" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="535" y="338" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="560" y="356" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="645" y="338" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="670" y="356" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+
+    <rect x="745" y="338" width="50" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+    <text x="770" y="356" text-anchor="middle" font-size="16" fill="#065F46" font-weight="700">✓</text>
+  </g>
+
+  <!-- Legend -->
+  <line x1="30" y1="385" x2="870" y2="385" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <rect x="30" y="400" width="24" height="24" fill="#D1FAE5" rx="4" stroke="#10B981" stroke-width="1"/>
+  <text x="60" y="417" class="note">✓ Property verified</text>
+
+  <rect x="280" y="400" width="24" height="24" fill="#FEE2E2" rx="4" stroke="#EF4444" stroke-width="1"/>
+  <text x="310" y="417" class="note">✗ Property missing</text>
+
+  <rect x="530" y="400" width="24" height="24" fill="#F3F4F6" rx="4" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="560" y="417" class="note">— Not applicable (meta/router skill)</text>
+
+  <!-- Footer note -->
+  <text x="30" y="480" class="note">Measured on every skill commit. Use-when patterns are critical for discovery integration.</text>
+  <text x="30" y="500" class="note">Frontmatter + Description length (≤1024 chars) ensure clarity in agent tool selection.</text>
+  <text x="30" y="520" class="note">No-DB rule & evidence rules are enforced for all data-access skills per thesis-pivot requirements.</text>
 </svg>

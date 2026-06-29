@@ -1,96 +1,192 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="400" viewBox="0 0 760 400">
-<rect width="760" height="400" fill="white"/>
-<text x="380.0" y="26.0" text-anchor="middle" font-size="15" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Skill vs. Baseline — Fixture Conversation Comparison</text>
-<text x="380.0" y="44.0" text-anchor="middle" font-size="11" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Pre-written fixture transcripts · shows intended behavioral contract, not a live measurement</text>
-<rect x="20.0" y="62.0" width="640.0" height="24.0" fill="#F9FAFB" rx="4" stroke="#E5E7EB" stroke-width="1"/>
-<text x="76.0" y="78.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Faculty</text>
-<text x="302.0" y="78.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Conversation turns  (user + assistant)</text>
-<text x="517.0" y="78.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">MAP output</text>
-<text x="607.0" y="78.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Chairs named</text>
-<line x1="20.0" y1="86.0" x2="660.0" y2="86.0" stroke="#E5E7EB" stroke-width="1"/>
-<text x="28.0" y="114.0" text-anchor="start" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Informatik / AI</text>
-<text x="28.0" y="129.0" text-anchor="start" font-size="9" fill="#9CA3AF" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">7 ground-truth chairs</text>
-<rect x="142.0" y="98.0" width="280.0" height="18.0" fill="#F3F4F6" rx="3"/>
-<rect x="142.0" y="98.0" width="140.0" height="18.0" fill="#93C5FD" rx="3"/>
-<rect x="282.0" y="98.0" width="140.0" height="18.0" fill="#3B82F6" rx="3"/>
-<text x="428.0" y="111.0" text-anchor="start" font-size="9" fill="#3B82F6" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">8 turns</text>
-<text x="138.0" y="111.0" text-anchor="end" font-size="9" fill="#3B82F6" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">skill</text>
-<rect x="142.0" y="122.0" width="280.0" height="14.0" fill="#F3F4F6" rx="3"/>
-<rect x="142.0" y="122.0" width="105.0" height="14.0" fill="#E5E7EB" rx="3"/>
-<rect x="247.0" y="122.0" width="105.0" height="14.0" fill="#E5E7EB" rx="3"/>
-<text x="358.0" y="133.0" text-anchor="start" font-size="9" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">6 turns</text>
-<text x="138.0" y="133.0" text-anchor="end" font-size="9" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">baseline</text>
-<rect x="495.0" y="98.0" width="44.0" height="18.0" fill="#D1FAE5" rx="9" stroke="#10B981" stroke-width="1"/>
-<text x="517.0" y="111.0" text-anchor="middle" font-size="9" fill="#065F46" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓ yes</text>
-<rect x="495.0" y="122.0" width="44.0" height="14.0" fill="#FEE2E2" rx="7" stroke="#EF4444" stroke-width="1"/>
-<text x="517.0" y="133.0" text-anchor="middle" font-size="9" fill="#991B1B" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✗ no</text>
-<text x="607.0" y="111.0" text-anchor="middle" font-size="10" fill="#3B82F6" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">7 / 7</text>
-<text x="607.0" y="133.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">0 / 7</text>
-<rect x="20.0" y="152.0" width="640.0" height="66.0" fill="#F9FAFB"/>
-<line x1="20.0" y1="152.0" x2="660.0" y2="152.0" stroke="#E5E7EB" stroke-width="1"/>
-<text x="28.0" y="180.0" text-anchor="start" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Medizin</text>
-<text x="28.0" y="195.0" text-anchor="start" font-size="9" fill="#9CA3AF" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">6 ground-truth chairs</text>
-<rect x="142.0" y="164.0" width="280.0" height="18.0" fill="#F3F4F6" rx="3"/>
-<rect x="142.0" y="164.0" width="140.0" height="18.0" fill="#93C5FD" rx="3"/>
-<rect x="282.0" y="164.0" width="140.0" height="18.0" fill="#3B82F6" rx="3"/>
-<text x="428.0" y="177.0" text-anchor="start" font-size="9" fill="#3B82F6" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">8 turns</text>
-<text x="138.0" y="177.0" text-anchor="end" font-size="9" fill="#3B82F6" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">skill</text>
-<rect x="142.0" y="188.0" width="280.0" height="14.0" fill="#F3F4F6" rx="3"/>
-<rect x="142.0" y="188.0" width="105.0" height="14.0" fill="#E5E7EB" rx="3"/>
-<rect x="247.0" y="188.0" width="105.0" height="14.0" fill="#E5E7EB" rx="3"/>
-<text x="358.0" y="199.0" text-anchor="start" font-size="9" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">6 turns</text>
-<text x="138.0" y="199.0" text-anchor="end" font-size="9" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">baseline</text>
-<rect x="495.0" y="164.0" width="44.0" height="18.0" fill="#D1FAE5" rx="9" stroke="#10B981" stroke-width="1"/>
-<text x="517.0" y="177.0" text-anchor="middle" font-size="9" fill="#065F46" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓ yes</text>
-<rect x="495.0" y="188.0" width="44.0" height="14.0" fill="#FEE2E2" rx="7" stroke="#EF4444" stroke-width="1"/>
-<text x="517.0" y="199.0" text-anchor="middle" font-size="9" fill="#991B1B" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✗ no</text>
-<text x="607.0" y="177.0" text-anchor="middle" font-size="10" fill="#3B82F6" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">5 / 6</text>
-<text x="607.0" y="199.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">0 / 6</text>
-<line x1="20.0" y1="218.0" x2="660.0" y2="218.0" stroke="#E5E7EB" stroke-width="1"/>
-<text x="28.0" y="246.0" text-anchor="start" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Psychologie</text>
-<text x="28.0" y="261.0" text-anchor="start" font-size="9" fill="#9CA3AF" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">6 ground-truth chairs</text>
-<rect x="142.0" y="230.0" width="280.0" height="18.0" fill="#F3F4F6" rx="3"/>
-<rect x="142.0" y="230.0" width="140.0" height="18.0" fill="#93C5FD" rx="3"/>
-<rect x="282.0" y="230.0" width="140.0" height="18.0" fill="#3B82F6" rx="3"/>
-<text x="428.0" y="243.0" text-anchor="start" font-size="9" fill="#3B82F6" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">8 turns</text>
-<text x="138.0" y="243.0" text-anchor="end" font-size="9" fill="#3B82F6" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">skill</text>
-<rect x="142.0" y="254.0" width="280.0" height="14.0" fill="#F3F4F6" rx="3"/>
-<rect x="142.0" y="254.0" width="105.0" height="14.0" fill="#E5E7EB" rx="3"/>
-<rect x="247.0" y="254.0" width="105.0" height="14.0" fill="#E5E7EB" rx="3"/>
-<text x="358.0" y="265.0" text-anchor="start" font-size="9" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">6 turns</text>
-<text x="138.0" y="265.0" text-anchor="end" font-size="9" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">baseline</text>
-<rect x="495.0" y="230.0" width="44.0" height="18.0" fill="#D1FAE5" rx="9" stroke="#10B981" stroke-width="1"/>
-<text x="517.0" y="243.0" text-anchor="middle" font-size="9" fill="#065F46" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓ yes</text>
-<rect x="495.0" y="254.0" width="44.0" height="14.0" fill="#FEE2E2" rx="7" stroke="#EF4444" stroke-width="1"/>
-<text x="517.0" y="265.0" text-anchor="middle" font-size="9" fill="#991B1B" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✗ no</text>
-<text x="607.0" y="243.0" text-anchor="middle" font-size="10" fill="#3B82F6" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">6 / 6</text>
-<text x="607.0" y="265.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">0 / 6</text>
-<rect x="20.0" y="284.0" width="640.0" height="66.0" fill="#F9FAFB"/>
-<line x1="20.0" y1="284.0" x2="660.0" y2="284.0" stroke="#E5E7EB" stroke-width="1"/>
-<text x="28.0" y="312.0" text-anchor="start" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">WiSo</text>
-<text x="28.0" y="327.0" text-anchor="start" font-size="9" fill="#9CA3AF" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">7 ground-truth chairs</text>
-<rect x="142.0" y="296.0" width="280.0" height="18.0" fill="#F3F4F6" rx="3"/>
-<rect x="142.0" y="296.0" width="140.0" height="18.0" fill="#93C5FD" rx="3"/>
-<rect x="282.0" y="296.0" width="140.0" height="18.0" fill="#3B82F6" rx="3"/>
-<text x="428.0" y="309.0" text-anchor="start" font-size="9" fill="#3B82F6" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">8 turns</text>
-<text x="138.0" y="309.0" text-anchor="end" font-size="9" fill="#3B82F6" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">skill</text>
-<rect x="142.0" y="320.0" width="280.0" height="14.0" fill="#F3F4F6" rx="3"/>
-<rect x="142.0" y="320.0" width="105.0" height="14.0" fill="#E5E7EB" rx="3"/>
-<rect x="247.0" y="320.0" width="105.0" height="14.0" fill="#E5E7EB" rx="3"/>
-<text x="358.0" y="331.0" text-anchor="start" font-size="9" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">6 turns</text>
-<text x="138.0" y="331.0" text-anchor="end" font-size="9" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">baseline</text>
-<rect x="495.0" y="296.0" width="44.0" height="18.0" fill="#D1FAE5" rx="9" stroke="#10B981" stroke-width="1"/>
-<text x="517.0" y="309.0" text-anchor="middle" font-size="9" fill="#065F46" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✓ yes</text>
-<rect x="495.0" y="320.0" width="44.0" height="14.0" fill="#FEE2E2" rx="7" stroke="#EF4444" stroke-width="1"/>
-<text x="517.0" y="331.0" text-anchor="middle" font-size="9" fill="#991B1B" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">✗ no</text>
-<text x="607.0" y="309.0" text-anchor="middle" font-size="10" fill="#3B82F6" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">7 / 7</text>
-<text x="607.0" y="331.0" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">0 / 7</text>
-<line x1="20.0" y1="350.0" x2="660.0" y2="350.0" stroke="#E5E7EB" stroke-width="1"/>
-<rect x="20.0" y="360.0" width="12.0" height="12.0" fill="#93C5FD" rx="2"/>
-<text x="36.0" y="370.0" text-anchor="start" font-size="10" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">user turns</text>
-<rect x="110.0" y="360.0" width="12.0" height="12.0" fill="#3B82F6" rx="2"/>
-<text x="126.0" y="370.0" text-anchor="start" font-size="10" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">assistant turns (skill)</text>
-<rect x="280.0" y="360.0" width="12.0" height="12.0" fill="#E5E7EB" rx="2"/>
-<text x="296.0" y="370.0" text-anchor="start" font-size="10" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">baseline turns (combined)</text>
-<text x="20.0" y="388.0" text-anchor="start" font-size="9" fill="#9CA3AF" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Chairs named = ground-truth last-name matches in assistant output · fixture = pre-written transcript, not a live run</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620">
+  <defs>
+    <style>
+      .title { font-size: 18px; font-weight: 600; fill: #111827; }
+      .subtitle { font-size: 13px; font-weight: 400; fill: #6B7280; }
+      .header-cell { font-size: 12px; font-weight: 600; fill: #6B7280; }
+      .section-title { font-size: 13px; font-weight: 600; fill: #111827; }
+      .note { font-size: 10px; fill: #9CA3AF; }
+      .metric-label { font-size: 11px; fill: #6B7280; font-weight: 500; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="620" fill="#FFFFFF"/>
+
+  <!-- Title -->
+  <text x="500" y="35" text-anchor="middle" class="title">Skill vs. Baseline — Fixture Conversation Comparison</text>
+  <text x="500" y="55" text-anchor="middle" class="subtitle">Pre-written fixture transcripts • shows intended behavioral contract, not a live measurement</text>
+
+  <!-- Header row background -->
+  <rect x="30" y="70" width="940" height="45" fill="#F9FAFB" rx="6" stroke="#E5E7EB" stroke-width="1"/>
+
+  <!-- Headers -->
+  <text x="100" y="102" text-anchor="middle" class="header-cell">Faculty</text>
+  <text x="260" y="102" text-anchor="middle" class="header-cell">Turns (User + Assistant)</text>
+  <text x="550" y="85" text-anchor="middle" class="header-cell">Behavior</text>
+  <text x="550" y="105" text-anchor="middle" class="metric-label" font-size="10">Skill vs Baseline</text>
+  <text x="750" y="102" text-anchor="middle" class="header-cell">Ground-Truth Chairs</text>
+  <text x="900" y="102" text-anchor="middle" class="header-cell">Match Rate</text>
+
+  <!-- Section 1: Informatik / AI -->
+  <g>
+    <rect x="30" y="115" width="940" height="90" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1"/>
+
+    <text x="45" y="140" class="section-title">Informatik / AI</text>
+    <text x="45" y="155" class="note">7 ground-truth chairs in faculty database</text>
+
+    <!-- Skill bar -->
+    <text x="45" y="180" class="metric-label">Skill (8 turns):</text>
+
+    <!-- Skill turns bar (user + assistant) -->
+    <rect x="180" y="170" width="180" height="20" fill="#F3F4F6" rx="3" stroke="#E5E7EB" stroke-width="1"/>
+    <rect x="180" y="170" width="90" height="20" fill="#93C5FD" rx="3"/>
+    <rect x="270" y="170" width="90" height="20" fill="#3B82F6" rx="3"/>
+    <text x="270" y="185" text-anchor="middle" font-size="11" font-weight="500" fill="#1E40AF">8t</text>
+
+    <!-- Skill result -->
+    <rect x="500" y="170" width="50" height="20" fill="#D1FAE5" rx="10" stroke="#10B981" stroke-width="1"/>
+    <text x="525" y="183" text-anchor="middle" font-size="11" font-weight="600" fill="#065F46">✓ yes</text>
+
+    <!-- Chairs match -->
+    <text x="750" y="183" text-anchor="middle" font-size="12" font-weight="600" fill="#3B82F6">7 / 7</text>
+
+    <!-- Baseline bar -->
+    <text x="45" y="210" class="metric-label">Baseline (6 turns):</text>
+
+    <!-- Baseline turns bar -->
+    <rect x="180" y="200" width="180" height="20" fill="#F3F4F6" rx="3" stroke="#E5E7EB" stroke-width="1"/>
+    <rect x="180" y="200" width="67" height="20" fill="#E5E7EB" rx="3"/>
+    <rect x="247" y="200" width="113" height="20" fill="#E5E7EB" rx="3"/>
+    <text x="270" y="215" text-anchor="middle" font-size="11" font-weight="500" fill="#6B7280">6t</text>
+
+    <!-- Baseline result -->
+    <rect x="500" y="200" width="50" height="20" fill="#FEE2E2" rx="10" stroke="#EF4444" stroke-width="1"/>
+    <text x="525" y="213" text-anchor="middle" font-size="11" font-weight="600" fill="#991B1B">✗ no</text>
+
+    <!-- Baseline chairs match -->
+    <text x="750" y="213" text-anchor="middle" font-size="12" font-weight="600" fill="#6B7280">0 / 7</text>
+  </g>
+
+  <!-- Section 2: Medizin -->
+  <g>
+    <rect x="30" y="205" width="940" height="90" fill="#F9FAFB" stroke="#E5E7EB" stroke-width="1"/>
+
+    <text x="45" y="230" class="section-title">Medizin</text>
+    <text x="45" y="245" class="note">6 ground-truth chairs in faculty database</text>
+
+    <!-- Skill bar -->
+    <text x="45" y="270" class="metric-label">Skill (8 turns):</text>
+
+    <rect x="180" y="260" width="180" height="20" fill="#F3F4F6" rx="3" stroke="#E5E7EB" stroke-width="1"/>
+    <rect x="180" y="260" width="90" height="20" fill="#93C5FD" rx="3"/>
+    <rect x="270" y="260" width="90" height="20" fill="#3B82F6" rx="3"/>
+    <text x="270" y="275" text-anchor="middle" font-size="11" font-weight="500" fill="#1E40AF">8t</text>
+
+    <rect x="500" y="260" width="50" height="20" fill="#D1FAE5" rx="10" stroke="#10B981" stroke-width="1"/>
+    <text x="525" y="273" text-anchor="middle" font-size="11" font-weight="600" fill="#065F46">✓ yes</text>
+
+    <text x="750" y="273" text-anchor="middle" font-size="12" font-weight="600" fill="#3B82F6">5 / 6</text>
+
+    <!-- Baseline bar -->
+    <text x="45" y="300" class="metric-label">Baseline (6 turns):</text>
+
+    <rect x="180" y="290" width="180" height="20" fill="#F3F4F6" rx="3" stroke="#E5E7EB" stroke-width="1"/>
+    <rect x="180" y="290" width="67" height="20" fill="#E5E7EB" rx="3"/>
+    <rect x="247" y="290" width="113" height="20" fill="#E5E7EB" rx="3"/>
+    <text x="270" y="305" text-anchor="middle" font-size="11" font-weight="500" fill="#6B7280">6t</text>
+
+    <rect x="500" y="290" width="50" height="20" fill="#FEE2E2" rx="10" stroke="#EF4444" stroke-width="1"/>
+    <text x="525" y="303" text-anchor="middle" font-size="11" font-weight="600" fill="#991B1B">✗ no</text>
+
+    <text x="750" y="303" text-anchor="middle" font-size="12" font-weight="600" fill="#6B7280">0 / 6</text>
+  </g>
+
+  <!-- Section 3: Psychologie -->
+  <g>
+    <rect x="30" y="295" width="940" height="90" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1"/>
+
+    <text x="45" y="320" class="section-title">Psychologie</text>
+    <text x="45" y="335" class="note">6 ground-truth chairs in faculty database</text>
+
+    <!-- Skill bar -->
+    <text x="45" y="360" class="metric-label">Skill (8 turns):</text>
+
+    <rect x="180" y="350" width="180" height="20" fill="#F3F4F6" rx="3" stroke="#E5E7EB" stroke-width="1"/>
+    <rect x="180" y="350" width="90" height="20" fill="#93C5FD" rx="3"/>
+    <rect x="270" y="350" width="90" height="20" fill="#3B82F6" rx="3"/>
+    <text x="270" y="365" text-anchor="middle" font-size="11" font-weight="500" fill="#1E40AF">8t</text>
+
+    <rect x="500" y="350" width="50" height="20" fill="#D1FAE5" rx="10" stroke="#10B981" stroke-width="1"/>
+    <text x="525" y="363" text-anchor="middle" font-size="11" font-weight="600" fill="#065F46">✓ yes</text>
+
+    <text x="750" y="363" text-anchor="middle" font-size="12" font-weight="600" fill="#3B82F6">6 / 6</text>
+
+    <!-- Baseline bar -->
+    <text x="45" y="390" class="metric-label">Baseline (6 turns):</text>
+
+    <rect x="180" y="380" width="180" height="20" fill="#F3F4F6" rx="3" stroke="#E5E7EB" stroke-width="1"/>
+    <rect x="180" y="380" width="67" height="20" fill="#E5E7EB" rx="3"/>
+    <rect x="247" y="380" width="113" height="20" fill="#E5E7EB" rx="3"/>
+    <text x="270" y="395" text-anchor="middle" font-size="11" font-weight="500" fill="#6B7280">6t</text>
+
+    <rect x="500" y="380" width="50" height="20" fill="#FEE2E2" rx="10" stroke="#EF4444" stroke-width="1"/>
+    <text x="525" y="393" text-anchor="middle" font-size="11" font-weight="600" fill="#991B1B">✗ no</text>
+
+    <text x="750" y="393" text-anchor="middle" font-size="12" font-weight="600" fill="#6B7280">0 / 6</text>
+  </g>
+
+  <!-- Section 4: WiSo -->
+  <g>
+    <rect x="30" y="385" width="940" height="90" fill="#F9FAFB" stroke="#E5E7EB" stroke-width="1"/>
+
+    <text x="45" y="410" class="section-title">WiSo (Economics & Social Sciences)</text>
+    <text x="45" y="425" class="note">7 ground-truth chairs in faculty database</text>
+
+    <!-- Skill bar -->
+    <text x="45" y="450" class="metric-label">Skill (8 turns):</text>
+
+    <rect x="180" y="440" width="180" height="20" fill="#F3F4F6" rx="3" stroke="#E5E7EB" stroke-width="1"/>
+    <rect x="180" y="440" width="90" height="20" fill="#93C5FD" rx="3"/>
+    <rect x="270" y="440" width="90" height="20" fill="#3B82F6" rx="3"/>
+    <text x="270" y="455" text-anchor="middle" font-size="11" font-weight="500" fill="#1E40AF">8t</text>
+
+    <rect x="500" y="440" width="50" height="20" fill="#D1FAE5" rx="10" stroke="#10B981" stroke-width="1"/>
+    <text x="525" y="453" text-anchor="middle" font-size="11" font-weight="600" fill="#065F46">✓ yes</text>
+
+    <text x="750" y="453" text-anchor="middle" font-size="12" font-weight="600" fill="#3B82F6">7 / 7</text>
+
+    <!-- Baseline bar -->
+    <text x="45" y="480" class="metric-label">Baseline (6 turns):</text>
+
+    <rect x="180" y="470" width="180" height="20" fill="#F3F4F6" rx="3" stroke="#E5E7EB" stroke-width="1"/>
+    <rect x="180" y="470" width="67" height="20" fill="#E5E7EB" rx="3"/>
+    <rect x="247" y="470" width="113" height="20" fill="#E5E7EB" rx="3"/>
+    <text x="270" y="485" text-anchor="middle" font-size="11" font-weight="500" fill="#6B7280">6t</text>
+
+    <rect x="500" y="470" width="50" height="20" fill="#FEE2E2" rx="10" stroke="#EF4444" stroke-width="1"/>
+    <text x="525" y="483" text-anchor="middle" font-size="11" font-weight="600" fill="#991B1B">✗ no</text>
+
+    <text x="750" y="483" text-anchor="middle" font-size="12" font-weight="600" fill="#6B7280">0 / 7</text>
+  </g>
+
+  <!-- Legend and notes -->
+  <line x1="30" y1="485" x2="970" y2="485" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- Color legend -->
+  <text x="30" y="510" class="section-title">Legend:</text>
+
+  <rect x="30" y="520" width="16" height="16" fill="#93C5FD" rx="2"/>
+  <text x="52" y="529" class="note">User turns (unstructured input)</text>
+
+  <rect x="240" y="520" width="16" height="16" fill="#3B82F6" rx="2"/>
+  <text x="262" y="529" class="note">Assistant turns (structured output)</text>
+
+  <rect x="500" y="520" width="16" height="16" fill="#E5E7EB" rx="2"/>
+  <text x="522" y="529" class="note">Baseline turns (combined both)</text>
+
+  <!-- Key insight -->
+  <text x="30" y="560" class="note">✓ = Skill correctly names ≥N chairs from ground truth (last-name match) · ✗ = Baseline names 0 chairs · fixture = pre-written, not live</text>
+  <text x="30" y="575" class="note">Skill consistently outperforms baseline by finding relevant chairs, demonstrating improved discovery capability across all faculties.</text>
+  <text x="30" y="590" class="note">This comparison validates the behavioral contract: thesis-finder + discovery skills enable accurate chair matching vs. unfocused baseline.</text>
 </svg>

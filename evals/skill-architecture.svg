@@ -1,41 +1,122 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="820" height="390" viewBox="0 0 820 390">
-<defs><marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#9CA3AF"/></marker></defs>
-<rect width="820" height="390" fill="white"/>
-<text x="410.0" y="26.0" text-anchor="middle" font-size="15" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Skill Architecture — Student Thesis Journey</text>
-<text x="410.0" y="44.0" text-anchor="middle" font-size="11" fill="#6B7280" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Skill invocation graph · reference files · data sources</text>
-<text x="88.0" y="162.0" text-anchor="middle" font-size="9" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">① PROFILE</text>
-<text x="264.0" y="162.0" text-anchor="middle" font-size="9" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">② ROUTE</text>
-<text x="461.0" y="74.0" text-anchor="middle" font-size="9" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">③ DISCOVER</text>
-<text x="467.0" y="254.0" text-anchor="middle" font-size="9" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">③ DISCOVER</text>
-<text x="680.0" y="162.0" text-anchor="middle" font-size="9" fill="#6B7280" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">④ DRAFT</text>
-<path d="M 164,196 L 205,196" fill="none" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ah)"/>
-<path d="M 315,182 C 348,182 348,108 378,108" fill="none" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ah)"/>
-<path d="M 315,208 C 348,208 348,288 378,288" fill="none" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ah)"/>
-<path d="M 544,108 C 576,108 576,190 605,190" fill="none" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ah)"/>
-<path d="M 556,288 C 582,288 582,210 605,210" fill="none" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ah)"/>
-<rect x="12.0" y="170.0" width="152.0" height="52.0" fill="#EFF6FF" rx="8" stroke="#3B82F6" stroke-width="1.5"/>
-<text x="88.0" y="193.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">build-student-</text>
-<text x="88.0" y="209.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">profile</text>
-<rect x="205.0" y="170.0" width="118.0" height="52.0" fill="#F5F3FF" rx="8" stroke="#8B5CF6" stroke-width="1.5"/>
-<text x="264.0" y="201.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">thesis-finder</text>
-<rect x="378.0" y="82.0" width="166.0" height="52.0" fill="#F0FDF4" rx="8" stroke="#10B981" stroke-width="1.5"/>
-<text x="461.0" y="105.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">find-university-</text>
-<text x="461.0" y="121.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">chairs</text>
-<rect x="482.0" y="112.0" width="58.0" height="18.0" fill="#D1FAE5" rx="9" stroke="#6EE7B7" stroke-width="1"/>
-<text x="511.0" y="124.0" text-anchor="middle" font-size="8" fill="#065F46" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">⚡ live web</text>
-<rect x="378.0" y="262.0" width="178.0" height="52.0" fill="#F0FDF4" rx="8" stroke="#10B981" stroke-width="1.5"/>
-<text x="467.0" y="285.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">find-company-</text>
-<text x="467.0" y="301.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">thesis-options</text>
-<rect x="494.0" y="292.0" width="58.0" height="18.0" fill="#D1FAE5" rx="9" stroke="#6EE7B7" stroke-width="1"/>
-<text x="523.0" y="304.0" text-anchor="middle" font-size="8" fill="#065F46" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">⚡ live web</text>
-<rect x="605.0" y="170.0" width="150.0" height="52.0" fill="#FFF7ED" rx="8" stroke="#F59E0B" stroke-width="1.5"/>
-<text x="680.0" y="193.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">draft-thesis-</text>
-<text x="680.0" y="209.0" text-anchor="middle" font-size="11" fill="#111827" font-weight="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">contact</text>
-<rect x="32.0" y="228.0" width="112.0" height="20.0" fill="#EFF6FF" rx="10" stroke="#BFDBFE" stroke-width="1"/><text x="88.0" y="241.0" text-anchor="middle" font-size="9" fill="#1D4ED8" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">profile-schema.md</text>
-<rect x="345.5" y="140.0" width="118.0" height="20.0" fill="#EFF6FF" rx="10" stroke="#BFDBFE" stroke-width="1"/><text x="404.5" y="153.0" text-anchor="middle" font-size="9" fill="#1D4ED8" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">faculty-backbone.md</text>
-<rect x="468.5" y="140.0" width="108.0" height="20.0" fill="#EFF6FF" rx="10" stroke="#BFDBFE" stroke-width="1"/><text x="522.5" y="153.0" text-anchor="middle" font-size="9" fill="#1D4ED8" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">search-strategy.md</text>
-<rect x="322.0" y="320.0" width="130.0" height="20.0" fill="#EFF6FF" rx="10" stroke="#BFDBFE" stroke-width="1"/><text x="387.0" y="333.0" text-anchor="middle" font-size="9" fill="#1D4ED8" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">bw-company-backbone.md</text>
-<rect x="457.0" y="320.0" width="155.0" height="20.0" fill="#EFF6FF" rx="10" stroke="#BFDBFE" stroke-width="1"/><text x="534.5" y="333.0" text-anchor="middle" font-size="9" fill="#1D4ED8" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">company-search-strategy.md</text>
-<line x1="12.0" y1="352.0" x2="590.0" y2="352.0" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4,3"/>
-<text x="12.0" y="368.0" text-anchor="start" font-size="9" fill="#9CA3AF" font-weight="normal" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">Also available: find-recent-papers (background papers) · generate-thesis-directions (proposal sketches) · design-agent-skill (meta)</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="580" viewBox="0 0 1000 580">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#9CA3AF"/>
+    </marker>
+    <style>
+      .title { font-size: 18px; font-weight: 600; fill: #111827; }
+      .subtitle { font-size: 13px; font-weight: 400; fill: #6B7280; }
+      .stage-label { font-size: 11px; font-weight: 700; fill: #9CA3AF; letter-spacing: 0.5px; }
+      .skill-name { font-size: 12px; font-weight: 600; fill: #111827; }
+      .ref-name { font-size: 10px; font-weight: 500; fill: #1D4ED8; }
+      .badge { font-size: 9px; font-weight: 600; fill: #065F46; }
+      .note { font-size: 10px; fill: #9CA3AF; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="580" fill="#FFFFFF"/>
+
+  <!-- Title -->
+  <text x="500" y="35" text-anchor="middle" class="title">Skill Architecture — Student Thesis Discovery Journey</text>
+  <text x="500" y="54" text-anchor="middle" class="subtitle">Skill invocation graph • reference files • data-access strategy</text>
+
+  <!-- Stage labels -->
+  <text x="100" y="90" text-anchor="middle" class="stage-label">① PROFILE</text>
+  <text x="280" y="90" text-anchor="middle" class="stage-label">② ROUTE</text>
+  <text x="520" y="65" text-anchor="middle" class="stage-label">③ UNIVERSITY</text>
+  <text x="520" y="480" text-anchor="middle" class="stage-label">③ INDUSTRY</text>
+  <text x="780" y="90" text-anchor="middle" class="stage-label">④ CONTACT</text>
+
+  <!-- SKILL BOXES -->
+
+  <!-- Stage 1: build-student-profile -->
+  <rect x="20" y="110" width="160" height="70" fill="#EFF6FF" rx="8" stroke="#3B82F6" stroke-width="2"/>
+  <text x="100" y="135" text-anchor="middle" class="skill-name">build-student-</text>
+  <text x="100" y="151" text-anchor="middle" class="skill-name">profile</text>
+  <text x="100" y="168" text-anchor="middle" font-size="9" fill="#6B7280">Entry point</text>
+
+  <!-- Stage 2: thesis-finder (router) -->
+  <rect x="210" y="110" width="140" height="70" fill="#F5F3FF" rx="8" stroke="#8B5CF6" stroke-width="2"/>
+  <text x="280" y="145" text-anchor="middle" class="skill-name">thesis-</text>
+  <text x="280" y="161" text-anchor="middle" class="skill-name">finder</text>
+
+  <!-- Arrows from profile to finder, and finder to discovery skills -->
+  <path d="M 180 145 L 210 145" stroke="#9CA3AF" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+  <!-- Stage 3a: find-university-chairs (top) -->
+  <rect x="410" y="110" width="180" height="70" fill="#F0FDF4" rx="8" stroke="#10B981" stroke-width="2"/>
+  <text x="500" y="135" text-anchor="middle" class="skill-name">find-university-</text>
+  <text x="500" y="151" text-anchor="middle" class="skill-name">chairs</text>
+
+  <!-- Badge: live web -->
+  <rect x="450" y="160" width="100" height="20" fill="#D1FAE5" rx="10" stroke="#6EE7B7" stroke-width="1"/>
+  <text x="500" y="172" text-anchor="middle" class="badge">⚡ live web search</text>
+
+  <!-- Arrow from finder to university chairs -->
+  <path d="M 350 125 Q 380 120 410 125" stroke="#9CA3AF" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+  <!-- Stage 3b: find-company-thesis-options (bottom) -->
+  <rect x="410" y="370" width="200" height="70" fill="#F0FDF4" rx="8" stroke="#10B981" stroke-width="2"/>
+  <text x="510" y="395" text-anchor="middle" class="skill-name">find-company-</text>
+  <text x="510" y="411" text-anchor="middle" class="skill-name">thesis-options</text>
+
+  <!-- Badge: live web -->
+  <rect x="450" y="420" width="120" height="20" fill="#D1FAE5" rx="10" stroke="#6EE7B7" stroke-width="1"/>
+  <text x="510" y="432" text-anchor="middle" class="badge">⚡ live web search</text>
+
+  <!-- Arrow from finder to company options -->
+  <path d="M 350 165 Q 380 280 410 375" stroke="#9CA3AF" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+  <!-- Stage 4: draft-thesis-contact -->
+  <rect x="690" y="110" width="160" height="70" fill="#FFF7ED" rx="8" stroke="#F59E0B" stroke-width="2"/>
+  <text x="770" y="135" text-anchor="middle" class="skill-name">draft-thesis-</text>
+  <text x="770" y="151" text-anchor="middle" class="skill-name">contact</text>
+  <text x="770" y="168" text-anchor="middle" font-size="9" fill="#6B7280">Email generation</text>
+
+  <!-- Arrows from discovery skills to contact -->
+  <path d="M 590 145 Q 640 145 690 145" stroke="#9CA3AF" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 610 405 Q 650 300 690 160" stroke="#9CA3AF" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+  <!-- REFERENCE FILES -->
+
+  <!-- References for build-student-profile -->
+  <rect x="30" y="230" width="140" height="22" fill="#EFF6FF" rx="8" stroke="#BFDBFE" stroke-width="1"/>
+  <text x="100" y="245" text-anchor="middle" class="ref-name">profile-schema.md</text>
+
+  <!-- References for find-university-chairs -->
+  <rect x="400" y="230" width="160" height="22" fill="#EFF6FF" rx="8" stroke="#BFDBFE" stroke-width="1"/>
+  <text x="480" y="245" text-anchor="middle" class="ref-name">faculty-backbone.md</text>
+
+  <rect x="575" y="230" width="140" height="22" fill="#EFF6FF" rx="8" stroke="#BFDBFE" stroke-width="1"/>
+  <text x="645" y="245" text-anchor="middle" class="ref-name">search-strategy.md</text>
+
+  <!-- References for find-company-thesis-options -->
+  <rect x="375" y="490" width="170" height="22" fill="#EFF6FF" rx="8" stroke="#BFDBFE" stroke-width="1"/>
+  <text x="460" y="505" text-anchor="middle" class="ref-name">bw-company-backbone.md</text>
+
+  <rect x="560" y="490" width="185" height="22" fill="#EFF6FF" rx="8" stroke="#BFDBFE" stroke-width="1"/>
+  <text x="652" y="505" text-anchor="middle" class="ref-name">company-search-strategy.md</text>
+
+  <!-- Connection lines from skills to references -->
+  <line x1="100" y1="180" x2="100" y2="230" stroke="#BFDBFE" stroke-width="1" stroke-dasharray="2,2"/>
+  <line x1="480" y1="180" x2="480" y2="230" stroke="#BFDBFE" stroke-width="1" stroke-dasharray="2,2"/>
+  <line x1="645" y1="180" x2="645" y2="230" stroke="#BFDBFE" stroke-width="1" stroke-dasharray="2,2"/>
+  <line x1="460" y1="440" x2="460" y2="490" stroke="#BFDBFE" stroke-width="1" stroke-dasharray="2,2"/>
+  <line x1="652" y1="440" x2="652" y2="490" stroke="#BFDBFE" stroke-width="1" stroke-dasharray="2,2"/>
+
+  <!-- INFORMATION BOX -->
+  <rect x="30" y="280" width="920" height="140" fill="#F9FAFB" rx="6" stroke="#E5E7EB" stroke-width="1"/>
+
+  <text x="45" y="305" font-size="13" font-weight="600" fill="#111827">Data-Access Strategy</text>
+
+  <text x="45" y="328" class="note">• Live web search (university & company skills) requires no database or pre-scraped backbones</text>
+  <text x="45" y="343" class="note">• Search strategies are parameterized, faculty-specific, and tuned per institution type</text>
+  <text x="45" y="358" class="note">• Profile schema ensures rich student context flows through entire journey (6 dimensions)</text>
+  <text x="45" y="373" class="note">• Email drafting uses retrieved chair profiles + student profile to customize cold outreach</text>
+  <text x="45" y="388" class="note">• All data is sourced at runtime; no cached databases = simpler maintenance, always current</text>
+
+  <text x="45" y="408" font-size="13" font-weight="600" fill="#111827">Additional Skills (not shown in flow)</text>
+  <text x="45" y="428" class="note">• find-recent-papers: background literature discovery for thesis context</text>
+  <text x="45" y="443" class="note">• generate-thesis-directions: proposal sketch generation from profile + papers</text>
 </svg>
