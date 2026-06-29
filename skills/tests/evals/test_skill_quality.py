@@ -103,20 +103,6 @@ pytestmark = [
             ),
         ),
         (
-            "match-thesis-advisors",
-            "Match my profile to possible thesis advisors: ML, Python, neural data analysis, master thesis.",
-            (
-                "Ranked shortlist:\n"
-                "1. Computational neuroscience / neural data science group: strong research fit because the profile names neural data analysis and ML. Evidence needed from bundled researcher profiles: recent papers using neural recordings or statistical learning. Preparation: pick one recent paper and formulate an evaluation question.\n"
-                "2. Machine learning group with probabilistic modeling: possible fit for methods, especially if bundled papers mention representation learning or uncertainty on biological data. Risk: application-area fit may be weaker.\n"
-                "3. Biomedical data analysis group: exploratory backup if profiles show real biological signal data. Caveat: verify current affiliation and supervision capacity; this is not a confirmed open topic."
-            ),
-            (
-                "Score high only if the answer behaves like match-thesis-advisors: combines profile, chair/researcher evidence, and paper signals, "
-                "ranks candidates with caveats and backup options, and does not claim confirmed availability."
-            ),
-        ),
-        (
             "generate-thesis-directions",
             "Generate thesis directions from a match to a neural data analysis chair and recent ML papers.",
             (
@@ -150,14 +136,32 @@ pytestmark = [
             ),
         ),
         (
-            "update-openalex-paper-index",
-            "Refresh the monthly OpenAlex data for known researchers.",
+            "thesis-finder",
+            "I want to find where to write my master's thesis. I'm interested in machine learning and neuroscience, prefer empirical work, want to work in Germany, and don't want pure theory.",
             (
-                "Maintenance plan: read `find-university-chairs/references/researchers/INDEX.md`, fetch recent works for each OpenAlex Author ID, deduplicate by DOI then OpenAlex ID then normalized title, and write updated researcher profiles plus paper indexes by topic and year. Preserve DOI, OpenAlex URL, source URL, publication year, keywords, and `last_updated`. Run `python -m pytest` after generation and open a PR with the Markdown diff."
+                "Based on your profile, you have two paths:\n"
+                "(a) University at Tübingen — machine learning and neuroscience groups across all faculties, live discovery of active chairs.\n"
+                "(b) Company in Baden-Württemberg (BW-region only) — ML/AI R&D teams and labs.\n\n"
+                "Answer: Which path fits better, or do you want to explore both? I can then run the full discovery for your chosen path(s) and match you to specific supervisors, labs, and companies with concrete evidence."
             ),
             (
-                "Score high only if the answer treats the skill as maintenance-only, writes reviewable Markdown data, preserves source IDs and dates, "
-                "uses OpenAlex Author IDs, and avoids requiring the old backend, database, Docker, or UI."
+                "Score high only if the answer behaves like thesis-finder: routes to one or both discovery skills, "
+                "asks the student to choose rather than deciding unilaterally, and does not attempt to produce a full option map itself."
+            ),
+        ),
+        (
+            "find-company-thesis-options",
+            "I want to find companies in Baden-Württemberg for a master's thesis in machine learning applied to automotive systems. I have Python, PyTorch, and want a structured environment.",
+            (
+                "Candidate companies:\n"
+                "1. Daimler / Mercedes-Benz AI Research — automotive AI, large structured program.\n"
+                "2. Bosch Center for AI — automotive and robotics AI, competitive, apply via careers.\n"
+                "3. Zeiss — optical systems + ML, smaller team, unclear thesis signal.\n\n"
+                "For each, the output includes: company size, R&D focus, thesis signal (explicit opening / active program / unclear), contact path, and evidence date. All marked with verification caveats and sources."
+            ),
+            (
+                "Score high only if the answer behaves like find-company-thesis-options: filters from BW backbone, "
+                "enriches with live web evidence, marks thesis signal clearly (never invents availability), links all URLs to company pages, and includes the map-level coverage caveat."
             ),
         ),
     ],

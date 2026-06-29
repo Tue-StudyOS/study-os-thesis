@@ -12,10 +12,10 @@
 
 **Phase 3 — Orchestration & Distribution: COMPLETE.** Backbone maintenance, entry-point skill,
 distribution artifacts, and smoke test are all done. Branch `feat/no-db-universal-skill` is
-ready for review/merge.
+package-ready; beta-ready after independent live test by another person/group.
 
-Phase 1 is **complete and GREEN** (all 4 faculties ≥70% live recall; gate passed
-2026-06-28). Phase 1 build plan: [2026-06-26-build-plan.md](findings/no_db_universal_skill/2026-06-26-build-plan.md).
+Phase 1 is **complete** with live validation (all 4 faculties ≥70% live recall on fixture-based
+evaluation; gate passed 2026-06-28). Phase 1 build plan: [2026-06-26-build-plan.md](findings/no_db_universal_skill/2026-06-26-build-plan.md).
 
 Phase 2 decisions: [2026-06-28-phase2-company-decisions.md](findings/no_db_universal_skill/2026-06-28-phase2-company-decisions.md)
 · Phase 2 build plan: [2026-06-28-phase2-build-plan.md](findings/no_db_universal_skill/2026-06-28-phase2-build-plan.md)
@@ -76,7 +76,12 @@ WiSo 100%/100%; real +65pp over baseline confirmed in Task I).
 - Smoke test passes with no dead references ✅
 - STATUS.md closed with gate verdict ✅
 
-**Overall Phase 3 gate: GREEN.** Branch `feat/no-db-universal-skill` is in a coherent state and ready for review/merge. Post-Phase-3 human actions: hand off to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope of this branch).
+**Overall Phase 3 gate: COHERENT & PACKAGE-READY.** Branch `feat/no-db-universal-skill` is in a
+coherent state with all orchestration in place; independent live validation pending. *Caveat:*
+Company eval exhibits circular recall (ground truth built from same BW backbone as the skill),
+and uni eval was initially weaker (Psych/CS issues) before 2e/2f fixes. Real-world validation
+by a fresh user or group is recommended before beta release. Post-Phase-3 human actions: hand off
+to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope of this branch).
 
 ---
 

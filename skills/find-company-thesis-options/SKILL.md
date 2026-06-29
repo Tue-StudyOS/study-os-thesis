@@ -8,7 +8,8 @@ description: Discover Masterarbeit options at BW companies — R&D teams, thesis
 Map a student's research interests to Master's thesis opportunities at **BW companies**
 using a two-pass approach: (1) filter a curated backbone of ~100 BW companies by sector
 tags, then (2) enrich each candidate with live web search. No runtime database —
-the backbone is a Markdown file and the live web is the only runtime source.
+the backbone is a Markdown file (curated, ~1x/year refresh) and the live web is the only
+runtime source. Live enrichment in Pass 2 adds current context to all candidates.
 
 ## Prerequisites
 

@@ -50,26 +50,55 @@ Do not start a global keyword search across all of `uni-tuebingen.de`.
 
 ### Step 4 — Pass 1: backbone crawl
 
-For each relevant faculty identified in Step 3:
+For each relevant faculty identified in Step 3, open its official listing URL:
 
-1. Open the faculty's official listing URL from
-   [`references/tuebingen-faculty-backbone.md`](references/tuebingen-faculty-backbone.md).
-2. If the URL lists departments (Science / Humanities / WiSo), drill into the
-   relevant department's sub-page to reach its Lehrstühle and Arbeitsbereiche. Use the
-   drill-down patterns in the backbone file and §3 of the search strategy.
-3. Collect every chair / Arbeitsbereich name and URL from that page.
+1. **Mathematisch-Naturwissenschaftliche Fakultät (Science):**
+   https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/
+   — Lists 8 departments (Informatik, Mathematik, Physik, Chemie, etc.); drill into each
+   department's `forschung.html` or `arbeitsbereiche` sub-page for chairs.
+
+2. **Philosophische Fakultät (Humanities):**
+   https://uni-tuebingen.de/fakultaeten/philosophische-fakultaet/fachbereiche.html
+   — Lists 5 departments; drill into each for Seminare and Institute.
+
+3. **Wirtschafts- und Sozialwissenschaftliche Fakultät (Economics & Social Sciences):**
+   https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftliche-fakultaet/faecher/
+   — Lists Fächer under Sozialwissenschaften and Wirtschaftswissenschaft; drill into each.
+
+4. **Juristische Fakultät (Law):**
+   https://uni-tuebingen.de/fakultaeten/juristische-fakultaet/lehrstuehle-und-personen/
+   — Lists Lehrstühle directly (no drill-down needed).
+
+5. **Evangelisch-Theologische Fakultät (Protestant Theology):**
+   https://uni-tuebingen.de/fakultaeten/evangelisch-theologische-fakultaet/lehrstuehle-und-institute/
+   — Lists chairs by discipline (no drill-down needed).
+
+6. **Katholisch-Theologische Fakultät (Catholic Theology):**
+   https://uni-tuebingen.de/fakultaeten/katholisch-theologische-fakultaet/lehrstuehle/
+   — Lists chairs directly.
+
+7. **Medizinische Fakultät (Medicine):**
+   Institutes: https://www.medizin.uni-tuebingen.de/de/das-klinikum/einrichtungen/institute
+   Clinics: https://www.medizin.uni-tuebingen.de/de/das-klinikum/einrichtungen/kliniken
+   — Separate host; lists Institute and Kliniken (no traditional Lehrstühle).
+
+8. **Zentrum für Islamische Theologie (ZITh):**
+   https://uni-tuebingen.de/fakultaeten/zentrum-fuer-islamische-theologie/professuren/
+   — Lists Professuren by theological specialization.
+
+For **interfaculty institutes & centers** (AI, neuroscience, cross-faculty):
+https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/interfakultaere-institute-und-zentren.html
+
+**For AI / ML / neuroscience interests:** the Informatik page alone is insufficient — it does not
+list MPI-IS-affiliated groups (Schölkopf, Martius, etc.). Before running any topic queries,
+also crawl:
+- **MPI for Intelligent Systems:** https://is.mpg.de/departments (Empirical Inference, Autonomous Learning, Perceiving Systems, etc.)
+- **ELLIS Tübingen / Cyber Valley:** https://uni-tuebingen.de/forschung/zentren-und-institute/ki-zentrum-tuebingen/ and https://cyber-valley.de/en/research/groups
+
+Treat these as **first-class Pass-1 sources**, not optional enrichment.
 
 This produces your **chair candidate set** — the complete official chair list for the
 relevant faculty, anchored to the real org structure rather than SEO results.
-
-Also check the **interfaculty institutes** page for AI, neuroscience, or cross-faculty
-interests (backbone file, row "interfaculty institutes & centers").
-
-**For AI / ML / neuroscience interests:** the FB-Informatik `forschung.html` page alone
-is insufficient — it does not list MPI-IS-affiliated groups (Schölkopf, Martius, etc.).
-Before running any topic queries, also crawl the MPI for Intelligent Systems and
-ELLIS / Cyber Valley legs listed in the backbone file's drill-down table. Treat these as
-**first-class Pass-1 sources**, not optional enrichment.
 
 ### Step 5 — Pass 2: live enrichment per chair
 

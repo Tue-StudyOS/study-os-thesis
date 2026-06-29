@@ -74,9 +74,10 @@ Architecture diagram showing the skill invocation graph and data-access strategy
    - Output: concise, high-signal first contact
 
 **Key design principle:**
-- All data is sourced at runtime (live web search)
-- No cached databases or pre-scraped backbones
-- Always current; simpler maintenance; no staleness risk
+- University discovery: live faculty pages, no external file.
+- Company discovery: curated BW-region seed backbone (Markdown, ~1x/year refresh) + live
+  enrichment in Pass 2 for current context.
+- No runtime database or job-board scraping in either skill.
 
 ---
 
