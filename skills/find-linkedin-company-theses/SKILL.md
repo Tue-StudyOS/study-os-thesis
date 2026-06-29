@@ -10,10 +10,10 @@ Find public LinkedIn-indexed company thesis opportunities that match a student's
 ## Workflow
 
 1. Check whether a deep enough student profile already exists in the conversation.
-2. If the profile is shallow, use `build-student-profile` first. Ask the next focused advising question about concrete coursework, projects, tools, work experience, thesis style, constraints, or no-gos. Do not ask for a search-parameter checklist yet.
-3. One advising turn is not enough for normal use. After each answer, reassess which profile fields are still missing and ask the next single focused advising question. Continue this profile-completion loop across turns until the profile is complete enough for thesis matching.
+2. If the profile is shallow, use `build-student-profile` first and follow its advising baseline. Ask evidence-seeking questions about concrete coursework, projects, tools, work experience, thesis style, constraints, or no-gos. Do not ask for a search-parameter checklist yet.
+3. One advising turn is not enough for normal use. After each answer, reflect what became clearer, reassess which profile fields are still missing, and ask the next focused advising question or small tightly grouped prompt bundle. Continue this profile-completion loop across turns until the profile is complete enough for thesis matching.
 4. Do not search, rank, or produce company thesis leads until the profile is strong enough to include at least: thesis level or target degree, concrete courses or project evidence, practical skills/tools, preferred thesis style, relevant experience when available, location/work-mode constraints, sector exclusions, and no-gos. Also do not ask a radius/work-mode/sector checklist or rank university chairs until this profile gate is met.
-5. Once the profile is strong enough, summarize the profile signals that will drive matching before asking for any remaining search parameters.
+5. Once the profile is strong enough, summarize the profile signals that will drive matching and prepare the parallel university/company search plan. Do not ask another standalone profile question. If institution plus region/radius/work-mode are already known, move into the provisional search plan immediately. Treat thesis timeline, language, and university-company process constraints as verification items that can be asked alongside the plan or checked before applying, not as blockers.
 6. After profile-building is complete, run a parallel thesis search by default: use `find-university-chairs` and `match-thesis-advisors` for the university/chair lane, and use this skill's web-search procedure for the company lane. Only skip one lane if the user explicitly asks for company-only or university-only results.
 7. Finish the shared search intake for both lanes: Bachelor, Master, or both; base location and radius in km; remote, hybrid, on-site, or all; sectors or company types to exclude; and any must-have or must-avoid technologies not already clear from the profile.
 8. Read `references/ranking-rubric.md` and use its profile-first gate, profile-completion loop, parallel university/company comparison, hard exclusions, scorecard, evidence tiers, company-career mirror search, and output shape.
@@ -65,7 +65,10 @@ After the company shortlist, include excluded or not-recommended postings with t
 - Treat company thesis search as a parallel complement to university/chair matching, not as a replacement.
 - Use the full in-session student profile for processing and ranking, not only keyword matches.
 - Do not turn a shallow request into a generic Google/LinkedIn search. Build the student profile first.
-- Do not treat one answered profile question as a complete profile. Continue the advising loop until the profile is complete enough for the same quality of matching expected by the university-thesis workflow.
+- Do not treat one answered profile question as a complete profile. Continue the advising loop with reflective summaries until the profile is complete enough for the same quality of matching expected by the university-thesis workflow.
+- Do not over-block once the profile is strong. If only minor company logistics remain, summarize the profile and move into a parallel search plan while asking the missing logistics.
+- Do not ask "one last" profile refinement as a blocker after readiness. Optional refinements must travel with the plan.
+- Do not ask thesis timing, language, or formal university-company rules as the next standalone turn after the student has already supplied institution, region, work mode, topic, skills, and no-gos.
 - Do not present ordinary jobs as thesis opportunities.
 - Do not invent thesis availability, supervision capacity, application deadlines, remote policy, salary, or company willingness.
 - Do not bypass LinkedIn access controls or require login.

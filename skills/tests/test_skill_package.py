@@ -99,6 +99,11 @@ def test_skill_privacy_and_evidence_rules_are_explicit() -> None:
     assert "Explicitly infer and summarize research skills" in profile_skill
     assert "Transcript of Records" in profile_skill
     assert "optional evidence sources" in profile_skill
+    assert "references/advising-baseline.md" in profile_skill
+    assert "small bundle of 2-4 lightweight prompts" in profile_skill
+    assert "Do not wait for a perfect profile when the baseline profile is already strong enough." in profile_skill
+    assert "If an optional refinement question remains, pair it with the compact profile and next-step plan" in profile_skill
+    assert "do not ask timing, language, or formal rules as a standalone next question" in profile_skill
     assert "Do not fabricate citation counts" in paper_skill
     assert "Do not invent openings, quotas, team sizes, citation counts, or willingness to supervise." in chair_skill
     assert "do not answer with a chair shortlist" in chair_skill
@@ -120,10 +125,17 @@ def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> No
     assert "use `build-student-profile` first" in skill_text
     assert "Do not ask for a search-parameter checklist yet." in skill_text
     assert "One advising turn is not enough for normal use." in skill_text
+    assert "reflect what became clearer" in skill_text
     assert "Continue this profile-completion loop across turns" in skill_text
     assert "Do not search, rank, or produce company thesis leads until the profile is strong enough" in skill_text
     assert "do not ask a radius/work-mode/sector checklist or rank university chairs until this profile gate is met." in skill_text
     assert "Once the profile is strong enough, summarize the profile signals" in skill_text
+    assert "prepare the parallel university/company search plan" in skill_text
+    assert "Do not over-block once the profile is strong." in skill_text
+    assert "Do not ask another standalone profile question." in skill_text
+    assert "Optional refinements must travel with the plan." in skill_text
+    assert "Treat thesis timeline, language, and university-company process constraints as verification items" in skill_text
+    assert "Do not ask thesis timing, language, or formal university-company rules as the next standalone turn" in skill_text
     assert "use `find-university-chairs` and `match-thesis-advisors` for the university/chair lane" in skill_text
     assert "Only skip one lane if the user explicitly asks for company-only or university-only results." in skill_text
     assert "base location and radius in km" in skill_text
@@ -159,9 +171,14 @@ def test_linkedin_company_theses_rubric_covers_release_ready_ranking() -> None:
     assert "Ask one focused advising question by default." in rubric_text
     assert "Profile-Completion Loop" in rubric_text
     assert "One question and one answer are not enough for normal use." in rubric_text
+    assert "The target behavior is a study-advising conversation, not a narrow search script." in rubric_text
     assert "until the profile supports the same quality of matching expected by the university-thesis workflow." in rubric_text
     assert "Before any LinkedIn/company search, university/chair ranking, or search-parameter checklist" in rubric_text
     assert "If only one or two of these areas are known, ask the next focused advising question and do not search." in rubric_text
+    assert "If the core profile is strong and only minor company logistics remain, do not keep delaying." in rubric_text
+    assert "Readiness is reached once the agent knows the student's thesis level/program" in rubric_text
+    assert "After readiness, do not ask another standalone profile question." in rubric_text
+    assert "Timing, language, and university-company registration details are important verification checklist items" in rubric_text
     assert "Parallel University/Company Search" in rubric_text
     assert "University/chair lane: use `find-university-chairs` and `match-thesis-advisors`" in rubric_text
     assert "Company lane: use public LinkedIn-indexed and company-career evidence" in rubric_text
@@ -234,6 +251,13 @@ def test_static_acceptance_fixture_covers_full_student_flow() -> None:
     assert "research core" in profile_skill
     assert "professional or research experience" in profile_skill
     assert "Research Skills" in (SKILLS_DIR / "build-student-profile" / "references" / "student-profile-schema.md").read_text(encoding="utf-8")
+    baseline = (SKILLS_DIR / "build-student-profile" / "references" / "advising-baseline.md").read_text(encoding="utf-8")
+    assert "reflect back what became clearer" in baseline.lower()
+    assert "project ownership" in baseline
+    assert "When the profile is strong enough, move forward." in baseline
+    assert "Do not ask another standalone profile question once these are known" in baseline
+    assert "Ask at most one final refinement question alongside the plan" in baseline
+    assert "timing, language, formal registration rules" in baseline
     assert "Philipp Berens" in professor_index
     assert "native websearch/browser tools" in chair_skill
     assert "Shallow Profile Guardrail" in chair_skill

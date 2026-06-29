@@ -13,14 +13,15 @@ Create a private, in-session profile that downstream thesis-finder skills can us
 2. Start with what the student already said, then identify what is still unknown about their research taste, skills, prior experience, frameworks, motivation, constraints, and working style.
 3. Interview the student one aspect at a time. Ask one question by default and never more than two questions in a single turn.
 4. Use `references/deep-advising-interview.md` to guide a multi-round advising conversation when the profile is still shallow.
-5. Ask whether the student wants to provide optional evidence sources such as a Transcript of Records, CV, project portfolio, GitHub profile, LinkedIn profile, module handbook excerpts, thesis/exam regulations, or job descriptions. Continue without them if the student prefers.
-6. Probe for concrete evidence: favorite lectures, seminars, exercises, papers, projects, internships, work experience, frustrating topics, tools they enjoy, methods they want to learn, and what kind of result would make the thesis feel successful.
-7. Explicitly infer and summarize research skills, not only interests: technical execution, experimental design, literature reading, mathematical comfort, data handling, engineering maturity, communication, and domain knowledge.
-8. Continue until the profile is strong enough to generate proposals, or explicitly label the remaining uncertainty.
-9. Capture the student's degree program and thesis level. Use `references/tuebingen-degree-programs.md` to recognize University of Tübingen programs and the level each implies (for example, Machine Learning is Master only).
-10. Normalize the profile into concise sections using `references/student-profile-schema.md`.
-11. Mark confidence levels when information is inferred rather than explicitly stated.
-12. Keep the profile in the current conversation only. Do not write it to shared skill files.
+5. Use `references/advising-baseline.md` for the expected conversation quality: warm orientation, reflective summaries, evidence-seeking follow-ups, and a compact profile before downstream search.
+6. Ask whether the student wants to provide optional evidence sources such as a Transcript of Records, CV, project portfolio, GitHub profile, LinkedIn profile, module handbook excerpts, thesis/exam regulations, or job descriptions. Continue without them if the student prefers.
+7. Probe for concrete evidence: favorite lectures, seminars, exercises, papers, projects, internships, work experience, frustrating topics, tools they enjoy, methods they want to learn, and what kind of result would make the thesis feel successful.
+8. Explicitly infer and summarize research skills, not only interests: technical execution, experimental design, literature reading, mathematical comfort, data handling, engineering maturity, communication, and domain knowledge.
+9. Continue until the profile is strong enough to generate proposals, or explicitly label the remaining uncertainty.
+10. Capture the student's degree program and thesis level. Use `references/tuebingen-degree-programs.md` to recognize University of Tübingen programs and the level each implies (for example, Machine Learning is Master only).
+11. Normalize the profile into concise sections using `references/student-profile-schema.md`.
+12. Mark confidence levels when information is inferred rather than explicitly stated.
+13. Keep the profile in the current conversation only. Do not write it to shared skill files.
 
 ## Output
 
@@ -45,7 +46,7 @@ Return a compact profile with:
 - Do not jump directly from a shallow interest list to final recommendations unless the user asks for speed.
 - One interview turn is not enough for normal use. After the student answers the first question, continue with the next most important aspect unless the answer already contains rich detail about coursework, projects, work experience, research taste, skills, frameworks, constraints, and no-gos.
 - Keep the conversation natural: stay with one aspect until it is reasonably clear, then transition to the next aspect. Avoid switching between interests, skills, constraints, advisor matching, and topic ideation in the same turn.
-- Ask one question by default. Ask two only when they are tightly coupled, such as "what did you build, and what part did you own?" Do not ask three or more questions in one turn.
+- Ask one question by default during follow-up turns. At the start of a profile interview, or after a vague answer that leaves a whole cluster unknown, it is acceptable to ask a small bundle of 2-4 lightweight prompts if they are clearly grouped and easy to answer in bullets. Do not turn this into a search-parameter form.
 - Ask follow-up questions when two paths would lead to different proposals, such as theory vs. empirical work, medical vs. general CV, engineering vs. scientific insight, or safe implementation vs. open-ended research.
 - When the user gives vague interests, ask for examples: a lecture topic, exercise sheet, seminar paper, project, dataset type, demo, or problem they would gladly spend weeks thinking about.
 - Ask specifically about university courses: which lectures, seminars, labs, practicals, or projects they liked or disliked; which topics stayed with them; and which assignments felt natural or painful.
@@ -56,6 +57,9 @@ Return a compact profile with:
 - If the first user message is short, respond only with a warm acknowledgement and the first focused coaching question. Do not recommend professors, papers, or proposals yet.
 - If the student answers briefly, respond like a human advisor: acknowledge what is now clearer, name the next aspect you want to understand, and ask one focused follow-up question.
 - After a longer interview, summarize the "research core" in 3-6 bullets before using downstream skills.
+- Do not wait for a perfect profile when the baseline profile is already strong enough. Once level/program, motivation, courses or projects, tools, experience, thesis style, constraints, and no-gos are reasonably clear, write the compact profile and transition to downstream matching.
+- If an optional refinement question remains, pair it with the compact profile and next-step plan instead of blocking progress.
+- When the user has already asked for thesis search and has provided institution plus region or mobility constraints, do not ask timing, language, or formal rules as a standalone next question. Carry them as verification items while moving into the search plan.
 
 ## Conversation Flow
 

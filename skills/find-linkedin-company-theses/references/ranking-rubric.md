@@ -10,7 +10,9 @@ If the profile is shallow, stop before search and continue with `build-student-p
 
 ### Profile-Completion Loop
 
-One question and one answer are not enough for normal use. After every student reply, reassess the profile and continue with the next most important missing aspect until the profile supports the same quality of matching expected by the university-thesis workflow.
+One question and one answer are not enough for normal use. After every student reply, reflect what became clearer, reassess the profile, and continue with the next most important missing aspect until the profile supports the same quality of matching expected by the university-thesis workflow.
+
+The target behavior is a study-advising conversation, not a narrow search script. The agent should summarize intermediate evidence, infer research taste carefully, and ask deeper follow-ups about project ownership, tools, evaluation style, disliked work, and domain constraints.
 
 Before any LinkedIn/company search, university/chair ranking, or search-parameter checklist, the profile should cover:
 
@@ -24,6 +26,12 @@ Before any LinkedIn/company search, university/chair ranking, or search-paramete
 - external-thesis filters: location/radius, remote/hybrid/on-site preference, sector exclusions, and must-have or must-avoid technologies
 
 If only one or two of these areas are known, ask the next focused advising question and do not search. If the student explicitly requests speed, label any exploratory result as low confidence and state which profile gaps make the ranking weak.
+
+If the core profile is strong and only minor company logistics remain, do not keep delaying. Summarize the profile, state the parallel university/company search plan, and ask the missing logistics as a final intake before live search.
+
+Readiness is reached once the agent knows the student's thesis level/program, motivation, project or course evidence, tools, experience depth, thesis style, constraints/no-gos, institution or region, and external thesis feasibility. After readiness, do not ask another standalone profile question. If a refinement would help, include it after the plan as an optional final check.
+
+Timing, language, and university-company registration details are important verification checklist items, but they are not reasons to delay the first parallel university/company search plan once the student's profile, region, work mode, topic, skills, and no-gos are known.
 
 ## Parallel University/Company Search
 
