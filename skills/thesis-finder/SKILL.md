@@ -31,7 +31,7 @@ Once the profile is confirmed complete, ask exactly this:
 
 > "Which option type do you want to explore?
 > (a) University thesis at Tübingen
-> (b) Company thesis in Baden-Württemberg
+> (b) Company thesis in **Baden-Württemberg** (BW-region only)
 > (c) Both"
 
 Wait for the student's answer before continuing.
