@@ -102,9 +102,10 @@ def test_skill_privacy_and_evidence_rules_are_explicit() -> None:
     assert "references/advising-baseline.md" in profile_skill
     assert "small bundle of 2-4 lightweight prompts" in profile_skill
     assert "A real thesis-advising profile session may take 30-60 minutes" in profile_skill
-    assert "Do not wait for a perfect profile when the baseline profile is already strong enough." in profile_skill
-    assert "If an optional refinement question remains, pair it with the compact profile and next-step plan" in profile_skill
-    assert "do not ask timing, language, or formal rules as a standalone next question" in profile_skill
+    assert "After every important answer, run the follow-up loop" in profile_skill
+    assert "Do not ask a generic \"Which university do you attend?\" question." in profile_skill
+    assert "A few broad interests, one project, basic tools, and one no-go are not enough" in profile_skill
+    assert "Only transition to downstream matching when the readiness gate is met" in profile_skill
     assert "Do not fabricate citation counts" in paper_skill
     assert "Do not invent openings, quotas, team sizes, citation counts, or willingness to supervise." in chair_skill
     assert "do not answer with a chair shortlist" in chair_skill
@@ -122,7 +123,8 @@ def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> No
     skill_text = (SKILLS_DIR / "find-linkedin-company-theses" / "SKILL.md").read_text(encoding="utf-8")
 
     assert "Use the full in-session student profile for processing and ranking, not only keyword matches." in skill_text
-    assert "thesis level or target degree, concrete courses or project evidence, practical skills/tools" in skill_text
+    assert "concrete liked/disliked courses and assignments" in skill_text
+    assert "project/work/HiWi/internship evidence with role and ownership" in skill_text
     assert "use `build-student-profile` first" in skill_text
     assert "Do not ask for a search-parameter checklist yet." in skill_text
     assert "One advising turn is not enough for normal use." in skill_text
@@ -130,6 +132,8 @@ def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> No
     assert "roughly 30-60 minutes before the student's nuanced tradeoffs are clear enough" in skill_text
     assert "Continue this profile-completion loop across turns" in skill_text
     assert "Do not search, rank, or produce company thesis leads until the profile is strong enough" in skill_text
+    assert "confirmed thesis level" in skill_text
+    assert "working and supervision style, career goals" in skill_text
     assert "do not ask a radius/work-mode/sector checklist or rank university chairs until this profile gate is met." in skill_text
     assert "Once the profile is strong enough, summarize the profile signals" in skill_text
     assert "prepare the parallel university/company search plan" in skill_text
@@ -141,13 +145,16 @@ def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> No
     assert "use `find-university-chairs` and `match-thesis-advisors` for the university/chair lane" in skill_text
     assert "Only skip one lane if the user explicitly asks for company-only or university-only results." in skill_text
     assert "base location and radius in km" in skill_text
+    assert "If the thesis level is missing or ambiguous" in skill_text
+    assert "search and rank only postings compatible with that level" in skill_text
     assert "sectors or company types to exclude" in skill_text
     assert "normal web search tool" in skill_text
     assert "Do not use a Markdown database" in skill_text
     assert "references/ranking-rubric.md" in skill_text
     assert "profile-first gate" in skill_text
     assert "parallel university/company comparison" in skill_text
-    assert "Exclude ordinary jobs, internships, and working-student roles" in skill_text
+    assert "Exclude ordinary jobs, internships, traineeships, Werkstudent roles, working-student roles" in skill_text
+    assert "Exclude ordinary jobs, internships, traineeships, Werkstudent roles, working-student roles" in skill_text
     assert "eligible ranked shortlist and an excluded or not-recommended list" in skill_text
     assert "Do not let a strong technology match override hard mismatches" in skill_text
     assert "company-career mirror" in skill_text
@@ -156,10 +163,14 @@ def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> No
     assert "external posting/snippet-derived lead" in skill_text
     assert "university research-area conversation starter" in skill_text
     assert "hybrid/external feasibility hypothesis" in skill_text
-    assert "not a thesis, generic job/internship, location or work-mode mismatch" in skill_text
+    assert "not a thesis, wrong thesis level, generic job/internship, Werkstudent/working-student role" in skill_text
     assert "Act like a thesis-oriented study advisor first and a search assistant second." in skill_text
     assert "Treat company thesis search as a parallel complement to university/chair matching" in skill_text
     assert "Do not turn a shallow request into a generic Google/LinkedIn search." in skill_text
+    assert "Do not treat a moderate profile such as" in skill_text
+    assert "Do not ask which university the student attends" in skill_text
+    assert "thesis level is a hard filter, not a soft preference." in skill_text
+    assert "Do not present Werkstudent, working-student, student assistant, internship" in skill_text
     assert "Do not treat one answered profile question as a complete profile." in skill_text
     assert "Do not run a live search before the student profile and search intake are complete" in skill_text
     assert "Do not skip the university/chair lane when the user asks broadly for thesis options" in skill_text
@@ -181,9 +192,13 @@ def test_linkedin_company_theses_rubric_covers_release_ready_ranking() -> None:
     assert "nuanced tradeoffs" in rubric_text
     assert "until the profile supports the same quality of matching expected by the university-thesis workflow." in rubric_text
     assert "Before any LinkedIn/company search, university/chair ranking, or search-parameter checklist" in rubric_text
+    assert "Do not mix Bachelorarbeit and Masterarbeit results unless the student explicitly asks for both." in rubric_text
+    assert "Masterarbeit-only for a Bachelor student" in rubric_text
     assert "If only one or two of these areas are known, ask the next focused advising question and do not search." in rubric_text
-    assert "If the core profile is strong and only minor company logistics remain, do not keep delaying." in rubric_text
-    assert "Readiness is reached once the agent knows the student's thesis level/program" in rubric_text
+    assert "A moderate profile with a program, a few interests, one project, tools, and one no-go is still not ready" in rubric_text
+    assert "If the comprehensive profile is strong and only minor company logistics remain, do not keep delaying." in rubric_text
+    assert "Readiness is reached once the agent knows the student's confirmed thesis level/program" in rubric_text
+    assert "supervision preferences, career goals" in rubric_text
     assert "After readiness, do not ask another standalone profile question." in rubric_text
     assert "Timing, language, and university-company registration details are important verification checklist items" in rubric_text
     assert "Parallel University/Company Search" in rubric_text
@@ -191,7 +206,8 @@ def test_linkedin_company_theses_rubric_covers_release_ready_ranking() -> None:
     assert "Company lane: use public LinkedIn-indexed and company-career evidence" in rubric_text
     assert "Cross-lane comparison and next actions." in rubric_text
     assert "Hard Exclusion Criteria" in rubric_text
-    assert "ordinary job, internship, trainee role, or working-student role" in rubric_text
+    assert "ordinary job, internship, trainee role, Werkstudent role, working-student role" in rubric_text
+    assert "Werkstudent role, working-student role, student assistant role" in rubric_text
     assert "Do not let a strong technology match override a hard exclusion." in rubric_text
     assert "Scorecard" in rubric_text
     assert "Thesis contribution" in rubric_text
@@ -261,14 +277,17 @@ def test_static_acceptance_fixture_covers_full_student_flow() -> None:
     assert "professional or research experience" in profile_skill
     assert "Research Skills" in (SKILLS_DIR / "build-student-profile" / "references" / "student-profile-schema.md").read_text(encoding="utf-8")
     baseline = (SKILLS_DIR / "build-student-profile" / "references" / "advising-baseline.md").read_text(encoding="utf-8")
-    assert "reflect back what became clearer" in baseline.lower()
+    assert "reflect what became clearer" in baseline.lower()
+    assert "follow-up loop" in baseline
     assert "project ownership" in baseline
     assert "A real advising conversation can last 30-60 minutes" in baseline
     assert "Capture tradeoffs and taste" in baseline
-    assert "When the profile is strong enough, move forward." in baseline
-    assert "Do not ask another standalone profile question once these are known" in baseline
+    assert "Do not ask a generic \"Which university are you at?\" question." in baseline
+    assert "Do not treat a moderate profile as ready" in baseline
+    assert "Do not start downstream matching until these are known with useful detail" in baseline
     assert "Ask at most one final refinement question alongside the plan" in baseline
     assert "timing, language, formal registration rules" in baseline
+    assert "Do not jump from \"ML Master at Tuebingen" in baseline
     assert "Philipp Berens" in professor_index
     assert "native websearch/browser tools" in chair_skill
     assert "Shallow Profile Guardrail" in chair_skill
@@ -297,11 +316,14 @@ def test_external_thesis_e2e_eval_covers_generation_outputs() -> None:
     assert "At least two proposal sketches grounded in the student profile" in text
     assert "one university-led proposal and one external/company-led proposal" in text
     assert "Each proposal must label evidence status" in text
+    assert "the output must not generate or rank" in text
+    assert "Werkstudent/working-student roles must be excluded completely" in text
     assert "Fixture-only mode: do not mention unavailable skills" in text
     assert 'Do not append judge labels, "Evaluation JSON:"' in text
     assert "generates and evaluates a university/chair lane" in text
     assert "generates and evaluates an external/company thesis lane" in text
-    assert "excludes generic robotics, medicine, and non-bachelor/perception-heavy mismatches" in text
+    assert "excludes generic robotics, medicine, Werkstudent/working-student roles, and non-bachelor/perception-heavy mismatches" in text
+    assert "Working-student/Werkstudent roles must be fully excluded" in text
     assert "generates at least two proposal sketches" in text
     assert "does not invent live web results, openings, supervision capacity" in text
     assert "must not upgrade snippets into confirmed live availability" in text

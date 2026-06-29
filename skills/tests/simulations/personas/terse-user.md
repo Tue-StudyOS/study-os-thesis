@@ -54,4 +54,5 @@ often answer only one part of a question and need patient, focused follow-ups.
 ## Success Signal
 
 The assistant should keep the conversation productive without prematurely
-recommending chairs, papers, or thesis topics from shallow information.
+recommending chairs, papers, companies, or thesis topics from shallow or
+moderate information.

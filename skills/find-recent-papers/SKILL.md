@@ -9,13 +9,14 @@ Help a student discover recent research papers that can guide a thesis direction
 
 ## Workflow
 
-1. Clarify the search intent from the user's interests, courses, skills, preferred methods, constraints, or target chairs.
-2. If chairs or professors are relevant, read the professor seed list at `../find-university-chairs/references/professors/INDEX.md` to find official starting URIs.
-3. Use the active agent's native websearch/browser tools on official profile, lab, publication, Google Scholar, OpenAlex, DBLP, or publisher pages to find papers.
-4. Prefer recent, primary, and traceable sources. Use `references/paper-search-rubric.md` for source ranking and output rules.
-5. Return a short ranked list, not an exhaustive bibliography.
-6. Explain why each paper matters for thesis discovery, including likely methods, prerequisites, and possible follow-up questions.
-7. If the active agent has no websearch/browser tools, explain that live paper discovery is unavailable and ask the user to provide publication pages or paper metadata.
+1. Clarify the search intent from the user's deep profile: interests, concrete coursework, project/work evidence, skills, preferred methods, constraints, working style, and target chairs.
+2. If the student profile is shallow and the user is asking for paper-based thesis directions, use `build-student-profile` first and ask the next focused coaching question instead of turning broad keywords into paper recommendations.
+3. If chairs or professors are relevant, read the professor seed list at `../find-university-chairs/references/professors/INDEX.md` to find official starting URIs.
+4. Use the active agent's native websearch/browser tools on official profile, lab, publication, Google Scholar, OpenAlex, DBLP, or publisher pages to find papers.
+5. Prefer recent, primary, and traceable sources. Use `references/paper-search-rubric.md` for source ranking and output rules.
+6. Return a short ranked list, not an exhaustive bibliography.
+7. Explain why each paper matters for thesis discovery, including likely methods, prerequisites, and possible follow-up questions.
+8. If the active agent has no websearch/browser tools, explain that live paper discovery is unavailable and ask the user to provide publication pages or paper metadata.
 
 ## Output
 
@@ -38,4 +39,5 @@ End with suggested next searches or chair/supervisor connections when evidence s
 - If sources disagree or data may be stale, say so.
 - Use absolute dates for "recent" results whenever possible.
 - Do not treat old bundled paper or researcher profiles as the primary source.
+- Do not use papers as a shortcut to thesis directions when the student has only provided a few keywords. Build the high-fidelity profile first, unless the user explicitly asks for a low-confidence exploratory paper scan.
 - Do not depend on the old UI, backend API, database, Docker, Celery, or FastAPI app.

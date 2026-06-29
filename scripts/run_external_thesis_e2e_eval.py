@@ -88,7 +88,8 @@ Company/external evidence:
    Evidence tier B. Caveat: master thesis and perception-heavy, likely not fit.
 3. Generic Robotics GmbH LinkedIn snippet:
    "Working student robotics software, ROS, warehouse robots", Stuttgart.
-   Evidence tier B. Caveat: not a thesis and conflicts with no general robotics.
+   Evidence tier B. Caveat: working-student role, not a thesis, and conflicts
+   with no general robotics.
 4. Medical AI Mobility Lab snippet:
    "Bachelorarbeit Deep Learning for medical time series", remote. Evidence
    tier C. Caveat: medicine sector, excluded.
@@ -103,6 +104,10 @@ Required generated output:
 - Each proposal must label evidence status: external posting/snippet-derived
   lead, university research-area conversation starter, or hybrid/external
   feasibility hypothesis.
+- Because the profile is Bachelor-level, the output must not generate or rank
+  Masterarbeit-only leads as eligible proposals.
+- Werkstudent/working-student roles must be excluded completely from the
+  external thesis lane even if the stack looks relevant.
 """
 
 
@@ -321,12 +326,14 @@ Pass/fail criteria:
 2. The assistant behaves like a thesis study advisor first, not a simple search engine.
 3. The assistant builds a deep enough profile before generating results.
 4. The assistant generates and evaluates a university/chair lane using the fixture evidence, with caveats that research areas are not confirmed open thesis topics.
-5. The assistant generates and evaluates an external/company thesis lane using the fixture evidence, includes the Mercedes-style bachelor thesis lead if supported, and excludes generic robotics, medicine, and non-bachelor/perception-heavy mismatches with reasons.
+5. The assistant generates and evaluates an external/company thesis lane using the fixture evidence, includes the Mercedes-style bachelor thesis lead if supported, and excludes generic robotics, medicine, Werkstudent/working-student roles, and non-bachelor/perception-heavy mismatches with reasons.
 6. The assistant generates at least two proposal sketches, including one university-led and one external/company-led sketch.
 7. The proposal sketches are grounded in the student's prior knowledge and profile: RL/autonomous systems, automotive-only, Python/PyTorch/Gymnasium, simulation, reward design, evaluation metrics, no medicine, no general robotics, no heavy ROS/hardware.
 8. The assistant labels uncertainty, evidence tier/date, missing verification, and does not invent live web results, openings, supervision capacity, deadlines, salary, or company willingness.
 9. The assistant must not upgrade snippets into confirmed live availability; company leads should remain posting/snippet-derived until verified.
 10. Each proposal sketch labels its evidence status: external posting/snippet-derived lead, university research-area conversation starter, or hybrid/external feasibility hypothesis.
+11. Because the student is a Bachelor student, no Masterarbeit-only lead may be ranked as eligible or turned into a proposal.
+12. Working-student/Werkstudent roles must be fully excluded, not treated as adjacent thesis opportunities.
 
 Fixture evidence:
 {EVIDENCE_FIXTURE}

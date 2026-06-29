@@ -4,7 +4,7 @@ Use this rubric to filter and rank public LinkedIn-indexed Bachelor and Master t
 
 ## Profile-First Gate
 
-Do not use this skill as a generic LinkedIn or Google search shortcut. Before searching, the agent must have a usable in-session student profile with concrete evidence about the student's thesis level or degree target, courses or project work, skills/tools, thesis style, constraints, sector exclusions, and no-gos.
+Do not use this skill as a generic LinkedIn or Google search shortcut. Before searching, the agent must have a usable in-session student profile with concrete evidence about the student's confirmed thesis level or degree target, liked/disliked courses and assignments, project/work/HiWi/internship evidence with role and ownership, skills/tools, research skills, working style, thesis style, career goals, constraints, sector exclusions, and no-gos.
 
 If the profile is shallow, stop before search and continue with `build-student-profile`. Ask one focused advising question by default. Search parameters such as radius, work mode, and sectors are collected after the profile is strong enough to make those filters meaningful.
 
@@ -16,23 +16,26 @@ The target behavior is a study-advising conversation, not a narrow search script
 
 Before any LinkedIn/company search, university/chair ranking, or search-parameter checklist, the profile should cover:
 
-- thesis level or target degree program
+- confirmed thesis level or target degree program
 - concrete motivation, interests, and research taste
-- liked or disliked courses, seminars, labs, or topics
-- practical projects, work experience, research experience, or substantial assignments
-- technical skills, tools, frameworks, methods, and implementation comfort
+- liked and disliked courses, seminars, labs, assignments, or topics
+- practical projects, work experience, HiWi work, research experience, open-source work, or substantial assignments, including exact roles, responsibilities, ownership, tools, and what the student enjoyed or disliked
+- technical skills, tools, frameworks, methods, implementation comfort, debugging habits, evaluation habits, and research skills
 - preferred thesis style, such as empirical ML, systems/engineering, robotics experimentation, theory, or scientific analysis
+- working style, supervision preferences, independence/collaboration preference, and career goals
 - nuanced tradeoffs, such as safe scope vs. open-ended research, university-led vs. company-led thesis, familiar tools vs. new tools, and engineering output vs. research insight
 - constraints and no-gos
 - external-thesis filters: location/radius, remote/hybrid/on-site preference, sector exclusions, and must-have or must-avoid technologies
 
-If only one or two of these areas are known, ask the next focused advising question and do not search. If the student explicitly requests speed, label any exploratory result as low confidence and state which profile gaps make the ranking weak.
+The confirmed thesis level is a hard gate. Do not mix Bachelorarbeit and Masterarbeit results unless the student explicitly asks for both. If the student says Bachelorarbeit, exclude Masterarbeit-only postings and do not generate Masterarbeit proposals. If the student says Masterarbeit, exclude Bachelorarbeit-only postings and do not generate Bachelorarbeit proposals.
 
-If the core profile is strong and only minor company logistics remain, do not keep delaying. Summarize the profile, state the parallel university/company search plan, and ask the missing logistics as a final intake before live search.
+If only one or two of these areas are known, ask the next focused advising question and do not search. A moderate profile with a program, a few interests, one project, tools, and one no-go is still not ready for company or chair ranking. If the student explicitly requests speed, label any exploratory result as low confidence and state which profile gaps make the ranking weak.
 
-Readiness is reached once the agent knows the student's thesis level/program, motivation, project or course evidence, tools, experience depth, thesis style, constraints/no-gos, institution or region, and external thesis feasibility. After readiness, do not ask another standalone profile question. If a refinement would help, include it after the plan as an optional final check.
+If the comprehensive profile is strong and only minor company logistics remain, do not keep delaying. Summarize the profile, state the parallel university/company search plan, and ask the missing logistics as a final intake before live search.
 
-Timing, language, and university-company registration details are important verification checklist items, but they are not reasons to delay the first parallel university/company search plan once the student's profile, region, work mode, topic, skills, and no-gos are known.
+Readiness is reached once the agent knows the student's confirmed thesis level/program, motivation, course evidence, project/work evidence, tools, experience depth, research skills, thesis style, working style, supervision preferences, career goals, constraints/no-gos, Tuebingen context or explicit exception, and external thesis feasibility. After readiness, do not ask another standalone profile question. If a refinement would help, include it after the plan as an optional final check.
+
+Timing, language, and university-company registration details are important verification checklist items, but they are not reasons to replace missing discovery about coursework, experience, skills, working style, and goals.
 
 ## Parallel University/Company Search
 
@@ -50,7 +53,8 @@ Do not treat university research areas as confirmed open thesis topics. Do not t
 Exclude a result from the ranked shortlist when any of these apply:
 
 - The visible text does not indicate Bachelorarbeit, Masterarbeit, Abschlussarbeit, thesis, final thesis, or thesis project.
-- It is an ordinary job, internship, trainee role, or working-student role without an explicit thesis component.
+- The posting thesis level conflicts with the student's confirmed level, such as Masterarbeit-only for a Bachelor student or Bachelorarbeit-only for a Master student.
+- It is an ordinary job, internship, trainee role, Werkstudent role, working-student role, student assistant role, or similar non-thesis employment format.
 - The sector or application area conflicts with the student's excluded sectors or no-gos.
 - The location and work mode clearly violate the student's constraints, such as full on-site work outside the accepted radius.
 - The core stack is dominated by must-avoid technologies or blocks the student's required working style.
@@ -64,7 +68,7 @@ For every eligible result, produce a compact scorecard. Use `pass`, `partial`, `
 
 | Criterion | What To Check |
 |---|---|
-| Thesis level | Bachelor, Master, or both matches the student. |
+| Thesis level | The posting explicitly matches the student's confirmed level, or is explicitly open to that level. |
 | Profile fit | Courses, projects, skills, tools, and work experience map to the topic. |
 | Feasibility gap | Missing requirements look manageable for the thesis timeline. |
 | Location/radius | City, commute, and radius fit or can be verified. |
@@ -107,7 +111,7 @@ Return:
 1. Shared profile signals used for both lanes.
 2. University/chair lane shortlist with research-fit evidence, caveats, and proposal/contact hooks.
 3. Company lane ranked shortlist with each posting's scorecard, matched profile evidence, evidence tier, access date, visible posting date, rationale, and confidence.
-4. Excluded or not-recommended company postings with exact reasons tied to the hard exclusion criteria.
+4. Excluded or not-recommended company postings with exact reasons tied to the hard exclusion criteria, including wrong thesis level and Werkstudent/working-student exclusions.
 5. Cross-lane comparison and next actions.
 6. Proposal sketches, when requested, each labeled as `external posting/snippet-derived lead`, `university research-area conversation starter`, or `hybrid/external feasibility hypothesis`.
 7. Verification checklist focused on university contact preparation and company-thesis readiness: open status, start date, compensation/workload, academic supervision, university-company process, data access, confidentiality, reportability, reproducible tooling, and evaluation metric.
