@@ -119,7 +119,10 @@ def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> No
     assert "thesis level or target degree, concrete courses or project evidence, practical skills/tools" in skill_text
     assert "use `build-student-profile` first" in skill_text
     assert "Do not ask for a search-parameter checklist yet." in skill_text
+    assert "One advising turn is not enough for normal use." in skill_text
+    assert "Continue this profile-completion loop across turns" in skill_text
     assert "Do not search, rank, or produce company thesis leads until the profile is strong enough" in skill_text
+    assert "do not ask a radius/work-mode/sector checklist or rank university chairs until this profile gate is met." in skill_text
     assert "Once the profile is strong enough, summarize the profile signals" in skill_text
     assert "use `find-university-chairs` and `match-thesis-advisors` for the university/chair lane" in skill_text
     assert "Only skip one lane if the user explicitly asks for company-only or university-only results." in skill_text
@@ -140,6 +143,7 @@ def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> No
     assert "Act like a thesis-oriented study advisor first and a search assistant second." in skill_text
     assert "Treat company thesis search as a parallel complement to university/chair matching" in skill_text
     assert "Do not turn a shallow request into a generic Google/LinkedIn search." in skill_text
+    assert "Do not treat one answered profile question as a complete profile." in skill_text
     assert "Do not run a live search before the student profile and search intake are complete" in skill_text
     assert "Do not skip the university/chair lane when the user asks broadly for thesis options" in skill_text
     assert "The main agent must merge evidence and rank centrally using the full student profile." in skill_text
@@ -153,6 +157,11 @@ def test_linkedin_company_theses_rubric_covers_release_ready_ranking() -> None:
     assert "Profile-First Gate" in rubric_text
     assert "Do not use this skill as a generic LinkedIn or Google search shortcut." in rubric_text
     assert "Ask one focused advising question by default." in rubric_text
+    assert "Profile-Completion Loop" in rubric_text
+    assert "One question and one answer are not enough for normal use." in rubric_text
+    assert "until the profile supports the same quality of matching expected by the university-thesis workflow." in rubric_text
+    assert "Before any LinkedIn/company search, university/chair ranking, or search-parameter checklist" in rubric_text
+    assert "If only one or two of these areas are known, ask the next focused advising question and do not search." in rubric_text
     assert "Parallel University/Company Search" in rubric_text
     assert "University/chair lane: use `find-university-chairs` and `match-thesis-advisors`" in rubric_text
     assert "Company lane: use public LinkedIn-indexed and company-career evidence" in rubric_text

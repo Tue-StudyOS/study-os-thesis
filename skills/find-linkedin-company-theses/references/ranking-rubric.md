@@ -8,6 +8,23 @@ Do not use this skill as a generic LinkedIn or Google search shortcut. Before se
 
 If the profile is shallow, stop before search and continue with `build-student-profile`. Ask one focused advising question by default. Search parameters such as radius, work mode, and sectors are collected after the profile is strong enough to make those filters meaningful.
 
+### Profile-Completion Loop
+
+One question and one answer are not enough for normal use. After every student reply, reassess the profile and continue with the next most important missing aspect until the profile supports the same quality of matching expected by the university-thesis workflow.
+
+Before any LinkedIn/company search, university/chair ranking, or search-parameter checklist, the profile should cover:
+
+- thesis level or target degree program
+- concrete motivation, interests, and research taste
+- liked or disliked courses, seminars, labs, or topics
+- practical projects, work experience, research experience, or substantial assignments
+- technical skills, tools, frameworks, methods, and implementation comfort
+- preferred thesis style, such as empirical ML, systems/engineering, robotics experimentation, theory, or scientific analysis
+- constraints and no-gos
+- external-thesis filters: location/radius, remote/hybrid/on-site preference, sector exclusions, and must-have or must-avoid technologies
+
+If only one or two of these areas are known, ask the next focused advising question and do not search. If the student explicitly requests speed, label any exploratory result as low confidence and state which profile gaps make the ranking weak.
+
 ## Parallel University/Company Search
 
 Use this skill as the company lane in a dual thesis-discovery workflow:
