@@ -101,6 +101,7 @@ def test_skill_privacy_and_evidence_rules_are_explicit() -> None:
     assert "optional evidence sources" in profile_skill
     assert "references/advising-baseline.md" in profile_skill
     assert "small bundle of 2-4 lightweight prompts" in profile_skill
+    assert "A real thesis-advising profile session may take 30-60 minutes" in profile_skill
     assert "Do not wait for a perfect profile when the baseline profile is already strong enough." in profile_skill
     assert "If an optional refinement question remains, pair it with the compact profile and next-step plan" in profile_skill
     assert "do not ask timing, language, or formal rules as a standalone next question" in profile_skill
@@ -126,6 +127,7 @@ def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> No
     assert "Do not ask for a search-parameter checklist yet." in skill_text
     assert "One advising turn is not enough for normal use." in skill_text
     assert "reflect what became clearer" in skill_text
+    assert "roughly 30-60 minutes before the student's nuanced tradeoffs are clear enough" in skill_text
     assert "Continue this profile-completion loop across turns" in skill_text
     assert "Do not search, rank, or produce company thesis leads until the profile is strong enough" in skill_text
     assert "do not ask a radius/work-mode/sector checklist or rank university chairs until this profile gate is met." in skill_text
@@ -151,6 +153,9 @@ def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> No
     assert "company-career mirror" in skill_text
     assert "Scorecard covering thesis level, profile fit, feasibility gap" in skill_text
     assert "Evidence tier, evidence source, and access date" in skill_text
+    assert "external posting/snippet-derived lead" in skill_text
+    assert "university research-area conversation starter" in skill_text
+    assert "hybrid/external feasibility hypothesis" in skill_text
     assert "not a thesis, generic job/internship, location or work-mode mismatch" in skill_text
     assert "Act like a thesis-oriented study advisor first and a search assistant second." in skill_text
     assert "Treat company thesis search as a parallel complement to university/chair matching" in skill_text
@@ -172,6 +177,8 @@ def test_linkedin_company_theses_rubric_covers_release_ready_ranking() -> None:
     assert "Profile-Completion Loop" in rubric_text
     assert "One question and one answer are not enough for normal use." in rubric_text
     assert "The target behavior is a study-advising conversation, not a narrow search script." in rubric_text
+    assert "roughly 30-60 minutes before generation" in rubric_text
+    assert "nuanced tradeoffs" in rubric_text
     assert "until the profile supports the same quality of matching expected by the university-thesis workflow." in rubric_text
     assert "Before any LinkedIn/company search, university/chair ranking, or search-parameter checklist" in rubric_text
     assert "If only one or two of these areas are known, ask the next focused advising question and do not search." in rubric_text
@@ -193,6 +200,8 @@ def test_linkedin_company_theses_rubric_covers_release_ready_ranking() -> None:
     assert "`A`: Opened public LinkedIn page or company career page confirms the thesis details." in rubric_text
     assert "Company-Career Mirror Search" in rubric_text
     assert "compensation/workload, academic supervision, university-company process" in rubric_text
+    assert "Proposal sketches, when requested, each labeled" in rubric_text
+    assert "external posting/snippet-derived lead" in rubric_text
 
 
 def test_required_markdown_database_indexes_exist() -> None:
@@ -254,6 +263,8 @@ def test_static_acceptance_fixture_covers_full_student_flow() -> None:
     baseline = (SKILLS_DIR / "build-student-profile" / "references" / "advising-baseline.md").read_text(encoding="utf-8")
     assert "reflect back what became clearer" in baseline.lower()
     assert "project ownership" in baseline
+    assert "A real advising conversation can last 30-60 minutes" in baseline
+    assert "Capture tradeoffs and taste" in baseline
     assert "When the profile is strong enough, move forward." in baseline
     assert "Do not ask another standalone profile question once these are known" in baseline
     assert "Ask at most one final refinement question alongside the plan" in baseline
@@ -264,5 +275,34 @@ def test_static_acceptance_fixture_covers_full_student_flow() -> None:
     assert "proposal hooks" in advisor_skill.lower()
     assert "research-proposal sketches" in directions_skill
     assert "conversation starter" in directions_skill
+    assert "evidence status: external posting/snippet-derived lead" in directions_skill
     assert "proposal sketch" in contact_skill
     assert "first-contact" in contact_skill
+
+
+def test_external_thesis_e2e_eval_covers_generation_outputs() -> None:
+    eval_script = SKILLS_DIR.parent / "scripts" / "run_external_thesis_e2e_eval.py"
+    text = eval_script.read_text(encoding="utf-8")
+
+    assert "Run an end-to-end eval for the external company thesis workflow." in text
+    assert "Evidence fixture for the generation phase." in text
+    assert "one-hour-equivalent deep advising profile" in text
+    assert "one live generation turn and one live judge turn" in text
+    assert "A real student may spend" in text
+    assert "University/chair evidence:" in text
+    assert "Company/external evidence:" in text
+    assert "Required generated output:" in text
+    assert "A ranked university/chair lane with evidence and caveats." in text
+    assert "A ranked external company thesis lane with included and excluded results." in text
+    assert "At least two proposal sketches grounded in the student profile" in text
+    assert "one university-led proposal and one external/company-led proposal" in text
+    assert "Each proposal must label evidence status" in text
+    assert "Fixture-only mode: do not mention unavailable skills" in text
+    assert 'Do not append judge labels, "Evaluation JSON:"' in text
+    assert "generates and evaluates a university/chair lane" in text
+    assert "generates and evaluates an external/company thesis lane" in text
+    assert "excludes generic robotics, medicine, and non-bachelor/perception-heavy mismatches" in text
+    assert "generates at least two proposal sketches" in text
+    assert "does not invent live web results, openings, supervision capacity" in text
+    assert "must not upgrade snippets into confirmed live availability" in text
+    assert "Each proposal sketch labels its evidence status" in text

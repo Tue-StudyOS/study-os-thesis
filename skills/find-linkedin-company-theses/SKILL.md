@@ -11,27 +11,28 @@ Find public LinkedIn-indexed company thesis opportunities that match a student's
 
 1. Check whether a deep enough student profile already exists in the conversation.
 2. If the profile is shallow, use `build-student-profile` first and follow its advising baseline. Ask evidence-seeking questions about concrete coursework, projects, tools, work experience, thesis style, constraints, or no-gos. Do not ask for a search-parameter checklist yet.
-3. One advising turn is not enough for normal use. After each answer, reflect what became clearer, reassess which profile fields are still missing, and ask the next focused advising question or small tightly grouped prompt bundle. Continue this profile-completion loop across turns until the profile is complete enough for thesis matching.
-4. Do not search, rank, or produce company thesis leads until the profile is strong enough to include at least: thesis level or target degree, concrete courses or project evidence, practical skills/tools, preferred thesis style, relevant experience when available, location/work-mode constraints, sector exclusions, and no-gos. Also do not ask a radius/work-mode/sector checklist or rank university chairs until this profile gate is met.
-5. Once the profile is strong enough, summarize the profile signals that will drive matching and prepare the parallel university/company search plan. Do not ask another standalone profile question. If institution plus region/radius/work-mode are already known, move into the provisional search plan immediately. Treat thesis timeline, language, and university-company process constraints as verification items that can be asked alongside the plan or checked before applying, not as blockers.
-6. After profile-building is complete, run a parallel thesis search by default: use `find-university-chairs` and `match-thesis-advisors` for the university/chair lane, and use this skill's web-search procedure for the company lane. Only skip one lane if the user explicitly asks for company-only or university-only results.
-7. Finish the shared search intake for both lanes: Bachelor, Master, or both; base location and radius in km; remote, hybrid, on-site, or all; sectors or company types to exclude; and any must-have or must-avoid technologies not already clear from the profile.
-8. Read `references/ranking-rubric.md` and use its profile-first gate, profile-completion loop, parallel university/company comparison, hard exclusions, scorecard, evidence tiers, company-career mirror search, and output shape.
-9. Use the active agent's normal web search tool to search public LinkedIn-indexed company results. Do not use a Markdown database, LinkedIn account, or authenticated browser session for the company lane.
-10. Search with German and English variants such as:
+3. Expect the profile phase to be a real advising conversation, not a quick pre-search form. It may take many turns or roughly 30-60 minutes before the student's nuanced tradeoffs are clear enough for high-confidence ranking.
+4. One advising turn is not enough for normal use. After each answer, reflect what became clearer, reassess which profile fields are still missing, and ask the next focused advising question or small tightly grouped prompt bundle. Continue this profile-completion loop across turns until the profile is complete enough for thesis matching.
+5. Do not search, rank, or produce company thesis leads until the profile is strong enough to include at least: thesis level or target degree, concrete courses or project evidence, practical skills/tools, preferred thesis style, nuanced tradeoffs, relevant experience when available, location/work-mode constraints, sector exclusions, and no-gos. Also do not ask a radius/work-mode/sector checklist or rank university chairs until this profile gate is met.
+6. Once the profile is strong enough, summarize the profile signals that will drive matching and prepare the parallel university/company search plan. Do not ask another standalone profile question. If institution plus region/radius/work-mode are already known, move into the provisional search plan immediately. Treat thesis timeline, language, and university-company process constraints as verification items that can be asked alongside the plan or checked before applying, not as blockers.
+7. After profile-building is complete, run a parallel thesis search by default: use `find-university-chairs` and `match-thesis-advisors` for the university/chair lane, and use this skill's web-search procedure for the company lane. Only skip one lane if the user explicitly asks for company-only or university-only results.
+8. Finish the shared search intake for both lanes: Bachelor, Master, or both; base location and radius in km; remote, hybrid, on-site, or all; sectors or company types to exclude; and any must-have or must-avoid technologies not already clear from the profile.
+9. Read `references/ranking-rubric.md` and use its profile-first gate, profile-completion loop, parallel university/company comparison, hard exclusions, scorecard, evidence tiers, company-career mirror search, and output shape.
+10. Use the active agent's normal web search tool to search public LinkedIn-indexed company results. Do not use a Markdown database, LinkedIn account, or authenticated browser session for the company lane.
+11. Search with German and English variants such as:
    - `site:linkedin.com/jobs Bachelorarbeit <skill> <city>`
    - `site:linkedin.com/jobs Masterarbeit <skill> <city>`
    - `site:linkedin.com/jobs Abschlussarbeit <skill> Unternehmen <city>`
    - `site:linkedin.com/jobs thesis <skill> company <city>`
-11. For promising LinkedIn results, use normal web search to look for a public company-career mirror when browsing is available. Prefer the company page if it confirms the same thesis posting.
-12. Open public result pages when available, or use snippets when pages are inaccessible. Label each result with an evidence tier from the rubric and treat snippets as incomplete unless a public page was opened.
-13. Accept only company results that visibly indicate a thesis opportunity, such as Bachelorarbeit, Masterarbeit, Abschlussarbeit, thesis, final thesis, or thesis project. Exclude ordinary jobs, internships, and working-student roles unless the visible text explicitly includes an Abschlussarbeit or thesis component.
-14. Split company results into an eligible ranked shortlist and an excluded or not-recommended list. Do not let a strong technology match override hard mismatches such as excluded sectors, clearly incompatible location/work mode, or must-avoid technologies.
-15. Score eligible company postings with the rubric scorecard, including thesis contribution and company-thesis readiness. Rank by hard exclusions first, then profile fit, thesis contribution, preference fit, feasibility, and evidence quality.
-16. Compare the strongest university/chair matches and company postings side by side. Distinguish university research-fit evidence from confirmed company thesis postings; do not present research areas as official open university topics.
-17. For each ranked company posting, explicitly check whether preferences are fulfilled: thesis level, location/radius, remote/hybrid/on-site mode, sector/no-gos, must-have technologies, must-avoid technologies, company-thesis readiness, and evidence quality.
-18. Include the access date and visible posting date for each result; use `date unclear` when no posting date is visible.
-19. If subagents are available and many results need review, they may extract visible facts from batches of company results or university pages. The main agent must merge evidence and rank centrally using the full student profile.
+12. For promising LinkedIn results, use normal web search to look for a public company-career mirror when browsing is available. Prefer the company page if it confirms the same thesis posting.
+13. Open public result pages when available, or use snippets when pages are inaccessible. Label each result with an evidence tier from the rubric and treat snippets as incomplete unless a public page was opened.
+14. Accept only company results that visibly indicate a thesis opportunity, such as Bachelorarbeit, Masterarbeit, Abschlussarbeit, thesis, final thesis, or thesis project. Exclude ordinary jobs, internships, and working-student roles unless the visible text explicitly includes an Abschlussarbeit or thesis component.
+15. Split company results into an eligible ranked shortlist and an excluded or not-recommended list. Do not let a strong technology match override hard mismatches such as excluded sectors, clearly incompatible location/work mode, or must-avoid technologies.
+16. Score eligible company postings with the rubric scorecard, including thesis contribution and company-thesis readiness. Rank by hard exclusions first, then profile fit, thesis contribution, preference fit, feasibility, and evidence quality.
+17. Compare the strongest university/chair matches and company postings side by side. Distinguish university research-fit evidence from confirmed company thesis postings; do not present research areas as official open university topics.
+18. For each ranked company posting, explicitly check whether preferences are fulfilled: thesis level, location/radius, remote/hybrid/on-site mode, sector/no-gos, must-have technologies, must-avoid technologies, company-thesis readiness, and evidence quality.
+19. Include the access date and visible posting date for each result; use `date unclear` when no posting date is visible.
+20. If subagents are available and many results need review, they may extract visible facts from batches of company results or university pages. The main agent must merge evidence and rank centrally using the full student profile.
 
 ## Output
 
@@ -58,6 +59,12 @@ For each company thesis opportunity include:
 - Ranking rationale and confidence level
 
 After the company shortlist, include excluded or not-recommended postings with the exact reason: not a thesis, generic job/internship, location or work-mode mismatch, excluded sector, must-avoid technology, weak profile match, or insufficient evidence. End with a compact checklist split into university-lane contact preparation and company-thesis readiness checks.
+
+When proposal sketches are generated from the parallel search, label each sketch as one of:
+
+- `external posting/snippet-derived lead`: grounded in visible company thesis evidence, with live status still requiring verification
+- `university research-area conversation starter`: grounded in chair/lab evidence, not an advertised thesis
+- `hybrid/external feasibility hypothesis`: requires both a company lead and university supervision verification
 
 ## Guardrails
 

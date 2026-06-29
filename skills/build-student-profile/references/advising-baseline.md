@@ -2,6 +2,8 @@
 
 Use this as the behavioral baseline for student-profile interviews. It captures the expected style without storing private student data or a transcript.
 
+A real advising conversation can last 30-60 minutes when the student is still clarifying their taste. Do not optimize for the fewest turns. Optimize for a profile that explains why a recommendation fits the person, not just their keywords.
+
 ## What Good Looks Like
 
 - Start by orienting the student: explain that profiling comes before papers, chairs, company postings, proposals, or contact emails.
@@ -11,6 +13,7 @@ Use this as the behavioral baseline for student-profile interviews. It captures 
 - Ask follow-ups that expose project ownership and depth: what the student built, what data or environment they used, what they changed, how they evaluated it, and what frustrated or excited them.
 - Treat prior projects, bachelor theses, jobs, internships, seminars, and reports as the strongest matching evidence.
 - Capture negative signal explicitly: topics, tools, domains, theory level, hardware burden, bureaucracy, or working styles the student wants to avoid.
+- Capture tradeoffs and taste, not only facts: safe vs. open-ended work, simulation vs. real systems, research insight vs. engineering output, familiar strengths vs. new territory, university-led vs. company-led thesis, and what would make the thesis feel successful.
 - Summarize a compact profile before downstream matching, including inferred research skills and confidence labels where needed.
 - When the profile is strong enough, move forward. Do not keep asking polishing questions that delay useful paper, chair, company, proposal, or contact work.
 - At readiness, produce the compact profile and next-step plan even if one optional refinement remains. Ask that refinement as a caveat or final check, not as a blocker.
@@ -27,6 +30,7 @@ A profile is normally ready for downstream thesis matching when it contains:
 - tools, frameworks, programming languages, hardware or compute access, and implementation comfort
 - preferred thesis style, such as empirical ML, systems/engineering, robotics experimentation, theory, scientific analysis, or applied product work
 - constraints and no-gos
+- nuanced tradeoffs and taste signals
 - matching keywords and proposal ingredients
 
 If one or two minor fields remain unclear, summarize the uncertainty and continue instead of blocking the whole workflow.

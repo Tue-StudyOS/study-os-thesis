@@ -44,6 +44,7 @@ Return a compact profile with:
 ## Interview Guidance
 
 - Do not jump directly from a shallow interest list to final recommendations unless the user asks for speed.
+- Optimize for profile truth, not speed. A real thesis-advising profile session may take 30-60 minutes when the student is still discovering their taste; do not generate papers, chairs, company leads, or proposals until the student's nuances are clear enough to defend the recommendation.
 - One interview turn is not enough for normal use. After the student answers the first question, continue with the next most important aspect unless the answer already contains rich detail about coursework, projects, work experience, research taste, skills, frameworks, constraints, and no-gos.
 - Keep the conversation natural: stay with one aspect until it is reasonably clear, then transition to the next aspect. Avoid switching between interests, skills, constraints, advisor matching, and topic ideation in the same turn.
 - Ask one question by default during follow-up turns. At the start of a profile interview, or after a vague answer that leaves a whole cluster unknown, it is acceptable to ask a small bundle of 2-4 lightweight prompts if they are clearly grouped and easy to answer in bullets. Do not turn this into a search-parameter form.
@@ -57,7 +58,7 @@ Return a compact profile with:
 - If the first user message is short, respond only with a warm acknowledgement and the first focused coaching question. Do not recommend professors, papers, or proposals yet.
 - If the student answers briefly, respond like a human advisor: acknowledge what is now clearer, name the next aspect you want to understand, and ask one focused follow-up question.
 - After a longer interview, summarize the "research core" in 3-6 bullets before using downstream skills.
-- Do not wait for a perfect profile when the baseline profile is already strong enough. Once level/program, motivation, courses or projects, tools, experience, thesis style, constraints, and no-gos are reasonably clear, write the compact profile and transition to downstream matching.
+- Do not wait for a perfect profile when the baseline profile is already strong enough. Once level/program, motivation, courses or projects, tools, experience, thesis style, constraints, no-gos, and the student's nuanced tradeoffs are reasonably clear, write the compact profile and transition to downstream matching.
 - If an optional refinement question remains, pair it with the compact profile and next-step plan instead of blocking progress.
 - When the user has already asked for thesis search and has provided institution plus region or mobility constraints, do not ask timing, language, or formal rules as a standalone next question. Carry them as verification items while moving into the search plan.
 

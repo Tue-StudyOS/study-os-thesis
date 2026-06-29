@@ -14,7 +14,8 @@ Turn evidence from a deep student profile, papers, and chair matches into precis
 3. Read `references/research-proposal-rubric.md` before finalizing proposals.
 4. Generate 2-4 proposal sketches, each narrow enough to become a first supervisor conversation.
 5. For each proposal, state the research question, motivation, method, expected evidence, feasibility assumptions, required background, advisor fit, and first validation step.
-6. Label uncertainty and avoid presenting proposals as official open topics.
+6. Label the evidence status for each proposal: external posting/snippet-derived lead, research-area conversation starter, or feasibility hypothesis requiring verification.
+7. Label uncertainty and avoid presenting proposals as official open topics.
 
 ## Output
 
@@ -25,6 +26,7 @@ For each proposal include:
 - motivation from cited evidence
 - possible methods/data/evaluation
 - fit to chair/person
+- evidence status: external posting/snippet-derived lead, research-area conversation starter, or feasibility hypothesis
 - prerequisites
 - feasibility risks and how to de-risk them
 - first question to ask in a meeting

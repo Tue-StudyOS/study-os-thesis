@@ -12,7 +12,7 @@ If the profile is shallow, stop before search and continue with `build-student-p
 
 One question and one answer are not enough for normal use. After every student reply, reflect what became clearer, reassess the profile, and continue with the next most important missing aspect until the profile supports the same quality of matching expected by the university-thesis workflow.
 
-The target behavior is a study-advising conversation, not a narrow search script. The agent should summarize intermediate evidence, infer research taste carefully, and ask deeper follow-ups about project ownership, tools, evaluation style, disliked work, and domain constraints.
+The target behavior is a study-advising conversation, not a narrow search script. In real use, the profile phase may take many turns or roughly 30-60 minutes before generation. The agent should summarize intermediate evidence, infer research taste carefully, and ask deeper follow-ups about project ownership, tools, evaluation style, disliked work, domain constraints, and tradeoffs.
 
 Before any LinkedIn/company search, university/chair ranking, or search-parameter checklist, the profile should cover:
 
@@ -22,6 +22,7 @@ Before any LinkedIn/company search, university/chair ranking, or search-paramete
 - practical projects, work experience, research experience, or substantial assignments
 - technical skills, tools, frameworks, methods, and implementation comfort
 - preferred thesis style, such as empirical ML, systems/engineering, robotics experimentation, theory, or scientific analysis
+- nuanced tradeoffs, such as safe scope vs. open-ended research, university-led vs. company-led thesis, familiar tools vs. new tools, and engineering output vs. research insight
 - constraints and no-gos
 - external-thesis filters: location/radius, remote/hybrid/on-site preference, sector exclusions, and must-have or must-avoid technologies
 
@@ -108,4 +109,5 @@ Return:
 3. Company lane ranked shortlist with each posting's scorecard, matched profile evidence, evidence tier, access date, visible posting date, rationale, and confidence.
 4. Excluded or not-recommended company postings with exact reasons tied to the hard exclusion criteria.
 5. Cross-lane comparison and next actions.
-6. Verification checklist focused on university contact preparation and company-thesis readiness: open status, start date, compensation/workload, academic supervision, university-company process, data access, confidentiality, reportability, reproducible tooling, and evaluation metric.
+6. Proposal sketches, when requested, each labeled as `external posting/snippet-derived lead`, `university research-area conversation starter`, or `hybrid/external feasibility hypothesis`.
+7. Verification checklist focused on university contact preparation and company-thesis readiness: open status, start date, compensation/workload, academic supervision, university-company process, data access, confidentiality, reportability, reproducible tooling, and evaluation metric.
