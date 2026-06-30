@@ -253,8 +253,7 @@ Ein fest formulierter Hinweis macht **drei Dinge ehrlich**:
    nicht „keine Chance".
 2. Konkrete Outreach-Anleitung je nach Firmengröße (siehe §7).
 3. **Das Backbone ist bewusst unvollständig** — neue Startups, Nischenfirmen und Quereinstiege
-   fehlen evtl. Der Studierende soll selbst breiter suchen (`"{Thema}" BW unternehmen`) und
-   seinen Betreuer nach Firmen fragen.
+   fehlen evtl.
 
 ---
 
