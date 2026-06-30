@@ -95,16 +95,18 @@ using the query skeletons in §4:
   Use the contact queries from §4.3. Never infer or guess a contact name.
 - **2d — Recency evidence:** confirm R&D activity from 2022 or later. Use the recency
   queries from §4.4. Flag evidence older than 3 years as stale.
-- **2e — Existence / activity check:** open the company's main domain and confirm it is
-  still active. Check: page reachable (not 404 or parked), careers or research section
-  exists, at least one signal (news, job posting, publication, press release) from 2024
-  or later. If the company appears inactive, acquired, or renamed, mark the entry
+- **2e — Existence / activity check AND URL verification (FIRST CHECK):** open the company's main 
+  domain and confirm it is still active. Check: page reachable (not 404 or parked), careers or 
+  research section exists, at least one signal (news, job posting, publication, press release) from 
+  2024 or later. If the company appears inactive, acquired, or renamed, mark the entry
   `⚠ existence not confirmed — verify before outreach` and rank it last. Do not silently drop it.
+  **Record the status of every URL you open: reachable, 404, redirect, or parked.** This is the 
+  first verification pass.
 
 If a company's main domain is not indexed (`site:` returns nothing), use the fallback
 queries from §4.5 before concluding the entry has weak web presence.
 
-### Step 5 — Apply quality filters and dedup
+### Step 5 — Apply quality filters, dedup, and URL re-verification (SECOND CHECK)
 
 Apply the quality filters from
 [`references/company-search-strategy.md` §5](references/company-search-strategy.md):
@@ -118,6 +120,13 @@ Apply the quality filters from
   If not, add `⚠ web presence not confirmed — verify before outreach`.
 - Dedup: if the backbone and a live search both surface the same company unit, merge into
   one entry; do not create two entries for the same R&D team.
+
+**URL Verification (SECOND CHECK — before final output):** Before including any contact URL, 
+careers portal link, or R&D team page in the output, **open it again and verify it is still 
+reachable**. Record the result (reachable / 404 / redirect / parked). Any URL that was reachable 
+in Pass 2 but unreachable here must be marked with `⚠ contact URL not confirmed — verify before 
+use` in the output and deprioritized (rank it lower than verified URLs). Never omit the URL — 
+just annotate the problem so the student can attempt it anyway.
 
 ### Step 6 — Final no-go check
 
@@ -185,7 +194,10 @@ Produce a **map of options** grouped by interest dimension (not by company secto
     page, with URL and date
   - `active program` — careers page mentions Abschlussarbeiten generally; no open position
     listed; program likely active
-  - `unclear` — no public signal found; proactive outreach required
+  - `unclear` — no public signal found; proactive outreach required. Include a size-aware 
+    guidance: for **corporates** (Bosch, SAP, ZF, etc.), suggest checking the careers portal 
+    and following up in 2 weeks if needed. For **startups and SMEs**, recommend **direct R&D 
+    team inquiry** as faster and more effective (no HR queue).
 - **Thesis coordinator / contact** — named person only when confirmed on the company's own
   public page; never inferred or guessed; omit if not confirmed
 
@@ -200,9 +212,12 @@ Produce a **map of options** grouped by interest dimension (not by company secto
 > "This map covers BW companies that publicly indicate R&D activity in your areas, based on a
 > curated backbone (as of [backbone date]) and live web enrichment. Most companies do NOT
 > publicize open Masterarbeit positions — a 'thesis signal: unclear' does not mean there is
-> no opening. For all entries marked 'unclear', proactive outreach (careers portal or direct
-> R&D contact) is the recommended next step. The backbone is necessarily incomplete; new
-> startups and divisions not yet in the list are a known gap."
+> no opening. For entries marked 'unclear': contact the careers portal for large corporates
+> (follow up in 2 weeks if needed), or reach out directly to the R&D team at startups/SMEs
+> (faster and more likely to get a response). The backbone is necessarily incomplete; new
+> startups, emerging divisions, and niche companies not yet in the list are a known gap.
+> If your profile is highly specialized, consider searching for '[your topic] BW unternehmen'
+> or asking your advisor for companies they know directly."
 
 ---
 
@@ -214,9 +229,11 @@ Produce a **map of options** grouped by interest dimension (not by company secto
 - **Never invent thesis openings, contact names, team sizes, or R&D topics.**
 - **Never invent or guess URLs.** Every URL in the output must have been retrieved and
   confirmed reachable during this run. If a URL was not opened and verified, do not include it.
-- **Every URL is verified twice:** once when first found (Pass 1 backbone or Pass 2 enrichment)
-  and once in the existence/activity check (sub-pass 2e). A URL that was not reachable on
-  either check must not appear in the output without a `⚠ URL not confirmed` flag.
+- **Every URL is verified twice:** (1) when first found (Pass 2 enrichment, sub-pass 2e) and 
+  (2) again immediately before final output (Step 5 re-verification). A URL that was reachable 
+  in Pass 2 but unreachable at Step 5 must appear in the output with a `⚠ contact URL not 
+  confirmed — verify before use` flag and be ranked last (below confirmed URLs). A URL that was 
+  never reachable must not appear in the output.
 - **Never name a thesis coordinator or R&D contact unless they appear on the company's own
   public page.** Company organizational information is less structured than university faculty
   pages — inferring from a LinkedIn profile or a conference attendance list is not sufficient.
@@ -290,7 +307,12 @@ Before delivering the option map, verify:
 - [ ] Startups with unverifiable web presence carry the `⚠ web presence not confirmed` flag
 - [ ] No job-board aggregator was used as a thesis source
 - [ ] The output is grouped by student interest dimension, not by backbone section
-- [ ] The map-level coverage caveat is present at the top of the output
+- [ ] The map-level coverage caveat is present at the top of the output, including guidance 
+      for size-specific outreach (corporates vs. startups) and the acknowledgment of backbone gaps
 - [ ] No no-go entry was silently dropped (discards are noted; ambiguous cases are annotated)
-- [ ] Every URL in the output was opened and confirmed reachable during this run (no invented or unverified URLs)
-- [ ] Every URL was checked at least twice: once when found, once in the existence check (2e)
+- [ ] Every URL in the output was opened and confirmed reachable twice: (1) in Pass 2 (sub-pass 2e) 
+      and (2) again in Step 5 before final output. Any URL unreachable at Step 5 is marked with 
+      `⚠ contact URL not confirmed` and ranked last
+- [ ] URLs that were never reachable are not included in the output at all
+- [ ] "Thesis signal: unclear" entries include concrete next-step guidance (e.g., "Try the careers 
+      portal at [URL]" for corporates, or "Email r-and-d@company.com directly" for startups)

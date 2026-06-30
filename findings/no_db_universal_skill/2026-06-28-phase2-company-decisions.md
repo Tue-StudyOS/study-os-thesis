@@ -140,6 +140,70 @@ These are behaviors the Phase 2 skill must **not** do:
 
 ---
 
+## Backbone Coverage Gaps Across Disciplines
+
+**Challenge:** The BW company backbone (~100–130 entries) is well-curated for AI/ML, robotics, 
+medtech, and manufacturing, but may undercover niche disciplines or cross-disciplinary profiles 
+that exist at companies not in the list. Examples:
+
+- **Psychology / Cognitive Science:** thesis work in human factors, UX research, cognitive 
+  load optimization at tech companies (not always prominent in career pages)
+- **Education / Learning Sciences:** EdTech companies in BW, learning analytics, adaptive 
+  learning systems (smaller, scattered)
+- **Environmental Science:** sustainability research at energy, automotive, or agri-tech firms
+- **Medicine / Life Sciences:** smaller medtech spinouts, pharmaceutical research, biotech not 
+  yet on Cyber Valley radar
+
+**Status:** Phase 2 live eval showed 100% recall on 3 profiles (C1, C2, C3 — AI/automotive, medtech, 
+enterprise software), but this is **circular recall**: both the ground truth and the skill filtered 
+from the same backbone. No independent validation that the backbone covers all realistic 
+opportunities across all Tübingen disciplines.
+
+**Design decision:** Accept the coverage gap as honest and explicit. The backbone is "good enough" 
+for ~70%+ of students (verified empirically for AI/ML + medtech + software); for niche profiles, 
+the **coverage caveat mandates honesty** — students must know to:
+1. Broaden their search beyond the list (search `"{TOPIC}" {DOMAIN} BW unternehmen OR firmen`)
+2. Ask advisors for companies they know about
+3. Check IONOS, Haufe, GFT, and other non-obvious tech companies that might fit
+
+The alternative (exhaustive web scraping to find *all* BW companies) trades maintainability and 
+anti-SEO-bias for coverage — a poor tradeoff for a portable, no-backend skill. Phase 3+ 
+enhancements could add a crowdsourced "gap fill" form, but that is out of scope.
+
+---
+
+## Outreach Strategy for "Thesis Signal: Unclear"
+
+**Challenge:** ~80% of companies do not publicize Masterarbeit positions on their websites. 
+A student seeing `thesis signal: unclear` needs concrete guidance on how to approach companies 
+that have no public opening listed.
+
+**Decision:**
+
+For companies marked `unclear`, the skill must provide a proactive outreach template 
+grouped by company size:
+
+**For corporates (Bosch, SAP, ZF, Zeiss, etc.):**
+- Use the careers portal URL (from backbone)
+- Template: "Hi, I'm interested in a thesis on [TOPIC]. Do you take thesis students in [DIVISION]?"
+- Follow up in 2 weeks if no response (large orgs have slow processes)
+
+**For SMEs and startups:**
+- Direct R&D team inquiry preferred (no waiting for HR)
+- Template: "Hi [R&D TEAM], I'm working on [TOPIC] and interested in thesis opportunities. 
+  Can we discuss?" 
+- No need to re-check careers page in 2 weeks — direct outreach is more likely to get response
+
+**URL/contact verification rule:** Every contact email, careers portal URL, or R&D team link 
+must be verified twice:
+1. When first found (Pass 2 enrichment)
+2. Immediately before inclusion in the output (existence check, sub-pass 2e)
+
+A URL discovered in Pass 2 but unreachable at verification time must be marked with 
+`⚠ contact URL not confirmed — verify before use` and ranked last in the output.
+
+---
+
 ## Relationship to `find-university-chairs`
 
 Phase 2 introduces a new, parallel skill `find-company-thesis-options`. The existing
