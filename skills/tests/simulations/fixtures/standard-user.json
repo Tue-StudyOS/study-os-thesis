@@ -11,7 +11,7 @@
     },
     {
       "role": "assistant",
-      "content": "Hallo Ben, ich helfe dir gern. Bevor ich Themen oder Lehrstühle vorschlage, brauche ich ein kurzes Profil: Welche ML-Kurse oder Projekte mochtest du, welche Tools kannst du, und was willst du in der Arbeit vermeiden?"
+      "content": "Hallo Ben, ich helfe dir gern. Bevor ich Themen oder Lehrstühle vorschlage, bauen wir ein echtes Profil auf; ich gehe dabei von Tübingen aus und frage nicht nach der Uni. Was hat dein Interesse an ML konkret ausgelöst, und welcher Kurs oder welches Projekt war bisher der stärkste Hinweis darauf?"
     },
     {
       "role": "user",
@@ -19,7 +19,7 @@
     },
     {
       "role": "assistant",
-      "content": "Danke. Ich sehe bisher: Deep Learning, probabilistische ML, Python/PyTorch, Zeitreihenprojekt, empirische statt theoretische Arbeit. Was reizt dich mehr: echte Daten analysieren, neue Modelle bauen, bestehende Methoden vergleichen, oder ein System/Tool entwickeln?"
+      "content": "Danke, das gibt einen ersten Kern: Deep Learning, probabilistische ML, Python/PyTorch, Zeitreihenprojekt und eher empirisch als theoretisch. Für Empfehlungen fehlt noch Tiefe zur Arbeit selbst. Was genau hast du in dem Zeitreihenprojekt gemacht: Datenaufbereitung, Modelltraining, Evaluation, Fehleranalyse, oder etwas anderes?"
     },
     {
       "role": "user",
@@ -27,7 +27,7 @@
     },
     {
       "role": "assistant",
-      "content": "Das klingt nach einer möglichen Richtung: empirische Evaluation von Deep-Learning- oder probabilistischen Methoden auf öffentlichen Gesundheits-, Sensor- oder Zeitreihendaten. Bevor wir Betreuer ranken, sollten wir ein bis zwei Paper oder Chair-Seiten als Evidenz prüfen und klären, ob du eher Bachelor-nahe Umsetzung oder forschungsnähere Analyse willst."
+      "content": "Das klingt nach einem Geschmack für reale Signale und Methodenvergleich, mit öffentlichen Daten als pragmatischer Rahmen. Ich würde noch nicht ranken, weil Arbeitsstil und Tiefe fehlen. Was würde dich in so einer Arbeit mehr zufrieden machen: eine saubere wissenschaftliche Analyse mit starken Metriken, ein neues Modell, oder ein gut gebautes Tool/Pipeline?"
     },
     {
       "role": "user",
@@ -35,7 +35,7 @@
     },
     {
       "role": "assistant",
-      "content": "Dann ist ein realistischer nächster Schritt: ein schmales Evaluationsprojekt statt eine neue große Methode. Dein Profil passt zu einer Masterarbeit über robuste Methodenauswertung auf öffentlichen Zeitreihen-, Sensor- oder Gesundheitsdaten. Für konkrete Advisor-Matches sollten wir nun aktuelle Paper und offizielle Chair-Seiten prüfen; dabei dürfen wir keine offenen Themen oder Betreuungskapazitäten voraussetzen."
+      "content": "Das schärft die These: forschungsnahe, aber realistisch in sechs Monaten, eher schmale Evaluation als großes Methodenbauprojekt. Für belastbare Matches fehlen noch deine Arbeitserfahrung und Betreuungsvorlieben. Hast du Praktika, HiWi-Arbeit, Werkstudentenjobs oder größere Projekte gemacht, und welche Aufgaben mochtest du dort besonders oder gar nicht?"
     }
   ],
   "completion_reason": "fixture_complete"

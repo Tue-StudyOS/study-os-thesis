@@ -426,15 +426,15 @@ def metric_specs() -> list[dict[str, str]]:
     return [
         {
             "name": "workflow_compliance",
-            "criteria": "Evaluate whether the assistant follows the thesis skill workflow across the whole conversation: profile-building first, then downstream suggestions only when enough profile context exists.",
+            "criteria": "Evaluate whether the assistant follows the thesis skill workflow across the whole conversation: deep profile-building first, then downstream suggestions only when comprehensive profile context exists.",
         },
         {
             "name": "profile_depth",
-            "criteria": "Evaluate whether the conversation captures interests, courses, skills, tools, experience, constraints, no-gos, research taste, and matching keywords where possible.",
+            "criteria": "Evaluate whether the conversation captures interests, courses, skills, tools, project/work ownership, research skills, working style, supervision preferences, career goals, constraints, no-gos, research taste, and matching keywords where possible.",
         },
         {
             "name": "shallow_profile_guardrail",
-            "criteria": "Evaluate whether the assistant avoids premature chair rankings or confident thesis proposals when the student profile is still shallow.",
+            "criteria": "Evaluate whether the assistant avoids premature chair rankings, company leads, paper-based directions, or confident thesis proposals when the student profile is shallow or merely moderate.",
         },
         {
             "name": "memory_retention",
@@ -442,7 +442,7 @@ def metric_specs() -> list[dict[str, str]]:
         },
         {
             "name": "question_quality",
-            "criteria": "Evaluate whether follow-up questions are small, relevant, targeted, and easy for the student to answer.",
+            "criteria": "Evaluate whether follow-up questions are small, relevant, targeted, and easy for the student to answer, and whether the assistant reflects what was learned, interprets it, names the key gap, and asks one focused next question.",
         },
         {
             "name": "evidence_discipline",
@@ -450,7 +450,7 @@ def metric_specs() -> list[dict[str, str]]:
         },
         {
             "name": "student_usefulness",
-            "criteria": "Evaluate whether the conversation ends with a practical next step that fits the student's current profile depth.",
+            "criteria": "Evaluate whether the conversation ends with a practical next step that fits the student's current profile depth; for shallow or moderate profiles, this should be another high-signal discovery question rather than a recommendation.",
         },
         {
             "name": "user_simulation_realism",

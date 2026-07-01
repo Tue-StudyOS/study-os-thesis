@@ -11,7 +11,7 @@
     },
     {
       "role": "assistant",
-      "content": "Hallo Ben. Ich starte mit Profilaufbau, damit spätere Vorschläge nicht generisch werden. Welche ML-Themen, Kurse, Projekte, Tools, Arbeitsweisen und No-gos sind für dich wichtig?"
+      "content": "Hallo Ben. Ich starte mit Profilaufbau, damit spätere Vorschläge nicht generisch werden. Ich gehe von Tübingen aus; wichtig sind jetzt deine konkreten Signale. Was hat dein ML-Interesse ausgelöst, und welche Kurse oder Projekte haben dir gezeigt, dass du daran länger arbeiten möchtest?"
     },
     {
       "role": "user",
@@ -19,7 +19,7 @@
     },
     {
       "role": "assistant",
-      "content": "Ich halte fest: empirisches Deep Learning, Representation Learning, Computer Vision, Evaluation/Generalisierung, PyTorch, Self-Supervised-Learning-Seminar, kein reines Leaderboard-Tuning, keine reine Theorie und wenig Hardware. Welche Art Ergebnis würde dich am Ende zufrieden machen: robuste Evaluation, neue Methode, Analyse/Interpretierbarkeit, oder ein anwendungsnaher Prototyp?"
+      "content": "Ich halte fest: empirisches Deep Learning, Representation Learning, Computer Vision, Evaluation/Generalisierung, PyTorch, Self-Supervised-Learning-Seminar, kein reines Leaderboard-Tuning, keine reine Theorie und wenig Hardware. Das ist ein guter Kern, aber noch keine Advisor-Reife. Was genau hast du im Bildklassifikationsprojekt selbst verantwortet: Daten, Modellcode, Training, Evaluation, Fehleranalyse oder Bericht?"
     },
     {
       "role": "user",
@@ -27,7 +27,7 @@
     },
     {
       "role": "assistant",
-      "content": "Das schärft die Richtung deutlich: Evaluation von Representation Learning unter Distribution Shift oder Label-Knappheit, bevorzugt mit öffentlichen Bilddaten. Ich würde jetzt noch Zeitrahmen, gewünschte Betreuungskultur und mögliche Chair-Präferenzen klären, bevor wir konkrete Betreuer oder Paper als Evidenz heranziehen."
+      "content": "Das schärft den Forschungsgeschmack: Evaluation von Representation Learning unter Shift oder Label-Knappheit, bevorzugt mit öffentlichen Bilddaten. Für die nächste Profilstufe möchte ich verstehen, wie du arbeitest. Magst du eher eigenständiges Experimentieren mit gelegentlichem Feedback, enge Betreuung, Kollaboration im Team, oder klare technische Aufgaben mit definierten Meilensteinen?"
     },
     {
       "role": "user",
@@ -35,7 +35,7 @@
     },
     {
       "role": "assistant",
-      "content": "Vorläufiges Profil: Masterarbeit in empirischem ML, PyTorch, CV und self-supervised representation learning; bevorzugt robuste Evaluation unter Shift/Label-Knappheit auf öffentlichen Daten; sechs Monate; regelmäßiges Feedback; methodisch starke ML-Gruppe mit real-data Bezug. Nächster Schritt: passende Paper und Chair-Seiten prüfen, ohne anzunehmen, dass konkrete Themen oder Kapazitäten offen sind."
+      "content": "Vorläufig sehe ich empirisches ML mit PyTorch, CV/self-supervised learning, robuste Evaluation unter Shift/Label-Knappheit, öffentliche Daten, sechs Monate und Wunsch nach regelmäßigem Feedback. Das ist stark, aber ich würde vor Empfehlungen noch deine Berufs- oder Forschungserfahrung und langfristige Richtung klären. Hast du HiWi-Arbeit, Praktika, Jobs oder Open-Source-Erfahrung, und willst du mit der Thesis eher Richtung Forschung, Industrie-ML oder noch offen explorieren?"
     }
   ],
   "completion_reason": "fixture_complete"

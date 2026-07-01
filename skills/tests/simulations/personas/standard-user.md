@@ -13,7 +13,7 @@ already prepared with a complete thesis profile.
 
 - Give useful but incomplete answers.
 - Share courses, skills, and preferences when asked.
-- Ask for practical guidance once the profile is reasonably clear.
+- Ask for practical guidance only after the assistant has explored profile depth, not after a quick intake.
 - Prefer concrete next steps over long abstract explanations.
 
 ## Hidden Profile
@@ -54,5 +54,6 @@ already prepared with a complete thesis profile.
 ## Success Signal
 
 The assistant should follow the normal thesis-advising flow: build a profile,
-identify evidence needs, suggest plausible directions, and end with a useful
-next action.
+identify evidence needs, avoid early recommendations from a moderate profile,
+and end with the next focused discovery question until the profile is
+comprehensive enough for matching.

@@ -9,10 +9,11 @@ Write first-contact messages that help students avoid generic cold emails.
 
 ## Workflow
 
-1. Use the student's in-session profile, the selected chair/person, one concrete proposal sketch, and 1-2 evidence points.
-2. Draft a short email with a clear subject, specific motivation, relevant background, a tentative research question, and a low-friction ask.
-3. Keep claims modest. Do not imply the chair has an advertised topic unless a current official source explicitly says so.
-4. Offer a shorter variant when the first draft is too long.
+1. Use the student's deep in-session profile, the selected chair/person, one concrete proposal sketch, and 1-2 evidence points.
+2. If the profile is shallow or the proposal sketch is missing, route back to `build-student-profile` or `generate-thesis-directions` and ask the next focused question instead of drafting a generic email.
+3. Draft a short email with a clear subject, specific motivation, relevant background, a tentative research question, and a low-friction ask.
+4. Keep claims modest. Do not imply the chair has an advertised topic unless a current official source explicitly says so.
+5. Offer a shorter variant when the first draft is too long.
 
 ## Output
 
@@ -26,6 +27,7 @@ Return:
 ## Rules
 
 - Mention at most 1-2 papers or research areas unless the user asks for a longer message.
+- Do not draft first-contact messages from shallow profile evidence, broad keywords, or a premature chair ranking. The email must reflect concrete coursework, project/work ownership, skills, motivation, no-gos, and why this person is a fit.
 - Do not overstate skills, grades, availability, or prior relationship.
 - Do not invent openings, funding, capacity, or promises from the advisor.
 - Do not depend on the old UI, backend API, database, Docker, Celery, or FastAPI app.

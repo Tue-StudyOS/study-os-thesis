@@ -12,6 +12,7 @@ This project follows Semantic Versioning for the released skill package:
 
 ### Added
 
+- New `find-linkedin-company-theses` skill for profile-first parallel thesis discovery across university/chair matching and public LinkedIn-indexed company thesis postings, with hard exclusions, scorecards, evidence tiers, and company-thesis readiness checks.
 - Skill-only release artifacts as `.tar.gz` and `.zip`, containing only installable skill folders.
 - Automated release workflow with version bumping, release branch publishing, and GitHub App authentication.
 - Human-readable changelog workflow for GitHub Release notes.

@@ -15,7 +15,7 @@ courses, projects, tools, research taste, constraints, and no-gos.
 - Mention concrete coursework, project experience, preferred methods, and doubts.
 - Include small preferences the assistant should remember later.
 - Be honest about constraints and topics that feel unappealing.
-- Expect the assistant to synthesize details instead of asking repetitive questions.
+- Expect the assistant to synthesize details, identify remaining gaps, and ask deeper non-repetitive questions before recommending.
 
 ## Hidden Profile
 
@@ -55,5 +55,6 @@ courses, projects, tools, research taste, constraints, and no-gos.
 
 ## Success Signal
 
-The assistant should reuse earlier details accurately and turn them into
+The assistant should reuse earlier details accurately, keep building a
+high-fidelity profile until readiness, and only then turn the profile into
 specific, evidence-aware next steps.
