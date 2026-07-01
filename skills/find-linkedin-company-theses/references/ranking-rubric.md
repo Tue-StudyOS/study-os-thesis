@@ -1,6 +1,6 @@
-# LinkedIn Company Thesis Ranking Rubric
+# External Company Thesis Ranking Rubric
 
-Use this rubric to filter and rank public LinkedIn-indexed Bachelor and Master thesis opportunities at companies. Keep the scoring qualitative and evidence-based; do not invent facts that are not visible in the result or public page.
+Use this rubric to filter and rank public provider-indexed Bachelor and Master thesis opportunities at companies. LinkedIn public search, StepStone, and company career pages are discovery providers, not guarantees of fit or availability. Keep the scoring qualitative and evidence-based; do not invent facts that are not visible in the result or public page.
 
 ## Profile-First Gate
 
@@ -14,7 +14,7 @@ One question and one answer are not enough for normal use. After every student r
 
 The target behavior is a study-advising conversation, not a narrow search script. In real use, the profile phase may take many turns or roughly 30-60 minutes before generation. The agent should summarize intermediate evidence, infer research taste carefully, and ask deeper follow-ups about project ownership, tools, evaluation style, disliked work, domain constraints, and tradeoffs.
 
-Before any LinkedIn/company search, university/chair ranking, or search-parameter checklist, the profile should cover:
+Before any provider/company search, university/chair ranking, or search-parameter checklist, the profile should cover:
 
 - confirmed thesis level or target degree program
 - concrete motivation, interests, and research taste
@@ -42,11 +42,33 @@ Timing, language, and university-company registration details are important veri
 Use this skill as the company lane in a dual thesis-discovery workflow:
 
 - University/chair lane: use `find-university-chairs` and `match-thesis-advisors` to identify relevant chairs, labs, supervisors, research areas, recent evidence, caveats, and proposal hooks.
-- Company lane: use public LinkedIn-indexed and company-career evidence to identify explicit Bachelor or Master thesis postings at companies.
+- Company lane: use public provider-indexed evidence from LinkedIn public search, StepStone, and company-career pages to identify explicit Bachelor or Master thesis postings at companies.
 - Shared basis: both lanes must use the same in-session student profile, constraints, no-gos, and skill evidence.
 - Output: compare the best university/chair options and company postings side by side. Explain which lane has stronger evidence, which has higher feasibility risk, and which next action fits the student's profile.
 
 Do not treat university research areas as confirmed open thesis topics. Do not treat company postings as supervision commitments beyond the visible evidence.
+
+## Provider Fetching And Candidate Schema
+
+Build a query matrix from the confirmed thesis level, region/radius, topic
+synonyms, sector exclusions, must-have technologies, and must-avoid
+technologies. Use `references/provider-fetching.md` for provider-specific query
+patterns and StepStone fixture expectations.
+
+Normalize every possible result with `references/candidate-schema.md` before
+ranking or exclusion. Each candidate must carry a `provider`, `source_url`,
+`title`, `company`, `location`, `thesis_level`, `job_type`, `visible_date`,
+`evidence_text`, `evidence_tier`, `matched_keywords`, `exclusion_reason`,
+`mirror_url`, and `access_date`.
+
+Treat provider result counts as discovery evidence only. A StepStone or
+LinkedIn count can justify more inspection, but it must not be presented as a
+shortlist item or availability proof.
+
+For Bachelor students, search only Bachelorarbeit/Bachelor thesis and
+level-compatible Abschlussarbeit/final thesis queries. For Master students, search only Masterarbeit/Master thesis and level-compatible Abschlussarbeit/final
+thesis queries. Do not mix Bachelorarbeit and Masterarbeit unless the student
+explicitly asks for both.
 
 ## Hard Exclusion Criteria
 
@@ -56,6 +78,7 @@ Exclude a result from the ranked shortlist when any of these apply:
 - The posting thesis level conflicts with the student's confirmed level, such as Masterarbeit-only for a Bachelor student or Bachelorarbeit-only for a Master student.
 - It is an ordinary job, internship, trainee role, Werkstudent role, working-student role, student assistant role, or similar non-thesis employment format.
 - The sector or application area conflicts with the student's excluded sectors or no-gos.
+- The topic visibly conflicts with the student's target direction or explicit no-gos.
 - The location and work mode clearly violate the student's constraints, such as full on-site work outside the accepted radius.
 - The core stack is dominated by must-avoid technologies or blocks the student's required working style.
 - The visible evidence is too thin to verify that a thesis opportunity exists.
@@ -86,23 +109,35 @@ Rank by hard exclusions first, then by profile fit, thesis contribution, prefere
 
 Label each result with the strongest available evidence tier:
 
-- `A`: Opened public LinkedIn page or company career page confirms the thesis details.
-- `B`: Search snippet visibly confirms a LinkedIn-indexed thesis posting, but the page was not opened.
-- `C`: Indirect public result suggests a thesis posting, but key details are missing.
+- `A`: Opened public provider page or company career page confirms the thesis details.
+- `B`: Search snippet visibly confirms a provider-indexed thesis posting, but the page was not opened.
+- `C`: Indirect public result, provider count, or listing category suggests a thesis posting, but key details are missing.
 - `D`: Stale, inaccessible, or ambiguous evidence; do not rank unless the user explicitly asks for a low-confidence lead.
 
 Use absolute access dates. Use `date unclear` when no posting date is visible.
 
 ## Company-Career Mirror Search
 
-LinkedIn snippets can be stale or incomplete. For promising results, use normal web search to look for public company mirrors when browsing is available:
+LinkedIn and StepStone snippets can be stale or incomplete. For promising
+results, use normal web search to look for public company mirrors when browsing
+is available:
 
 - `"<title>" "<company>" Abschlussarbeit`
 - `"<title>" "<company>" Masterarbeit`
 - `"<title>" "<company>" thesis`
 - `site:<company-domain> <title>`
 
-Prefer company career pages over search snippets when they confirm the same opportunity. Do not use a LinkedIn login or authenticated scraping.
+Prefer company career pages over search snippets when they confirm the same
+opportunity. Keep the discovery provider and original source URL in the
+candidate record, and add the confirming page as `mirror_url`. Do not use a
+LinkedIn login, StepStone login, provider API, or authenticated scraping.
+
+## No Qualifying Results
+
+If no candidate survives hard exclusions, say `no qualifying results after
+searched providers`, name the providers and query families searched, and list
+the most important excluded or inconclusive evidence. Do not say or imply that
+no postings exist anywhere.
 
 ## Output Shape
 
@@ -110,8 +145,8 @@ Return:
 
 1. Shared profile signals used for both lanes.
 2. University/chair lane shortlist with research-fit evidence, caveats, and proposal/contact hooks.
-3. Company lane ranked shortlist with each posting's scorecard, matched profile evidence, evidence tier, access date, visible posting date, rationale, and confidence.
-4. Excluded or not-recommended company postings with exact reasons tied to the hard exclusion criteria, including wrong thesis level and Werkstudent/working-student exclusions.
+3. Company lane ranked shortlist with each posting's provider, source URL, mirror URL if found, scorecard, matched profile evidence, evidence tier, access date, visible posting date, rationale, and confidence.
+4. Excluded or not-recommended company postings with exact reasons tied to the hard exclusion criteria, including wrong thesis level, not a thesis, generic job/internship, Werkstudent/working-student role, topic mismatch, location/work-mode mismatch, excluded sector, must-avoid technology, weak profile match, and insufficient evidence.
 5. Cross-lane comparison and next actions.
 6. Proposal sketches, when requested, each labeled as `external posting/snippet-derived lead`, `university research-area conversation starter`, or `hybrid/external feasibility hypothesis`.
 7. Verification checklist focused on university contact preparation and company-thesis readiness: open status, start date, compensation/workload, academic supervision, university-company process, data access, confidentiality, reportability, reproducible tooling, and evaluation metric.

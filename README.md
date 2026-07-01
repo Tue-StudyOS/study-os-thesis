@@ -27,7 +27,7 @@ skills/
 ├── find-university-chairs/        matching chairs from bundled data + live web search
 ├── match-thesis-advisors/         supervisors ranked by fit + evidence
 ├── find-recent-papers/            relevant papers as evidence
-├── find-linkedin-company-theses/  company thesis lane parallel to university/chair search
+├── find-linkedin-company-theses/  external company thesis lane via public providers
 ├── generate-thesis-directions/    concrete thesis directions + proposal hooks
 ├── draft-thesis-contact/          first-contact email
 ├── update-openalex-paper-index/   maintenance: refresh bundled OpenAlex data

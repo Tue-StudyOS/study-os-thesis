@@ -77,26 +77,44 @@ University/chair evidence:
    outside the student's home university, supervision process must be verified.
 
 Company/external evidence:
-1. Mercedes-Benz Careers public snippet:
+1. Mercedes-Benz Careers public snippet, provider `company_careers`:
    "Abschlussarbeit / Bachelorarbeit: Reinforcement Learning for automated
    driving simulation", Stuttgart/Sindelfingen, hybrid possible, Python and
    simulation, evaluation of driving scenarios. Visible posting date unclear.
    Evidence tier B because only the snippet is available in this eval.
-2. Bosch Careers public snippet:
+   Source URL: https://example.invalid/mercedes-bachelor-rl. Mirror URL:
+   none found in fixture.
+2. StepStone public snippet, provider `stepstone`:
+   "Bachelorarbeit: Safe reinforcement learning in autonomous driving
+   simulation", Stuttgart, Python, simulation, scenario evaluation, posted date
+   unclear. Evidence tier B because only the snippet is available in this eval.
+   Source URL: https://example.invalid/stepstone-bachelor-safe-rl. Mirror URL:
+   https://example.invalid/company-careers-safe-rl.
+3. Bosch Careers public snippet, provider `company_careers`:
    "Masterarbeit: Trajectory prediction for automated driving", Stuttgart,
    Python/PyTorch, perception-heavy camera data. Visible posting date unclear.
    Evidence tier B. Caveat: master thesis and perception-heavy, likely not fit.
-3. Generic Robotics GmbH LinkedIn snippet:
+   Source URL: https://example.invalid/bosch-master-trajectory.
+4. Generic Robotics GmbH LinkedIn snippet, provider `linkedin_public`:
    "Working student robotics software, ROS, warehouse robots", Stuttgart.
    Evidence tier B. Caveat: working-student role, not a thesis, and conflicts
    with no general robotics.
-4. Medical AI Mobility Lab snippet:
+   Source URL: https://example.invalid/linkedin-working-student-robotics.
+5. Medical AI Mobility Lab StepStone snippet, provider `stepstone`:
    "Bachelorarbeit Deep Learning for medical time series", remote. Evidence
    tier C. Caveat: medicine sector, excluded.
+   Source URL: https://example.invalid/stepstone-medical-ai.
+6. StepStone provider count, provider `stepstone`:
+   StepStone listing page says many "Bachelorarbeit Stuttgart" results exist,
+   but no visible result text is available for this fixture item. Evidence tier
+   C. Caveat: provider count only; it is discovery evidence, not a candidate.
 
 Required generated output:
 - A ranked university/chair lane with evidence and caveats.
 - A ranked external company thesis lane with included and excluded results.
+  Every company candidate must include provider label, source URL, mirror URL
+  when available, evidence tier, visible date, access date, and exact exclusion
+  reason when excluded.
 - At least two proposal sketches grounded in the student profile and the
   evidence: one university-led proposal and one external/company-led proposal.
 - Each proposal must include working title, research question, methods/data/
@@ -108,6 +126,10 @@ Required generated output:
   Masterarbeit-only leads as eligible proposals.
 - Werkstudent/working-student roles must be excluded completely from the
   external thesis lane even if the stack looks relevant.
+- Provider counts must not be ranked as postings. If no eligible company
+  postings survive in another run, the assistant must say "no qualifying
+  results after searched providers" rather than claiming no postings exist
+  anywhere.
 """
 
 
@@ -326,14 +348,16 @@ Pass/fail criteria:
 2. The assistant behaves like a thesis study advisor first, not a simple search engine.
 3. The assistant builds a deep enough profile before generating results.
 4. The assistant generates and evaluates a university/chair lane using the fixture evidence, with caveats that research areas are not confirmed open thesis topics.
-5. The assistant generates and evaluates an external/company thesis lane using the fixture evidence, includes the Mercedes-style bachelor thesis lead if supported, and excludes generic robotics, medicine, Werkstudent/working-student roles, and non-bachelor/perception-heavy mismatches with reasons.
+5. The assistant generates and evaluates an external/company thesis lane using the fixture evidence, includes the Mercedes-style bachelor thesis lead and the StepStone bachelor lead if supported, and excludes generic robotics, medicine, provider-count-only evidence, Werkstudent/working-student roles, and non-bachelor/perception-heavy mismatches with reasons.
 6. The assistant generates at least two proposal sketches, including one university-led and one external/company-led sketch.
 7. The proposal sketches are grounded in the student's prior knowledge and profile: RL/autonomous systems, automotive-only, Python/PyTorch/Gymnasium, simulation, reward design, evaluation metrics, no medicine, no general robotics, no heavy ROS/hardware.
 8. The assistant labels uncertainty, evidence tier/date, missing verification, and does not invent live web results, openings, supervision capacity, deadlines, salary, or company willingness.
-9. The assistant must not upgrade snippets into confirmed live availability; company leads should remain posting/snippet-derived until verified.
-10. Each proposal sketch labels its evidence status: external posting/snippet-derived lead, university research-area conversation starter, or hybrid/external feasibility hypothesis.
-11. Because the student is a Bachelor student, no Masterarbeit-only lead may be ranked as eligible or turned into a proposal.
-12. Working-student/Werkstudent roles must be fully excluded, not treated as adjacent thesis opportunities.
+9. The assistant includes provider labels, source URLs, mirror URLs when available, evidence tiers, visible dates, access dates, and exact exclusion reasons for company candidates.
+10. The assistant must not upgrade snippets into confirmed live availability; company leads should remain posting/snippet-derived until verified.
+11. Provider counts must be treated as discovery evidence only, not as recommendations or confirmed postings.
+12. Each proposal sketch labels its evidence status: external posting/snippet-derived lead, university research-area conversation starter, or hybrid/external feasibility hypothesis.
+13. Because the student is a Bachelor student, no Masterarbeit-only lead may be ranked as eligible or turned into a proposal.
+14. Working-student/Werkstudent roles must be fully excluded, not treated as adjacent thesis opportunities.
 
 Fixture evidence:
 {EVIDENCE_FIXTURE}

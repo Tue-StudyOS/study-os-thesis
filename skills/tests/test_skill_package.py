@@ -122,6 +122,8 @@ def test_student_facing_skills_reject_old_runtime_dependencies() -> None:
 def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> None:
     skill_text = (SKILLS_DIR / "find-linkedin-company-theses" / "SKILL.md").read_text(encoding="utf-8")
 
+    assert "Find External Company Theses" in skill_text
+    assert "LinkedIn public search, StepStone, and company career pages as providers" in skill_text
     assert "Use the full in-session student profile for processing and ranking, not only keyword matches." in skill_text
     assert "concrete liked/disliked courses and assignments" in skill_text
     assert "project/work/HiWi/internship evidence with role and ownership" in skill_text
@@ -149,29 +151,47 @@ def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> No
     assert "search and rank only postings compatible with that level" in skill_text
     assert "sectors or company types to exclude" in skill_text
     assert "normal web search tool" in skill_text
+    assert "Start with LinkedIn public search, StepStone, and company-career mirrors" in skill_text
     assert "Do not use a Markdown database" in skill_text
+    assert "StepStone account" in skill_text
+    assert "authenticated browser session, or provider API" in skill_text
     assert "references/ranking-rubric.md" in skill_text
+    assert "references/candidate-schema.md" in skill_text
+    assert "references/provider-fetching.md" in skill_text
     assert "profile-first gate" in skill_text
+    assert "query matrix" in skill_text
+    assert "provider labels" in skill_text
+    assert "candidate schema" in skill_text
     assert "parallel university/company comparison" in skill_text
+    assert "Treat provider result counts as discovery evidence, not recommendations." in skill_text
+    assert "site:stepstone.de/jobs Bachelorarbeit <skill> <city>" in skill_text
+    assert "site:stepstone.de/jobs Masterarbeit <skill> <city>" in skill_text
+    assert "site:stepstone.de/jobs Abschlussarbeit <skill> <city>" in skill_text
     assert "Exclude ordinary jobs, internships, traineeships, Werkstudent roles, working-student roles" in skill_text
     assert "Exclude ordinary jobs, internships, traineeships, Werkstudent roles, working-student roles" in skill_text
     assert "eligible ranked shortlist and an excluded or not-recommended list" in skill_text
     assert "Do not let a strong technology match override hard mismatches" in skill_text
+    assert "topic mismatch" in skill_text
     assert "company-career mirror" in skill_text
     assert "Scorecard covering thesis level, profile fit, feasibility gap" in skill_text
-    assert "Evidence tier, evidence source, and access date" in skill_text
+    assert "Provider" in skill_text
+    assert "Source URL" in skill_text
+    assert "mirror URL" in skill_text
+    assert "Evidence tier, evidence source, provider label, and access date" in skill_text
+    assert "no qualifying results after searched providers" in skill_text
     assert "external posting/snippet-derived lead" in skill_text
     assert "university research-area conversation starter" in skill_text
     assert "hybrid/external feasibility hypothesis" in skill_text
-    assert "not a thesis, wrong thesis level, generic job/internship, Werkstudent/working-student role" in skill_text
+    assert "not a thesis, wrong thesis level, generic job/internship, Werkstudent/working-student role, topic mismatch" in skill_text
     assert "Act like a thesis-oriented study advisor first and a search assistant second." in skill_text
     assert "Treat company thesis search as a parallel complement to university/chair matching" in skill_text
-    assert "Do not turn a shallow request into a generic Google/LinkedIn search." in skill_text
+    assert "Do not turn a shallow request into a generic Google/LinkedIn/StepStone search." in skill_text
     assert "Do not treat a moderate profile such as" in skill_text
     assert "Do not ask which university the student attends" in skill_text
     assert "thesis level is a hard filter, not a soft preference." in skill_text
     assert "Do not present Werkstudent, working-student, student assistant, internship" in skill_text
     assert "Do not treat one answered profile question as a complete profile." in skill_text
+    assert "Do not bypass LinkedIn, StepStone, or company career access controls" in skill_text
     assert "Do not run a live search before the student profile and search intake are complete" in skill_text
     assert "Do not skip the university/chair lane when the user asks broadly for thesis options" in skill_text
     assert "The main agent must merge evidence and rank centrally using the full student profile." in skill_text
@@ -183,6 +203,8 @@ def test_linkedin_company_theses_rubric_covers_release_ready_ranking() -> None:
     )
 
     assert "Profile-First Gate" in rubric_text
+    assert "public provider-indexed Bachelor and Master thesis opportunities" in rubric_text
+    assert "LinkedIn public search, StepStone, and company career pages are discovery providers" in rubric_text
     assert "Do not use this skill as a generic LinkedIn or Google search shortcut." in rubric_text
     assert "Ask one focused advising question by default." in rubric_text
     assert "Profile-Completion Loop" in rubric_text
@@ -191,7 +213,7 @@ def test_linkedin_company_theses_rubric_covers_release_ready_ranking() -> None:
     assert "roughly 30-60 minutes before generation" in rubric_text
     assert "nuanced tradeoffs" in rubric_text
     assert "until the profile supports the same quality of matching expected by the university-thesis workflow." in rubric_text
-    assert "Before any LinkedIn/company search, university/chair ranking, or search-parameter checklist" in rubric_text
+    assert "Before any provider/company search, university/chair ranking, or search-parameter checklist" in rubric_text
     assert "Do not mix Bachelorarbeit and Masterarbeit results unless the student explicitly asks for both." in rubric_text
     assert "Masterarbeit-only for a Bachelor student" in rubric_text
     assert "If only one or two of these areas are known, ask the next focused advising question and do not search." in rubric_text
@@ -203,21 +225,92 @@ def test_linkedin_company_theses_rubric_covers_release_ready_ranking() -> None:
     assert "Timing, language, and university-company registration details are important verification checklist items" in rubric_text
     assert "Parallel University/Company Search" in rubric_text
     assert "University/chair lane: use `find-university-chairs` and `match-thesis-advisors`" in rubric_text
-    assert "Company lane: use public LinkedIn-indexed and company-career evidence" in rubric_text
+    assert "Company lane: use public provider-indexed evidence from LinkedIn public search, StepStone, and company-career pages" in rubric_text
+    assert "Provider Fetching And Candidate Schema" in rubric_text
+    assert "references/provider-fetching.md" in rubric_text
+    assert "references/candidate-schema.md" in rubric_text
+    assert "`provider`, `source_url`" in rubric_text
+    assert "Treat provider result counts as discovery evidence only." in rubric_text
+    assert "For Bachelor students, search only Bachelorarbeit/Bachelor thesis" in rubric_text
+    assert "For Master students, search only Masterarbeit/Master thesis" in rubric_text
     assert "Cross-lane comparison and next actions." in rubric_text
     assert "Hard Exclusion Criteria" in rubric_text
     assert "ordinary job, internship, trainee role, Werkstudent role, working-student role" in rubric_text
     assert "Werkstudent role, working-student role, student assistant role" in rubric_text
+    assert "topic visibly conflicts" in rubric_text
     assert "Do not let a strong technology match override a hard exclusion." in rubric_text
     assert "Scorecard" in rubric_text
     assert "Thesis contribution" in rubric_text
     assert "Company-thesis readiness" in rubric_text
     assert "Evidence Tiers" in rubric_text
-    assert "`A`: Opened public LinkedIn page or company career page confirms the thesis details." in rubric_text
+    assert "`A`: Opened public provider page or company career page confirms the thesis details." in rubric_text
+    assert "`B`: Search snippet visibly confirms a provider-indexed thesis posting" in rubric_text
+    assert "provider count" in rubric_text
     assert "Company-Career Mirror Search" in rubric_text
+    assert "LinkedIn and StepStone snippets can be stale or incomplete." in rubric_text
+    assert "Keep the discovery provider and original source URL" in rubric_text
+    assert "Do not use a\nLinkedIn login, StepStone login, provider API, or authenticated scraping." in rubric_text
+    assert "No Qualifying Results" in rubric_text
+    assert "no qualifying results after\nsearched providers" in rubric_text
     assert "compensation/workload, academic supervision, university-company process" in rubric_text
     assert "Proposal sketches, when requested, each labeled" in rubric_text
     assert "external posting/snippet-derived lead" in rubric_text
+
+
+def test_external_company_candidate_schema_is_auditable() -> None:
+    schema_text = (
+        SKILLS_DIR / "find-linkedin-company-theses" / "references" / "candidate-schema.md"
+    ).read_text(encoding="utf-8")
+
+    for field in [
+        "`provider`",
+        "`source_url`",
+        "`title`",
+        "`company`",
+        "`location`",
+        "`thesis_level`",
+        "`job_type`",
+        "`visible_date`",
+        "`evidence_text`",
+        "`evidence_tier`",
+        "`matched_keywords`",
+        "`exclusion_reason`",
+        "`mirror_url`",
+        "`access_date`",
+    ]:
+        assert field in schema_text
+
+    assert "`linkedin_public`, `stepstone`, or `company_careers`" in schema_text
+    assert "Do not infer a thesis level from a strong topic match." in schema_text
+    assert "Do not infer live availability from stale snippets" in schema_text
+    assert "`wrong thesis level`" in schema_text
+    assert "`Werkstudent/working-student role`" in schema_text
+    assert "`topic mismatch`" in schema_text
+
+
+def test_stepstone_provider_fetching_fixtures_cover_expected_filters() -> None:
+    provider_text = (
+        SKILLS_DIR / "find-linkedin-company-theses" / "references" / "provider-fetching.md"
+    ).read_text(encoding="utf-8")
+
+    assert "### `stepstone`" in provider_text
+    assert "site:stepstone.de/jobs Bachelorarbeit <topic> <city>" in provider_text
+    assert "site:stepstone.de/jobs Masterarbeit <topic> <city>" in provider_text
+    assert "site:stepstone.de/jobs Abschlussarbeit <topic> <city>" in provider_text
+    assert "Provider result counts may indicate where to look\nnext, but never count as a recommendation." in provider_text
+    assert "StepStone Fixture Expectations" in provider_text
+    assert "| eligible bachelor | Bachelor |" in provider_text
+    assert "| eligible master | Master |" in provider_text
+    assert "| generic Abschlussarbeit | Bachelor |" in provider_text
+    assert "| wrong-level | Bachelor |" in provider_text
+    assert "exclude as `wrong thesis level`" in provider_text
+    assert "| Werkstudent | Bachelor |" in provider_text
+    assert "exclude as `Werkstudent/working-student role`" in provider_text
+    assert "| internship | Master |" in provider_text
+    assert "exclude as `generic job/internship`" in provider_text
+    assert "| topic mismatch | Master |" in provider_text
+    assert "exclude as `topic mismatch`" in provider_text
+    assert "No qualifying results after searched providers" in provider_text
 
 
 def test_required_markdown_database_indexes_exist() -> None:
@@ -310,21 +403,33 @@ def test_external_thesis_e2e_eval_covers_generation_outputs() -> None:
     assert "A real student may spend" in text
     assert "University/chair evidence:" in text
     assert "Company/external evidence:" in text
+    assert "provider `company_careers`" in text
+    assert "provider `stepstone`" in text
+    assert "provider `linkedin_public`" in text
+    assert "StepStone public snippet" in text
+    assert "StepStone provider count" in text
+    assert "provider count only; it is discovery evidence, not a candidate" in text
     assert "Required generated output:" in text
     assert "A ranked university/chair lane with evidence and caveats." in text
     assert "A ranked external company thesis lane with included and excluded results." in text
+    assert "Every company candidate must include provider label, source URL, mirror URL" in text
     assert "At least two proposal sketches grounded in the student profile" in text
     assert "one university-led proposal and one external/company-led proposal" in text
     assert "Each proposal must label evidence status" in text
     assert "the output must not generate or rank" in text
     assert "Werkstudent/working-student roles must be excluded completely" in text
+    assert "Provider counts must not be ranked as postings." in text
+    assert "no qualifying\n  results after searched providers" in text
     assert "Fixture-only mode: do not mention unavailable skills" in text
     assert 'Do not append judge labels, "Evaluation JSON:"' in text
     assert "generates and evaluates a university/chair lane" in text
     assert "generates and evaluates an external/company thesis lane" in text
-    assert "excludes generic robotics, medicine, Werkstudent/working-student roles, and non-bachelor/perception-heavy mismatches" in text
+    assert "includes the Mercedes-style bachelor thesis lead and the StepStone bachelor lead" in text
+    assert "excludes generic robotics, medicine, provider-count-only evidence, Werkstudent/working-student roles" in text
     assert "Working-student/Werkstudent roles must be fully excluded" in text
     assert "generates at least two proposal sketches" in text
     assert "does not invent live web results, openings, supervision capacity" in text
+    assert "includes provider labels, source URLs, mirror URLs when available" in text
     assert "must not upgrade snippets into confirmed live availability" in text
+    assert "Provider counts must be treated as discovery evidence only" in text
     assert "Each proposal sketch labels its evidence status" in text
