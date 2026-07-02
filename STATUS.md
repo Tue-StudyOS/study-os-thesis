@@ -90,6 +90,7 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 | J | Canonical six profile dimensions everywhere (cold-start consistency) | ✅ | Domi | Fixed dimension-list mismatch: `build-student-profile/SKILL.md` required "interests, liked/disliked courses, skills, experience, preferred thesis style, no-gos" while thesis-finder and both discovery skills gated on Interests/Methods/Domain/Thesis style/Skills/No-gos. A standalone build-student-profile pass could pass its own gate without satisfying the discovery skills'. Added a canonical definition to `student-profile-schema.md`, corrected workflow step 4 and the Output section in `build-student-profile/SKILL.md`; courses/experience kept as elicitation avenues, not dimensions. `pytest -q` 29 passed/8 skipped; release build OK. |
 | Roadmap-J | Lightweight live-eval runbook (see [core-optimization-roadmap.md](findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md) Track 1) | ✅ | Domi | **Note:** this is the roadmap's own "Task J", distinct from the "J" row above (letter collision — the roadmap's Task J was never built under that name; a different fix got logged as J first). Relabeled `Roadmap-J`/`Roadmap-K` here to avoid ambiguity. Wrote `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md`: a ~15–20 min checklist to re-validate one faculty live after a skill change (reuse existing persona, no-peeking, skill arm only, score recall+precision, log a one-paragraph entry), vs. the full 4-faculty `2026-06-28-live-validation-protocol.md` written for one-time validation. Not yet exercised — log has no runs. |
 | Roadmap-K | Add a precision metric to the eval ground truth | ✅ | Domi | Recall alone rewards over-surfacing. Added "What precision means here" to `skills/tests/eval_ground_truth/README.md`: precision = surfaced options judged relevant / total surfaced options; relevance judged against the MAP's own "Relevance rationale" field, not just ground-truth membership (ground truth isn't exhaustive). No fixed precision target yet — needs a few live runs (via Roadmap-J's runbook) to establish a baseline first. Scoring steps 5–7 added to the "How to score" section. `pytest -q` 29 passed/8 skipped; release build OK. |
+| Roadmap-J run 1 | First live exercise of the runbook (`cs` faculty) | ✅ | Domi | Recall 5/5 = 100% (matches Task I-fix, no regression). Precision 9/12 = 75% — first-ever precision data point. 3 noise entries: Butz (domain mismatch, cognitive science), Williamson (weak topical fit / borderline pure-math no-go), and Oh/STAI (relocated to KAIST Feb 2026 but still listed on the live FB-Informatik backbone page — a stale-backbone gap, not a relevance miss). Zell excluded pre-scoring via the hardware/embedded no-go. **Caveat: no-peeking discipline was broken** — the CS ground truth and Task I-fix's named results were read during general task context-gathering before Pass 1 ran; recall is probably still representative (the GT names surfaced organically from the FB-Informatik page) but isn't a blind result. Points to **Track 3 / Task O** (relevance/no-go tightening + strengthen the 2f existence check to catch PI relocations, not just page staleness) as the next track. Full write-up: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md` log. `pytest -q` and `build_skill_release.py` still green. |
 
 ---
 
@@ -124,6 +125,37 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-02** — First live exercise of the Roadmap-J runbook, faculty `cs`.
+  Reused the Task I-fix persona verbatim for comparability. Ran Pass 1 live
+  (FB-Informatik page fetched fine; MPI-IS `is.mpg.de/departments` bot-blocked
+  again; Cyber Valley `research-groups` URL 404'd this time — both required a
+  web-search fallback per researcher name, same gap as Task I-fix). **Recall
+  5/5 = 100%** — no regression vs. Task I-fix. **Precision 9/12 = 75%** — the
+  first precision number ever recorded for this skill. Two entries are genuine
+  over-surfacing (Butz: cognitive science, not AI/ML; Williamson: weak topical
+  fit, borderline pure-math no-go). One is a more interesting failure mode:
+  **Prof. Seong Joon Oh's STAI group relocated to KAIST in February 2026, but
+  the live FB-Informatik backbone page still lists it under Tübingen with no
+  relocation notice** — the skill's existing 2f "existence/activity check"
+  checks for recent publications/news, which the old page still has, so it
+  would not have caught this. Zell was correctly excluded pre-scoring via the
+  hardware/embedded no-go (3 robotics labs, FPGA project — non-ambiguous).
+  **Honesty note:** the runbook's no-peeking rule was not observed this run —
+  the CS ground-truth file and Task I-fix's named results were read during
+  general context-gathering before Pass 1 started. The recall number is
+  probably still representative (the FB-Informatik page organically listed
+  the GT names in its own "Maschinelles Lernen" section, they weren't
+  specifically searched for), but it isn't a blind result — flagged clearly in
+  the runbook log so it isn't mistaken for a clean measurement. Result and
+  full reasoning: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md`.
+  **Points to Track 3 (Task O — relevance/no-go tightening)** as the next
+  optimization track: tighten relevance filtering so faculty-page section
+  membership alone doesn't surface a domain-mismatched chair, and extend the
+  2f check to verify current institutional affiliation (not just publication
+  recency) so a relocated PI isn't silently presented as available.
+  `pytest -q` and `python3 scripts/build_skill_release.py` re-confirmed green
+  after these doc-only changes.
 
 - **2026-07-02** — Roadmap-J + Roadmap-K done (core-optimization-roadmap Track 1,
   items after Task I). Discovered a letter collision first: the roadmap's own
