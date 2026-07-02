@@ -116,3 +116,52 @@ could plausibly affect recall or precision. Skip for pure prose/typo edits.
   and (b) strengthen the 2f existence/activity check to also verify current
   institutional affiliation, not just recency of publications, so a relocated PI
   doesn't get silently presented as available. See STATUS.md 2026-07-02 log entry.
+
+- **2026-07-02 — Re-run after Task O (`cs`).** Task O added: (1) a "topical
+  justification" quality filter in search-strategy.md §5 (co-location on a faculty
+  page section is not relevance evidence — worked example: Butz), (2) sharpened §7
+  no-go wording so foundational-but-not-proof-only theory work is ambiguous-by-default
+  (kept + flagged, not silently excluded, not silently included either), and (3) a new
+  §4.7 affiliation-currency check + SKILL.md 2f upgrade to catch relocated PIs, distinct
+  from the existing recency check. Same persona as the 2026-07-02 first run (reused
+  verbatim, reconstructed from this file's compact summary rather than opening
+  `eval_ground_truth/` — see no-peeking note below). Output:
+  `dist/live-validation/cs-skill.md` (overwritten; prior version in git history at
+  commit before `2e5b503`).
+
+  **No-peeking discipline held this run.** Did not open `eval_ground_truth/` or any
+  `*-revalidation.md`/`*-eval-results.md` file until after Pass 1/2 were complete and
+  the map was written. Did read `2026-06-28-live-validation-protocol.md` (process doc,
+  not GT data) to reconstruct the missing persona dimensions (domain, thesis style,
+  skills) not spelled out in this file's compact prior-run summary — that file doesn't
+  itself contain GT chair names, only a generic protocol description.
+
+  **Recall:** 5/5 = **100%** (all 5 `cs_seed` rows found: autonomous-learning/Martius,
+  methods-of-machine-learning/Hennig, machine-learning/Hein+von Luxburg,
+  empirical-inference/Schölkopf, neural-intelligence/Brendel+Bethge). No regression
+  from either prior run.
+
+  **Precision:** 10/10 = **100%** (up from 75% / 9 of 12). The topical-justification
+  filter (§5) excluded Butz (domain mismatch — the exact worked example) and, on
+  re-judgment, Williamson (weak topical fit, same verdict as the prior run's scoring
+  but now backed by an explicit rule) before they ever reached the output map, rather
+  than surfacing them with a caveat. The affiliation-currency check (2f) caught Oh's
+  KAIST relocation again — same finding as last run — but this time via a codified
+  check instead of incidental diligence; the entry is flagged and excluded from the
+  numbered/actionable list per SKILL.md's "do not silently drop" instruction, so it
+  doesn't count as a surfaced option this run (consistent with how the prior run's
+  scoring already treated it as excluded-from-the-precision-count).
+
+  **Honest caveats:** (1) 10/10 precision on one faculty, one persona, one run is a
+  small sample — this is evidence the specific known noise sources are fixed, not
+  proof the filter generalizes to other faculties/personas without new noise patterns.
+  (2) The topical-justification exclusions (Ludwig, Gehler, Krenn, Hardt, Eivazi) are
+  new judgment calls not present in either prior run — reasonable applications of the
+  new rule, but not independently cross-checked the way the original Butz/Williamson/Oh
+  findings were. (3) MPI-IS's `is.mpg.de/departments` bot-block persisted a third run in
+  a row — still an open gap (Track 2 candidate), unaffected by this Task O change.
+
+  **Verdict:** Task O's fix holds on this re-run — recall unaffected, precision up
+  25pp, and the specific relocation-detection gap now has a systematic check instead of
+  depending on the agent noticing. Ready to move to the next track (see STATUS.md
+  2026-07-02 log entry for the specific recommendation).
