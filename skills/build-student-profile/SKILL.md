@@ -12,7 +12,7 @@ Create a private, in-session profile that downstream thesis-finder skills can us
 1. Accept raw student input in any form, even a single sentence such as "I like deep learning and computer vision and want to work with robots."
 2. Start with what the student already said, then identify what is still unknown about their research taste, skills, prior experience, frameworks, motivation, constraints, and working style.
 3. Interview the student **one question per turn**. Ask at most two questions per turn only when they are tightly coupled (e.g. "which courses did you like, and what specifically did you like about them?"). Never send a survey batch. Prefer questions that reveal tradeoffs, not checklists. At the start of the interview, ask the student to answer **precisely and concisely** — focused, specific answers move the profile forward faster.
-4. Do not start any search or discovery until the profile covers all six dimensions: **interests, liked/disliked courses, skills, experience, preferred thesis style, and no-gos**. If any dimension is still shallow, keep interviewing.
+4. Do not start any search or discovery until the profile covers all six dimensions: **Interests, Methods, Domain, Thesis style, Skills, No-gos** (see `references/student-profile-schema.md`). Courses, projects, and experience are not separate dimensions — they are the evidence you elicit to fill Methods, Domain, and Skills. If any dimension is still shallow, keep interviewing.
 5. Use `references/deep-advising-interview.md` to guide a multi-round advising conversation when the profile is still shallow.
 6. Ask whether the student wants to provide optional evidence sources such as a Transcript of Records, CV, project portfolio, GitHub profile, LinkedIn profile, module handbook excerpts, thesis/exam regulations, or job descriptions. Continue without them if the student prefers.
 7. Probe for concrete evidence: favorite lectures, seminars, exercises, papers, projects, internships, work experience, frustrating topics, tools they enjoy, methods they want to learn, and what kind of result would make the thesis feel successful.
@@ -27,6 +27,9 @@ Create a private, in-session profile that downstream thesis-finder skills can us
 
 Return a compact profile with:
 
+- **canonical six-dimension summary** — one line each for Interests, Methods, Domain,
+  Thesis style, Skills, No-gos (see `references/student-profile-schema.md`), so the
+  profile is immediately usable by `thesis-finder` and the discovery skills
 - thesis level and program, if known
 - interests and preferred research areas
 - relevant courses and skills
