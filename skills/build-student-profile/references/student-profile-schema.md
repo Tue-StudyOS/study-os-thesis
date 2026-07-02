@@ -2,6 +2,22 @@
 
 Use this schema for in-session matching only. Do not write filled profiles into shared skill resources.
 
+## Canonical Six Dimensions
+
+`thesis-finder`, `find-university-chairs`, and `find-company-thesis-options` all gate on
+these six dimensions being present before they will search. Use identical names everywhere:
+
+1. **Interests** — core research areas / topics
+2. **Methods** — how the student wants to work (empirical, qualitative, computational, …)
+3. **Domain** — application field (healthcare, education, finance, automotive, …)
+4. **Thesis style** — preferred output type (experimental, theoretical, systems, analysis, survey, mixed)
+5. **Skills** — concrete tools / competencies (Python, fMRI, R, ML frameworks, lab methods, …)
+6. **No-gos** — hard exclusions (hardware setup, clinical rotations, pure proofs, large-scale SE, …)
+
+Courses, projects, and professional experience are not separate dimensions — they are the
+evidence the interview uses to fill Methods, Domain, and Skills (see
+`build-student-profile/SKILL.md`).
+
 ```markdown
 # Student Thesis Profile
 
