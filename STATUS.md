@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-06-28 (thesis-finder made true single entry point — inline profile building, no separate skill invocation needed)
+**Last update:** 2026-07-02 (Roadmap-J live-eval runbook + Roadmap-K precision metric added)
 
 ---
 
@@ -88,6 +88,8 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 | Task | Step | Status | Owner | Notes / difficulties |
 |---|---|---|---|---|
 | J | Canonical six profile dimensions everywhere (cold-start consistency) | ✅ | Domi | Fixed dimension-list mismatch: `build-student-profile/SKILL.md` required "interests, liked/disliked courses, skills, experience, preferred thesis style, no-gos" while thesis-finder and both discovery skills gated on Interests/Methods/Domain/Thesis style/Skills/No-gos. A standalone build-student-profile pass could pass its own gate without satisfying the discovery skills'. Added a canonical definition to `student-profile-schema.md`, corrected workflow step 4 and the Output section in `build-student-profile/SKILL.md`; courses/experience kept as elicitation avenues, not dimensions. `pytest -q` 29 passed/8 skipped; release build OK. |
+| Roadmap-J | Lightweight live-eval runbook (see [core-optimization-roadmap.md](findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md) Track 1) | ✅ | Domi | **Note:** this is the roadmap's own "Task J", distinct from the "J" row above (letter collision — the roadmap's Task J was never built under that name; a different fix got logged as J first). Relabeled `Roadmap-J`/`Roadmap-K` here to avoid ambiguity. Wrote `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md`: a ~15–20 min checklist to re-validate one faculty live after a skill change (reuse existing persona, no-peeking, skill arm only, score recall+precision, log a one-paragraph entry), vs. the full 4-faculty `2026-06-28-live-validation-protocol.md` written for one-time validation. Not yet exercised — log has no runs. |
+| Roadmap-K | Add a precision metric to the eval ground truth | ✅ | Domi | Recall alone rewards over-surfacing. Added "What precision means here" to `skills/tests/eval_ground_truth/README.md`: precision = surfaced options judged relevant / total surfaced options; relevance judged against the MAP's own "Relevance rationale" field, not just ground-truth membership (ground truth isn't exhaustive). No fixed precision target yet — needs a few live runs (via Roadmap-J's runbook) to establish a baseline first. Scoring steps 5–7 added to the "How to score" section. `pytest -q` 29 passed/8 skipped; release build OK. |
 
 ---
 
@@ -122,6 +124,27 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-02** — Roadmap-J + Roadmap-K done (core-optimization-roadmap Track 1,
+  items after Task I). Discovered a letter collision first: the roadmap's own
+  "Task J" (lightweight live-eval runbook) and "Task K" (precision metric) were
+  never built under those names — a different, unrelated fix (canonical six
+  profile dimensions) got logged as "Task J" earlier today. Relabeled the roadmap
+  items `Roadmap-J`/`Roadmap-K` in the task table to keep both traceable without
+  renaming the already-completed J. (Roadmap-J) Wrote
+  `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md`: a cheap
+  (~15–20 min) checklist to re-validate one faculty live after a skill change —
+  reuse the existing persona, no-peeking, skill arm only (no fresh baseline),
+  score recall + precision, append one log line — versus the full 4-faculty,
+  both-arms `2026-06-28-live-validation-protocol.md` meant for one-time
+  validation. Not yet exercised. (Roadmap-K) Recall alone rewards over-surfacing,
+  so added a precision metric to `skills/tests/eval_ground_truth/README.md`:
+  precision = surfaced options judged relevant / total surfaced options, judged
+  against the MAP's own "Relevance rationale" field rather than strict
+  ground-truth membership (the ground truth is deliberately non-exhaustive, so a
+  correct-but-unlisted option is still relevant, not noise). No fixed precision
+  target set yet — deferred until the new runbook produces a few live data
+  points. `pytest -q` → 29 passed, 8 skipped; `build_skill_release.py` OK.
 
 - **2026-07-02** — Task J done. `build-student-profile/SKILL.md` workflow step 4
   required a different six-item list ("interests, liked/disliked courses, skills,
