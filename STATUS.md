@@ -83,6 +83,12 @@ and uni eval was initially weaker (Psych/CS issues) before 2e/2f fixes. Real-wor
 by a fresh user or group is recommended before beta release. Post-Phase-3 human actions: hand off
 to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope of this branch).
 
+### Post-Phase-3 hardening
+
+| Task | Step | Status | Owner | Notes / difficulties |
+|---|---|---|---|---|
+| J | Canonical six profile dimensions everywhere (cold-start consistency) | ✅ | Domi | Fixed dimension-list mismatch: `build-student-profile/SKILL.md` required "interests, liked/disliked courses, skills, experience, preferred thesis style, no-gos" while thesis-finder and both discovery skills gated on Interests/Methods/Domain/Thesis style/Skills/No-gos. A standalone build-student-profile pass could pass its own gate without satisfying the discovery skills'. Added a canonical definition to `student-profile-schema.md`, corrected workflow step 4 and the Output section in `build-student-profile/SKILL.md`; courses/experience kept as elicitation avenues, not dimensions. `pytest -q` 29 passed/8 skipped; release build OK. |
+
 ---
 
 ## Open decisions
@@ -116,6 +122,22 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-02** — Task J done. `build-student-profile/SKILL.md` workflow step 4
+  required a different six-item list ("interests, liked/disliked courses, skills,
+  experience, preferred thesis style, no-gos") than the gate every discovery skill
+  actually checks (Interests, Methods, Domain, Thesis style, Skills, No-gos) —
+  Methods and Domain were missing entirely, so a profile built standalone via this
+  skill could look "complete" and still fail the `find-university-chairs` /
+  `find-company-thesis-options` prerequisite gate. Added a single canonical
+  definition (`## Canonical Six Dimensions`, each with a 1-line description) to
+  `student-profile-schema.md`; corrected workflow step 4 in `build-student-profile/
+  SKILL.md` to reference it; courses/experience kept as elicitation avenues (how
+  Methods/Domain/Skills get filled), not as separate dimensions; Output section now
+  explicitly emits the compact 6D summary alongside the existing rich fields.
+  `thesis-finder`, `find-university-chairs`, `find-company-thesis-options` already
+  used the correct 6 terms — no changes needed there. `pytest -q` → 29 passed, 8
+  skipped; `build_skill_release.py` OK. Commits: `3483629`, `2d6a9c5`.
 
 - **2026-06-28** — **CI / engineering-hygiene fix.** Review found the deterministic
   package suite was actually **RED**: `python -m pytest -q` (run by `qa.yml` and
