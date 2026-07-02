@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-02 (Task O — relevance/no-go tightening + affiliation-currency check, precision 75%→100% on re-run)
+**Last update:** 2026-07-02 (Task P — steering proof: two inverted personas on `cs` produce near-disjoint option maps; steering confirmed)
 
 ---
 
@@ -92,6 +92,7 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 | Roadmap-K | Add a precision metric to the eval ground truth | ✅ | Domi | Recall alone rewards over-surfacing. Added "What precision means here" to `skills/tests/eval_ground_truth/README.md`: precision = surfaced options judged relevant / total surfaced options; relevance judged against the MAP's own "Relevance rationale" field, not just ground-truth membership (ground truth isn't exhaustive). No fixed precision target yet — needs a few live runs (via Roadmap-J's runbook) to establish a baseline first. Scoring steps 5–7 added to the "How to score" section. `pytest -q` 29 passed/8 skipped; release build OK. |
 | Roadmap-J run 1 | First live exercise of the runbook (`cs` faculty) | ✅ | Domi | Recall 5/5 = 100% (matches Task I-fix, no regression). Precision 9/12 = 75% — first-ever precision data point. 3 noise entries: Butz (domain mismatch, cognitive science), Williamson (weak topical fit / borderline pure-math no-go), and Oh/STAI (relocated to KAIST Feb 2026 but still listed on the live FB-Informatik backbone page — a stale-backbone gap, not a relevance miss). Zell excluded pre-scoring via the hardware/embedded no-go. **Caveat: no-peeking discipline was broken** — the CS ground truth and Task I-fix's named results were read during general task context-gathering before Pass 1 ran; recall is probably still representative (the GT names surfaced organically from the FB-Informatik page) but isn't a blind result. Points to **Track 3 / Task O** (relevance/no-go tightening + strengthen the 2f existence check to catch PI relocations, not just page staleness) as the next track. Full write-up: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md` log. `pytest -q` and `build_skill_release.py` still green. |
 | Task O | Relevance/no-go tightening + affiliation-currency check (Track 3, per Roadmap-J run 1's finding) | ✅ | Domi | Added a "topical justification" quality filter to search-strategy.md §5 (co-location on a faculty page section ≠ relevance; Butz worked example), sharpened §7's pure-math no-go wording (foundational-but-not-proof-only theory work is ambiguous-by-default, kept+flagged), and added a §4.7 affiliation-currency query skeleton + SKILL.md 2f upgrade to catch relocated PIs distinct from the existing recency check. Re-ran the Roadmap-J runbook live for `cs` with the same persona (no-peeking held this time): **recall 5/5 = 100%** (no regression), **precision 10/10 = 100%** (up from 75%) — Butz and Williamson now excluded before reaching the map instead of surfaced-with-caveat, Oh's KAIST relocation caught by the codified 2f check instead of incidental diligence. Small-sample caveat: one faculty, one persona, one run — evidence the known noise is fixed, not proof the filter generalizes. `pytest -q` 29 passed/8 skipped; release build OK. Full write-up: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md` log (second 2026-07-02 entry). |
+| Task P | **Steering proof (Track 3 — "most important for the thesis claim")** | ✅ | Domi | **Steering CONFIRMED (strong).** Ran `cs` live with two students with *inverted* profiles: Persona A (causality + probabilistic/Bayesian ML; no-go **computer vision** + hardware) vs. Persona B (computer vision + representation learning; no-go **heavy Bayesian theory** + hardware). Same faculty, same Pass-1 candidate set (25 groups; the live FB-Informatik page now also exposes a "Vision & Cognition" section). The two option maps are **near-disjoint**: numbered options A={Schölkopf, Brendel, Hennig, Macke, von Luxburg, Hein, Martius}, B={Geiger, Black, Pons-Moll, Kühne, Bethge, Brendel, Lensch, Berens} — intersection only {Brendel, Hein}, and those two are reframed/reranked per profile. Vision chairs top B and are excluded from A; Bayesian chairs top A and are excluded from B — flips in exactly the predicted direction. Conversation starters also fully diverge. Steering is driven by §1 (topic→query) + §5 (topical justification); **honest gap** — the two no-gos ("CV", "heavy Bayesian") are *not* codified rows in §7, so they ran via §7's general rule, not the table (one-line §7 note is a minor follow-up, not fixed here). Caveats: single-agent authored/judged (confirmation-bias risk, mitigated by live-verified per-chair facts); personas built to diverge (proves mechanism *can* steer, not that it steers on subtle personas); one faculty. Outputs: `dist/live-validation/cs-persona-{A,B}-skill.md`. Full write-up: `findings/no_db_universal_skill/2026-07-02-task-p-steering-proof.md`. `pytest -q` 29 passed/8 skipped; release build OK. |
 
 ---
 
@@ -126,6 +127,31 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-02** — Task P (Track 3, **steering proof** — the roadmap calls this "the
+  most important for the thesis claim"). First direct test that the 6-dimension
+  interview actually changes the search rather than decorating a generic answer. Ran
+  `cs` (FB-Informatik) live through `find-university-chairs/SKILL.md` with **two
+  students with inverted profiles**: Persona A (causality + probabilistic/Bayesian ML;
+  no-go computer vision + hardware) and Persona B (computer vision + representation
+  learning; no-go heavy Bayesian theory + hardware). Same faculty, same Pass-1
+  candidate set. Result: the two option maps are **near-disjoint** — vision chairs
+  (Geiger, Black, Pons-Moll, Kühne, Bethge) top Persona B and are excluded from A;
+  Bayesian/causality chairs (Schölkopf, Hennig, Macke, von Luxburg) top A and are
+  excluded from B; only Brendel and Hein appear in both, and reframed/reranked. The
+  top entries flip in exactly the direction each profile predicts, and conversation
+  starters fully diverge. **Verdict: steering confirmed (strong)** — the profile is
+  not decorative; this is the first empirical defense of the "better than plain
+  Claude" claim. Steering is carried by search-strategy §1 (interest→topic query) +
+  §5 (topical-justification filter); the §7 no-go *table* did **not** carry it (neither
+  "CV" nor "heavy Bayesian" is a codified §7 row — both applied via §7's general rule),
+  a minor doc gap logged as follow-up, not fixed here. Honest limits: single agent
+  designed/ran/judged both runs (confirmation-bias risk, mitigated by grounding every
+  chair→persona call in live-verified facts); personas were built to diverge (proves
+  the mechanism *can* steer, not that it steers on near-identical profiles); one
+  faculty. Outputs `dist/live-validation/cs-persona-{A,B}-skill.md`; write-up
+  `findings/no_db_universal_skill/2026-07-02-task-p-steering-proof.md`. Next: Track 4
+  Task Q (hard-faculty ground truth). `pytest -q` 29 passed/8 skipped; release build OK.
 
 - **2026-07-02** — Task O (Track 3, relevance/no-go tightening + affiliation-currency
   check), driven directly by Roadmap-J run 1's finding below. Three doc changes in
