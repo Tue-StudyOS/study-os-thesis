@@ -25,9 +25,31 @@ naming him explicitly).
 A chair is **not counted** if it appears only in a generic sentence ("there are many
 neuroscience labs at Tübingen") without specific identification.
 
+## What "precision" means here
+
+Recall alone rewards over-surfacing (list everything remotely related and recall goes
+up for free). Precision catches that:
+
+**Precision = (surfaced options judged relevant to the profile) / (total surfaced options in the MAP)**
+
+An option counts as **relevant** if a reasonable reader would agree it plausibly fits
+the profile's stated interests/methods/domain — i.e. the skill's own "Relevance
+rationale" field for that option holds up on inspection, even if the option isn't in
+the ground-truth list (the ground truth is not exhaustive; a correct option missing
+from it is still relevant, not noise).
+
+An option counts as **not relevant** (noise) if it's a generic/padding entry whose
+rationale is weak or unrelated to the stated profile — e.g. a chair included mainly
+because it's prominent, not because it fits.
+
+Precision is scored by human judgment on the MAP output; there is no automated check.
+
 ## Target
 
-**≥ 70% recall** per faculty on the first eval run (Task H).
+**≥ 70% recall** per faculty on the first eval run (Task H). No fixed precision
+target yet (Roadmap-K introduced the metric; a target should be set once a few live
+runs establish a baseline) — treat a precision drop across a skill change as a signal
+worth investigating, same as a recall drop.
 
 This is a starting target, not a pass/fail gate — the honest result matters more than
 hitting the number. If the skill consistently surfaces 5 of 6 known chairs per faculty
@@ -40,7 +62,12 @@ that is a strong signal; 2 of 6 indicates a systematic gap worth diagnosing.
 2. Collect the full MAP output from the skill.
 3. For each row in the ground-truth table, mark it **found** (✓) or **missed** (✗).
 4. Compute: `recall = count(✓) / total rows`.
-5. Record per-faculty recall and the overall mean in the findings doc (Task H output).
+5. For every option actually surfaced in the MAP (not just ground-truth rows), mark it
+   **relevant** or **not relevant** per the definition above.
+6. Compute: `precision = count(relevant) / total surfaced options`.
+7. Record per-faculty recall, precision, and the overall means in the findings doc
+   (or the live-eval runbook log for a single-faculty re-check —
+   [2026-07-02-live-eval-runbook.md](../../../findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md)).
 
 ## What the ground truth is NOT
 
