@@ -8,7 +8,7 @@ a precise, reproducible set of web queries for discovering thesis options across
   (the anti-SEO-bias baseline of official listing URLs).
 - **Used by:** `find-university-chairs` (Task D) and any future discovery skill
   that targets Tübingen.
-- **Last updated:** 2026-06-27
+- **Last updated:** 2026-07-02
 
 ---
 
@@ -239,6 +239,29 @@ returns a page from *that unit's own domain or staff listing* naming the person 
 Leiter/Leiterin or group head. A result that names the person alongside a *different*
 group with a similar name does not count.
 
+### 4.7 Affiliation-currency queries (Pass 2f)
+
+Use these to confirm a PI is still affiliated with the Tübingen unit found in Pass 1/2 —
+distinct from confirming recent publication activity (§4.4). A backbone page can still
+show 2024–2025 content after a PI has already relocated; recency of content is not proof
+of *current* affiliation.
+
+```
+# Direct relocation check
+"{PROF_NAME}" (moved OR relocated OR "joins" OR "now at" OR "new position") 2025 OR 2026
+
+# Cross-check current institution via the PI's own homepage
+"{PROF_NAME}" homepage OR "personal page" -site:uni-tuebingen.de
+
+# Latest publication affiliation line
+"{PROF_NAME}" arxiv 2025 OR 2026
+```
+
+**Verification rule:** if the PI's own homepage or a 2025/2026 publication lists a
+*different* institution, or no 2025/2026-dated evidence ties the PI to Tübingen
+specifically (only the faculty backbone page does), treat affiliation as unconfirmed —
+see SKILL.md Step 5 sub-step 2f.
+
 ---
 
 ## 5. Quality filters
@@ -253,6 +276,16 @@ Pass 2. Do not promote a chair just because it appears prominently in results.
 | **Specificity** | A chair that lists the student's topic as one of its *active research areas* (with dated publications) outranks one that only mentions the topic in a broad description. |
 | **Thesis readiness** | Explicit mention of thesis openings or student projects is a strong positive signal; weight it above general research description. |
 | **Lab activity signal** | PhD student / postdoc pages updated recently indicate an active group; dormant group pages (no updates ≥ 3 years) are a risk to flag. |
+| **Topical justification** | A chair's inclusion must be justified by its *own* stated research focus matching the profile's interests/domain — not merely by co-location in the same faculty page section or listing group. Faculty pages often bundle topically adjacent-but-distinct groups under one heading. Read the chair's own description/publications before including it; do not infer relevance from its neighbors on the page. |
+
+**Worked example (Roadmap-J, `cs` live run, 2026-07-02):** FB-Informatik's page lists
+Prof. Martin Butz's chair (Kognitive Modellierung / predictive-processing models of
+human cognition) under the same "Maschinelles Lernen" section as Schölkopf, Hein, and
+Martius. For a profile whose stated interests are "deep learning, probabilistic
+methods, causality, representation learning" (AI/ML research), Butz's chair does not
+match — cognitive modeling of human perception and action is a distinct field from
+AI/ML research, even though both use probabilistic modeling and share a page section.
+Section membership is not relevance evidence; the chair's own stated focus is.
 
 ---
 
@@ -284,7 +317,7 @@ student's no-gos. Apply no-go filtering **before** ranking, not after.
 | Student no-go | Exclusion signal | How to detect |
 |---|---|---|
 | Hardware setup / embedded systems | Keywords: Robotik, Embedded, FPGA, Mikrocontroller, Hardware-in-the-Loop | Scan chair description; exclude if hardware is the *primary* methodology |
-| Pure mathematical proofs | Keywords: Algebraische Topologie, Beweistheorie, rein theoretisch, proof-based | Exclude if lab output is exclusively theoretical papers with no empirical component |
+| Pure mathematical proofs | Keywords: Algebraische Topologie, Beweistheorie, rein theoretisch, proof-based | Exclude if lab output is exclusively theoretical papers with no empirical component. **Foundational/theoretical work that analyzes or motivates methods used by empirical groups (e.g. learning theory, generalization bounds, statistical foundations of ML) is not automatically a match for this no-go** — treat it as ambiguous by default: keep the chair and annotate `⚠ possible conflict with no-go: pure math proofs` rather than excluding. Only exclude outright when the group's own output is consistently proof-only with no stated connection to applied/empirical work. |
 | Clinical patient work | Keywords: Klinik, Patientenversorgung, klinische Studien, Notaufnahme | Exclude Medicine *Kliniken* entries unless the student explicitly accepts clinical research |
 | Large software engineering | Keywords: Systemarchitektur, large-scale SE, Softwareentwicklung, DevOps | Exclude if the thesis role is primarily software engineering with no research component |
 | Heavy teaching involvement | Check if the role is a "Lehrbeauftragter" or teaching-only position | Exclude if the person has no own research group |

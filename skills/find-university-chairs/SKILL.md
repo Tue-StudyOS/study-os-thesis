@@ -120,6 +120,13 @@ queries from [`references/search-strategy.md` §3](references/search-strategy.md
   publication, event, or news item from 2024 or later, and a named PI still listed.
   If the page is gone or shows no activity since 2023, mark the entry
   `⚠ activity not confirmed — verify before outreach` and rank it last. Do not silently drop it.
+  **Also run the affiliation-currency check** ([`references/search-strategy.md` §4.7](references/search-strategy.md)) —
+  a separate check from the one above. A backbone page can look active (recent-dated content)
+  while the PI has already relocated to a different institution and the page simply hasn't
+  been updated to reflect it. Confirm the PI is still *at Tübingen*, not just that their old
+  page has recent content. If affiliation can't be confirmed current, mark the entry
+  `⚠ affiliation not confirmed current — possible relocation, verify before outreach` and
+  rank it last. Do not silently drop it.
 
 Use the exact query skeletons from
 [`references/search-strategy.md` §4](references/search-strategy.md).
