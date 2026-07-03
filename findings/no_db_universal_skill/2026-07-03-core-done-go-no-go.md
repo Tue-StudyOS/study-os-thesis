@@ -11,6 +11,19 @@
 
 ---
 
+> **Update — 2026-07-03, post-Task-T.** Task T ran the cheap path below.
+> **Outcome: the original blocker is resolved, but NO-GO still stands (transformed).**
+> The eval-protocol fix landed; the Humanities 60% became **100%** under the corrected
+> persona (both misses were the dropped-clause artifact — hypothesis confirmed). But the
+> genuinely-blind **Law** run came in at **60% recall / 100% precision** and surfaced a
+> *new, real* skill defect: the §5 topical-justification filter excluded a core-relevant
+> chair (**Remmert** — actual focus *Allgemeine Grundrechtslehren*, a constitutional-law/
+> human-rights match) at the title-surface level without Pass-2 enrichment. Now **5 of 6**
+> measured faculties clear 80% (Law is the sole miss), so the strict per-faculty reading
+> of criterion 1 is still not met. Next task is **Task U** (§5 enrich-before-exclude fix +
+> Law re-run), not GO. Full write-up:
+> [`2026-07-03-task-t-recall-closeout.md`](2026-07-03-task-t-recall-closeout.md).
+
 ## Verdict: **NO-GO** — narrowly, with a cheap named path to GO.
 
 The core is *not* done against roadmap §4's own bar. Three of five criteria are
