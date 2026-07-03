@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-02 (Task P — steering proof: two inverted personas on `cs` produce near-disjoint option maps; steering confirmed)
+**Last update:** 2026-07-03 (Task Q — hard-faculty ground truth: Humanities/Law/Theology + an interdisciplinary AI-ethics persona authored from the official backbone; blind live run deferred)
 
 ---
 
@@ -93,6 +93,7 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 | Roadmap-J run 1 | First live exercise of the runbook (`cs` faculty) | ✅ | Domi | Recall 5/5 = 100% (matches Task I-fix, no regression). Precision 9/12 = 75% — first-ever precision data point. 3 noise entries: Butz (domain mismatch, cognitive science), Williamson (weak topical fit / borderline pure-math no-go), and Oh/STAI (relocated to KAIST Feb 2026 but still listed on the live FB-Informatik backbone page — a stale-backbone gap, not a relevance miss). Zell excluded pre-scoring via the hardware/embedded no-go. **Caveat: no-peeking discipline was broken** — the CS ground truth and Task I-fix's named results were read during general task context-gathering before Pass 1 ran; recall is probably still representative (the GT names surfaced organically from the FB-Informatik page) but isn't a blind result. Points to **Track 3 / Task O** (relevance/no-go tightening + strengthen the 2f existence check to catch PI relocations, not just page staleness) as the next track. Full write-up: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md` log. `pytest -q` and `build_skill_release.py` still green. |
 | Task O | Relevance/no-go tightening + affiliation-currency check (Track 3, per Roadmap-J run 1's finding) | ✅ | Domi | Added a "topical justification" quality filter to search-strategy.md §5 (co-location on a faculty page section ≠ relevance; Butz worked example), sharpened §7's pure-math no-go wording (foundational-but-not-proof-only theory work is ambiguous-by-default, kept+flagged), and added a §4.7 affiliation-currency query skeleton + SKILL.md 2f upgrade to catch relocated PIs distinct from the existing recency check. Re-ran the Roadmap-J runbook live for `cs` with the same persona (no-peeking held this time): **recall 5/5 = 100%** (no regression), **precision 10/10 = 100%** (up from 75%) — Butz and Williamson now excluded before reaching the map instead of surfaced-with-caveat, Oh's KAIST relocation caught by the codified 2f check instead of incidental diligence. Small-sample caveat: one faculty, one persona, one run — evidence the known noise is fixed, not proof the filter generalizes. `pytest -q` 29 passed/8 skipped; release build OK. Full write-up: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md` log (second 2026-07-02 entry). |
 | Task P | **Steering proof (Track 3 — "most important for the thesis claim")** | ✅ | Domi | **Steering CONFIRMED (strong).** Ran `cs` live with two students with *inverted* profiles: Persona A (causality + probabilistic/Bayesian ML; no-go **computer vision** + hardware) vs. Persona B (computer vision + representation learning; no-go **heavy Bayesian theory** + hardware). Same faculty, same Pass-1 candidate set (25 groups; the live FB-Informatik page now also exposes a "Vision & Cognition" section). The two option maps are **near-disjoint**: numbered options A={Schölkopf, Brendel, Hennig, Macke, von Luxburg, Hein, Martius}, B={Geiger, Black, Pons-Moll, Kühne, Bethge, Brendel, Lensch, Berens} — intersection only {Brendel, Hein}, and those two are reframed/reranked per profile. Vision chairs top B and are excluded from A; Bayesian chairs top A and are excluded from B — flips in exactly the predicted direction. Conversation starters also fully diverge. Steering is driven by §1 (topic→query) + §5 (topical justification); **honest gap** — the two no-gos ("CV", "heavy Bayesian") are *not* codified rows in §7, so they ran via §7's general rule, not the table (one-line §7 note is a minor follow-up, not fixed here). Caveats: single-agent authored/judged (confirmation-bias risk, mitigated by live-verified per-chair facts); personas built to diverge (proves mechanism *can* steer, not that it steers on subtle personas); one faculty. Outputs: `dist/live-validation/cs-persona-{A,B}-skill.md`. Full write-up: `findings/no_db_universal_skill/2026-07-02-task-p-steering-proof.md`. `pytest -q` 29 passed/8 skipped; release build OK. |
+| Task Q | **Hard-faculty ground truth (Track 4 — robustness)** | ✅ (GT authored; blind live run deferred) | Domi | Extended eval ground truth from the 4 easy faculties (Med/Psych/WiSo/CS) to the **structurally harder** ones + one interdisciplinary persona, all built by crawling the official faculty backbone (not a skill run) on 2026-07-02. New files under `skills/tests/eval_ground_truth/`: **`humanities.md`** (Philosophisches Seminar — phil. of mind/metaphysics/cognitive science; hardness = large 3-level faculty, chairs live deep in a Seminar; core GT Sattig/Wong/Corcilius/Schlösser/Döring), **`law.md`** (Öffentliches Recht — constitutional/international law + tech regulation; hardness = dense German chair-title formulas; von Bernstorff/Nettesheim/Finck/Saurer/Remmert), **`theology.md`** (Ev.-Theol. — biblical studies/early-church history; Leuenberger/Kamlah/Tilly/Landmesser/Drecoll/Witt), and **`interdisciplinary.md`** (AI ethics & governance across Law/Humanities-IZEW/Science-ML — Finck + Heesen + Ammicht Quinn + Hardt + Wong; tests routing breadth, not depth). **Task-P caveat #3 confirmed live as a robustness finding:** Ev.-Theol. has several **vacant (N.N.) chairs** incl. Systematic Theology II (Ethik) — for an ethics/systematic persona the relevant chair is unstaffed, so honest discovery should say "no staffed chair for this focus," not misroute; recorded as chair-scarcity, not a steering/skill failure (see `theology.md` Notes). README Files table + a new interdisciplinary routing-metric note updated. **Blind live run deferred by design:** authoring GT this session contaminates a same-session skill run (runbook no-peeking discipline), so the first recall/precision read on a hard faculty is handed to a fresh conversation. `python3 -m pytest -q` and `build_skill_release.py` still green. |
 
 ---
 
@@ -127,6 +128,56 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-03** — Task Q (Track 4, **hard-faculty ground truth** — robustness, the
+  last unproven axis in the roadmap's "core is done" definition §4). Extended eval
+  ground truth beyond the 4 structurally-easy faculties (Med/Psych/WiSo/CS) to the
+  hard ones, all built by crawling the **official faculty backbone** (WebFetch/WebSearch
+  on the uni-tuebingen.de listing pages), not by running the skill — so these files stay
+  a valid, skill-independent benchmark. Four new files under
+  `skills/tests/eval_ground_truth/`:
+  - **`humanities.md`** — Philosophische Fakultät → FB5 → Philosophisches Seminar;
+    sample interest phil. of mind / metaphysics / cognitive science. Core GT: Sattig
+    (theoretical phil.), Wong (phil. of cognitive science), Corcilius (ancient),
+    Schlösser (Kant/German Idealism), Döring (ethics/emotions, honorary — flagged for
+    the affiliation-currency check). Hardness = *large three-level faculty*: chairs sit
+    two levels below the backbone page in a Seminar, so discovery must drill the tree.
+  - **`law.md`** — Juristische Fakultät → Öffentliches Recht. Core GT: von Bernstorff
+    (constitutional/international/human rights), Nettesheim (EU/international), Finck
+    (**Recht der KI** — AI law/data protection), Saurer (environmental/comparative),
+    Remmert (public economic law). Tax chairs (Droege, Seiler) documented as
+    off-interest, not noise. Hardness = *dense German public-law chair-title formulas*
+    the topic→query mapping must decode.
+  - **`theology.md`** — Evangelisch-Theologische Fakultät; sample interest biblical
+    studies / early-church history. Core GT: Leuenberger, Kamlah, Tilly, Landmesser,
+    Drecoll, Witt (+ Zellentin adjacent). Lists chairs almost directly (structurally
+    easy) **but is genuinely chair-poor for some interests** — see below.
+  - **`interdisciplinary.md`** — one persona spanning **three faculties + interfaculty
+    centers**: ethics/law/governance of AI. Anchors: Finck (Law), Heesen + Ammicht Quinn
+    (IZEW/interfaculty ethics), Hardt (MPI-IS Social Foundations of Computation —
+    fairness/FAccT), Wong (Philosophy — foundations). Tests **routing breadth** (does
+    discovery span all three faculties, incl. off-backbone interfaculty centers) rather
+    than within-faculty depth. README gained a per-faculty-coverage routing-metric note.
+
+  **Task-P caveat #3 confirmed as a live robustness finding.** Protestant Theology has
+  several **vacant (N.N.) chairs** — including **Systematische Theologie II (Ethik und
+  Christliche Gesellschaftslehre)** and Fundamentaltheologie/Religionsphilosophie. So for
+  a theological-ethics or philosophy-of-religion persona the directly-relevant chair is
+  currently *unstaffed*: honest discovery should report "no staffed chair for this exact
+  focus at this faculty," not misroute to a filled-but-off-topic chair. This is the
+  chair-scarcity limit Task P predicted (a small faculty may not have enough distinct
+  *staffed* groups for two profiles to diverge) — recorded as robustness/coverage, **not**
+  a steering or recall failure. The biblical-studies GT above is deliberately chosen from
+  the well-staffed cluster to keep the recall metric clean; the vacancy point lives in
+  `theology.md` Notes.
+
+  **Blind live run deferred — on purpose.** The runbook's core discipline is that GT
+  authoring and the skill arm must be blind to each other; authoring all this GT in this
+  conversation contaminates any same-session skill run. So the first live recall/precision
+  read on a hard faculty is handed to a **fresh** conversation (next task), which should
+  run the skill arm without opening these GT files until scoring. Deliverable this session
+  is the GT itself. `python3 -m pytest -q` and `python3 scripts/build_skill_release.py`
+  still green.
 
 - **2026-07-02** — Task P (Track 3, **steering proof** — the roadmap calls this "the
   most important for the thesis claim"). First direct test that the 6-dimension
