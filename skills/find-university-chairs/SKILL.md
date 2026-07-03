@@ -143,6 +143,9 @@ Before ranking, discard chairs that violate the student's no-gos using the exclu
 table in [`references/search-strategy.md` §7](references/search-strategy.md).
 If a no-go *might* apply (ambiguous), keep the chair and annotate it with a
 `⚠ possible conflict with no-go: {NOGO}` note rather than silently dropping it.
+Do not exclude a candidate at this or the Step 6 topical-justification step from its
+title alone when the title names a core-interest field amid other strands — enrich
+first (see §5 "Enrich before excluding" in `search-strategy.md`).
 
 ### Step 8 — Produce the option map
 

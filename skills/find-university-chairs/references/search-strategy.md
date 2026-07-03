@@ -277,8 +277,9 @@ Pass 2. Do not promote a chair just because it appears prominently in results.
 | **Thesis readiness** | Explicit mention of thesis openings or student projects is a strong positive signal; weight it above general research description. |
 | **Lab activity signal** | PhD student / postdoc pages updated recently indicate an active group; dormant group pages (no updates ≥ 3 years) are a risk to flag. |
 | **Topical justification** | A chair's inclusion must be justified by its *own* stated research focus matching the profile's interests/domain — not merely by co-location in the same faculty page section or listing group. Faculty pages often bundle topically adjacent-but-distinct groups under one heading. Read the chair's own description/publications before including it; do not infer relevance from its neighbors on the page. |
+| **Enrich before excluding** | The symmetric risk to the one above: do **not** exclude a candidate at this step from a *title-only* reading when the chair's own title or listing already names one of the profile's core-interest fields, even if that title also carries other, off-interest strands. A dense multi-strand chair title (common in German public-law/administrative chairs) can bury the core-match term among distinguishing-but-irrelevant ones. Run Pass-2 enrichment (2a) on the chair's actual current research focus — Schwerpunkte, recent publications, commentary work — **before** deciding the title's off-interest strands dominate. Exclude only after that enrichment confirms the chair's real focus does not match; a title-surface judgment alone is not sufficient grounds for exclusion. |
 
-**Worked example (Roadmap-J, `cs` live run, 2026-07-02):** FB-Informatik's page lists
+**Worked example — over-inclusion (Roadmap-J, `cs` live run, 2026-07-02):** FB-Informatik's page lists
 Prof. Martin Butz's chair (Kognitive Modellierung / predictive-processing models of
 human cognition) under the same "Maschinelles Lernen" section as Schölkopf, Hein, and
 Martius. For a profile whose stated interests are "deep learning, probabilistic
@@ -286,6 +287,21 @@ methods, causality, representation learning" (AI/ML research), Butz's chair does
 match — cognitive modeling of human perception and action is a distinct field from
 AI/ML research, even though both use probabilistic modeling and share a page section.
 Section membership is not relevance evidence; the chair's own stated focus is.
+
+**Worked example — under-inclusion (Task U, `law` live run, 2026-07-03):** the Law
+faculty listing gives Prof. Barbara Remmert's chair the title "Staats- und
+Verwaltungsrecht, Öffentliches Wirtschaftsrecht, Kommunalrecht" (constitutional/
+administrative law, public economic law, municipal law). For a profile whose core
+interest is constitutional law + human rights, a title-only reading sees the
+*distinguishing* strands (economic law, municipal law) and drops the chair as an
+economic/municipal-law specialist — a plausible-looking but wrong call. Pass-2
+enrichment of her actual Schwerpunkte shows her current focus is **Allgemeine
+Grundrechtslehren** (fundamental-rights doctrine) with active constitutional work
+(GG commentary) — a core match the title's first, generic word ("Staatsrecht")
+already hinted at but which the exclusion judgment skipped past without checking.
+Excluding on the title alone, without opening the chair's own Schwerpunkte/publication
+page, produced a false-negative. The title naming a core-interest term (even amid
+off-interest strands) is a signal to enrich, not a license to exclude.
 
 ---
 
