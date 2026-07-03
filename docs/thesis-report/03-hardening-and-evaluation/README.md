@@ -4,11 +4,15 @@
 under `findings/`; this section synthesizes and links rather than duplicates:
 - [core-optimization-roadmap.md](../../../findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md) —
   the Track 1–5 plan this whole phase follows, and its "definition of core is done" bar.
-- Live-eval results: `2026-06-28-live-eval-results.md`, `2026-06-28-I-fix-revalidation.md`,
-  `2026-06-28-phase2-live-eval-results.md`, `2026-07-02-live-eval-runbook.md`, `2026-07-02-task-p-steering-proof.md`
-  (all under `findings/no_db_universal_skill/`).
+- [2026-07-03-eval-aggregate-scorecard.md](../../../findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md) —
+  **every recall/precision/steering/robustness number to date, in one place**, with sources
+  and honest caveats per number. Read this first if you just want the numbers.
+- Individual write-ups the scorecard aggregates: `2026-06-28-live-eval-results.md`,
+  `2026-06-28-I-fix-revalidation.md`, `2026-06-28-phase2-live-eval-results.md`,
+  `2026-07-02-live-eval-runbook.md`, `2026-07-02-task-p-steering-proof.md`,
+  `2026-07-03-task-r-edge-cases.md` (all under `findings/no_db_universal_skill/`).
 - `STATUS.md`, section "Post-Phase-3 hardening" — the literal current status of every task
-  named below (Tasks J, O, P, Q; Track 2; Tasks R/S).
+  named below (Tasks J, O, P, Q, R; Track 2; Task S).
 
 ## Synthesis
 
@@ -54,18 +58,27 @@ Pass-1 candidate set — and produced **near-disjoint option maps** (only 2 of 8
 overlapped, and even those two were re-ranked and re-framed per profile). This is the first
 direct empirical answer to the question the 2026-06-25 meeting notes asked out loud: *"what's
 the difference to just using Claude without a skill?"* If the interview didn't change the
-output, the answer would be "none" — Task P shows it does, sharply. Task Q then extended
-ground truth to structurally harder faculties (Humanities, Law, Theology, plus an
-interdisciplinary AI-ethics persona spanning three faculties) to test whether the same
-mechanism holds outside the "easy," well-organized faculties Phase 1 was built and tuned on —
-its blind live run is deliberately deferred to a fresh conversation (see
-[04](../04-open-work/README.md)) to avoid contaminating the no-peeking protocol that gives
-these results their credibility in the first place.
+output, the answer would be "none" — Task P shows it does, sharply.
+
+Task Q then extended ground truth to structurally harder faculties (Humanities, Law,
+Theology, plus an interdisciplinary AI-ethics persona) to test whether the same mechanism
+holds outside the "easy," well-organized faculties Phase 1 was built and tuned on. Its first
+blind live run (Humanities) landed at 60% recall — below the roadmap's 80% robustness bar —
+but the honest read is more nuanced than "the skill got worse on hard faculties": the miss was
+root-caused to the **eval protocol** (an incomplete one-line persona summary), not the skill
+itself, which found and correctly evaluated all 5 ground-truth chairs. Law and Theology have
+ground truth but no live run yet. Task R separately exercised three robustness edge cases
+(a niche topic with no Tübingen match, a shallow/resistant student, interdisciplinary routing
+across three faculties) and passed all three cleanly, fixing two small spec gaps along the way.
 
 **Honest limitations, stated plainly for the write-up:** every live run to date has been
 designed, executed, and scored by a single agent in a single session — a confirmation-bias
 risk mitigated only by grounding every factual claim in a live-verified source, not by
 independent review. Sample sizes per faculty are n=1–3, not enough to claim the filters
-generalize. The company eval's ground-truth circularity is unresolved. These are named
-explicitly rather than smoothed over, in keeping with the project's own evidence-rules
-discipline (never invent, never claim completeness, flag what's uncertain).
+generalize. The company eval's ground-truth circularity is unresolved. The roadmap's own
+"core is done" recall bar (≥80% across ≥6 faculties incl. one hard faculty) is **not yet
+met** — only 5 faculties have any live number, and the one hard faculty tested sits below
+bar. Output quality (Task S) has no data at all yet. These are named explicitly rather than
+smoothed over, in keeping with the project's own evidence-rules discipline (never invent,
+never claim completeness, flag what's uncertain). Full numbers, per-faculty, with sources:
+[2026-07-03-eval-aggregate-scorecard.md](../../../findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md).

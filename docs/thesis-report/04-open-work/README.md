@@ -12,16 +12,21 @@
 
 ## What's open right now
 
-- **The deferred Task Q blind live run.** Ground truth exists for four structurally hard
-  faculties (Humanities, Law, Theology, one interdisciplinary persona), but the first
-  recall/precision read against it was deliberately handed to a fresh conversation to avoid
-  breaking the no-peeking discipline that makes the earlier results credible (see
-  [03](../03-hardening-and-evaluation/README.md)). Not yet run as of this writing.
+- **Law and Theology blind live runs.** Ground truth exists for all four hard-faculty/
+  interdisciplinary cases; Humanities has been run (60% recall, root-caused to an eval-protocol
+  gap, not a skill defect — see [03](../03-hardening-and-evaluation/README.md)) and the
+  interdisciplinary case was covered via Task R's routing check (100%). Law and Theology have
+  ground truth but no live run yet.
 - **Track 2 (backbone audit & repair, weak-web-presence fallback, query-skeleton iteration)**
-  and **Tasks R (edge-case behavior) and S (output & interview quality pass)** — all defined
-  in `core-optimization-roadmap.md` §3, none started. Track 2 was implicitly skipped because
-  Task I already cleared the recall bar that would have triggered it; this was never formally
-  closed and, until 2026-07-03, wasn't even visible as "open" in `STATUS.md`.
+  and **Task S (output & interview quality pass)** — defined in `core-optimization-roadmap.md`
+  §3, neither started. Task R (edge-case behavior) is done (3/3 edge cases pass). Track 2 was
+  implicitly skipped because Task I already cleared the recall bar that would have triggered
+  it; this was never formally closed and, until 2026-07-03, wasn't even visible as "open" in
+  `STATUS.md`.
+- **The roadmap's own "core is done" recall bar is not yet met** (≥80% recall across ≥6
+  faculties incl. one hard faculty — only 5 faculties have any live number, and the one hard
+  faculty tested is below bar; see the
+  [aggregate scorecard](../../../findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md)).
 - **Company-backbone ground-truth circularity** (named in [03](../03-hardening-and-evaluation/README.md)):
   an independent, non-backbone-derived ground truth for company discovery is still missing.
 - **Non-MINT company backbone coverage** — the BW company backbone is strong for AI/ML,
