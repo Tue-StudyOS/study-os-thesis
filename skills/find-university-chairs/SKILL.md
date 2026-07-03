@@ -157,6 +157,12 @@ End with the coverage caveat.
 Produce a **map of options** grouped by interest dimension (e.g. "NLP / Language-in-Education",
 "Clinical Neuroscience"). Do not list by faculty.
 
+**If no chair survives Pass 1/2 and the filters** (a genuine no-match, e.g. a topic
+requiring an engineering faculty Tübingen doesn't have), say so plainly instead of
+padding the map with a distant, weakly-justified chair. Name where the topic *would*
+fit if you found that during routing, and note whether a narrower/adjacent version
+of the interest might still have a Tübingen fit.
+
 For each option include:
 
 - **Chair / Arbeitsbereich name** and official URL

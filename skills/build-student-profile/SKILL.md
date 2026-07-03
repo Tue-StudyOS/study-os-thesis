@@ -57,6 +57,8 @@ Return a compact profile with:
 - Ask about "negative signal" too: topics, tools, work styles, or thesis formats the student does not want.
 - If the first user message is short, respond only with the first question. Do not recommend professors, papers, or proposals yet.
 - If the student answers briefly, respond like a human advisor: acknowledge what is now clearer, name what is still missing, and ask the next focused question.
+- If open-ended questions repeatedly produce refusals or non-answers ("idk", "no preference", "just recommend something"), switch to forced-choice questions (two or three concrete options to pick from) — a resistant student who won't elaborate freely will often still pick from a short list.
+- If a student remains resistant across several forced-choice attempts and a dimension still has no real content, stop pushing further. Say plainly which dimension(s) are still missing, and offer the student an explicit choice: continue the interview, or receive a generic, non-personalized pointer instead of a tailored shortlist. Do not silently hand a thin profile to `find-university-chairs` — the six-dimension bar applies regardless of how much patience the interview has used up.
 - After a longer interview, summarize the "research core" in 3-6 bullets before using downstream skills.
 
 ## First Question
