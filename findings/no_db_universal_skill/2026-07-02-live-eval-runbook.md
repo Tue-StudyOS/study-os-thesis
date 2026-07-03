@@ -23,11 +23,23 @@ could plausibly affect recall or precision. Skip for pure prose/typo edits.
 1. **Pick the faculty** most exercised by the change (e.g. a backbone fix to §Medicine
    → re-run medicine; a query-skeleton change → pick whichever faculty's queries
    changed, or `cs` as the default well-understood case).
-2. **Reuse the existing persona** for that faculty from
-   `skills/tests/eval_ground_truth/<faculty>.md` (or `cs_seed/`) — same sample
-   interest, so results are comparable to the last live run. Do not invent a new
-   persona; that breaks comparability.
-3. **No peeking.** Do not open the ground-truth file for this faculty until step 5.
+2. **Build the persona from the GT file's FULL `Sample interest:` line.** Extract
+   *only* that one line from `skills/tests/eval_ground_truth/<faculty>.md` (or, for CS,
+   `cs_seed/`) — e.g. `grep -i "sample interest" skills/tests/eval_ground_truth/<faculty>.md`
+   — and build the test persona from its full wording. **Do NOT build the persona from
+   the README's one-line summary table** (`eval_ground_truth/README.md`): those
+   summaries are lossy and drop qualifying clauses present in the GT file's real sample
+   interest. This exact gap was the documented root cause of the Humanities 60% run
+   (2026-07-03) — the README one-liner "Philosophy of mind, metaphysics and cognitive
+   science" dropped the GT file's "...with an interest in the history of the field
+   (ancient philosophy, Kant / German Idealism)" clause, which caused a spurious
+   historical-work no-go that excluded 2 GT chairs the crawl had already found. Use the
+   GT file's full sample interest verbatim so results stay comparable and complete.
+3. **No peeking — with one carve-out.** Do not read the ground-truth **chair rows,
+   Notes, or scoring table** for this faculty until step 5. Reading *only* the single
+   `Sample interest:` line (via the `grep` in step 2, which does not reveal the chair
+   list) is allowed and required — that is how you build the persona without breaking
+   blindness. Do not open the full GT file in an editor until step 5.
 4. **Run the skill arm live**: follow `find-university-chairs/SKILL.md` end-to-end
    with real `WebSearch`/browse calls. Save the output MAP to
    `dist/live-validation/<faculty>-skill.md` (overwrite the prior run; git history
