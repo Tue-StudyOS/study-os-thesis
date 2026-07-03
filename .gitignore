@@ -243,11 +243,11 @@ Thumbs.db
 
 # --- Local working files (not part of the repo) ---
 .claude-flow/
+.swarm/
 .claude/
 *.docx
 COMBINED_PR_GUIDE.md
 ISSUE_ROUTER.md
-PROJECT_CONTEXT.md
 WORKFLOW.md
 update-context.sh
 graphify-out/

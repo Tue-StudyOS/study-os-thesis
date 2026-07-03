@@ -23,5 +23,5 @@ stays correct because it reads the live web is the only thing that survives.
 
 ## Related
 
-- Vision doc at repo root: [VISION_NO_DB.md](../../VISION_NO_DB.md)
+- Vision doc: [VISION_NO_DB.md](../../docs/thesis-report/01-the-pivot/2026-06-26-vision-no-db.md)
 - Branch: `feat/no-db-universal-skill` (off `codex/chair-discovery-eval-from-valentin`)

@@ -3,7 +3,7 @@
 - **Date:** 2026-06-26
 - **Branch:** `feat/no-db-universal-skill` (off `codex/chair-discovery-eval-from-valentin`)
 - **Read first:** [2026-06-26-concept-and-risks.md](2026-06-26-concept-and-risks.md) and
-  [VISION_NO_DB.md](../../VISION_NO_DB.md)
+  [VISION_NO_DB.md](../../docs/thesis-report/01-the-pivot/2026-06-26-vision-no-db.md)
 
 This plan is written so each task can be handed to a single agent run, in order.
 Tasks A→H are sequential where dependencies require it; parallel-safe tasks are

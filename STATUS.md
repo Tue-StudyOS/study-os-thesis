@@ -490,7 +490,7 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 - **2026-06-26** — Pivoted to the database-less, university-wide direction.
   Created branch `feat/no-db-universal-skill` off
   `codex/chair-discovery-eval-from-valentin`. Wrote
-  [VISION_NO_DB.md](VISION_NO_DB.md) and the findings set under
+  [VISION_NO_DB.md](docs/thesis-report/01-the-pivot/2026-06-26-vision-no-db.md) and the findings set under
   `findings/no_db_universal_skill/` (concept-and-risks, exact build plan).
   Rewrote MASTERPLAN around Phase 1 = university discovery (Tasks A–H) and reset
   this STATUS. Located Max's multiturn eval harness on branch

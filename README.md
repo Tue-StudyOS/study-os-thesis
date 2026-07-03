@@ -138,7 +138,7 @@ study-os-thesis/
 │   ├── design-agent-skill/SKILL.md
 │   └── tests/                       deterministic + eval tests
 ├── scripts/build_skill_release.py   packages skills into tar.gz + zip
-├── docs/research/                   research package + architecture rationale
+├── docs/thesis-report/               project genesis & decision history (thesis writeup)
 ├── MASTERPLAN.md                    stable plan: what we build, in what order, why
 ├── STATUS.md                        living progress doc: current state + decisions
 └── .github/workflows/               qa.yml · package-skills.yml · codex-multiturn-evals.yml
@@ -174,7 +174,11 @@ or `major`). Release notes are maintained in [CHANGELOG.md](CHANGELOG.md).
 This project started as a hosted web app (FastAPI + Celery + Postgres + React).
 That stack is archived on the [`legacy/web-app`](../../tree/legacy/web-app) branch.
 The pivot to a skill-only architecture is documented in
-[docs/research/skill_architecture_summary.md](docs/research/skill_architecture_summary.md).
+[skill_architecture_summary.md](docs/thesis-report/00-problem-and-research/2026-06-12-professor-research-package/skill_architecture_summary.md).
+
+The full genesis story — pre-pivot research, the pivot decision, how the skill was built
+and hardened, and what's still open — is curated in
+[docs/thesis-report/](docs/thesis-report/README.md), written for the thesis submission.
 
 The core argument: a web app with a curated professor database requires a person
 to keep the data fresh. A skill with a search strategy + a backbone of structural
