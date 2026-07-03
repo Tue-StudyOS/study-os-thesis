@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-03 (Eval Scorecard: all recall/precision/steering/robustness numbers to date aggregated in one document — the roadmap's "core is done" recall bar is not yet met)
+**Last update:** 2026-07-03 (Go/No-Go call on roadmap §4 "core is done": **NO-GO** — 4/5 criteria met, but the recall bar (≥6 faculties incl. ≥1 hard ≥80%) is not; next task named)
 
 ---
 
@@ -13,6 +13,16 @@
 **Phase 3 — Orchestration & Distribution: COMPLETE.** Backbone maintenance, entry-point skill,
 distribution artifacts, and smoke test are all done. Branch `feat/no-db-universal-skill` is
 package-ready; beta-ready after independent live test by another person/group.
+
+**Phase 4 — Core hardening: NEAR-DONE, one gap open.** Tracks 1–4 of the optimization
+roadmap are complete (recall/precision fixes, steering proof, robustness, output quality).
+The explicit go/no-go on roadmap §4's "core is done" bar is **NO-GO** (2026-07-03): 4 of 5
+criteria are met (precision-where-measured, steering, output quality, edge cases), but the
+recall criterion — ≥80% across ≥6 faculties incl. ≥1 hard faculty — is not: only 5 faculties
+have a live number, and the one hard faculty tested (Humanities) sits at a protocol-caveated
+60%. The gap is measurement + a cheap eval-protocol fix, **not** a skill defect. No schedule
+pressure to cut the corner: Phase 2 (companies) is already GREEN. Next task: **Task T** below.
+Decision doc: [2026-07-03-core-done-go-no-go.md](findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md).
 
 Phase 1 is **complete** with live validation (all 4 faculties ≥70% live recall on fixture-based
 evaluation; gate passed 2026-06-28). Phase 1 build plan: [2026-06-26-build-plan.md](findings/no_db_universal_skill/2026-06-26-build-plan.md).
@@ -99,6 +109,8 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 | Task R | Edge-case behavior — niche topic with no Tübingen match, shallow/resistant student (does the gate hold?), interdisciplinary routing (Track 4, see roadmap §3) | ✅ | Domi | All 3 edge cases exercised live, all pass. (1) Niche no-match (rocket-engine/aerospace propulsion — Tübingen has no engineering faculty): honest "no strong fit" output, no padding. (2) Shallow/resistant student: 8-turn simulated adversarial interview never triggered a premature `find-university-chairs` call; gate held via `build-student-profile`'s own re-prompting plus `find-university-chairs`'s independent Step 1 re-check. (3) Interdisciplinary routing (`interdisciplinary.md` persona): 5/5 GT anchors surfaced, 3/3 spanned faculties/centers covered (Law/Finck, Humanities-IZEW/Heesen+Ammicht Quinn+Wong, Science-ML/Hardt) — no collapse onto a single discipline. Two small spec gaps found and fixed: `find-university-chairs/SKILL.md` now has an explicit zero-candidates rule; `build-student-profile/SKILL.md` now recommends forced-choice questions for resistant students plus an honest generic-pointer fallback instead of an endless interview loop. Full write-up: `findings/no_db_universal_skill/2026-07-03-task-r-edge-cases.md`. Outputs: `dist/live-validation/{niche-no-match,interdisciplinary}-skill.md`. `pytest -q` and `build_skill_release.py` still green. |
 | Task S | Output & interview quality pass — honest pros/cons, concrete conversation starters, dated evidence, caveat presence, interview convergence (Track 4, see roadmap §3) | ✅ | Domi | Reviewed all 5 full discovery transcripts against the 5 criteria. 4/5 criteria pass cleanly (pros/cons, conversation starters, coverage caveat, and — via a live happy-path interview simulation, since none existed — interview convergence: 6 turns, clean, vs. edge case 2's adversarial 8-turn non-convergence). 1 real repeated gap found: cs-skill and wiso-skill (2/5 transcripts) omit the "Dated evidence" field from every option. Fixed with one worked example added to `find-university-chairs/SKILL.md` Step 8 Output section. Full write-up: `findings/no_db_universal_skill/2026-07-03-task-s-output-quality.md`. `pytest -q` and `build_skill_release.py` still green. |
 | Eval Scorecard | Aggregate every recall/precision/steering/robustness number to date into one document | ✅ | Domi | Pure aggregation, no new live run. `findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md`: one table per axis (university recall/precision by faculty, company recall/thesis-signal, steering, robustness), each cell cited to its source. Honest bottom line: the roadmap's "core is done" bar (≥80% recall across ≥6 faculties incl. one hard faculty) is **not yet met** — only 5 faculties have any live number and the one hard faculty tested (Humanities, 60%) is below bar; Task S has zero data. `docs/thesis-report/03-hardening-and-evaluation/README.md` and `04-open-work/README.md` updated to match (Task Q's blind run and Task R are no longer described as pending). |
+| §4 Go/No-Go | Explicit go/no-go call on roadmap §4 "core is done" (over existing evidence, no new run) | ✅ | Domi | **Verdict: NO-GO** (narrowly). Scored §4's 5 criteria: steering (Task P), output quality (Task S), edge cases (Task R) all ✅; precision strong but under-sampled (2/5 faculties); **recall bar ❌** — fails on two independent counts: only 5 faculties measured (not ≥6), and no hard faculty has a clean live ≥80% (Humanities 60%, protocol-caveated; Law/Theology unrun). The Humanities miss is root-caused to the eval protocol (personas built from the README's lossy one-line summaries, not the GT files' full sample interest), not a skill defect — the crawl found all 5 GT chairs. Not a GO because (1) precedent: the project was already burned by a premature "gate GREEN" on partial evidence (2026-06-28 CI-hygiene entry); (2) no schedule pressure — Phase 2 (companies) is already GREEN, so nothing waits on this. Names **Task T** (eval-protocol fix + blind re-run Humanities + blind-run Law) as the closeout. Decision doc: `findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md`. No skill files touched. |
+| Task T | Eval-protocol fix + hard-faculty recall closeout (clears §4 criterion 1) | ⬜ open | — | Named by the §4 Go/No-Go above. (1) Fix the runbook so test personas are built from each GT file's **full** sample interest, not the README's lossy one-liners (root cause of Humanities 60%) — an eval-harness fix, not a skill change. (2) Blind-re-run **Humanities** under the corrected protocol (should clear 80% — crawl already found all 5). (3) Blind-run **Law** (`eval_ground_truth/law.md`; different hardness axis — dense chair-title formulas) to reach ≥6 measured faculties. Score recall + precision on both. **Done-when:** ≥6 faculties have a live recall number with ≥1 hard faculty ≥80%; then revisit the §4 go/no-go to GO. |
 
 ---
 
@@ -133,6 +145,27 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-03** — **§4 Go/No-Go call: NO-GO** (judgment over existing evidence, no new
+  live run). With Tracks 1–4 all complete, made the explicit "core is done" decision the
+  roadmap's §5 dependency graph had been deferring. Scored roadmap §4's five criteria against
+  the aggregate scorecard: steering (Task P), output quality (Task S), and edge-case
+  robustness (Task R) all **met**; precision **strong where measured** but only 2/5 faculties
+  formally scored; the **recall criterion is NOT met** and fails on two independent counts —
+  (a) only **5** faculties have a live number, so "≥6 faculties" cannot be claimed at all, and
+  (b) **no hard faculty** has a clean live ≥80% (Humanities 60%, Law/Theology unrun). Crucially,
+  the Humanities 60% is root-caused to the **eval protocol, not the skill**: personas are built
+  from the README's lossy one-line sample-interest summaries, dropping a clause in the GT file's
+  full sample interest — the live crawl actually found all 5 GT chairs. **Not converted to a GO**
+  for two reasons: (1) precedent — this project was already burned by a premature "gate GREEN"
+  declared on partial evidence (see the 2026-06-28 CI-hygiene entry); (2) no schedule pressure —
+  Phase 2 (companies) is already GREEN, so nothing downstream waits on this gate, meaning there's
+  no cost to closing the gap properly instead of booking it. Named the closeout as **Task T**
+  (fix the eval-protocol lossy-summary gap → blind-re-run Humanities under the corrected protocol
+  → blind-run Law to reach ≥6 measured faculties), done-when ≥6 faculties have a live recall
+  number with ≥1 hard faculty ≥80%. Deliverable is the decision itself — **no skill files
+  touched**, so pytest/release-build untouched and still green from the last task. Full reasoning:
+  `findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md`.
 
 - **2026-07-03** — **Task S (output & interview quality pass) done.** Reviewed the 5
   full discovery transcripts (`dist/live-validation/{cs,medicine,psychology,wiso,
