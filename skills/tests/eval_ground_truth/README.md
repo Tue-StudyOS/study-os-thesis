@@ -12,6 +12,18 @@ at the University of Tübingen.
 | `medicine.md` | Medizinische Fakultät | Neurodegenerative diseases and clinical brain research |
 | `psychology.md` | Science — Psychologie (Psychology) | Cognitive neuroscience and experimental decision-making |
 | `wiso.md` | Wirtschafts- und Sozialwissenschaftliche Fakultät (WiSo) | Comparative politics and political economy |
+| `humanities.md` | Philosophische Fakultät — Philosophisches Seminar | Philosophy of mind, metaphysics and cognitive science |
+| `law.md` | Juristische Fakultät — Öffentliches Recht | Constitutional/international law and regulation of new technologies |
+| `theology.md` | Evangelisch-Theologische Fakultät | Biblical studies and the history of early Christianity |
+| `interdisciplinary.md` | Law + Humanities/IZEW + Science (MPI-IS/Cyber Valley) | Ethics, law and governance of artificial intelligence |
+
+The first four rows are the **structurally easy, well-organized** faculties (used for
+the recall/precision/steering proofs, Tasks H–P). The last four were added in
+**Task Q (robustness)** to cover the **structurally harder** faculties — Humanities
+(a large three-level faculty where chairs live deep in a Seminar), Law (dense German
+chair-title formulas), Theology (a small faculty with several vacant chairs) — plus one
+**interdisciplinary** persona spanning three faculties to test routing breadth. See
+each file's Notes for the specific hardness it exercises.
 
 ## What "recall" means here
 
@@ -24,6 +36,14 @@ naming him explicitly).
 
 A chair is **not counted** if it appears only in a generic sentence ("there are many
 neuroscience labs at Tübingen") without specific identification.
+
+**Interdisciplinary file (`interdisciplinary.md`) — routing metric.** For the
+cross-faculty persona, recall is the same fraction (anchors surfaced / total anchors),
+but **also report per-faculty coverage**: whether the run surfaced at least one anchor
+from *each* spanned faculty (Law, Humanities/IZEW, Science-ML). Surfacing five law
+chairs but nothing from the ethics centers or ML side is an interdisciplinary-routing
+miss even at high raw recall — the point of that file is routing breadth, not depth in
+one faculty.
 
 ## What "precision" means here
 
