@@ -174,6 +174,24 @@ For each option include:
 - **Conversation starter** — one concrete angle for a first-contact email
 - **No-go flags** — if any no-go partially applies, say so
 
+Example of a complete option entry (all fields present, including dated evidence — this
+field is required on *every* option, not just the first one in the map):
+
+> **Chair for Theoretical Philosophy — Prof. Dr. Thomas Sattig**
+> ([uni-tuebingen.de](https://uni-tuebingen.de/en/fakultaeten/philosophische-fakultaet/fachbereiche/philosophie-rhetorik-medien/philosophisches-seminar/personen/professoren/prof-dr-thomas-sattig/))
+> - Relevant person: Prof. Dr. Thomas Sattig
+> - Relevance rationale: own stated research areas are "Metaphysics and Philosophy of
+>   Mind" — direct match on interests + methods.
+> - Pros & likely difficulties: senior, well-published chair-holder with a strong
+>   supervision track record; no online thesis-opening announcement found (typical for
+>   philosophy chairs — direct inquiry needed, not itself a red flag).
+> - Dated evidence: *How Time Passes* (Oxford University Press, 2025); own page
+>   confirms current chair-holder role (accessed 2026-07-03).
+> - Conversation starter: reference *How Time Passes* (2025) and ask whether the
+>   persistence-of-persons work has room for a thesis connecting metaphysics of mind to
+>   computational notions of identity.
+> - No-go flags: none.
+
 End the map with the **coverage caveat**:
 
 > "This map covers publicly visible chairs as of [today's date]. Chairs with a weak web
