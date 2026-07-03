@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-03 (Task Q run 1: first blind hard-faculty live run, `humanities` — 60% recall/100% precision, shortfall traced to an eval-protocol persona gap, not a skill defect)
+**Last update:** 2026-07-03 (Task R: edge-case behavior — all 3 edge cases pass: niche no-match topic honestly says so, shallow/resistant-student gate holds for 8 turns, interdisciplinary routing hits 5/5 anchors across all 3 faculties)
 
 ---
 
@@ -96,7 +96,7 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 | Task Q | **Hard-faculty ground truth (Track 4 — robustness)** | ✅ (GT authored; blind live run deferred) | Domi | Extended eval ground truth from the 4 easy faculties (Med/Psych/WiSo/CS) to the **structurally harder** ones + one interdisciplinary persona, all built by crawling the official faculty backbone (not a skill run) on 2026-07-02. New files under `skills/tests/eval_ground_truth/`: **`humanities.md`** (Philosophisches Seminar — phil. of mind/metaphysics/cognitive science; hardness = large 3-level faculty, chairs live deep in a Seminar; core GT Sattig/Wong/Corcilius/Schlösser/Döring), **`law.md`** (Öffentliches Recht — constitutional/international law + tech regulation; hardness = dense German chair-title formulas; von Bernstorff/Nettesheim/Finck/Saurer/Remmert), **`theology.md`** (Ev.-Theol. — biblical studies/early-church history; Leuenberger/Kamlah/Tilly/Landmesser/Drecoll/Witt), and **`interdisciplinary.md`** (AI ethics & governance across Law/Humanities-IZEW/Science-ML — Finck + Heesen + Ammicht Quinn + Hardt + Wong; tests routing breadth, not depth). **Task-P caveat #3 confirmed live as a robustness finding:** Ev.-Theol. has several **vacant (N.N.) chairs** incl. Systematic Theology II (Ethik) — for an ethics/systematic persona the relevant chair is unstaffed, so honest discovery should say "no staffed chair for this focus," not misroute; recorded as chair-scarcity, not a steering/skill failure (see `theology.md` Notes). README Files table + a new interdisciplinary routing-metric note updated. **Blind live run deferred by design:** authoring GT this session contaminates a same-session skill run (runbook no-peeking discipline), so the first recall/precision read on a hard faculty is handed to a fresh conversation. `python3 -m pytest -q` and `build_skill_release.py` still green. |
 | Track 2 | Backbone audit & repair / weak-web-presence fallback / query-skeleton iteration (roadmap's own "Task L/M/N", see [core-optimization-roadmap.md](findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md) Track 2) | ⬜ open | — | Implicitly skipped so far: Task I already showed ≥70% live recall, so the fork in the roadmap's §5 dependency graph ("recall low? → Track 2") never triggered. Not formally closed — the backbone has not been systematically audited for drill-down completeness, and no weak-web-presence fallback (Vorlesungsverzeichnis, Fachschaft lists, institute staff directories) exists yet. Revisit if a future faculty's recall comes in low. |
 | Task Q run 1 | First blind hard-faculty live run (`humanities`, Track 4 — robustness) | ✅ | Domi | Recall 3/5 = 60% (Sattig, Wong, Schlösser found; Corcilius, Döring missed) — below the README's 70% target, but root-caused to a persona-construction gap in the eval protocol (the README's one-line sample-interest summary omits `humanities.md`'s "...with an interest in the history of the field" clause), not a skill discovery failure: the live crawl found and evaluated all 5 GT chairs, then correctly excluded 2 per no-gos the incomplete persona implied. Precision 3/3 = 100%, and the run independently re-derived the GT file's own "deliberately excluded, not noise" calls (Grabmayr, Schumski). Backbone drill-down (Faculty→FB5→Seminar) worked correctly first try — the "must descend the department tree" hardness this faculty was chosen to test was not the failure mode. One interfaculty backbone URL 404'd (second data point for Track 2). Output: `dist/live-validation/humanities-skill.md`. Full write-up: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md` log (2026-07-03 entry). `pytest -q` and `build_skill_release.py` still green. |
-| Task R | Edge-case behavior — niche topic with no Tübingen match, shallow/resistant student (does the gate hold?), interdisciplinary routing (Track 4, see roadmap §3) | ⬜ open | — | Not started. |
+| Task R | Edge-case behavior — niche topic with no Tübingen match, shallow/resistant student (does the gate hold?), interdisciplinary routing (Track 4, see roadmap §3) | ✅ | Domi | All 3 edge cases exercised live, all pass. (1) Niche no-match (rocket-engine/aerospace propulsion — Tübingen has no engineering faculty): honest "no strong fit" output, no padding. (2) Shallow/resistant student: 8-turn simulated adversarial interview never triggered a premature `find-university-chairs` call; gate held via `build-student-profile`'s own re-prompting plus `find-university-chairs`'s independent Step 1 re-check. (3) Interdisciplinary routing (`interdisciplinary.md` persona): 5/5 GT anchors surfaced, 3/3 spanned faculties/centers covered (Law/Finck, Humanities-IZEW/Heesen+Ammicht Quinn+Wong, Science-ML/Hardt) — no collapse onto a single discipline. Two small spec gaps found and fixed: `find-university-chairs/SKILL.md` now has an explicit zero-candidates rule; `build-student-profile/SKILL.md` now recommends forced-choice questions for resistant students plus an honest generic-pointer fallback instead of an endless interview loop. Full write-up: `findings/no_db_universal_skill/2026-07-03-task-r-edge-cases.md`. Outputs: `dist/live-validation/{niche-no-match,interdisciplinary}-skill.md`. `pytest -q` and `build_skill_release.py` still green. |
 | Task S | Output & interview quality pass — honest pros/cons, concrete conversation starters, dated evidence, caveat presence, interview convergence (Track 4, see roadmap §3) | ⬜ open | — | Not started. |
 
 ---
@@ -207,6 +207,38 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
   run the skill arm without opening these GT files until scoring. Deliverable this session
   is the GT itself. `python3 -m pytest -q` and `python3 scripts/build_skill_release.py`
   still green.
+
+- **2026-07-03** — Task R (Track 4, **edge-case behavior**), following Task Q run 1.
+  Three edge cases exercised live, per roadmap §3. **(1) Niche no-match:**
+  rocket-engine/spacecraft-propulsion engineering — confirmed live that Tübingen has
+  no engineering faculty and neither Physics nor Chemistry has a propulsion/
+  combustion group; the honest output says so plainly and names universities that
+  do have this (TU Berlin, TU Braunschweig, TUM, Uni Stuttgart) instead of padding
+  with a distant weak match. **(2) Shallow/resistant student:** rather than assert
+  the gate holds, simulated an 8-turn adversarial interview (repeated "just give me
+  a name" pressure, "no preference"/"none" non-answers) against
+  `build-student-profile`'s actual rules. The gate held throughout — no premature
+  `find-university-chairs` call — and the simulation surfaced that
+  `find-university-chairs`'s own independent Step 1 depth re-check (not just trust
+  in `build-student-profile`'s handoff) is a real, exercised robustness property,
+  not just a paper guarantee. **(3) Interdisciplinary routing:** ran the
+  `interdisciplinary.md` persona (ethics/law/governance of AI spanning Law,
+  Humanities/IZEW, Science-ML) live — **5/5 GT anchors surfaced, 3/3 faculties/
+  centers covered** (Finck/Law, Heesen+Ammicht Quinn/IZEW, Wong/Philosophy,
+  Hardt/MPI-IS) — routing did not collapse onto one discipline. Not a blind run by
+  design (Task R tests routing breadth, not an unbiased recall number). **Two small
+  spec gaps found and fixed**, both one-line additions: `find-university-chairs/
+  SKILL.md` Step 8 now has an explicit zero-candidates rule; `build-student-profile/
+  SKILL.md` now recommends forced-choice questions when open-ended ones produce
+  refusals, plus an honest generic-pointer fallback instead of an endless interview
+  loop for a student who never crosses the depth bar. All three edge cases passed
+  the "degrade honestly" bar — no search-strategy or backbone defect found, both
+  fixes were spec gaps for cases the design already handled correctly in spirit.
+  Full write-up: `findings/no_db_universal_skill/2026-07-03-task-r-edge-cases.md`.
+  Outputs: `dist/live-validation/{niche-no-match,interdisciplinary}-skill.md`.
+  Per roadmap §5, Track 4 is now done; recommend **Task S** (output & interview
+  quality pass) next. `python3 -m pytest -q` and
+  `python3 scripts/build_skill_release.py` still green.
 
 - **2026-07-03** — Task Q run 1 (Track 4, **first blind hard-faculty live run**,
   `humanities`). Fresh conversation, as planned by the deferral above. Chose
