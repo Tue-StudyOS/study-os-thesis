@@ -68,6 +68,66 @@ could plausibly affect recall or precision. Skip for pure prose/typo edits.
 
 *(append one entry per re-validation run; newest first)*
 
+- **2026-07-03 — Blind hard-faculty run (`law`, Task T).** First genuinely-blind run
+  under the corrected persona protocol (personas from the GT file's full
+  `Sample interest:` line, extracted via `grep`, not the README one-liner). Law was the
+  clean-blind faculty this round — only its sample-interest line was read before Pass 1;
+  the chair rows/Notes stayed closed until scoring. Persona: public law — constitutional
+  law, international/European law + human rights, and legal regulation of new
+  technologies (AI, data protection, IT law); no-gos: private/criminal-only, pure legal
+  history. Output: `dist/live-validation/law-skill.md`.
+
+  **Recall: 3/5 = 60%** (found: von Bernstorff, Nettesheim, Finck; **missed: Remmert,
+  Saurer**). **Precision: 3/3 = 100%** (all three surfaced options are GT chairs and
+  clearly relevant; no padding). **Discovery recall was 5/5** — Pass 1 enumerated all
+  five GT chairs from `.../lehrstuehle-oeffentliches-recht/`; the 60% is a *downstream
+  filtering* miss, not a crawl miss.
+
+  **Root cause — a real skill finding, not an eval artifact.** The two misses were
+  excluded at the §5 topical-justification step *without running Pass-2 enrichment*,
+  from a surface reading of their dense multi-strand German chair titles. Post-scoring
+  enrichment of **Remmert** ("Staats- und Verwaltungsrecht, Öffentliches Wirtschaftsrecht,
+  Kommunalrecht") showed her *actual* Schwerpunkte are **"Allgemeine Grundrechtslehren"**
+  (fundamental-rights doctrine) with current constitutional work (GG commentary, Art. 12
+  GG, 2026) — a squarely-core match to the persona's constitutional-law + human-rights
+  strands. Her title's *distinguishing* strands read economic/municipal, so a
+  title-only judgment (which I made) drops her; her research does not. That is a genuine
+  **false-negative**: the skill lacks a rule to *enrich before excluding* a public-law
+  chair whose multi-strand title contains a core-interest term (here Staatsrecht /
+  Grundrechte). Saurer (Umwelt-/Infrastrukturrecht + Rechtsvergleichung; current focus
+  Klimaschutzrecht) is the more defensible exclusion — comparative-public-law method is
+  borderline, tech-touch is energy-regulation — but GT counts him relevant too. Had the
+  skill enriched Remmert before excluding, recall would be ≥4/5 = **80%**.
+
+  **This is the exact hardness `law.md` was designed to probe** (map "constitutional
+  law" onto dense German formulas). The skill's profile→query mapping handled it for
+  von Bernstorff/Nettesheim/Finck but failed on Remmert. **Named next task: Task U** —
+  add an *enrich-before-exclude* rule to §5 (do not exclude a candidate whose own title
+  names a core-interest field without a Pass-2 read of its actual research focus), then
+  re-run Law. Backbone note (Track 2): the Juniorprofessur listing URL 404'd — same
+  URL-drift class as CS/Humanities.
+
+- **2026-07-03 — Humanities corrected re-score (`humanities`, Task T).** **Not a fresh
+  blind run** — this conversation is un-blind on Humanities (the prior 2026-07-03 blind
+  entry below, which had to be read for task context, names all 5 GT chairs and the
+  exact miss reasons). This is a transparent *re-score* of the already-saved blind map
+  (`dist/live-validation/humanities-skill.md`) under the corrected persona, using the
+  full `humanities.md` sample interest instead of the README one-liner. It is
+  well-founded because the prior blind crawl already reached and evaluated all five GT
+  chairs (see that map's Pass-2 table) — only the final filter decision changes.
+
+  **Recall: 5/5 = 100%** (was 3/5 = 60%). Both prior misses flip to Include under the
+  full sample interest: **Corcilius** was excluded by a "historical-exegesis / no
+  contemporary debate" no-go that only existed because the README one-liner dropped
+  *"…an interest in the history of the field (ancient philosophy, Kant / German
+  Idealism)"* — restore that clause and the no-go disappears → Include. **Döring** was
+  excluded as "ethics/emotion, not cognitive science"; the full sample interest
+  explicitly lists *"theory of emotions"* as a philosophy-of-cognitive-science subtopic
+  → direct match → Include. **Precision: 5/5 = 100%** (all five are GT chairs; the two
+  GT-flagged non-noise exclusions — Grabmayr logic-only, Schumski non-chair — stay
+  correctly excluded). **This decisively validates the protocol fix**: the entire
+  Humanities 60% was a lossy-README artifact; the discovery machinery had it right.
+
 - **2026-07-02 — First live run (`cs`).** No skill change triggered this — it's the
   first exercise of the runbook itself, per the handoff from Roadmap-J/K. Persona:
   reused verbatim from Task I-fix (deep learning, probabilistic methods, causality,
