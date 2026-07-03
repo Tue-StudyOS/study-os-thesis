@@ -159,7 +159,18 @@ gap.
 
 ---
 
-## 8. How this plan is used
+## 8. Phase 4 — Hardening (post-Phase-3, current)
+
+Phase 3 made the skill package coherent and distributable; Phase 4 makes the university
+core (Tübingen) not just *pass the gate* but genuinely *work well* across recall,
+precision, steering, output quality, and robustness on structurally hard faculties. Full
+task list, tracks, and the "core is done" bar:
+[findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md](findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md).
+Live status per task: `STATUS.md`, section "Post-Phase-3 hardening".
+
+---
+
+## 9. How this plan is used
 
 - `MASTERPLAN.md` = stable structural plan. Change it only when the product goal,
   phase structure, or major workflow changes.

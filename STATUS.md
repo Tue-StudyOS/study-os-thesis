@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-03 (Task Q — hard-faculty ground truth: Humanities/Law/Theology + an interdisciplinary AI-ethics persona authored from the official backbone; blind live run deferred)
+**Last update:** 2026-07-03 (documentation pass: Track 2/Task R/S visibility gap closed, thesis-report folder created)
 
 ---
 
@@ -94,6 +94,9 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 | Task O | Relevance/no-go tightening + affiliation-currency check (Track 3, per Roadmap-J run 1's finding) | ✅ | Domi | Added a "topical justification" quality filter to search-strategy.md §5 (co-location on a faculty page section ≠ relevance; Butz worked example), sharpened §7's pure-math no-go wording (foundational-but-not-proof-only theory work is ambiguous-by-default, kept+flagged), and added a §4.7 affiliation-currency query skeleton + SKILL.md 2f upgrade to catch relocated PIs distinct from the existing recency check. Re-ran the Roadmap-J runbook live for `cs` with the same persona (no-peeking held this time): **recall 5/5 = 100%** (no regression), **precision 10/10 = 100%** (up from 75%) — Butz and Williamson now excluded before reaching the map instead of surfaced-with-caveat, Oh's KAIST relocation caught by the codified 2f check instead of incidental diligence. Small-sample caveat: one faculty, one persona, one run — evidence the known noise is fixed, not proof the filter generalizes. `pytest -q` 29 passed/8 skipped; release build OK. Full write-up: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md` log (second 2026-07-02 entry). |
 | Task P | **Steering proof (Track 3 — "most important for the thesis claim")** | ✅ | Domi | **Steering CONFIRMED (strong).** Ran `cs` live with two students with *inverted* profiles: Persona A (causality + probabilistic/Bayesian ML; no-go **computer vision** + hardware) vs. Persona B (computer vision + representation learning; no-go **heavy Bayesian theory** + hardware). Same faculty, same Pass-1 candidate set (25 groups; the live FB-Informatik page now also exposes a "Vision & Cognition" section). The two option maps are **near-disjoint**: numbered options A={Schölkopf, Brendel, Hennig, Macke, von Luxburg, Hein, Martius}, B={Geiger, Black, Pons-Moll, Kühne, Bethge, Brendel, Lensch, Berens} — intersection only {Brendel, Hein}, and those two are reframed/reranked per profile. Vision chairs top B and are excluded from A; Bayesian chairs top A and are excluded from B — flips in exactly the predicted direction. Conversation starters also fully diverge. Steering is driven by §1 (topic→query) + §5 (topical justification); **honest gap** — the two no-gos ("CV", "heavy Bayesian") are *not* codified rows in §7, so they ran via §7's general rule, not the table (one-line §7 note is a minor follow-up, not fixed here). Caveats: single-agent authored/judged (confirmation-bias risk, mitigated by live-verified per-chair facts); personas built to diverge (proves mechanism *can* steer, not that it steers on subtle personas); one faculty. Outputs: `dist/live-validation/cs-persona-{A,B}-skill.md`. Full write-up: `findings/no_db_universal_skill/2026-07-02-task-p-steering-proof.md`. `pytest -q` 29 passed/8 skipped; release build OK. |
 | Task Q | **Hard-faculty ground truth (Track 4 — robustness)** | ✅ (GT authored; blind live run deferred) | Domi | Extended eval ground truth from the 4 easy faculties (Med/Psych/WiSo/CS) to the **structurally harder** ones + one interdisciplinary persona, all built by crawling the official faculty backbone (not a skill run) on 2026-07-02. New files under `skills/tests/eval_ground_truth/`: **`humanities.md`** (Philosophisches Seminar — phil. of mind/metaphysics/cognitive science; hardness = large 3-level faculty, chairs live deep in a Seminar; core GT Sattig/Wong/Corcilius/Schlösser/Döring), **`law.md`** (Öffentliches Recht — constitutional/international law + tech regulation; hardness = dense German chair-title formulas; von Bernstorff/Nettesheim/Finck/Saurer/Remmert), **`theology.md`** (Ev.-Theol. — biblical studies/early-church history; Leuenberger/Kamlah/Tilly/Landmesser/Drecoll/Witt), and **`interdisciplinary.md`** (AI ethics & governance across Law/Humanities-IZEW/Science-ML — Finck + Heesen + Ammicht Quinn + Hardt + Wong; tests routing breadth, not depth). **Task-P caveat #3 confirmed live as a robustness finding:** Ev.-Theol. has several **vacant (N.N.) chairs** incl. Systematic Theology II (Ethik) — for an ethics/systematic persona the relevant chair is unstaffed, so honest discovery should say "no staffed chair for this focus," not misroute; recorded as chair-scarcity, not a steering/skill failure (see `theology.md` Notes). README Files table + a new interdisciplinary routing-metric note updated. **Blind live run deferred by design:** authoring GT this session contaminates a same-session skill run (runbook no-peeking discipline), so the first recall/precision read on a hard faculty is handed to a fresh conversation. `python3 -m pytest -q` and `build_skill_release.py` still green. |
+| Track 2 | Backbone audit & repair / weak-web-presence fallback / query-skeleton iteration (roadmap's own "Task L/M/N", see [core-optimization-roadmap.md](findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md) Track 2) | ⬜ open | — | Implicitly skipped so far: Task I already showed ≥70% live recall, so the fork in the roadmap's §5 dependency graph ("recall low? → Track 2") never triggered. Not formally closed — the backbone has not been systematically audited for drill-down completeness, and no weak-web-presence fallback (Vorlesungsverzeichnis, Fachschaft lists, institute staff directories) exists yet. Revisit if a future faculty's recall comes in low. |
+| Task R | Edge-case behavior — niche topic with no Tübingen match, shallow/resistant student (does the gate hold?), interdisciplinary routing (Track 4, see roadmap §3) | ⬜ open | — | Not started. |
+| Task S | Output & interview quality pass — honest pros/cons, concrete conversation starters, dated evidence, caveat presence, interview convergence (Track 4, see roadmap §3) | ⬜ open | — | Not started. |
 
 ---
 
@@ -128,6 +131,31 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-03** — Documentation pass, no skill-logic changes. (1) Closed a silent
+  visibility gap found while reconciling Task Q: `core-optimization-roadmap.md` defines
+  Track 2 (backbone audit & repair / weak-web-presence fallback / query-skeleton iteration)
+  and Track 4's Task R (edge-case behavior) and Task S (output & interview quality) — none
+  of the three appeared in STATUS.md's task table, as either open or done, so a reader of
+  STATUS.md alone would not know they were planned-but-not-started work. Added all three as
+  ⬜ open rows with a note that Track 2 was implicitly skipped because Task I already cleared
+  ≥70% recall (the roadmap's own dependency graph only routes to Track 2 when recall is low).
+  (2) Added a "Phase 4 — Hardening" pointer section to MASTERPLAN.md so the stable plan
+  reflects that a post-Phase-3 hardening track exists, without duplicating its detail — same
+  pattern as the existing phase sections. (3) Created `docs/thesis-report/`: a curated,
+  chronologically-organized account of the project's genesis and decisions for the thesis
+  submission, assembled from ~25 previously scattered root/docs/findings files. Historical
+  root-level files (`VISION_NO_DB.md`, `PROJECT_CONTEXT.md`, `25.06Besprechung.md`,
+  `Ideen_Domi_02_07.md`, `docs/research/`, `Mails (1).docx`, `Plan.docx`) were physically
+  moved (`git mv`, history preserved) into dated subfolders; living docs (this file,
+  MASTERPLAN.md, README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, Design-Entscheidungen.md)
+  stayed in place and are linked, not copied. `findings/no_db_universal_skill/*` was left
+  untouched — already dated and chronological, just linked more heavily. (4) Removed local-only
+  junk with zero git footprint (`ruvector.db`, `.claude-flow/`, `.swarm/` — pre-pivot
+  vector-DB leftover and tool-state caches, none tracked or referenced); flagged three tracked,
+  zero-inbound-reference docs (`WORKFLOW.md`, `COMBINED_PR_GUIDE.md`, `ISSUE_ROUTER.md`) as
+  deletion candidates for Domi to confirm rather than removing them unasked. Next: a fresh
+  conversation runs the deferred Task Q blind live run (hard faculty, `law` recommended).
 
 - **2026-07-03** — Task Q (Track 4, **hard-faculty ground truth** — robustness, the
   last unproven axis in the roadmap's "core is done" definition §4). Extended eval
