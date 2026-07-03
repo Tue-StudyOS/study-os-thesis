@@ -165,3 +165,72 @@ could plausibly affect recall or precision. Skip for pure prose/typo edits.
   25pp, and the specific relocation-detection gap now has a systematic check instead of
   depending on the agent noticing. Ready to move to the next track (see STATUS.md
   2026-07-02 log entry for the specific recommendation).
+
+- **2026-07-03 — First blind hard-faculty run (`humanities`, Track 4).** Task Q
+  (previous session) authored hard-faculty ground truth (`humanities.md`, `law.md`,
+  `theology.md`, `interdisciplinary.md`) but deliberately deferred the live run to a
+  fresh conversation to preserve no-peeking discipline. This is that run — chose
+  `humanities` (harder of the two single-faculty options) over `law` because it
+  exercises the deep Faculty→FB5→Seminar drill-down, the actual untested robustness
+  axis. Persona built from the eval README's one-line summary only ("Philosophy of
+  mind, metaphysics and cognitive science") — the full GT file `humanities.md` was
+  not opened until after the live skill run. Output: `dist/live-validation/humanities-skill.md`.
+
+  **No-peeking discipline held.** Read only the runbook (this file), SKILL.md,
+  search-strategy.md, tuebingen-faculty-backbone.md, and the eval README's scoring
+  rules + one-line summary table before Pass 1. `humanities.md` was opened only after
+  the live run and the map were saved.
+
+  **Recall: 3/5 = 60%** (found: Sattig, Wong, Schlösser; missed: Corcilius, Döring).
+  **This is below the README's 70% first-run target — but the root cause is a
+  persona-construction gap in the eval protocol, not a discovery failure by the
+  skill.** The live run's Pass 1 backbone crawl correctly reached and enumerated all
+  five GT chairs (Corcilius and Döring were found, read, and evaluated — see the
+  saved map's Pass-2 table) — nothing was missed structurally. They were then
+  deliberately excluded from the final option map because the persona built from the
+  eval README's abbreviated one-line sample interest ("Philosophy of mind, metaphysics
+  and cognitive science") omitted a detail present in the full `humanities.md` GT
+  file's actual "Sample interest" line: "...with an interest in the history of the
+  field (ancient philosophy, Kant / German Idealism)." Without that clause, a
+  reasonable persona reasonably added a no-go against "purely historical exegesis with
+  no engagement with contemporary debates" — which correctly (per the skill's own
+  no-go/topical-justification rules) excluded Corcilius (ancient philosophy of mind,
+  historical) outright and downgraded Schlösser (Kant/German Idealism,
+  self-consciousness theory) to a flagged/ambiguous inclusion rather than a clean one.
+  Döring (theory of emotions) was excluded as a domain mismatch under the persona's
+  stated interests, independent of the history gap. **This is a finding about the
+  README's one-line-summary table being lossy for hard-faculty personas, not a
+  search-strategy or backbone defect** — a corrected persona that includes the
+  historical-strand interest would very likely surface Corcilius and count Schlösser
+  cleanly, which is consistent with all 5 chairs actually being present and correctly
+  identified in the live crawl.
+
+  **Precision: 3/3 = 100%.** All three surfaced options (Wong, Sattig, Schlösser) have
+  rationales that hold up on inspection against the persona actually used — no
+  padding/noise entries. Schlösser was kept-and-flagged per the "ambiguous no-go" rule
+  rather than silently dropped, consistent with SKILL.md's instruction. Independently,
+  the two chairs the GT file itself flags as "deliberately excluded, not noise" —
+  Juniorprof. Grabmayr (logic-focused, off-profile) and Dr. Schumski (non-chair
+  Vertretungsprofessorin) — were also excluded by this live run for matching reasons
+  (no-go: formal-logic-only; domain mismatch respectively), independent confirmation
+  that the exclusion judgment generalizes correctly even where recall on core GT
+  chairs took a hit from the persona gap above.
+
+  **One honest note on what broke:** the Science-faculty interfaculty
+  institutes/centers backbone URL (`.../interfakultaere-institute-und-zentren.html`)
+  404'd this run — the same class of URL-drift gap the `cs` runs hit with the Cyber
+  Valley URL. A web-search fallback confirmed CIN as the relevant interfaculty host
+  with no additional PIs beyond Wong, so it didn't affect this run's recall/precision,
+  but it's a second independent data point for **Track 2 (backbone audit)** being the
+  right next investment — URL drift is recurring across faculties, not a one-off.
+
+  **Track pointer:** the backbone drill-down itself (Faculty→FB5→Seminar) worked
+  correctly on the first try — no structural/routing miss on the "must descend the
+  department tree" hardness this faculty was chosen to test. The recall shortfall is
+  fully explained by a persona-construction artifact of the blind-eval protocol
+  (README one-liner vs. full GT sample-interest line), which is a protocol/eval-doc
+  finding worth a small follow-up (e.g. the README's summary table could note when a
+  GT file's real sample interest has an extra qualifying clause), not a signal to
+  reopen Task O or the search-strategy filters. Recommend **Track 4 Task R**
+  (edge-case behavior) next, as originally planned — this run did not surface a new
+  skill defect to fix first.
