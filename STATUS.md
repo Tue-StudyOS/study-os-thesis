@@ -97,7 +97,7 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 | Track 2 | Backbone audit & repair / weak-web-presence fallback / query-skeleton iteration (roadmap's own "Task L/M/N", see [core-optimization-roadmap.md](findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md) Track 2) | ⬜ open | — | Implicitly skipped so far: Task I already showed ≥70% live recall, so the fork in the roadmap's §5 dependency graph ("recall low? → Track 2") never triggered. Not formally closed — the backbone has not been systematically audited for drill-down completeness, and no weak-web-presence fallback (Vorlesungsverzeichnis, Fachschaft lists, institute staff directories) exists yet. Revisit if a future faculty's recall comes in low. |
 | Task Q run 1 | First blind hard-faculty live run (`humanities`, Track 4 — robustness) | ✅ | Domi | Recall 3/5 = 60% (Sattig, Wong, Schlösser found; Corcilius, Döring missed) — below the README's 70% target, but root-caused to a persona-construction gap in the eval protocol (the README's one-line sample-interest summary omits `humanities.md`'s "...with an interest in the history of the field" clause), not a skill discovery failure: the live crawl found and evaluated all 5 GT chairs, then correctly excluded 2 per no-gos the incomplete persona implied. Precision 3/3 = 100%, and the run independently re-derived the GT file's own "deliberately excluded, not noise" calls (Grabmayr, Schumski). Backbone drill-down (Faculty→FB5→Seminar) worked correctly first try — the "must descend the department tree" hardness this faculty was chosen to test was not the failure mode. One interfaculty backbone URL 404'd (second data point for Track 2). Output: `dist/live-validation/humanities-skill.md`. Full write-up: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md` log (2026-07-03 entry). `pytest -q` and `build_skill_release.py` still green. |
 | Task R | Edge-case behavior — niche topic with no Tübingen match, shallow/resistant student (does the gate hold?), interdisciplinary routing (Track 4, see roadmap §3) | ✅ | Domi | All 3 edge cases exercised live, all pass. (1) Niche no-match (rocket-engine/aerospace propulsion — Tübingen has no engineering faculty): honest "no strong fit" output, no padding. (2) Shallow/resistant student: 8-turn simulated adversarial interview never triggered a premature `find-university-chairs` call; gate held via `build-student-profile`'s own re-prompting plus `find-university-chairs`'s independent Step 1 re-check. (3) Interdisciplinary routing (`interdisciplinary.md` persona): 5/5 GT anchors surfaced, 3/3 spanned faculties/centers covered (Law/Finck, Humanities-IZEW/Heesen+Ammicht Quinn+Wong, Science-ML/Hardt) — no collapse onto a single discipline. Two small spec gaps found and fixed: `find-university-chairs/SKILL.md` now has an explicit zero-candidates rule; `build-student-profile/SKILL.md` now recommends forced-choice questions for resistant students plus an honest generic-pointer fallback instead of an endless interview loop. Full write-up: `findings/no_db_universal_skill/2026-07-03-task-r-edge-cases.md`. Outputs: `dist/live-validation/{niche-no-match,interdisciplinary}-skill.md`. `pytest -q` and `build_skill_release.py` still green. |
-| Task S | Output & interview quality pass — honest pros/cons, concrete conversation starters, dated evidence, caveat presence, interview convergence (Track 4, see roadmap §3) | ⬜ open | — | Not started. |
+| Task S | Output & interview quality pass — honest pros/cons, concrete conversation starters, dated evidence, caveat presence, interview convergence (Track 4, see roadmap §3) | ✅ | Domi | Reviewed all 5 full discovery transcripts against the 5 criteria. 4/5 criteria pass cleanly (pros/cons, conversation starters, coverage caveat, and — via a live happy-path interview simulation, since none existed — interview convergence: 6 turns, clean, vs. edge case 2's adversarial 8-turn non-convergence). 1 real repeated gap found: cs-skill and wiso-skill (2/5 transcripts) omit the "Dated evidence" field from every option. Fixed with one worked example added to `find-university-chairs/SKILL.md` Step 8 Output section. Full write-up: `findings/no_db_universal_skill/2026-07-03-task-s-output-quality.md`. `pytest -q` and `build_skill_release.py` still green. |
 | Eval Scorecard | Aggregate every recall/precision/steering/robustness number to date into one document | ✅ | Domi | Pure aggregation, no new live run. `findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md`: one table per axis (university recall/precision by faculty, company recall/thesis-signal, steering, robustness), each cell cited to its source. Honest bottom line: the roadmap's "core is done" bar (≥80% recall across ≥6 faculties incl. one hard faculty) is **not yet met** — only 5 faculties have any live number and the one hard faculty tested (Humanities, 60%) is below bar; Task S has zero data. `docs/thesis-report/03-hardening-and-evaluation/README.md` and `04-open-work/README.md` updated to match (Task Q's blind run and Task R are no longer described as pending). |
 
 ---
@@ -133,6 +133,25 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-03** — **Task S (output & interview quality pass) done.** Reviewed the 5
+  full discovery transcripts (`dist/live-validation/{cs,medicine,psychology,wiso,
+  humanities}-skill.md`) against the roadmap's 5 output-quality criteria. Pros/cons:
+  mostly honest and specific (one narrow lapse — wiso-skill, 2/7 options missing the
+  field). Conversation starters: consistently chair-specific, not templated (humanities
+  the strongest, naming an actual 2025 paper by title). Coverage caveat: present on
+  5/5 full outputs. Dated evidence: **repeated gap** — cs-skill and wiso-skill omit the
+  field from every option (2 of 5 transcripts), while medicine/psychology/humanities
+  comply; not explained by chronology, so treated as a spec-compliance gap and fixed
+  with one worked example added to `find-university-chairs/SKILL.md` Step 8. Interview
+  convergence: no happy-path transcript existed anywhere in the repo (every discovery
+  transcript starts from an already-built persona, never an actual interview), so ran
+  one live — 6 turns to a clean six-dimension profile with a cooperative persona,
+  contrasting with edge case 2's 8-turn adversarial non-convergence. No fix needed
+  there; confirms the design. Full write-up:
+  `findings/no_db_universal_skill/2026-07-03-task-s-output-quality.md`. Per the
+  roadmap's dependency graph (§5), Track 4 is now fully done — §4's "core is done" gate
+  should get an explicit go/no-go call next.
 
 - **2026-07-03** — **Eval Scorecard.** Aggregated every recall/precision/steering/robustness
   number produced so far (Task H/I/I-fix, Phase-2 Task 2-E, Roadmap-J run 1, Task O re-run,
