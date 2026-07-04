@@ -4,7 +4,10 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-04 (Task U closed the recall gap: Law re-run **80%** post §5 enrich-before-exclude fix. Go/No-Go on roadmap §4 "core is done" flipped to **GO** — all 5 criteria now met.)
+**Last update:** 2026-07-04 (Task L merged: BW company backbone extended to all 7 Tübingen
+faculties + ZITh via a 13-field employment taxonomy, closing most gaps honestly documented
+below. Before this, Task U closed the recall gap: Law re-run **80%** post §5 enrich-before-exclude
+fix. Go/No-Go on roadmap §4 "core is done" flipped to **GO** — all 5 criteria now met.)
 
 ---
 
@@ -24,14 +27,18 @@ core-interest term). All 6 measured faculties now clear 80% (CS 100%, Medicine �
 Psychology ≥83%, WiSo ≥83%, Humanities 100%, Law 80%), 2 of them hard.
 Decision doc: [2026-07-03-core-done-go-no-go.md](findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md).
 
-**Phase 5 — direction chosen 2026-07-04.** Task U was the last task on the critical path to
-GO; candidates discussed (Theology blind run, independent external validation, the
+**Phase 5 — Task L done, merged 2026-07-04.** Task U was the last task on the critical path
+to GO; candidates discussed (Theology blind run, independent external validation, the
 scope-erosion experiment, company-backbone taxonomy) — Domi picked **company-backbone
-taxonomy (Task L)**. Runs in the prepared worktree `study-os-thesis-taskL`
-(branch `task/L-company-backbone`, currently unstarted). The other three candidates remain
-open and undecided for later. This section will be updated once Task L lands and is merged
-back into `feat/no-db-universal-skill`.
-This section will be updated once a direction is chosen.
+taxonomy (Task L)**, run in worktree `study-os-thesis-taskL` (branch
+`task/L-company-backbone`). Extended `bw-company-backbone.md` from a MINT-heavy ~90-entry
+list to a 99-entry list covering all 13 employment fields derived from Uni Tübingen's actual
+faculty structure (not the CS-only reference file the task brief originally pointed at — see
+the findings doc §0 for that correction). Merged fast-forward into
+`feat/no-db-universal-skill`; worktree and branch removed. Full write-up:
+[2026-07-04-taskL-taxonomy-and-gap-analysis.md](findings/no_db_universal_skill/2026-07-04-taskL-taxonomy-and-gap-analysis.md).
+The other three Phase 5 candidates (Theology blind run, independent external validation,
+scope-erosion experiment) remain open and undecided.
 
 Phase 1 is **complete** with live validation (all 4 faculties ≥70% live recall on fixture-based
 evaluation; gate passed 2026-06-28). Phase 1 build plan: [2026-06-26-build-plan.md](findings/no_db_universal_skill/2026-06-26-build-plan.md).
@@ -121,6 +128,7 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 | §4 Go/No-Go | Explicit go/no-go call on roadmap §4 "core is done" (over existing evidence, no new run) | ✅ | Domi | **Verdict: NO-GO** (narrowly). Scored §4's 5 criteria: steering (Task P), output quality (Task S), edge cases (Task R) all ✅; precision strong but under-sampled (2/5 faculties); **recall bar ❌** — fails on two independent counts: only 5 faculties measured (not ≥6), and no hard faculty has a clean live ≥80% (Humanities 60%, protocol-caveated; Law/Theology unrun). The Humanities miss is root-caused to the eval protocol (personas built from the README's lossy one-line summaries, not the GT files' full sample interest), not a skill defect — the crawl found all 5 GT chairs. Not a GO because (1) precedent: the project was already burned by a premature "gate GREEN" on partial evidence (2026-06-28 CI-hygiene entry); (2) no schedule pressure — Phase 2 (companies) is already GREEN, so nothing waits on this. Names **Task T** (eval-protocol fix + blind re-run Humanities + blind-run Law) as the closeout. Decision doc: `findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md`. No skill files touched. |
 | Task T | Eval-protocol fix + hard-faculty recall closeout (clears §4 criterion 1) | ✅ | Domi | (1) **Protocol fix committed** — runbook steps 2–3 reconciled: personas now built from each GT file's full `Sample interest:` line (grep-extracted, no-peeking carve-out), not the README one-liner. (2) **Humanities corrected re-score: 3/5→5/5 = 100%** (transparent — this conversation is un-blind on Humanities; both misses flip to Include once the dropped "history of the field" + "theory of emotions" clauses are restored → protocol fix validated). (3) **Law blind run: 3/5 = 60% recall, 3/3 = 100% precision.** Discovery found all 5 GT chairs; the 60% is a *downstream filter* miss — **Remmert** was excluded at the §5 topical-justification step from her multi-strand title without Pass-2 enrichment, but her actual focus (*Allgemeine Grundrechtslehren*) is a core constitutional-law/human-rights match → genuine false-negative. **Outcome: NO-GO still stands (transformed).** Original Humanities blocker resolved, but now **5 of 6** faculties clear 80% (Law is the sole miss), so criterion 1's strict per-faculty reading is not yet met. Names **Task U** (§5 enrich-before-exclude fix + Law re-run). Write-up: `findings/no_db_universal_skill/2026-07-03-task-t-recall-closeout.md`. Skill files untouched this task (fix deferred to Task U). |
 | Task U | §5 enrich-before-exclude fix + Law re-run (the remaining path to GO) | ✅ | Domi | (1) **Skill fix committed** — added an "Enrich before excluding" row to `search-strategy.md` §5 (symmetric dual of the Butz worked example) + a matching one-liner in `SKILL.md` Step 7: do not exclude a candidate from a title-only reading when its title names a core-interest field amid off-interest strands; run Pass-2 enrichment first. (2) **Law blind re-run: 4/5 = 80% recall, 4/4 = 100% precision** (found von Bernstorff, Nettesheim, Finck, **Remmert**; missed Saurer). Remmert's dense multi-strand title still reads economic/municipal on its face, but Pass-2 enrichment of her own Schwerpunkte surfaced "Allgemeine Grundrechtslehren" — a core constitutional-law/human-rights match — and she was included. Droege and Seiler were also enriched (not title-judged) and correctly excluded, independently matching the GT file's own exclusion notes. Saurer's own page shows no constitutional/human-rights/tech focus even after enrichment — an honest, defensible remaining miss, not the same defect class as Remmert. **Outcome: §4 criterion 1 now MET — all 6 measured faculties clear 80% (2 of 6 hard). Go/no-go flipped to GO.** Write-ups: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md` (2026-07-04 log entry), `2026-07-03-core-done-go-no-go.md` (GO banner). Output: `dist/live-validation/law-skill.md`. `pytest -q` 29 passed/8 skipped; release build OK. |
+| Task L | BW company backbone — extend to all Tübingen faculties + routing features (Phase 5) | ✅ | Domi | Live-researched all 7 faculties + ZITh (the `tuebingen-degree-programs.md` file the task brief pointed at turned out to be CS-only — corrected via Domi's live steer to research the actual faculty structure first). Derived a 13-employment-field taxonomy, gap-analyzed the existing backbone against it, and added 6 new sections (Chemie/Materialwissenschaft, extended Umwelt/Energie/Geowissenschaften, Wirtschaft/Consulting/Versicherung, Sozialwissenschaften/Marktforschung, Bildung/EdTech, Medien/Verlage/Sprache, Sport/Gesundheitstechnologie) with 16 new live-verified entries (every URL opened via WebFetch), plus a `Thesis-Kultur` column across all 13 tables and a Studiengangs-Routing table mapping every field to its backbone sections/tags. Rejected two candidates after failed verification (an acquired consultancy resolving to an unrelated same-named firm; an unconfirmed legal-tech HQ) rather than guess. Honestly documents fields that stayed thin despite real search effort (Recht/Legal Tech: 0 entries, Sozialwissenschaften: 1, Sport: 2) and one pre-existing 30%-cap breach (Informatik/AI, ~36% — predates this task, left alone as out of scope). EdTech persona smoke test returned only 2–3 candidates (below the 5–20 target) — an honest reflection of a thin field, correctly handled by the skill's existing "ask to broaden scope" fallback, not a bug. `pytest -q` 29 passed/8 skipped; release build OK. Full write-up: `findings/no_db_universal_skill/2026-07-04-taskL-taxonomy-and-gap-analysis.md`. |
 
 ---
 
@@ -155,6 +163,33 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-04** — **Task L (BW company backbone — extend to all Tübingen faculties) done,
+  merged into `feat/no-db-universal-skill`.** Domi's live steer corrected the task brief:
+  `tuebingen-degree-programs.md` (the file Step 1 pointed at) only lists the 6 CS-department
+  programs, not a university-wide list — researched all 7 faculties + ZITh live via WebFetch
+  instead, cross-checked against the existing `tuebingen-faculty-backbone.md`. Derived a
+  13-employment-field taxonomy (Informatik/AI, Ingenieurnahe Systeme, Medtech, Chemie,
+  Psychologie, Bildung, Umwelt/Energie/Geo, Wirtschaft/Consulting, Sozialwissenschaften,
+  Medien/Sprache, Recht, Sport, and an explicit Theologie/Philosophie no-fit field), gap-
+  analyzed the ~90-entry backbone against it, then added 16 new live-verified entries across
+  6 new sections plus a `Thesis-Kultur` column and Studiengangs-Routing table. Rejected two
+  candidates after live verification failed (an acquired management consultancy whose jobs
+  page now resolves to an unrelated same-named Hagen tax firm; an unconfirmed legal-tech HQ)
+  rather than guess — the backbone's "never invent a URL/location" rule held under pressure.
+  Documented honest, real gaps instead of padding: Recht/Legal Tech (0 entries — matches the
+  task brief's own expectation that company-supervised Jura theses are structurally rare),
+  Sozialwissenschaften/Marktforschung (1 entry — most BW social-science jobs are public-
+  sector/NGO, outside this company-only backbone's scope), Sport (2), Wirtschaft (4). Also
+  surfaced and left transparently flagged, not silently fixed: Informatik/AI already exceeds
+  the 30%-of-backbone cap (~36%) from before this task — real Cyber-Valley density, not
+  padding, and out of scope to trim without risking the Phase 3/4 eval baseline. EdTech
+  persona smoke test returned 2–3 candidates (below the 5–20 target) — confirmed this is the
+  skill's existing "ask to broaden scope" disambiguation rule working as designed on a
+  genuinely thin field, not a defect. `pytest -q` 29 passed/8 skipped; `build_skill_release.py`
+  green, both re-checked after merge to `feat/no-db-universal-skill`. Worktree
+  `study-os-thesis-taskL` and branch `task/L-company-backbone` removed post-merge. Full
+  write-up: `findings/no_db_universal_skill/2026-07-04-taskL-taxonomy-and-gap-analysis.md`.
 
 - **2026-07-04** — **Task U (§5 enrich-before-exclude fix + Law re-run) done — §4 go/no-go
   FLIPPED TO GO.** (1) **Skill fix committed:** added an "Enrich before excluding" rule to
