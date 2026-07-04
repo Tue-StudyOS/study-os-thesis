@@ -109,10 +109,14 @@ students in `build-student-profile/SKILL.md`). Source: `2026-07-03-task-r-edge-c
 
 ## 5. Output & interview quality (Task S)
 
-**Not measured. Task S is open** (`STATUS.md`, Post-Phase-3 hardening). No data exists yet on
-whether pros/cons are consistently honest, conversation starters are concrete, evidence dates
-are present, or the coverage caveat reliably appears — the roadmap's fourth quality axis has
-zero data points as of this scorecard.
+**Measured, 4/5 pass.** All 5 existing discovery transcripts reviewed against 5 criteria
+(pros/cons, conversation starters, dated evidence, coverage caveat, interview convergence).
+4/5 criteria pass cleanly; interview convergence was checked via a live happy-path simulation
+(none existed) — 6 turns, clean convergence, versus edge case 2's adversarial 8-turn
+non-convergence (Task R). One real, repeated gap found: `cs-skill` and `wiso-skill` (2 of 5
+transcripts) omitted the "Dated evidence" field from every option — fixed with a worked
+example added to `find-university-chairs/SKILL.md` Step 8. Source:
+`2026-07-03-task-s-output-quality.md`.
 
 ---
 

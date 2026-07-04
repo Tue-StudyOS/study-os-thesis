@@ -159,14 +159,21 @@ gap.
 
 ---
 
-## 8. Phase 4 — Hardening (post-Phase-3, current)
+## 8. Phase 4 — Hardening (DONE, 2026-07-04)
 
-Phase 3 made the skill package coherent and distributable; Phase 4 makes the university
+Phase 3 made the skill package coherent and distributable; Phase 4 made the university
 core (Tübingen) not just *pass the gate* but genuinely *work well* across recall,
-precision, steering, output quality, and robustness on structurally hard faculties. Full
-task list, tracks, and the "core is done" bar:
+precision, steering, output quality, and robustness on structurally hard faculties. The
+explicit go/no-go on the roadmap's "core is done" bar flipped to **GO** on 2026-07-04: all
+6 measured faculties (2 of them hard) clear ≥80% recall, precision/steering/output-quality/
+robustness all measured and passing. Full task list, tracks, and the bar definition:
 [findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md](findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md).
+Verdict and evidence: [2026-07-03-core-done-go-no-go.md](findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md).
+All numbers: [2026-07-03-eval-aggregate-scorecard.md](findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md).
 Live status per task: `STATUS.md`, section "Post-Phase-3 hardening".
+
+**Phase 5 is not yet scoped** — there is no currently-named next task on the critical path.
+See STATUS.md "Current phase" for the open candidates under discussion.
 
 ---
 
