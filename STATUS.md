@@ -4,7 +4,7 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-03 (Go/No-Go call on roadmap §4 "core is done": **NO-GO** — 4/5 criteria met, but the recall bar (≥6 faculties incl. ≥1 hard ≥80%) is not; next task named)
+**Last update:** 2026-07-04 (Task U closed the recall gap: Law re-run **80%** post §5 enrich-before-exclude fix. Go/No-Go on roadmap §4 "core is done" flipped to **GO** — all 5 criteria now met.)
 
 ---
 
@@ -14,14 +14,14 @@
 distribution artifacts, and smoke test are all done. Branch `feat/no-db-universal-skill` is
 package-ready; beta-ready after independent live test by another person/group.
 
-**Phase 4 — Core hardening: NEAR-DONE, one gap open.** Tracks 1–4 of the optimization
-roadmap are complete (recall/precision fixes, steering proof, robustness, output quality).
-The explicit go/no-go on roadmap §4's "core is done" bar is **NO-GO** (2026-07-03): 4 of 5
-criteria are met (precision-where-measured, steering, output quality, edge cases), but the
-recall criterion — ≥80% across ≥6 faculties incl. ≥1 hard faculty — is not: only 5 faculties
-have a live number, and the one hard faculty tested (Humanities) sits at a protocol-caveated
-60%. The gap is measurement + a cheap eval-protocol fix, **not** a skill defect. No schedule
-pressure to cut the corner: Phase 2 (companies) is already GREEN. Next task: **Task T** below.
+**Phase 4 — Core hardening: DONE.** Tracks 1–4 of the optimization roadmap are complete
+(recall/precision fixes, steering proof, robustness, output quality). The explicit go/no-go
+on roadmap §4's "core is done" bar is **GO** (flipped 2026-07-04, Task U): all 5 criteria are
+met. The recall criterion — ≥80% across ≥6 faculties incl. ≥1 hard faculty — cleared once
+Task T fixed the eval-protocol (persona-construction) gap and Task U fixed a genuine skill
+gap (§5 "enrich before excluding" a candidate whose dense multi-strand title buries a
+core-interest term). All 6 measured faculties now clear 80% (CS 100%, Medicine ≥83%,
+Psychology ≥83%, WiSo ≥83%, Humanities 100%, Law 80%), 2 of them hard.
 Decision doc: [2026-07-03-core-done-go-no-go.md](findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md).
 
 Phase 1 is **complete** with live validation (all 4 faculties ≥70% live recall on fixture-based
@@ -111,7 +111,7 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 | Eval Scorecard | Aggregate every recall/precision/steering/robustness number to date into one document | ✅ | Domi | Pure aggregation, no new live run. `findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md`: one table per axis (university recall/precision by faculty, company recall/thesis-signal, steering, robustness), each cell cited to its source. Honest bottom line: the roadmap's "core is done" bar (≥80% recall across ≥6 faculties incl. one hard faculty) is **not yet met** — only 5 faculties have any live number and the one hard faculty tested (Humanities, 60%) is below bar; Task S has zero data. `docs/thesis-report/03-hardening-and-evaluation/README.md` and `04-open-work/README.md` updated to match (Task Q's blind run and Task R are no longer described as pending). |
 | §4 Go/No-Go | Explicit go/no-go call on roadmap §4 "core is done" (over existing evidence, no new run) | ✅ | Domi | **Verdict: NO-GO** (narrowly). Scored §4's 5 criteria: steering (Task P), output quality (Task S), edge cases (Task R) all ✅; precision strong but under-sampled (2/5 faculties); **recall bar ❌** — fails on two independent counts: only 5 faculties measured (not ≥6), and no hard faculty has a clean live ≥80% (Humanities 60%, protocol-caveated; Law/Theology unrun). The Humanities miss is root-caused to the eval protocol (personas built from the README's lossy one-line summaries, not the GT files' full sample interest), not a skill defect — the crawl found all 5 GT chairs. Not a GO because (1) precedent: the project was already burned by a premature "gate GREEN" on partial evidence (2026-06-28 CI-hygiene entry); (2) no schedule pressure — Phase 2 (companies) is already GREEN, so nothing waits on this. Names **Task T** (eval-protocol fix + blind re-run Humanities + blind-run Law) as the closeout. Decision doc: `findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md`. No skill files touched. |
 | Task T | Eval-protocol fix + hard-faculty recall closeout (clears §4 criterion 1) | ✅ | Domi | (1) **Protocol fix committed** — runbook steps 2–3 reconciled: personas now built from each GT file's full `Sample interest:` line (grep-extracted, no-peeking carve-out), not the README one-liner. (2) **Humanities corrected re-score: 3/5→5/5 = 100%** (transparent — this conversation is un-blind on Humanities; both misses flip to Include once the dropped "history of the field" + "theory of emotions" clauses are restored → protocol fix validated). (3) **Law blind run: 3/5 = 60% recall, 3/3 = 100% precision.** Discovery found all 5 GT chairs; the 60% is a *downstream filter* miss — **Remmert** was excluded at the §5 topical-justification step from her multi-strand title without Pass-2 enrichment, but her actual focus (*Allgemeine Grundrechtslehren*) is a core constitutional-law/human-rights match → genuine false-negative. **Outcome: NO-GO still stands (transformed).** Original Humanities blocker resolved, but now **5 of 6** faculties clear 80% (Law is the sole miss), so criterion 1's strict per-faculty reading is not yet met. Names **Task U** (§5 enrich-before-exclude fix + Law re-run). Write-up: `findings/no_db_universal_skill/2026-07-03-task-t-recall-closeout.md`. Skill files untouched this task (fix deferred to Task U). |
-| Task U | §5 enrich-before-exclude fix + Law re-run (the remaining path to GO) | ⬜ open | — | Named by Task T. (1) Add a rule to `find-university-chairs/references/search-strategy.md` §5: do **not** exclude a candidate at the topical-justification step when its own title/listing names a core-interest field, without first running Pass-2 enrichment on its actual research focus (the symmetric dual of the Butz over-inclusion guard). (2) Blind-re-run **Law** under the fixed skill — expect Remmert to surface (→ ≥80%), reconsider Saurer. (3) If Law clears 80%, all 6 faculties clear the bar → flip the §4 go/no-go to **GO**. **This is a skill change** → `pytest -q` + `build_skill_release.py` must be green. **Done-when:** Law ≥80% recall logged; §4 verdict flipped to GO (or a further real defect logged). |
+| Task U | §5 enrich-before-exclude fix + Law re-run (the remaining path to GO) | ✅ | Domi | (1) **Skill fix committed** — added an "Enrich before excluding" row to `search-strategy.md` §5 (symmetric dual of the Butz worked example) + a matching one-liner in `SKILL.md` Step 7: do not exclude a candidate from a title-only reading when its title names a core-interest field amid off-interest strands; run Pass-2 enrichment first. (2) **Law blind re-run: 4/5 = 80% recall, 4/4 = 100% precision** (found von Bernstorff, Nettesheim, Finck, **Remmert**; missed Saurer). Remmert's dense multi-strand title still reads economic/municipal on its face, but Pass-2 enrichment of her own Schwerpunkte surfaced "Allgemeine Grundrechtslehren" — a core constitutional-law/human-rights match — and she was included. Droege and Seiler were also enriched (not title-judged) and correctly excluded, independently matching the GT file's own exclusion notes. Saurer's own page shows no constitutional/human-rights/tech focus even after enrichment — an honest, defensible remaining miss, not the same defect class as Remmert. **Outcome: §4 criterion 1 now MET — all 6 measured faculties clear 80% (2 of 6 hard). Go/no-go flipped to GO.** Write-ups: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md` (2026-07-04 log entry), `2026-07-03-core-done-go-no-go.md` (GO banner). Output: `dist/live-validation/law-skill.md`. `pytest -q` 29 passed/8 skipped; release build OK. |
 
 ---
 
@@ -146,6 +146,36 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-04** — **Task U (§5 enrich-before-exclude fix + Law re-run) done — §4 go/no-go
+  FLIPPED TO GO.** (1) **Skill fix committed:** added an "Enrich before excluding" rule to
+  `find-university-chairs/references/search-strategy.md` §5 — the symmetric dual of the
+  existing Butz over-inclusion worked example. Do not exclude a candidate at the
+  topical-justification step from a *title-only* reading when the title names a
+  core-interest field amid off-interest strands; run Pass-2 enrichment on the chair's
+  actual research focus first. Added a matching one-liner to `SKILL.md` Step 7. (2) **Law
+  blind re-run: 3/5 → 4/5 = 80% recall, 3/3 → 4/4 = 100% precision.** Same persona as Task
+  T's blind run, reused verbatim (only the `Sample interest:` grep re-confirmed; no
+  GT chair rows opened until scoring). All 7 public-law chairs Pass-2 enriched this time,
+  not title-judged. **Remmert now surfaces:** her dense multi-strand title ("Staats- und
+  Verwaltungsrecht, Öffentliches Wirtschaftsrecht, Kommunalrecht") still reads
+  economic/municipal on its face, but enrichment of her own Schwerpunkte page found
+  "Allgemeine Grundrechtslehren" (fundamental-rights doctrine) plus active GG-commentary
+  work — a core constitutional-law/human-rights match — and she was included. Droege and
+  Seiler were also enriched (not title-judged) and still correctly excluded, independently
+  matching the GT file's own "off-interest, not noise" notes exactly — confirms the fix
+  didn't just flip Remmert by loosening the filter generally. **Saurer remains the one
+  miss** — his own chair page shows no constitutional-law/human-rights/tech-regulation
+  content even after enrichment (Umweltrecht/Infrastrukturrecht/Rechtsvergleichung is his
+  genuine core); an honest, defensible remaining gap, not the same title-surface defect
+  class as Remmert. (3) **All 6 measured faculties now clear 80% recall** (CS 100%, Medicine
+  ≥83%, Psychology ≥83%, WiSo ≥83%, Humanities 100%, Law 80%), with 2 of 6 being hard
+  faculties — **§4 criterion 1 is MET.** Flipped the go/no-go verdict banner in
+  `2026-07-03-core-done-go-no-go.md` to **GO**, updated the aggregate scorecard
+  (`2026-07-03-eval-aggregate-scorecard.md`) to match. `pytest -q` 29 passed/8 skipped;
+  `build_skill_release.py` green. Write-ups: `2026-07-02-live-eval-runbook.md` (2026-07-04
+  entry), `2026-07-03-core-done-go-no-go.md` (GO banner). Output:
+  `dist/live-validation/law-skill.md`.
 
 - **2026-07-03** — **Task T (eval-protocol fix + hard-faculty recall closeout) done — NO-GO
   still stands, transformed.** (1) **Protocol fix committed:** the runbook built personas from

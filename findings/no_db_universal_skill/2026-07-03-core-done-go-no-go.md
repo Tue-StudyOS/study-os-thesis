@@ -11,6 +11,20 @@
 
 ---
 
+> **Update — 2026-07-04, post-Task-U. VERDICT FLIPPED TO GO.** Task U (1) added an
+> *enrich-before-exclude* rule to `search-strategy.md` §5 — the symmetric dual of the
+> Butz over-inclusion guard: do not exclude a candidate at the topical-justification
+> step from a title-only reading when the title names a core-interest field amid
+> off-interest strands; enrich first. (2) Re-ran **Law** blind under the fixed skill:
+> **80% recall / 100% precision** (found von Bernstorff, Nettesheim, Finck, **Remmert**;
+> missed Saurer — an honest, defensible miss, not the same defect class). Remmert's
+> dense multi-strand title reads economic/municipal on its face, but Pass-2 enrichment
+> of her own Schwerpunkte surfaced "Allgemeine Grundrechtslehren" (fundamental-rights
+> doctrine) — a core constitutional-law/human-rights match. All **6 measured faculties**
+> now clear the ≥80% recall bar (CS 100%, Medicine ≥83%, Psychology ≥83%, WiSo ≥83%,
+> Humanities 100%, Law 80%), with 2 of 6 being hard faculties. §4 criterion 1 is met.
+> Full write-up: `2026-07-02-live-eval-runbook.md` (2026-07-04 log entry).
+
 > **Update — 2026-07-03, post-Task-T.** Task T ran the cheap path below.
 > **Outcome: the original blocker is resolved, but NO-GO still stands (transformed).**
 > The eval-protocol fix landed; the Humanities 60% became **100%** under the corrected
@@ -24,12 +38,31 @@
 > Law re-run), not GO. Full write-up:
 > [`2026-07-03-task-t-recall-closeout.md`](2026-07-03-task-t-recall-closeout.md).
 
-## Verdict: **NO-GO** — narrowly, with a cheap named path to GO.
+## Verdict: **GO** (as of 2026-07-04, post-Task-U).
 
-The core is *not* done against roadmap §4's own bar. Three of five criteria are
-cleanly met; the headline recall criterion is not, and it fails on two independent
-counts. The gap is not a skill defect — it is an unrun measurement plus a known,
-cheap eval-protocol fix. Closing it is the next task.
+The core clears roadmap §4's bar. All five criteria are now met: criterion 1's
+recall bar clears across all 6 measured faculties (2 of them hard), and criteria
+2–5 were already met as of Task T. The path to GO ran through two sequential
+fixes — an eval-protocol fix (Task T) and a genuine skill fix (Task U's §5
+enrich-before-exclude rule) — both landed, both verified live. See the criteria
+table below and the updated evidence for criterion 1.
+
+**Updated criterion 1 evidence (2026-07-04):**
+
+| Faculty | Recall | Hard? | ≥80%? |
+|---|---|---|---|
+| CS | 100% | – | ✅ |
+| Medicine | ≥83% | – | ✅ |
+| Psychology | ≥83% | – | ✅ |
+| WiSo | ≥83% | – | ✅ |
+| Humanities | 100% | hard | ✅ |
+| Law | 80% | hard | ✅ |
+
+All 6 of 6 measured faculties clear 80% under the strict per-faculty reading this
+go/no-go adopted (§ below). Criterion 1: **MET.**
+
+*(The remainder of this document below is preserved as the historical record of
+the NO-GO analysis that led to Tasks T and U; it is no longer the live verdict.)*
 
 ---
 

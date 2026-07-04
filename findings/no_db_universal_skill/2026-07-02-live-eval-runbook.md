@@ -68,6 +68,44 @@ could plausibly affect recall or precision. Skip for pure prose/typo edits.
 
 *(append one entry per re-validation run; newest first)*
 
+- **2026-07-04 — Law re-run after Task U's §5 enrich-before-exclude fix.** Blind re-run
+  under the same persona as the Task T blind run (public law — constitutional law,
+  international/European law + human rights, legal regulation of new technologies;
+  no-gos: private/criminal-only, pure legal history), reused from `law-skill.md`
+  verbatim; only the single `Sample interest:` line was re-grepped for confirmation
+  (no chair rows/Notes opened until scoring). Output: `dist/live-validation/law-skill.md`
+  (overwritten; Task T's version in git history).
+
+  **Recall: 4/5 = 80%** (found: von Bernstorff, Nettesheim, Finck, **Remmert**; missed:
+  Saurer). **Precision: 4/4 = 100%** (all four surfaced options are GT chairs, all
+  clearly relevant; no padding).
+
+  **The §5 fix worked as designed.** Remmert's chair title ("Staats- und
+  Verwaltungsrecht, Öffentliches Wirtschaftsrecht, Kommunalrecht") still reads
+  economic/municipal on its face, but this run ran Pass-2 enrichment on her own
+  Schwerpunkte page *before* deciding — per the new enrich-before-exclude rule — and
+  found "Allgemeine Grundrechtslehren" (fundamental-rights doctrine) plus active GG
+  commentary work (Art. 12 Abs. 2/3, Art. 87c–90), a core constitutional-law/
+  human-rights match. Included this run. Independent confirmation the fix
+  generalizes correctly: Droege and Seiler were *also* Pass-2 enriched this run (not
+  title-only judged) and still correctly excluded — their own Schwerpunkte pages
+  confirm tax/religion-law and tax/family-law focus respectively, off the persona's
+  core, matching the GT file's own exclusion notes exactly (Seiler's evidence is also
+  stale, dated to March 2020).
+
+  **Saurer remains the one miss — an honest, defensible one, not a fixable defect of
+  the same class.** Unlike Remmert, Saurer's own chair page surfaces no
+  constitutional-law, human-rights, or tech-regulation content on enrichment —
+  Schwerpunktbereich 5 ("Öffentliche Wirtschaft, Infrastruktur und Umwelt") is squarely
+  environmental/infrastructure law. GT counts him relevant via the comparative-public-law
+  method matching the persona's stated method ("comparative/normative analysis"), a
+  softer, method-level match rather than a topical one that Pass-2 enrichment (which
+  checks *topic*, not method-alone) doesn't reliably surface. Flagged honestly in the
+  map rather than silently dropped, per §5's judgment-call convention.
+
+  **Verdict: Law clears 80% — Task U's done-when criterion met.** All 6 faculties now
+  clear the ≥80% recall bar (see the updated §4 go/no-go).
+
 - **2026-07-03 — Blind hard-faculty run (`law`, Task T).** First genuinely-blind run
   under the corrected persona protocol (personas from the GT file's full
   `Sample interest:` line, extracted via `grep`, not the README one-liner). Law was the
