@@ -193,8 +193,8 @@ operates its main German R&D site in Mannheim (BW).
 | TeamViewer AG | software, cloud | corporate | Göppingen | https://www.teamviewer.com/en/company/careers/ | 2026-06-28 | unklar |
 | MHP Management- und IT-Beratung GmbH | consulting, AI/ML | corporate | Ludwigsburg | https://www.mhp.com/de/karriere.html | 2026-06-28 | unklar |
 | IONOS Group SE | cloud, software | corporate | Karlsruhe | https://jobs.ionos.de/career/all-jobs ✓ | 2026-06-28 | unklar |
-| Haufe Group GmbH & Co. KG | software, HR-tech | SME | Freiburg | https://jobs.haufegroup.com/young-talents ✓ | 2026-06-28 | unklar |
-| GFT Technologies SE | fintech, software | corporate | Stuttgart | https://jobs.gft.com/go/germany/4411601/ ✓ | 2026-06-28 | unklar |
+| Haufe Group GmbH & Co. KG | software, HR-tech, verlag | SME | Freiburg | https://jobs.haufegroup.com/young-talents ✓ | 2026-06-28 | unklar |
+| GFT Technologies SE | fintech, software, consulting | corporate | Stuttgart | https://jobs.gft.com/go/germany/4411601/ ✓ | 2026-06-28 | unklar |
 | Schwarz IT GmbH & Co. KG | software, supply-chain | corporate | Neckarsulm | https://it.schwarz/en/karriere/einstieg ✓ | 2026-06-28 | unklar |
 
 ---

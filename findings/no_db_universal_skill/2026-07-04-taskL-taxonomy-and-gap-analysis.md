@@ -96,7 +96,27 @@ rate-limited (HTTP 429) on every live-fetch attempt during this session — not 
 backbone to keep the "every URL opened live" rule intact; flagged here as a good next-session
 candidate for Umwelt/Energie/Geo once it can be fetched.
 
-## 5. Anti-bias compliance note
+## 5. Smoke test — "Erziehungswissenschaft, digitale Lernmedien" persona (2026-07-04)
+
+Manual Pass-1 walkthrough per the task's step 6, using the final backbone:
+
+- Interest tag: `edtech`. Domain tags: Bildung, `verlag` (secondary).
+- Candidates: DenkBox GmbH (§1, `edtech`), Ernst Klett Verlag (§11, `edtech, verlag`),
+  Haufe Group (§5, `verlag` — secondary fit only, HR/business content not core Lernmedien).
+  Motor Presse Stuttgart (§12, `verlag`) excluded on relevance judgment despite the tag
+  match — its publishing focus is automotive/lifestyle, not education.
+- **Result: 2–3 candidates, below the 5–20 target range.** This is not a bug in the
+  filter — it is the honest, documented outcome of a field (Bildung/EdTech) that stayed
+  thin despite real search effort (§3). The skill's own Disambiguation Rules
+  (`SKILL.md`, "When to ask") already cover this case: fewer than 3 candidates on a niche
+  profile triggers asking the student whether to broaden scope, rather than silently
+  returning a short list. No code or skill-logic change was needed to handle it correctly —
+  the existing fallback behavior is the right one here.
+- Take-away for whoever revisits the backbone next: Bildung/EdTech is the field most likely
+  to benefit from a future dedicated research pass (e.g. checking Cornelsen's Stuttgart
+  office for any BW-registered entity, or Tübingen-based e-learning spinouts not yet surfaced).
+
+## 6. Anti-bias compliance note
 
 - **Source diversity:** new entries were sourced via general web search (not solely
   Cyber-Valley-adjacent), a state environmental agency (LUBW), a state research institute
