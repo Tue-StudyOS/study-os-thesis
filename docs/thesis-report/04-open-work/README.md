@@ -4,6 +4,10 @@
 - [2026-07-02-ideen-domi.md](2026-07-02-ideen-domi.md) — raw brainstorm on six directions for
   the project (other universities, testable evaluation, backbone breadth, distribution,
   and — most importantly — the scope-vs-genericness intuition below).
+- [2026-07-04-feedback-gehler.md](2026-07-04-feedback-gehler.md) — raw notes from an informal
+  end-user test session, with Domi's own follow-up ideas interleaved. Not a designed eval run
+  (no protocol, no ground truth, one tester) — see synthesis below for what it does and
+  doesn't support.
 
 **Related, not moved here** (already dated/organized in place):
 - [findings/gesamtplan-2026-07-02.md](../../../findings/gesamtplan-2026-07-02.md) — a full
@@ -32,6 +36,25 @@
 - **Non-MINT company backbone coverage** — the BW company backbone is strong for AI/ML,
   robotics, medtech, and manufacturing, and thin for psychology/UX, EdTech, environmental
   science, and life-science spinouts, even though the tool claims to serve all faculties.
+
+## A first, informal data point toward independent validation
+
+`2026-07-04-feedback-gehler.md` is the first evidence of a real person outside the project
+using the tool — relevant to the still-open "independent external validation" item (Design-
+Entscheidungen.md TODO 1) — but it is **informal, not a designed eval**: one tester, no
+protocol, no ground truth, feedback captured as free-text quotes rather than scored against a
+rubric. Treat it as a source of concrete product ideas, not as evidence for or against the
+recall/precision/steering numbers in [03](../03-hardening-and-evaluation/README.md). Three
+usable signals from it: (1) the tester found the interview's information-need unclear at the
+start ("not clear how much detail was required at which step") — a candidate fix is an
+upfront one-line explanation of what the skill does and that detail level is the student's
+choice; (2) the tester wanted more concrete follow-through after the option map ("tell me
+which one you would choose... walk a bit more down that road") — currently `thesis-finder`
+only offers `draft-thesis-contact` as a next step, with no ranking or drill-down; (3) the
+tester asked whether professors could contribute information to the skill — out of scope per
+the no-DB principle ([01](../01-the-pivot/README.md)), but suggests the coverage caveat could
+more clearly explain *why* the tool doesn't take professor input. None of these are committed
+to as changes here — they're raw signal for whoever picks up independent validation next.
 
 ## The scope question — the idea that matters most for the thesis claim
 
