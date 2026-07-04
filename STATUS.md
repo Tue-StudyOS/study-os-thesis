@@ -24,12 +24,13 @@ core-interest term). All 6 measured faculties now clear 80% (CS 100%, Medicine �
 Psychology ≥83%, WiSo ≥83%, Humanities 100%, Law 80%), 2 of them hard.
 Decision doc: [2026-07-03-core-done-go-no-go.md](findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md).
 
-**Phase 5 — not yet scoped.** Task U was the last task on the critical path to GO; there is
-no currently-named next task. Open candidates being discussed with Domi: (1) Theology's blind
-live run (GT exists, never run — optional 3rd hard-faculty data point, not required for the
-bar already met), (2) packaging/release polish or an independent end-to-end smoke test now
-that Phase 4 is GO, (3) something outside the eval track entirely (e.g. the scope-erosion
-experiment from `docs/thesis-report/04-open-work/README.md`, or Track 2's backbone audit).
+**Phase 5 — direction chosen 2026-07-04.** Task U was the last task on the critical path to
+GO; candidates discussed (Theology blind run, independent external validation, the
+scope-erosion experiment, company-backbone taxonomy) — Domi picked **company-backbone
+taxonomy (Task L)**. Runs in the prepared worktree `study-os-thesis-taskL`
+(branch `task/L-company-backbone`, currently unstarted). The other three candidates remain
+open and undecided for later. This section will be updated once Task L lands and is merged
+back into `feat/no-db-universal-skill`.
 This section will be updated once a direction is chosen.
 
 Phase 1 is **complete** with live validation (all 4 faculties ≥70% live recall on fixture-based
