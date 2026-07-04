@@ -4,14 +4,36 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-04 (Task L merged: BW company backbone extended to all 7 Tübingen
-faculties + ZITh via a 13-field employment taxonomy, closing most gaps honestly documented
-below. Before this, Task U closed the recall gap: Law re-run **80%** post §5 enrich-before-exclude
-fix. Go/No-Go on roadmap §4 "core is done" flipped to **GO** — all 5 criteria now met.)
+**Last update:** 2026-07-04 — **project paused.** Task L merged (BW company backbone
+extended to all 7 Tübingen faculties + ZITh via a 13-field employment taxonomy). Phase 4
+go/no-go on roadmap §4 "core is done" is **GO** (all 5 criteria met, flipped via Task U's
+§5 enrich-before-exclude fix + Law re-run at 80%). Working tree clean, 41 commits ahead of
+origin, not pushed. **Next up when work resumes:** process
+`docs/thesis-report/04-open-work/2026-07-04-feedback-gehler.md`. See "Current phase" below
+for the full, exact re-entry summary.
 
 ---
 
 ## Current phase
+
+> ⏸ **Project paused here as of 2026-07-04.** No further work is planned on this branch
+> until further notice. This section is written to be a precise, self-contained re-entry
+> point — read it first when work resumes, before touching anything else.
+>
+> **Exact state:** `feat/no-db-universal-skill`, working tree clean, 41 commits ahead of
+> `origin/feat/no-db-universal-skill` (not yet pushed to the remote). `pytest -q` → 29
+> passed / 8 skipped; `python3 scripts/build_skill_release.py` builds cleanly. Phases 1–4
+> are done (Phase 4 go/no-go verdict: **GO**, see below). Phase 5 has one task done (Task L)
+> and three named candidates still undecided (also below).
+>
+> **The next thing to work through is
+> [`docs/thesis-report/04-open-work/2026-07-04-feedback-gehler.md`](docs/thesis-report/04-open-work/2026-07-04-feedback-gehler.md)**
+> — raw notes from an informal end-user test session, captured but not yet acted on. The
+> synthesis in `docs/thesis-report/04-open-work/README.md` ("A first, informal data point
+> toward independent validation") already extracts three concrete signals from it (unclear
+> upfront session framing, missing post-map follow-through/ranking, professor-input question)
+> — start there, decide which (if any) become actual skill changes, and log the outcome in
+> this file under a new dated task entry before doing anything else.
 
 **Phase 3 — Orchestration & Distribution: COMPLETE.** Backbone maintenance, entry-point skill,
 distribution artifacts, and smoke test are all done. Branch `feat/no-db-universal-skill` is
@@ -163,6 +185,19 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-04** — **Project paused.** Full review pass over the current state before
+  stepping away for a while: git tree confirmed clean (`git status` → nothing to commit),
+  branch `feat/no-db-universal-skill` 41 commits ahead of origin, not pushed; `pytest -q`
+  29 passed/8 skipped and `build_skill_release.py` both re-verified green. Two loose ends
+  from the cleanup pass were resolved before pausing: the fully-merged `plan/gesamtplan-
+  2026-07-02` branch pointer was deleted (dead weight, no data loss), and an untracked root
+  file (`Feedback_Gehler.md` — informal end-user test notes) was moved to
+  `docs/thesis-report/04-open-work/2026-07-04-feedback-gehler.md` with a synthesis paragraph
+  in that section's README rather than left as unstructured clutter. Added an explicit ⏸
+  pause banner to the top of "Current phase" (this file) as the designated re-entry point,
+  naming the Feedback-Gehler file as the concrete next task. No skill logic changed in this
+  pass — pure state verification and documentation.
 
 - **2026-07-04** — **Task L (BW company backbone — extend to all Tübingen faculties) done,
   merged into `feat/no-db-universal-skill`.** Domi's live steer corrected the task brief:
