@@ -57,6 +57,12 @@ These inform the backbone filter and the pros/difficulties annotation.
 2. Apply the interest-to-tag mapping from
    [`references/company-search-strategy.md` §2.1](references/company-search-strategy.md):
    identify which backbone sections and rows match the student's interest and domain tags.
+   For students from a non-technical or non-Informatik degree program, check the
+   **Studiengangs-Routing** table near the end of `bw-company-backbone.md` first — it maps
+   Uni Tübingen employment fields (Chemie, Psychologie, Bildung, Umwelt/Geo, Wirtschaft,
+   Sozialwissenschaften, Medien/Sprache, Recht, Sport, Theologie/Philosophie/…) to the
+   relevant backbone sections and tags, and says plainly which fields have no realistic
+   company-thesis track (route those students to `find-university-chairs` instead).
 3. Apply the filtering logic from §2.2:
    - **Include** entries whose sector tags intersect the student's mapped tags.
    - **Expand** by including the entire relevant backbone section if the student's domain

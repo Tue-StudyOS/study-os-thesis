@@ -52,6 +52,20 @@ which backbone sections to read and which rows to keep.
 | Enterprise software, ERP, business AI | `enterprise software`, `AI/ML` | `consulting` |
 | Supply chain, logistics, operations | `supply-chain`, `logistics`, `AI/ML` | `industrial` |
 | Cybersecurity, safe AI | `cybersecurity`, `AI/ML` | `automotive` (functional safety) |
+| Chemie, Materialwissenschaft | `chemie`, `materials` | `industrial` |
+| Wirtschaftspsychologie, UX-Forschung, HR-Analytics | `ux-research`, `HR-tech` | `AI/ML` |
+| Bildung, EdTech, Lernmedien | `edtech`, `verlag` | — |
+| Umwelttechnik, Energie, Geowissenschaften | `umwelt`, `energy`, `sustainability`, `geo` | `sensors` |
+| Consulting, Finance, Versicherung | `consulting`, `finance`, `versicherung` | `enterprise software` |
+| Marktforschung, empirische Sozialforschung | `marktforschung` | — |
+| Verlagswesen, Medien, Sprachindustrie | `verlag`, `medien` | `edtech` |
+| Sport- und Gesundheitstechnologie | `sport` | `medtech` |
+
+For the full derivation of these fields from Uni Tübingen's Fachbereich structure — and an
+honest account of which fields have no realistic company-thesis track (Recht/Legal Tech,
+Theologie/Philosophie/Religionswissenschaft, klinische Psychologie) — see the
+**Studiengangs-Routing** table in
+[`bw-company-backbone.md`](bw-company-backbone.md#studiengangs-routing).
 
 ### 2.2 Filtering logic
 
