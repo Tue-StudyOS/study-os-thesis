@@ -4,12 +4,12 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-05 — Task M1 (upfront framing message in `thesis-finder`) done and
-committed. Gehler feedback build plan otherwise unchanged: M3 and M2 still open. Task L
-merged (BW company backbone extended to all 7 Tübingen faculties + ZITh via a 13-field
-employment taxonomy). Phase 4 go/no-go on roadmap §4 "core is done" is **GO** (all 5 criteria
-met, flipped via Task U's §5 enrich-before-exclude fix + Law re-run at 80%). Working tree
-clean. **Next up when work resumes:** implement Task M3 (see
+**Last update:** 2026-07-05 — Task M1 and Task M3 done and committed. Gehler feedback build
+plan otherwise unchanged: M2 still open (depends on M3's paper-surfacing pattern, now
+finished). Task L merged (BW company backbone extended to all 7 Tübingen faculties + ZITh via
+a 13-field employment taxonomy). Phase 4 go/no-go on roadmap §4 "core is done" is **GO** (all
+5 criteria met, flipped via Task U's §5 enrich-before-exclude fix + Law re-run at 80%). Working
+tree clean. **Next up when work resumes:** implement Task M2 (see
 [2026-07-05-taskM-gehler-feedback-plan.md](findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md)).
 See "Current phase" below for the full, exact re-entry summary.
 
@@ -28,15 +28,16 @@ See "Current phase" below for the full, exact re-entry summary.
 > and three named candidates still undecided (also below).
 >
 > **Task M1 is done** (upfront framing message in `thesis-finder`, committed 2026-07-05).
-> **The next thing to work through is Task M3**, defined in
+> **Task M3 is done** (paper-first gate in `draft-thesis-contact`, committed 2026-07-05).
+> **The next thing to work through is Task M2**, defined in
 > [`findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md`](findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md).
 > The raw Gehler feedback (`docs/thesis-report/04-open-work/2026-07-04-feedback-gehler.md`) has
-> been triaged: M3 (paper-first gate in `draft-thesis-contact`) and M2 (recommend +
-> drill-down step in `thesis-finder`, depends on M3) remain. The professor-input
-> coverage-caveat item (M4) and the example-walkthrough/example-prompts idea were considered and
-> explicitly dropped — do not resurrect them as scope creep inside M2/M3. Do M3 next
-> (independent, small), M2 last (depends on M3's paper-surfacing pattern). Each task's exact
-> agent handoff prompt is in the plan doc — paste it into a fresh conversation per task.
+> been triaged: M2 (recommend + drill-down step in `thesis-finder`, depends on M3, now
+> finished — reuse the paper-surfacing pattern in `draft-thesis-contact/SKILL.md`) remains. The
+> professor-input coverage-caveat item (M4) and the example-walkthrough/example-prompts idea
+> were considered and explicitly dropped — do not resurrect them as scope creep inside M2.
+> Each task's exact agent handoff prompt is in the plan doc — paste it into a fresh
+> conversation per task.
 
 **Phase 3 — Orchestration & Distribution: COMPLETE.** Backbone maintenance, entry-point skill,
 distribution artifacts, and smoke test are all done. Branch `feat/no-db-universal-skill` is
@@ -188,6 +189,16 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-05** — **Task M3 (paper-first gate in `draft-thesis-contact`) done**, committed
+  on `feat/no-db-universal-skill`. Added a workflow step before drafting: if 1-2 relevant
+  recent papers for the target person/lab aren't already in-session, call `find-recent-papers`
+  to get them. Output section now includes the surfaced papers plus a recommendation that the
+  student skim them first (avoids reading as generic, shows genuine engagement). Existing
+  drafting rules (modest claims, no invented openings/funding/capacity) untouched. Task M1 was
+  already done (see entry below). Next up: Task M2 (recommend + drill-down step in
+  `thesis-finder`), per
+  [2026-07-05-taskM-gehler-feedback-plan.md](findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md).
 
 - **2026-07-05** — **Task M1 (upfront framing message in `thesis-finder`) done**, committed
   on `feat/no-db-universal-skill`. Added a one-time framing message before Step N1's
