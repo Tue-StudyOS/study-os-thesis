@@ -159,7 +159,7 @@ gap.
 
 ---
 
-## 8. Phase 4 — Hardening (DONE, 2026-07-04)
+## 8. Phase 4 — Hardening (DONE, 2026-07-04; GO verdict flagged provisional 2026-07-05)
 
 Phase 3 made the skill package coherent and distributable; Phase 4 made the university
 core (Tübingen) not just *pass the gate* but genuinely *work well* across recall,
@@ -172,18 +172,56 @@ Verdict and evidence: [2026-07-03-core-done-go-no-go.md](findings/no_db_universa
 All numbers: [2026-07-03-eval-aggregate-scorecard.md](findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md).
 Live status per task: `STATUS.md`, section "Post-Phase-3 hardening".
 
-**Phase 5 is not yet scoped** — there is no currently-named next task on the critical path.
-See STATUS.md "Current phase" for the open candidates under discussion.
+**Independent-review caveat (2026-07-05):** an independent 1.0-readiness review
+([2026-07-05-fable-1.0-readiness-review.md](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md))
+found the two hard-faculty numbers behind the GO are not clean blind measurements —
+Humanities' 100% is a transparent re-score by a session that was explicitly un-blind on
+that faculty, and Law's 80% was produced by a re-run whose session had already read the
+document naming the missed chair and the fix that flips her. Every genuinely blind
+hard-faculty run to date (Humanities 60%, Law 60%) landed below the 80% bar. This does
+**not** roll back the GO or any skill fix (Task U's enrich-before-exclude rule is real
+and independently verified elsewhere in the same evidence) — it flags the verdict as
+**provisional** pending one clean blind hard-faculty run. See Phase 5 Task V below.
 
 ---
 
-## 9. How this plan is used
+## 9. Phase 5 — Independent validation, scope experiment & distribution (scoped 2026-07-05)
+
+Phase 5 was "not yet scoped" as of 2026-07-04 — Task L (company-backbone taxonomy) is the
+only Phase-5 task done so far. The 2026-07-05 independent 1.0-readiness review scoped the
+remaining path to 1.0, for both a thesis committee and real students, into a concrete task
+table. **The project is paused here (2026-07-05) with Phase 5 fully scoped but not
+started** — see `STATUS.md` "Current phase" for the exact re-entry point.
+
+| Task | What it is about | Blocking for |
+|---|---|---|
+| V | Blind live run, Theology faculty — the only hard-faculty ground truth no session has opened mid-run; repairs the Phase 4 evidentiary gap above | Thesis (evidence) |
+| W | Scope-erosion experiment (`findings/gesamtplan-2026-07-02.md` §3 Idee 6 / §6 T3): 2×2 {tool, baseline} × {Tübingen, TUM or KIT}, foreign ground truth curated by a second person | Thesis (central claim) |
+| X | Independent scoring pass — a second person re-scores ~20% of surfaced options against existing live-eval outputs | Thesis (methodology) |
+| Y | Non-circular company ground truth (gesamtplan T4) — or explicitly demote the company eval to "plumbing check" status in the write-up | Thesis (methodology) |
+| Z | Protocolled external test (3–5 students, incl. non-CS) on the shipped release artifact, plus one distribution channel (Fachschaft Informatik first) | Product (Design-Entscheidungen.md TODO 1+2) |
+| AA | Hygiene sweep: fix the stale/wrong-person paper index, the CS-only degree-programs file mislabeled as university-wide, portability contradictions, a backbone link audit, and small wording defects | Both (low effort, real defects) |
+
+Full task-by-task justification, evidence pointers, and the six-question assessment this
+table is derived from:
+[2026-07-05-fable-1.0-readiness-review.md](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md).
+Recommended first move on re-entry: **Task V** (cheapest, ~20 minutes, directly repairs
+the Phase 4 evidentiary gap), then **Task W** (the review's single highest-value
+remaining task for the thesis claim).
+
+---
+
+## 10. How this plan is used
 
 - `MASTERPLAN.md` = stable structural plan. Change it only when the product goal,
   phase structure, or major workflow changes.
 - `STATUS.md` = living progress document. Update status, blockers, decisions, and
   dated logs there.
 - `findings/no_db_universal_skill/` = the concept, risks, exact build plan, and
-  eval results for this direction.
+  eval results for this direction — including the
+  [2026-07-05 independent 1.0-readiness review](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md),
+  the current authoritative source for what's left before 1.0.
+- `docs/thesis-report/` = the curated, chronological account for the thesis write-up;
+  synced to match this plan and STATUS.md as of 2026-07-05.
 - `AGENTS.md` = operating instructions for future agents and maintainers.
 - GitHub Issues = executable work units mirroring Tasks A–H.
