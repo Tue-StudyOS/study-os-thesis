@@ -4,37 +4,95 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-05 — Task M2 done and committed, closing out the Task M (Gehler
-feedback) plan: M1, M2, and M3 are all done. Task L merged (BW company backbone extended to
-all 7 Tübingen faculties + ZITh via a 13-field employment taxonomy). Phase 4 go/no-go on
-roadmap §4 "core is done" is **GO** (all 5 criteria met, flipped via Task U's §5
-enrich-before-exclude fix + Law re-run at 80%). Working tree clean. **Next up when work
-resumes:** no open task in the Gehler feedback plan; pick up the three undecided Phase 5
-candidates noted in "Current phase" below, or start a new task. See "Current phase" below for
-the full, exact re-entry summary.
+**Last update:** 2026-07-05 — Independent 1.0-readiness review completed and actioned:
+Phase 5 is now fully **scoped** (Tasks V–AA, MASTERPLAN.md §9), the Phase 4 GO verdict is
+flagged **provisional** (hard-faculty blindness gap, see below), and `docs/thesis-report/03`
+and `04` were corrected to match the current state instead of a stale 2026-07-03 snapshot.
+Before that: Task M2 done and committed, closing out the Task M (Gehler feedback) plan
+(M1, M2, M3 all done); Task L merged (BW company backbone extended to all 7 Tübingen
+faculties + ZITh via a 13-field employment taxonomy). Working tree clean. **Next up when
+work resumes:** Task V (blind Theology run, ~20 min, repairs the Phase 4 evidentiary gap),
+then Task W (scope-erosion experiment — the single highest-value remaining task). See
+"Current phase" below for the full, exact re-entry summary.
 
 ---
 
 ## Current phase
 
-> ⏸ **Project paused here as of 2026-07-04.** No further work is planned on this branch
-> until further notice. This section is written to be a precise, self-contained re-entry
-> point — read it first when work resumes, before touching anything else.
+> ⏸ **Project paused here as of 2026-07-05, after the independent 1.0-readiness review.**
+> No further work is planned on this branch until further notice. This section is written
+> to be a precise, self-contained re-entry point — read it first when work resumes, before
+> touching anything else.
 >
-> **Exact state:** `feat/no-db-universal-skill`, working tree clean, 41 commits ahead of
+> **Exact state:** `feat/no-db-universal-skill`, working tree clean, ahead of
 > `origin/feat/no-db-universal-skill` (not yet pushed to the remote). `pytest -q` → 29
 > passed / 8 skipped; `python3 scripts/build_skill_release.py` builds cleanly. Phases 1–4
-> are done (Phase 4 go/no-go verdict: **GO**, see below). Phase 5 has one task done (Task L)
-> and three named candidates still undecided (also below).
+> are done. Phase 4's go/no-go verdict is **GO, but flagged provisional** (see below).
+> Phase 5 is now fully **scoped** (Tasks V–AA, MASTERPLAN.md §9) but only Task L
+> (company-backbone taxonomy) is actually done.
 >
 > **Task M1 is done** (upfront framing message in `thesis-finder`, committed 2026-07-05).
 > **Task M3 is done** (paper-first gate in `draft-thesis-contact`, committed 2026-07-05).
 > **Task M2 is done** (recommend & drill-down step in `thesis-finder`, committed 2026-07-05).
-> **The Task M (Gehler feedback) plan is now complete** — see
+> **The Task M (Gehler feedback) plan is complete** — see
 > [`findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md`](findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md)
-> for the full plan. The professor-input coverage-caveat item (M4) and the
-> example-walkthrough/example-prompts idea were considered and explicitly dropped, not folded
-> into M1-M3. No open task remains from this plan.
+> for the full plan (now committed; it was briefly untracked, fixed in this pass). The
+> professor-input coverage-caveat item (M4) and the example-walkthrough/example-prompts
+> idea were considered and explicitly dropped, not folded into M1-M3. No open task remains
+> from this plan. **Caveat added by the 2026-07-05 review:** M1–M3 have not been
+> live-exercised since landing — no runbook re-run confirms the new flow works end-to-end
+> in practice. Folded into Task AA's hygiene sweep rather than given its own task.
+>
+> **What happened 2026-07-05 — the independent 1.0-readiness review:** a from-scratch,
+> deliberately skeptical review assessed the project for both a thesis committee and real
+> students (full text:
+> [`findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md`](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md)).
+> Its findings, now the authoritative source for what's left before 1.0:
+>
+> 1. **The Phase 4 GO verdict is evidentially weaker than its write-up suggests.** The two
+>    hard-faculty recall numbers that flipped it to GO (Humanities 100%, Law 80%) are not
+>    clean blind measurements — Humanities is a transparent re-score by a session that was
+>    explicitly un-blind on that faculty; the Law re-run's session had already read the
+>    document naming the missed chair (Remmert) and the exact fix that flips her. Every
+>    genuinely blind hard-faculty run to date (Humanities 60%, Law 60%) landed below the
+>    80% bar. **Not reversed** — Task U's underlying §5 enrich-before-exclude skill fix is
+>    real and independently corroborated (Droege/Seiler stayed correctly excluded under the
+>    same fix) — but the verdict is now **provisional** pending one clean blind run. New
+>    **Task V**: blind Theology run (ground truth exists, never opened mid-run — the last
+>    uncontaminated hard-faculty data point available).
+> 2. **The project's central scientific claim is still asserted, not tested.** The
+>    "narrow scope beats plain Claude; breadth erodes the advantage" argument
+>    (`docs/thesis-report/04-open-work/2026-07-02-ideen-domi.md`, point 6; formalized in
+>    `findings/gesamtplan-2026-07-02.md` §3 Idee 6) is probably right in conclusion but its
+>    SLLN framing over-claims — a curated foreign backbone would not dilute Tübingen's
+>    curation density; only an uncurated expansion trivially converges to baseline. The
+>    defensible form is a dose-response claim (advantage ∝ curated local-knowledge
+>    density), and the gesamtplan's own scope-erosion experiment (§6 T3) to test it has
+>    never been run. New **Task W** — the review's single highest-value remaining task.
+> 3. **Self-scoring, company-GT circularity, and single-agent authorship** remain open
+>    methodological caveats the project already named (STATUS/scorecard) but never
+>    mitigated. New **Task X** (independent re-scoring of a sample) and **Task Y**
+>    (non-circular company ground truth).
+> 4. **Product readiness gap:** nobody outside the project has run the shipped release
+>    artifact; the one informal external test (Gehler) had no protocol or ground truth.
+>    Design-Entscheidungen.md TODOs 1 and 2 (both "Hoch/Ja") remain untouched. New
+>    **Task Z**: a protocolled 3–5-student external test plus one distribution channel.
+> 5. **Small, real, unfixed defects** (review is read-only by design — nothing was
+>    patched): `find-recent-papers`' shipped paper index conflates two different people
+>    both named "Matthias Hein" (radar/superconductivity papers filed under Tübingen's ML
+>    professor); `build-student-profile/references/tuebingen-degree-programs.md` is
+>    CS-only but used/titled as if university-wide; `find-company-thesis-options`'s
+>    frontmatter claims "any discipline" against its own routing table's honest
+>    exceptions; portability claims vs. the hardcoded `~/.claude/` session path; two
+>    recorded backbone 404s with no link-audit process. Bundled into new **Task AA**.
+>
+> The Phase 5 task table (MASTERPLAN.md §9, Tasks V–AA) is the actionable form of this
+> review. `docs/thesis-report/03-hardening-and-evaluation/README.md` and
+> `04-open-work/README.md` were corrected in this same pass — they previously stated a
+> stale 2026-07-03 snapshot (Task S "not started", recall bar "not yet met") that
+> contradicted the current GO/Task-S-done state; both now link to the review and state
+> the provisional-GO caveat directly. **Recommended first move on re-entry: Task V**, then
+> **Task W**.
 
 **Phase 3 — Orchestration & Distribution: COMPLETE.** Backbone maintenance, entry-point skill,
 distribution artifacts, and smoke test are all done. Branch `feat/no-db-universal-skill` is
@@ -49,19 +107,26 @@ gap (§5 "enrich before excluding" a candidate whose dense multi-strand title bu
 core-interest term). All 6 measured faculties now clear 80% (CS 100%, Medicine ≥83%,
 Psychology ≥83%, WiSo ≥83%, Humanities 100%, Law 80%), 2 of them hard.
 Decision doc: [2026-07-03-core-done-go-no-go.md](findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md).
+**Flagged provisional 2026-07-05** — see "Current phase" above and the
+[independent review](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md):
+the Humanities and Law numbers behind this verdict are not clean blind measurements: Task V
+(blind Theology run) is the named repair.
 
-**Phase 5 — Task L done, merged 2026-07-04.** Task U was the last task on the critical path
-to GO; candidates discussed (Theology blind run, independent external validation, the
-scope-erosion experiment, company-backbone taxonomy) — Domi picked **company-backbone
-taxonomy (Task L)**, run in worktree `study-os-thesis-taskL` (branch
+**Phase 5 — Task L done, merged 2026-07-04; fully scoped 2026-07-05.** Task U was the last
+task on the critical path to GO; candidates discussed (Theology blind run, independent
+external validation, the scope-erosion experiment, company-backbone taxonomy) — Domi picked
+**company-backbone taxonomy (Task L)**, run in worktree `study-os-thesis-taskL` (branch
 `task/L-company-backbone`). Extended `bw-company-backbone.md` from a MINT-heavy ~90-entry
 list to a 99-entry list covering all 13 employment fields derived from Uni Tübingen's actual
 faculty structure (not the CS-only reference file the task brief originally pointed at — see
 the findings doc §0 for that correction). Merged fast-forward into
 `feat/no-db-universal-skill`; worktree and branch removed. Full write-up:
 [2026-07-04-taskL-taxonomy-and-gap-analysis.md](findings/no_db_universal_skill/2026-07-04-taskL-taxonomy-and-gap-analysis.md).
-The other three Phase 5 candidates (Theology blind run, independent external validation,
-scope-erosion experiment) remain open and undecided.
+The other three candidates named that day (Theology blind run, independent external
+validation, scope-erosion experiment) are no longer just "undecided" — the 2026-07-05
+independent review formally scoped them (plus two new tasks, independent scoring and
+non-circular company GT) as **Tasks V–AA** in MASTERPLAN.md §9. See "Current phase" above
+for the full task table and evidence.
 
 Phase 1 is **complete** with live validation (all 4 faculties ≥70% live recall on fixture-based
 evaluation; gate passed 2026-06-28). Phase 1 build plan: [2026-06-26-build-plan.md](findings/no_db_universal_skill/2026-06-26-build-plan.md).
@@ -153,6 +218,28 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 | Task U | §5 enrich-before-exclude fix + Law re-run (the remaining path to GO) | ✅ | Domi | (1) **Skill fix committed** — added an "Enrich before excluding" row to `search-strategy.md` §5 (symmetric dual of the Butz worked example) + a matching one-liner in `SKILL.md` Step 7: do not exclude a candidate from a title-only reading when its title names a core-interest field amid off-interest strands; run Pass-2 enrichment first. (2) **Law blind re-run: 4/5 = 80% recall, 4/4 = 100% precision** (found von Bernstorff, Nettesheim, Finck, **Remmert**; missed Saurer). Remmert's dense multi-strand title still reads economic/municipal on its face, but Pass-2 enrichment of her own Schwerpunkte surfaced "Allgemeine Grundrechtslehren" — a core constitutional-law/human-rights match — and she was included. Droege and Seiler were also enriched (not title-judged) and correctly excluded, independently matching the GT file's own exclusion notes. Saurer's own page shows no constitutional/human-rights/tech focus even after enrichment — an honest, defensible remaining miss, not the same defect class as Remmert. **Outcome: §4 criterion 1 now MET — all 6 measured faculties clear 80% (2 of 6 hard). Go/no-go flipped to GO.** Write-ups: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md` (2026-07-04 log entry), `2026-07-03-core-done-go-no-go.md` (GO banner). Output: `dist/live-validation/law-skill.md`. `pytest -q` 29 passed/8 skipped; release build OK. |
 | Task L | BW company backbone — extend to all Tübingen faculties + routing features (Phase 5) | ✅ | Domi | Live-researched all 7 faculties + ZITh (the `tuebingen-degree-programs.md` file the task brief pointed at turned out to be CS-only — corrected via Domi's live steer to research the actual faculty structure first). Derived a 13-employment-field taxonomy, gap-analyzed the existing backbone against it, and added 6 new sections (Chemie/Materialwissenschaft, extended Umwelt/Energie/Geowissenschaften, Wirtschaft/Consulting/Versicherung, Sozialwissenschaften/Marktforschung, Bildung/EdTech, Medien/Verlage/Sprache, Sport/Gesundheitstechnologie) with 16 new live-verified entries (every URL opened via WebFetch), plus a `Thesis-Kultur` column across all 13 tables and a Studiengangs-Routing table mapping every field to its backbone sections/tags. Rejected two candidates after failed verification (an acquired consultancy resolving to an unrelated same-named firm; an unconfirmed legal-tech HQ) rather than guess. Honestly documents fields that stayed thin despite real search effort (Recht/Legal Tech: 0 entries, Sozialwissenschaften: 1, Sport: 2) and one pre-existing 30%-cap breach (Informatik/AI, ~36% — predates this task, left alone as out of scope). EdTech persona smoke test returned only 2–3 candidates (below the 5–20 target) — an honest reflection of a thin field, correctly handled by the skill's existing "ask to broaden scope" fallback, not a bug. `pytest -q` 29 passed/8 skipped; release build OK. Full write-up: `findings/no_db_universal_skill/2026-07-04-taskL-taxonomy-and-gap-analysis.md`. |
 
+### Phase 5 — Independent validation, scope experiment & distribution (scoped 2026-07-05)
+
+Scoped by the [independent 1.0-readiness review](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md);
+full justification and evidence per task lives there. Task letters continue from Task U
+(no collision with the post-Phase-3 hardening table above).
+
+| Task | Step | Status | Owner | Notes / difficulties |
+|---|---|---|---|---|
+| V | Blind live run, Theology faculty — repairs the Phase 4 hard-faculty blindness gap | ⬜ open | — | Ground truth exists (`skills/tests/eval_ground_truth/theology.md`), never opened mid-run. Cheapest remaining task (~20 min via the live-eval runbook). Also exercises the known N.N.-vacant-chair honesty case. Recommended first task on re-entry. |
+| W | Scope-erosion experiment (gesamtplan §3 Idee 6 / §6 T3) — 2×2 {tool, baseline} × {Tübingen, TUM or KIT}, foreign GT curated by a second person | ⬜ open | — | The project's central scientific claim is untested. Trimmed version (one foreign university, one faculty, ~6-chair GT) estimated at 2–4 working days. Named by the review as the single highest-value remaining task. |
+| X | Independent scoring pass — second person re-scores ~20% of surfaced options against existing live-eval outputs | ⬜ open | — | Every recall/precision/steering number to date is single-agent authored and scored; cheapest mitigation the gesamtplan already prescribed (§7) and never executed. |
+| Y | Non-circular company ground truth (gesamtplan T4) | ⬜ open | — | Company recall/thesis-signal numbers measure "does the skill find what's in the backbone," not "does the backbone reflect reality." Alternative: explicitly demote company numbers to "plumbing check" in the write-up instead of running this task. |
+| Z | Protocolled external test (3–5 students, incl. non-CS) on the shipped release artifact + one distribution channel (Fachschaft Informatik first) | ⬜ open | — | Closes Design-Entscheidungen.md TODOs 1 ("Hoch/Ja") and 2 ("Hoch/Ja"). Nobody outside the project has run the shipped `build_skill_release.py` artifact; Gehler's informal test used a dev checkout with no protocol. |
+| AA | Hygiene sweep: fix the wrong-person paper index, the CS-only degree-programs file, portability contradictions, backbone link audit, small wording defects; also covers a post-M1–M3 live runbook re-exercise | ⬜ open | — | Bundle of small, independently-cheap fixes named by the review §7/O1–O6; none block the other Phase 5 tasks but should not be forgotten before a real 1.0 tag. |
+
+**Gate Phase 5 (draft, to be confirmed on re-entry):** Task V done (clean hard-faculty
+blind number exists) · Task W done with either outcome reported (Δ_in ≫ Δ_out confirmed,
+or an honest negative result discussed) · Tasks X/Y done or explicitly and visibly
+demoted in the write-up · Task Z done (external test run, one channel contacted) · Task AA
+swept. Not all six need to complete for a defensible thesis submission — see the review's
+§0 bottom line for which items are strictly blocking vs. optional.
+
 ---
 
 ## Open decisions
@@ -186,6 +273,43 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-05** — **Independent 1.0-readiness review completed and actioned; project
+  re-paused with Phase 5 fully scoped.** Ran a from-scratch, deliberately skeptical review
+  (`findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md`) assessing
+  1.0-readiness for both a thesis committee and real students, per this repo's own
+  precedent of catching and reversing premature "green" calls (2026-06-28 CI-hygiene
+  incident). Headline finding: the two hard-faculty numbers that produced the 2026-07-04
+  GO (Humanities 100%, Law 80%) are not clean blind measurements — Humanities is a
+  transparent re-score by an un-blind session, and the Law re-run's session had already
+  read the document naming the missed chair and the fix. Every genuinely blind
+  hard-faculty run to date scored 60%. The GO is not reversed (Task U's underlying skill
+  fix is real and independently corroborated) but is flagged **provisional**. The review
+  also assessed the project's central scientific claim (gesamtplan §3 Idee 6 — narrow
+  scope beats plain Claude, breadth erodes the advantage) as directionally right but
+  over-claimed in its SLLN framing, and confirmed the scope-erosion experiment (gesamtplan
+  T3) needed to test it directly has still never been run — named as the single
+  highest-value remaining task. Actioned the review's punch list into this project's own
+  planning structure: (1) **MASTERPLAN.md** §8 got the provisional-GO caveat, and a new
+  §9 scopes **Phase 5 as Tasks V–AA** (blind Theology run, scope-erosion experiment,
+  independent scoring pass, non-circular company GT, protocolled external test +
+  distribution, hygiene sweep) — replacing the previous "not yet scoped" placeholder; old
+  §9 renumbered to §10. (2) **This file** got the same caveat threaded through the
+  "Current phase" banner, the Phase 4/5 summary paragraphs, and a new Phase-5 task table
+  mirroring the Phase 2/3 table format. (3) **`docs/thesis-report/03-hardening-and-
+  evaluation/README.md` and `04-open-work/README.md`** were corrected — both still stated
+  a stale 2026-07-03 snapshot (recall bar "not yet met", Task S "no data at all yet") that
+  had been superseded by Task T/U/S but never synced into the thesis-facing narrative;
+  both now state the current GO-provisional status directly and link the review. (4) The
+  previously-untracked Task M plan file
+  (`findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md`, `??` in
+  `git status` despite being linked from three STATUS.md entries and two commit messages)
+  was added to git in this pass. No skill files, reference files, or eval artifacts were
+  touched — this was a read-only review followed by a pure documentation/planning update,
+  exactly as the review's own mandate required. `pytest -q` and
+  `python3 scripts/build_skill_release.py` unaffected (no code/skill changes). **Project
+  re-paused here** — see "Current phase" above for the exact re-entry point; recommended
+  next task on resume is **Task V**, then **Task W**.
 
 - **2026-07-05** — **Task M2 (recommend & drill-down step in `thesis-finder`) done**, committed
   on `feat/no-db-universal-skill`. Inserted a new step between the option-map delivery and the
