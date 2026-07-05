@@ -32,7 +32,9 @@ toward "it's good": live (not fixture) evaluation, a precision metric, a **steer
 that the student interview genuinely changes the search output (not just decorates a generic
 answer — the empirical core of the "beats plain Claude" claim), and ground truth for
 structurally harder faculties. What remains open going into the write-up is documented
-honestly in `04-open-work/`.
+honestly in `04-open-work/`, including an independent, deliberately skeptical
+1.0-readiness review (2026-07-05) that scoped the remaining path to a real 1.0 — for both
+the thesis claim and real students — into the project's next concrete task list.
 
 ---
 
@@ -44,7 +46,7 @@ honestly in `04-open-work/`.
 | [01](01-the-pivot/README.md) | The pivot | Why did the team abandon the hosted web app for a database-less skill? | `VISION_NO_DB.md`, skill architecture summary |
 | [02](02-building-the-core/README.md) | Building the core | How was the two-track (university/company) discovery skill actually built? | `MASTERPLAN.md`, `findings/no_db_universal_skill/*`, `Design-Entscheidungen.md` |
 | [03](03-hardening-and-evaluation/README.md) | Hardening & evaluation | Does it actually work, and how do we know? | `core-optimization-roadmap.md`, live-eval results, steering proof |
-| [04](04-open-work/README.md) | Open work | What's left, and what did we deliberately decide not to do? | `Ideen_Domi_02_07.md`, `gesamtplan-2026-07-02.md` |
+| [04](04-open-work/README.md) | Open work | What's left, and what did we deliberately decide not to do? | `Ideen_Domi_02_07.md`, `gesamtplan-2026-07-02.md`, `2026-07-05-fable-1.0-readiness-review.md` |
 | — | [decision-log.md](decision-log.md) | The whole timeline as one citable table | synthesized from all of the above |
 
 ## Where the living documents are (not moved here)

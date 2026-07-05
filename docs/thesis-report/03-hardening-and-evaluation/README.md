@@ -13,6 +13,11 @@ under `findings/`; this section synthesizes and links rather than duplicates:
   `2026-07-03-task-r-edge-cases.md` (all under `findings/no_db_universal_skill/`).
 - `STATUS.md`, section "Post-Phase-3 hardening" — the literal current status of every task
   named below (Tasks J, O, P, Q, R; Track 2; Task S).
+- [2026-07-05-fable-1.0-readiness-review.md](../../../findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md) —
+  an independent, deliberately skeptical review of everything below, run after this
+  synthesis was written. Read it alongside this section, not instead of it: it confirms
+  the mechanism and design are sound but disputes the blindness of the two hard-faculty
+  numbers behind the GO verdict (see the updated "Honest limitations" paragraph below).
 
 ## Synthesis
 
@@ -71,14 +76,27 @@ ground truth but no live run yet. Task R separately exercised three robustness e
 (a niche topic with no Tübingen match, a shallow/resistant student, interdisciplinary routing
 across three faculties) and passed all three cleanly, fixing two small spec gaps along the way.
 
-**Honest limitations, stated plainly for the write-up:** every live run to date has been
-designed, executed, and scored by a single agent in a single session — a confirmation-bias
-risk mitigated only by grounding every factual claim in a live-verified source, not by
-independent review. Sample sizes per faculty are n=1–3, not enough to claim the filters
-generalize. The company eval's ground-truth circularity is unresolved. The roadmap's own
-"core is done" recall bar (≥80% across ≥6 faculties incl. one hard faculty) is **not yet
-met** — only 5 faculties have any live number, and the one hard faculty tested sits below
-bar. Output quality (Task S) has no data at all yet. These are named explicitly rather than
-smoothed over, in keeping with the project's own evidence-rules discipline (never invent,
-never claim completeness, flag what's uncertain). Full numbers, per-faculty, with sources:
+**Honest limitations, stated plainly for the write-up (updated 2026-07-05):** every live
+run to date has been designed, executed, and scored by a single agent in a single
+session — a confirmation-bias risk mitigated only by grounding every factual claim in a
+live-verified source, not by independent review. Sample sizes per faculty are n=1–3, not
+enough to claim the filters generalize. The company eval's ground-truth circularity is
+unresolved. The roadmap's own "core is done" recall bar (≥80% across ≥6 faculties incl.
+one hard faculty) was declared **MET** on 2026-07-04 (Task T's eval-protocol fix + Task
+U's skill fix), flipping the go/no-go to **GO** — but an independent 2026-07-05 review
+found the two hard-faculty numbers behind that verdict are not clean blind measurements:
+Humanities' 100% is a re-score by a session that was explicitly un-blind on that faculty,
+and Law's 80% re-run's session had already read the document naming the missed chair and
+the fix that flips her. Every genuinely blind hard-faculty run to date (Humanities 60%,
+Law 60%) landed below the 80% bar. Treat the GO as **provisional** until one clean blind
+hard-faculty run exists — Theology's ground truth has never been opened mid-run and is the
+cheapest remaining repair (`STATUS.md` Phase 5 Task V). Output quality (Task S) is now
+scored (4/5 criteria pass cleanly; the one repeated gap was found and fixed), but, like
+everything else here, by the same single-agent process — an independent re-scoring pass
+is still open (Phase 5 Task X). These are named explicitly rather than smoothed over, in
+keeping with the project's own evidence-rules discipline (never invent, never claim
+completeness, flag what's uncertain). Full numbers, per-faculty, with sources:
 [2026-07-03-eval-aggregate-scorecard.md](../../../findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md).
+Independent critical review — methodology assessment, scope-claim evaluation, and the
+full Phase 5 punch list this paragraph summarizes:
+[2026-07-05-fable-1.0-readiness-review.md](../../../findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md).
