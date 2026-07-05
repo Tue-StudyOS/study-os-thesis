@@ -20,6 +20,10 @@ Attempt to read `~/.claude/thesis-finder/session.md`.
 
 ## New User Flow
 
+Before starting the interview, give the student a short one-time framing message:
+
+> "This skill helps you find where to write your thesis — at a university chair, a company, or both. I'll first ask a few questions to build a profile of your interests, skills, and preferences; how much detail you give is entirely up to you — more detail helps the search be more precise, but there's no minimum required. Once the profile is done, I'll ask whether you want to search university chairs, companies, or both."
+
 ### Step N1 — Build student profile
 
 Check whether the current conversation already contains a complete 6-dimension student profile:
