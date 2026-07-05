@@ -4,14 +4,14 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-05 — Task M1 and Task M3 done and committed. Gehler feedback build
-plan otherwise unchanged: M2 still open (depends on M3's paper-surfacing pattern, now
-finished). Task L merged (BW company backbone extended to all 7 Tübingen faculties + ZITh via
-a 13-field employment taxonomy). Phase 4 go/no-go on roadmap §4 "core is done" is **GO** (all
-5 criteria met, flipped via Task U's §5 enrich-before-exclude fix + Law re-run at 80%). Working
-tree clean. **Next up when work resumes:** implement Task M2 (see
-[2026-07-05-taskM-gehler-feedback-plan.md](findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md)).
-See "Current phase" below for the full, exact re-entry summary.
+**Last update:** 2026-07-05 — Task M2 done and committed, closing out the Task M (Gehler
+feedback) plan: M1, M2, and M3 are all done. Task L merged (BW company backbone extended to
+all 7 Tübingen faculties + ZITh via a 13-field employment taxonomy). Phase 4 go/no-go on
+roadmap §4 "core is done" is **GO** (all 5 criteria met, flipped via Task U's §5
+enrich-before-exclude fix + Law re-run at 80%). Working tree clean. **Next up when work
+resumes:** no open task in the Gehler feedback plan; pick up the three undecided Phase 5
+candidates noted in "Current phase" below, or start a new task. See "Current phase" below for
+the full, exact re-entry summary.
 
 ---
 
@@ -29,15 +29,12 @@ See "Current phase" below for the full, exact re-entry summary.
 >
 > **Task M1 is done** (upfront framing message in `thesis-finder`, committed 2026-07-05).
 > **Task M3 is done** (paper-first gate in `draft-thesis-contact`, committed 2026-07-05).
-> **The next thing to work through is Task M2**, defined in
-> [`findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md`](findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md).
-> The raw Gehler feedback (`docs/thesis-report/04-open-work/2026-07-04-feedback-gehler.md`) has
-> been triaged: M2 (recommend + drill-down step in `thesis-finder`, depends on M3, now
-> finished — reuse the paper-surfacing pattern in `draft-thesis-contact/SKILL.md`) remains. The
-> professor-input coverage-caveat item (M4) and the example-walkthrough/example-prompts idea
-> were considered and explicitly dropped — do not resurrect them as scope creep inside M2.
-> Each task's exact agent handoff prompt is in the plan doc — paste it into a fresh
-> conversation per task.
+> **Task M2 is done** (recommend & drill-down step in `thesis-finder`, committed 2026-07-05).
+> **The Task M (Gehler feedback) plan is now complete** — see
+> [`findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md`](findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md)
+> for the full plan. The professor-input coverage-caveat item (M4) and the
+> example-walkthrough/example-prompts idea were considered and explicitly dropped, not folded
+> into M1-M3. No open task remains from this plan.
 
 **Phase 3 — Orchestration & Distribution: COMPLETE.** Backbone maintenance, entry-point skill,
 distribution artifacts, and smoke test are all done. Branch `feat/no-db-universal-skill` is
@@ -189,6 +186,19 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 ---
 
 ## Log
+
+- **2026-07-05** — **Task M2 (recommend & drill-down step in `thesis-finder`) done**, committed
+  on `feat/no-db-universal-skill`. Inserted a new step between the option-map delivery and the
+  `draft-thesis-contact` offer in both flows: New User Step N5 (offer step renumbered to N6)
+  and Returning User Step R6 (offer step renumbered to R7, only runs if R4 produced a fresh
+  map). The step recommends 1-2 top options from the map with a rationale grounded only in
+  the map's existing fields, asks whether the student wants to go deeper or keep exploring,
+  and — if deeper — reuses the `find-recent-papers` pattern from Task M3 to surface 1-2
+  papers plus a "what you'd likely work on/learn" summary derived only from the map and the
+  papers (Active Candidates status updated to "Recommended"). Both M1 and M3 log entries were
+  already present (see below). **This closes out the Task M (Gehler feedback) plan** — M1,
+  M2, M3 all done; M4 stays dropped per Domi's 2026-07-05 decision. Full plan:
+  [2026-07-05-taskM-gehler-feedback-plan.md](findings/no_db_universal_skill/2026-07-05-taskM-gehler-feedback-plan.md).
 
 - **2026-07-05** — **Task M3 (paper-first gate in `draft-thesis-contact`) done**, committed
   on `feat/no-db-universal-skill`. Added a workflow step before drafting: if 1-2 relevant
