@@ -10,6 +10,28 @@ This project follows Semantic Versioning for the released skill package:
 
 ## [Unreleased]
 
+### Added
+
+- ...
+
+### Changed
+
+- ...
+
+### Fixed
+
+- ...
+
+### Removed
+
+- ...
+
+### Breaking Changes
+
+- None.
+
+## [1.0.0] - 2026-07-06
+
 ### No-DB Universal Skill Rewrite (this branch)
 
 - `thesis-finder` rebuilt as a single, database-less, university-wide entry-point skill covering all faculties, with inline student-profile building (no separate pre-skill call needed).
@@ -38,7 +60,6 @@ This project follows Semantic Versioning for the released skill package:
 ### Breaking Changes
 
 - None.
-
 ## [0.1.2] - 2026-06-19
 
 ### Added
