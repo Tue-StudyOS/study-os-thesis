@@ -1,0 +1,35 @@
+{
+  "persona_id": "psych-student",
+  "scenario_id": "psychology-discovery-baseline",
+  "runner": "fixture",
+  "model": "fixture",
+  "arm": "baseline",
+  "max_turns": 8,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hallo, ich studiere Psychologie im Master und interessiere mich für eine Masterarbeit im Bereich kognitive Neurowissenschaften und Entscheidungsforschung. Wer forscht dazu in Tübingen?"
+    },
+    {
+      "role": "assistant",
+      "content": "Hallo! Das ist ein spannendes Themenfeld. Der Fachbereich Psychologie der Universität Tübingen ist Teil der Mathematisch-Naturwissenschaftlichen Fakultät und bietet verschiedene Arbeitsbereiche, die sich mit Kognition und Neurowissenschaften beschäftigen. Ich empfehle dir, die offizielle Fachbereichsseite unter https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/psychologie/arbeitsbereiche/ zu besuchen, um die aktuellen Forschungsgruppen zu erkunden. Für kognitive Neurowissenschaften gibt es in Tübingen zudem Überschneidungen mit dem Tübingen AI Center und dem Bernstein Center for Computational Neuroscience."
+    },
+    {
+      "role": "user",
+      "content": "Gibt es bestimmte Professoren, die ich direkt ansprechen sollte?"
+    },
+    {
+      "role": "assistant",
+      "content": "Für Entscheidungsforschung und kognitive Neurowissenschaften gibt es in Tübingen mehrere aktive Forschungsgruppen. Ich empfehle dir, PubMed nach Publikationen aus Tübingen in deinen Interessengebieten zu durchsuchen — Suchbegriffe wie \"Tübingen cognitive neuroscience\" oder \"Tübingen decision making fMRI\" helfen dabei, aktiv publizierende Gruppen zu identifizieren. Du kannst auch im Vorlesungsverzeichnis schauen, welche Professoren Masterseminare zu Kognitionspsychologie oder Neurowissenschaften anbieten — das zeigt dir, wer in diesen Bereichen lehrt und forscht."
+    },
+    {
+      "role": "user",
+      "content": "Ich habe Erfahrung mit fMRI und EEG — passen diese Methoden zu Gruppen dort?"
+    },
+    {
+      "role": "assistant",
+      "content": "Ja, fMRI und EEG sind sehr gefragt in der kognitiven Neurowissenschaft. In Tübingen gibt es sowohl im Psychologie-Fachbereich als auch im benachberten Neurowissenschafts-Umfeld Gruppen, die mit bildgebenden Verfahren und elektrophysiologischen Methoden arbeiten. Mit dieser Methodenkompetenz bist du gut aufgestellt. Am besten besuchst du die Webseiten der Arbeitsbereiche und schaust, welche Gruppen aktuelle Projekte mit fMRI oder EEG haben, und nimmst dann direkt Kontakt auf."
+    }
+  ],
+  "completion_reason": "fixture_complete"
+}

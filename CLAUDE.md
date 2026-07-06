@@ -107,11 +107,59 @@ Rules:
 
 This project is tracked with two central files at the repo root:
 
-- **[MASTERPLAN.md](MASTERPLAN.md)** — the zoomed-out, stable lookup: what we build, in what order, and why. Phases, the Prof→PhD→Paper data tree, and links to all issues. **Read it first** to understand where any task fits. Only edit when the plan structurally changes.
-- **[STATUS.md](STATUS.md)** — the single living document. Progress, blockers, difficulties, decisions, and a dated log. **When you work on a step, update STATUS.md** (step status + a dated log line) — never put running progress in the Masterplan.
+- **[MASTERPLAN.md](MASTERPLAN.md)** — the zoomed-out, stable lookup: what we build, in what order, and why. Phases and the task list (A–H). **Read it first** to understand where any task fits. Only edit when the plan structurally changes.
+- **[STATUS.md](STATUS.md)** — the single living document. Progress, blockers, difficulties, decisions, and a dated log. **When you work on a task, update STATUS.md** (task status + a dated log line) — never put running progress in the Masterplan.
 
-Rule of thumb: Masterplan answers "what's the plan?", STATUS answers "where are we right now?". GitHub Issues hold the executable detail and discussion.
+Rule of thumb: Masterplan answers "what's the plan?", STATUS answers "where are we right now?". The exact, agent-runnable task list lives in `findings/no_db_universal_skill/2026-06-26-build-plan.md`.
+
+We work **without GitHub issues** — just for ourselves. Track work through STATUS.md and the build plan, not issues.
+
+---
+
+## 7. Commits & Conversation Handoff
+
+We work task-by-task (Tasks A–H in the build plan), one task per conversation.
+
+### Commit rhythm
+- Make **frequent small commits** as you complete meaningful sub-steps of a task — not one giant commit at the end.
+- Each commit message must reasonably describe **what was done** (conventional-commit subject + a short body when useful).
+- Commit only when a sub-step is coherent and the tree is in a sane state.
+
+### End-of-task handoff (mandatory)
+When a task is **truly finished** (done-when criteria met, committed), end the conversation by producing two things:
+
+1. **Next-step explanation** — a short, plain description of what the next task is and how this task's output feeds into it.
+2. **A ready-to-paste handoff prompt** for the next conversation, inside a fenced code block, that gives the next agent everything it needs to continue seamlessly **without re-reading this whole conversation**. It must include:
+   - the active branch
+   - which task it is (letter + one-line goal) and its dependencies
+   - the key files to read first (build plan, MASTERPLAN, STATUS, relevant references/skills)
+   - what the previous task produced and where
+   - the concrete done-when criteria
+   - **which model to use** and any effort note (see table below)
+   - a reminder to commit in small steps and to emit its own handoff prompt at the end
+
+The point: I can paste the prompt into a fresh conversation and the next task continues with full context.
+
+### Model selection per task type
+
+| Task type | Recommended model | Rationale |
+|---|---|---|
+| Document writing / reference files (Tasks B, C, F) | `claude-sonnet-4-6` | Fast, cheap, sufficient for structured writing |
+| Skill rewrites, complex code changes (Tasks A, D, E, G) | `claude-sonnet-4-6` | Good enough; use Opus only if first pass is weak |
+| Eval interpretation, tricky judgment calls (Task H) | `claude-opus-4-8` | Nuanced analysis benefits from stronger reasoning |
+
+Default: **Sonnet 4.6** unless the task needs heavy cross-file reasoning or judgment. Note the model in the handoff prompt so the next agent starts with the right one.
 
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+Rules:
+- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).

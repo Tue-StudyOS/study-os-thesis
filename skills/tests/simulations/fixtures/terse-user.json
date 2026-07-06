@@ -1,0 +1,42 @@
+{
+  "persona_id": "terse-user",
+  "scenario_id": "ml-master-thesis",
+  "runner": "fixture",
+  "model": "fixture",
+  "max_turns": 10,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hallo ich heisse Ben und bin im ML Master und suche eine Masterarbeit. Help."
+    },
+    {
+      "role": "assistant",
+      "content": "Hallo Ben, lass uns zuerst dein Profil schärfen, bevor ich Themen oder Betreuer vorschlage. Was hat dir im ML-Studium bisher am meisten Spaß gemacht, welche Kurse oder Projekte fandest du stark, und was möchtest du in einer Masterarbeit eher vermeiden?"
+    },
+    {
+      "role": "user",
+      "content": "NNs machen Spaß."
+    },
+    {
+      "role": "assistant",
+      "content": "Gut, dann bleiben wir bei neuronalen Netzen, aber das ist noch breit. Was daran macht dir Spaß: Modelle trainieren, Architekturen verstehen, Experimente auswerten, oder Anwendungen wie Bilder, Sprache, Robotik oder Medizin?"
+    },
+    {
+      "role": "user",
+      "content": "Trainieren und sehen ob es klappt. PyTorch bisschen."
+    },
+    {
+      "role": "assistant",
+      "content": "Alles klar: bisher sehe ich Master ML, Interesse an NN-Training und etwas PyTorch. Für Empfehlungen fehlt noch Kontext. Welche Daten oder Aufgaben hast du schon ausprobiert, und gibt es No-gos wie reine Theorie, viel Hardware, Medizinbürokratie oder reine Literaturarbeit?"
+    },
+    {
+      "role": "user",
+      "content": "Bilderkennung Uni Projekt. Keine Theorie bitte."
+    },
+    {
+      "role": "assistant",
+      "content": "Das reicht für eine erste Arbeitsrichtung, aber noch nicht für eine belastbare Chair-Liste. Dein vorläufiges Profil: empirisches Deep Learning, PyTorch-Grundlage, Bilderkennungserfahrung, wenig Interesse an Theorie. Nächster sinnvoller Schritt: wir sammeln noch 2-3 Kurse, Zeitrahmen und ob du eher Computer Vision, multimodale Modelle oder angewandte ML-Evaluation willst."
+    }
+  ],
+  "completion_reason": "fixture_complete"
+}

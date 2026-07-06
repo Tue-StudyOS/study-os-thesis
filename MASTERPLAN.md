@@ -1,104 +1,227 @@
 # Masterplan — StudyOS Thesis-Finder
 
-> **Purpose:** The zoomed-out view of the whole effort. This file is a **lookup** — it describes *what* we build, *in what order*, and *why*. It changes rarely.
+> **Purpose:** The zoomed-out view of the whole effort. This file is a
+> **lookup** — it describes *what* we build, *in what order*, and *why*. It
+> changes rarely.
 >
-> **For current progress, open difficulties, and notes see [STATUS.md](STATUS.md)** — that is the only file that is updated continuously.
+> **For current progress, open difficulties, and notes see [STATUS.md](STATUS.md)** —
+> that is the only file that is updated continuously.
 
 ---
 
 ## 1. What we build
 
-A set of portable **Claude Skills** that take a student from vague interests to a prepared first contact with a fitting thesis supervisor — with no backend, DB, or UI, driven only by curated Markdown data + live research.
+A public, portable **Agent Skill package** that simplifies the *cold start* of
+the thesis search. It takes a student from vague interests, coursework, skills,
+and constraints to a **clear map of the possibilities** — which chairs, groups,
+people, and (later) companies fit them — so they know what exists and where to go
+next.
 
-The skill flow:
+**Core principle: no runtime database, no backend.** The skill encodes *how*
+Claude interviews the student and *how* it searches the live web. It works for
+**all faculties of the University of Tübingen** immediately and stays correct
+because it reads the live web, not a curated store that rots. This is a deliberate
+choice: the system must be **maintenance-free** — no one will keep a database
+fresh after this project.
 
+The agent gives a **targeted direction and clarifies options**. It does not do the
+whole job, write the thesis, or guarantee complete coverage. "Good enough,"
+honestly stated, beats a precise database that decays.
+
+The durable product is:
+
+- portable `skills/` folders with concise `SKILL.md` entrypoints
+- Markdown `references/` files that encode search strategy, the Tübingen faculty
+  backbone, rubrics, and schemas
+- `AGENTS.md` as the maintainer and agent operating guide
+- an eval harness that compares the skill against a plain-Claude baseline
+- durable findings under `findings/`
+
+The student-facing skill flow:
+
+```text
+raw input ("I like deep learning + healthcare, hate hardware setup")
+   |
+   v  build-student-profile      ordered interview (one question, max two per turn)
+   v  discover-thesis-options    profile -> search templates -> faculty backbone + live web -> MAP of options
+   v  draft-thesis-contact       (optional) first-contact message for a chosen option
 ```
-raw input ("I like deep learning + robotics")
-   │
-   ▼  build-student-profile        deep interview → structured profile (in-session only)
-   ▼  find-university-chairs        matching chairs from the database + live web search
-   ▼  match-thesis-advisors         supervisors ranked by fit + evidence
-   ▼  find-recent-papers            relevant papers as evidence
-   ▼  generate-thesis-directions    concrete thesis directions + proposal hooks
-   ▼  draft-thesis-contact          first contact email
-```
 
-Plus maintenance skills: `update-openalex-paper-index` (data refresh) and `design-agent-skill` (meta).
+Maintenance / meta assets:
+
+- `design-agent-skill` is the meta-skill for creating, reviewing, or reshaping
+  any skill.
+- `find-recent-papers` is an optional evidence tool; `generate-thesis-directions`
+  is optional and de-emphasized — we deliver a *map*, not finished proposals.
+- `AGENTS.md` explains how future agents extend the package (e.g. companies, other
+  universities).
 
 ---
 
-## 2. The data structure — the tree
+## 2. Why no database
 
-The core is a **tree structure** as a Markdown database:
+| Database approach (former direction) | Database-less approach (this plan) |
+|---|---|
+| Goes stale within months | Always current (live web) |
+| CS Tübingen only | All faculties, immediately |
+| Needs GitHub Actions to refresh | Zero ongoing maintenance |
+| Only covers what is curated | Covers what is publicly visible |
+| Does not scale to companies | Companies use the same principle |
 
-```
-Professor  (topic area + description)
-   └── PhD  (topic area + description)
-          └── Paper (with summary)
-```
-
-Every professor has a topic area and a description; beneath them all their PhDs with their own topic area; beneath those their papers with a summary. Everything saved as `.md` after scraping, referentially linked.
-
----
-
-## 3. Ordering principle
-
-**Get the data correct first, then everything else.** Downstream quality (matching, proposals) cannot be verified while the data is wrong or incomplete. So Phase 1 (data foundation) is a hard gate before Phase 2 (optimization).
-
-**De-risk strategy:** Don't make "all 47 profs perfect" the gate — instead **pilot on 3 chairs → prove the pipeline + validation → scale to 47.**
+The skill is the intelligence; the data comes from the world. Curated chair/prof
+data is kept **only as an evaluation ground truth**, never as a runtime source.
 
 ---
 
-## 4. Phase 1 — Data Foundation (current phase)
+## 3. The core IP — how the skill searches
 
-The "verified researcher tree" epic. Order = dependency.
+The value over "just ask Claude" lives in two references the discovery skill
+carries:
 
-| # | Issue | What it is about |
+1. **Search strategy** — the reusable mapping from profile dimensions (interests,
+   methods, domain, thesis style, no-gos) to precise web queries, plus quality
+   filters, dedup rules, and profile→faculty routing.
+2. **Faculty backbone** — the official `uni-tuebingen.de` listing pages per
+   faculty, crawled first so discovery starts from the real org structure and not
+   only from SEO-strong pages.
+
+The discovery is **two-pass**: (1) crawl the backbone to get the structured chair
+set per relevant faculty; (2) enrich with live queries for topics, recent work,
+and openings. Output is a **map of options** grouped by interest dimension, each
+with relevance rationale, pros/cons & difficulties, dated evidence, and a
+conversation starter — ending with an honest coverage caveat.
+
+---
+
+## 4. Ordering principle
+
+**Prove the university arm first, then extend.** Companies are a structurally
+harder, chaotic discovery problem; they wait until the core is empirically shown
+to work. Within the university arm: build the search references, then the skill,
+then measure it against a small hand-curated ground truth and against a
+plain-Claude baseline.
+
+---
+
+## 5. Phase 1 — University discovery (current phase)
+
+The executable backlog (full detail in
+[findings/no_db_universal_skill/2026-06-26-build-plan.md](findings/no_db_universal_skill/2026-06-26-build-plan.md)).
+Each task is one agent run.
+
+| Task | What it is about | Depends on |
 |---|---|---|
-| 1 | [#45](https://github.com/Tue-StudyOS/study-os-thesis/issues/45) | **Resolve author IDs for all 47 profs** (name+URI → OpenAlex ID, with disambiguation) |
-| 2 | [#46](https://github.com/Tue-StudyOS/study-os-thesis/issues/46) | **Ground-truth roster** for 3 pilot chairs (manual PhD list as the measuring stick) |
-| 3 | [#47](https://github.com/Tue-StudyOS/study-os-thesis/issues/47) | **PhD discovery per chair** (team page + co-author graph; none forgotten) — keep the mechanism as simple as possible |
-| 4 | [#48](https://github.com/Tue-StudyOS/stud
-
-y-os-thesis/issues/48) | **Tree schema** Prof→PhD→Paper + referential integrity |
-| 5 | [#49](https://github.com/Tue-StudyOS/study-os-thesis/issues/49) | **Paper scrape + topic/description** per person, as tree MD |
-| 6 | [#50](https://github.com/Tue-StudyOS/study-os-thesis/issues/50) | **Validation harness** (anomaly checks + sampling + golden record) |
-| 7 | [#51](https://github.com/Tue-StudyOS/study-os-thesis/issues/51) | **Automation** — a mechanism the agents can run themselves to refresh their data (especially the chair info) and update the referential links accordingly |
+| A | Conversation discipline in `build-student-profile` (one question, max two per turn; precise answers) | – |
+| B | Faculty backbone reference: official Tübingen faculty/chair listing URLs | – |
+| C | Search-strategy reference: profile → precise queries, two-pass, filters, faculty routing | B |
+| D | Rework `find-university-chairs` into the faculty-agnostic discovery skill (map output, no DB) | B, C |
+| E | Retire DB assets (`match-thesis-advisors`, `update-openalex-paper-index`, seed data → eval-only) | D |
+| F | Eval ground truth for 3–4 faculties + coverage metric | – |
+| G | Wire discovery into Max's multiturn eval harness (skill vs. plain-Claude baseline) | D, F |
+| H | Run the eval, measure coverage and the skill-vs-baseline delta, document | G |
 
 Dependency graph:
 
-```
-1 (Prof IDs) ─┐
-2 (ground truth) ─→ 3 (PhD discovery) ─→ 5 (papers+description) ─→ 6 (validation) ─→ 7 (automation)
-4 (schema) ────────────────────────────────┘
-                                                                       ↓
-                                                      Gate: only once 6 is green → Phase 2
+```text
+A (interview) ----------------------------------.
+B (backbone) -> C (search strategy) -> D (skill) -> E (retire DB)
+                                          \         \
+F (ground truth) --------------------------+-------- G (harness) -> H (results)
 ```
 
-**Gate Phase 1 → Phase 2:** Issue 6 (validation) is green, golden record reproducible, pilot recall ≥ 90%.
+Gate Phase 1 → Phase 2:
+
+- discovery skill runs end-to-end on a sample profile with no DB dependency
+- ground truth exists for ≥3 faculties with a defined coverage metric
+- the harness reports coverage and a skill-vs-plain-Claude comparison
+- coverage meets the agreed starting target (≥70%) on the ground-truth sample
 
 ---
 
-## 5. Phase 2 — Skill optimization (after the gate)
+## 6. Phase 2 — Company discovery (later)
 
-Only sensible once the data is correct.
-
-- **Measure a baseline** — freeze current eval scores before changing anything.
-- **Expand the eval set** — several cases per core skill (happy path, shallow profile, missing info, adversarial) instead of 1.
-- **Few-shot examples** in the core skills (`build-student-profile`, `find-university-chairs`, `match-thesis-advisors`).
-- **Unify guardrails** (shallow-profile protection everywhere).
-- **End-to-end flow eval** across the whole skill chain.
-- **Calibrate the judge** against human judgement.
-- **Respect degree program / thesis level / scope** — groundwork already added by a teammate in `build-student-profile` (`references/tuebingen-degree-programs.md`): degree program → thesis level (e.g. Machine Learning is Master-only) → scope (Bachelor 4 months vs. Master 6 months). Proposal generation must honor this.
-
-## 6. Phase 3 — Cross-platform (stretch)
-
-The content is portable; the mechanism should be tested with Codex and Gemini CLI.
+Add external-company thesis discovery only after the university arm is proven. The
+likely approach is a **one-time** curated list (e.g. companies in
+Baden-Württemberg) tagged by area/hashtags — the one acceptable static asset,
+because there is no clean live-search equivalent. New startups are a known later
+gap.
 
 ---
 
-## 7. How this plan is used
+## 7. Phase 3 — Distribution & cross-platform
 
-- **MASTERPLAN.md** (this file) = stable lookup. Only adjusted when the plan changes structurally.
-- **[STATUS.md](STATUS.md)** = living document. Progress, blockers, decisions, notes land here. **Always update here, not in the Masterplan.**
-- **GitHub Issues** = the executable units. Each issue linked above; details, acceptance criteria, and discussion live in the issue.
+- **Distribution channels:** Fachschaft Informatik, Hennig-GitHub, Ersti-Heft,
+  and ideally surfacing on the university site / "How to find a thesis" pages so
+  students who google the problem find the skill.
+- **Cross-platform:** keep the content portable across capable coding-agent
+  clients (Codex, Claude, Gemini CLI). Avoid client-specific metadata without a
+  documented portable fallback.
+
+---
+
+## 8. Phase 4 — Hardening (DONE, 2026-07-04; GO verdict flagged provisional 2026-07-05)
+
+Phase 3 made the skill package coherent and distributable; Phase 4 made the university
+core (Tübingen) not just *pass the gate* but genuinely *work well* across recall,
+precision, steering, output quality, and robustness on structurally hard faculties. The
+explicit go/no-go on the roadmap's "core is done" bar flipped to **GO** on 2026-07-04: all
+6 measured faculties (2 of them hard) clear ≥80% recall, precision/steering/output-quality/
+robustness all measured and passing. Full task list, tracks, and the bar definition:
+[findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md](findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md).
+Verdict and evidence: [2026-07-03-core-done-go-no-go.md](findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md).
+All numbers: [2026-07-03-eval-aggregate-scorecard.md](findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md).
+Live status per task: `STATUS.md`, section "Post-Phase-3 hardening".
+
+**Independent-review caveat (2026-07-05):** an independent 1.0-readiness review
+([2026-07-05-fable-1.0-readiness-review.md](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md))
+found the two hard-faculty numbers behind the GO are not clean blind measurements —
+Humanities' 100% is a transparent re-score by a session that was explicitly un-blind on
+that faculty, and Law's 80% was produced by a re-run whose session had already read the
+document naming the missed chair and the fix that flips her. Every genuinely blind
+hard-faculty run to date (Humanities 60%, Law 60%) landed below the 80% bar. This does
+**not** roll back the GO or any skill fix (Task U's enrich-before-exclude rule is real
+and independently verified elsewhere in the same evidence) — it flags the verdict as
+**provisional** pending one clean blind hard-faculty run. See Phase 5 Task V below.
+
+---
+
+## 9. Phase 5 — Independent validation, scope experiment & distribution (scoped 2026-07-05)
+
+Phase 5 was "not yet scoped" as of 2026-07-04 — Task L (company-backbone taxonomy) is the
+only Phase-5 task done so far. The 2026-07-05 independent 1.0-readiness review scoped the
+remaining path to 1.0, for both a thesis committee and real students, into a concrete task
+table. **The project is paused here (2026-07-05) with Phase 5 fully scoped but not
+started** — see `STATUS.md` "Current phase" for the exact re-entry point.
+
+| Task | What it is about | Blocking for |
+|---|---|---|
+| V | Blind live run, Theology faculty — the only hard-faculty ground truth no session has opened mid-run; repairs the Phase 4 evidentiary gap above | Thesis (evidence) |
+| W | Scope-erosion experiment (`findings/gesamtplan-2026-07-02.md` §3 Idee 6 / §6 T3): 2×2 {tool, baseline} × {Tübingen, TUM or KIT}, foreign ground truth curated by a second person | Thesis (central claim) |
+| X | Independent scoring pass — a second person re-scores ~20% of surfaced options against existing live-eval outputs | Thesis (methodology) |
+| Y | Non-circular company ground truth (gesamtplan T4) — or explicitly demote the company eval to "plumbing check" status in the write-up | Thesis (methodology) |
+| Z | Protocolled external test (3–5 students, incl. non-CS) on the shipped release artifact, plus one distribution channel (Fachschaft Informatik first) | Product (Design-Entscheidungen.md TODO 1+2) |
+| AA | Hygiene sweep: fix the stale/wrong-person paper index, the CS-only degree-programs file mislabeled as university-wide, portability contradictions, a backbone link audit, and small wording defects | Both (low effort, real defects) |
+
+Full task-by-task justification, evidence pointers, and the six-question assessment this
+table is derived from:
+[2026-07-05-fable-1.0-readiness-review.md](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md).
+Recommended first move on re-entry: **Task V** (cheapest, ~20 minutes, directly repairs
+the Phase 4 evidentiary gap), then **Task W** (the review's single highest-value
+remaining task for the thesis claim).
+
+---
+
+## 10. How this plan is used
+
+- `MASTERPLAN.md` = stable structural plan. Change it only when the product goal,
+  phase structure, or major workflow changes.
+- `STATUS.md` = living progress document. Update status, blockers, decisions, and
+  dated logs there.
+- `findings/no_db_universal_skill/` = the concept, risks, exact build plan, and
+  eval results for this direction — including the
+  [2026-07-05 independent 1.0-readiness review](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md),
+  the current authoritative source for what's left before 1.0.
+- `docs/thesis-report/` = the curated, chronological account for the thesis write-up;
+  synced to match this plan and STATUS.md as of 2026-07-05.
+- `AGENTS.md` = operating instructions for future agents and maintainers.
+- GitHub Issues = executable work units mirroring Tasks A–H.

@@ -16,6 +16,34 @@ Treat these files as the source of truth. Future work should make the skills
 clearer, more portable, better evidenced, and easier for students and
 maintainers to use.
 
+## Findings And Dev Process Log
+
+Important repo findings must be recorded under `findings/dev_process/`.
+
+Use this log for durable process and product learnings that future humans or
+agents should not have to rediscover, including:
+
+- architecture or product-scope decisions
+- stale, incorrect, or misleading documentation
+- issue-triage decisions and backlog resets
+- data-pipeline constraints or recurring scrape failures
+- eval, CI, release, or maintenance-process learnings
+- privacy, evidence, or public-data policy decisions
+- recurring failure modes that should change future work
+
+Each finding entry should be a Markdown file named
+`YYYY-MM-DD-short-topic.md` and include:
+
+- date
+- context
+- finding
+- implication
+- follow-up or linked issue
+
+Do not put private student data, transcripts, CVs, grades, contact drafts, or
+temporary scratch notes in `findings/dev_process/`. Use `STATUS.md` for current
+progress tracking; use findings only for durable lessons and decisions.
+
 ## Core Rule: Use The Meta-Skill First
 
 All new skills and all substantial redesigns of existing skills must start with
@@ -37,13 +65,18 @@ authors are unavailable.
 
 ## Student Workflow
 
-The normal student-facing workflow is:
+Start with `thesis-finder` — it builds your profile through a short inline interview if needed,
+asks which track you want, and routes to the right discovery skill automatically.
+One skill, end to end.
 
-1. `build-student-profile`
-2. `find-recent-papers` and/or `find-university-chairs`
-3. `match-thesis-advisors`
-4. `generate-thesis-directions`
-5. `draft-thesis-contact`
+1. `thesis-finder` (single entry point — inline profile interview + routing)
+2. `find-university-chairs` (university track, invoked by thesis-finder)
+   `find-company-thesis-options` (company track, invoked by thesis-finder)
+   (both may be run in sequence)
+3. `draft-thesis-contact` (optional — drafts a first-contact email for any option you choose)
+
+`build-student-profile` can still be invoked standalone when you only want to build or
+update a profile without immediately searching for options.
 
 Do not skip directly to chair rankings, thesis proposals, or contact emails
 from a shallow profile. Good thesis advice starts with understanding the
@@ -79,6 +112,31 @@ Guardrails:
 - avoid client-specific metadata unless explicitly requested
 - keep student-private data out of shared resources
 - require evidence, dates, and uncertainty labels for stale-prone facts
+
+### `thesis-finder`
+
+Intent: thin orchestrating entry point that guides a student through the full
+thesis-option discovery flow.
+
+Use when a student wants to start the workflow from scratch, or when an agent
+needs a single command that sequences profiling, track selection, and discovery.
+
+Inputs:
+
+- any student statement, or nothing (profile is built inline if missing)
+- student's choice of track: university, company, or both
+
+Outputs:
+
+- a complete 6-dimension student profile (built inline or confirmed from context)
+- delegates to `find-university-chairs` and/or `find-company-thesis-options`
+- after delivery, offers `draft-thesis-contact` as an optional next step
+
+Guardrails:
+
+- if no profile is present, build it inline (one question per turn); do not defer to a separate skill
+- never duplicates discovery logic from the routed-to skills
+- does not merge or re-rank outputs from the two tracks
 
 ### `build-student-profile`
 
@@ -161,7 +219,33 @@ Guardrails:
   supervise
 - date public evidence when freshness matters
 
-### `match-thesis-advisors`
+### `find-company-thesis-options`
+
+Intent: identify Baden-Württemberg companies offering thesis supervision or
+student research projects relevant to the student's profile.
+
+Use only after a sufficiently deep student profile exists, or when the student
+has already provided enough profile context. Parallel to `find-university-chairs`
+for the company track.
+
+Inputs:
+
+- deep student profile (6-dimension output from `build-student-profile`)
+- BW company backbone (`references/bw-company-backbone.md`)
+
+Outputs:
+
+- a company option map: relevant BW companies grouped by sector, with thesis-signal
+  labels, research-fit rationale, and no-go filters applied
+
+Guardrails:
+
+- do not recommend companies from a shallow profile
+- label entries with thesis-signal strength (confirmed program vs. inferred from careers page)
+- do not invent open topics, supervision capacity, or application deadlines
+- date public evidence when freshness matters
+
+### `match-thesis-advisors` *(retired)*
 
 Intent: rank possible advisors by combining the student's profile with paper and
 chair evidence.
@@ -245,7 +329,7 @@ Guardrails:
 - do not overstate skills, grades, availability, or prior relationships
 - do not invent openings, funding, capacity, or promises from the advisor
 
-### `update-openalex-paper-index`
+### `update-openalex-paper-index` *(retired)*
 
 Intent: maintain optional Markdown paper data from OpenAlex for reviewed
 researchers.
