@@ -37,20 +37,23 @@ central evaluation summary.
      in the conversation report instead.
 3. Save the complete conversation.
    - Directory: `.simulations/convo`
-   - Filename format: `student_conversation_dd.MM.YYYY-HH-mm-ss.md`
+   - Filename format: `{student-slug}_conversation_dd.MM.YYYY-HH-mm-ss.md`
+   - Use the lowercase student name or command slug, for example
+     `maja_conversation_28.07.2026-22-10-06.md`.
    - Generate the timestamp at write time.
    - If a filename collision occurs because two files are written in the same
      second, wait until the next second and retry. Do not add student names or
      counters to the filename.
 4. Evaluate the conversation using `references/evaluation-rubric.md`.
-   - Directory: `simulations/rating`
-   - Filename format: `student_rating_dd.MM.YYYY-HH-mm-ss.md`
+   - Directory: `.simulations/rating`
+   - Filename format: `{student-slug}_rating_dd.MM.YYYY-HH-mm-ss.md`
+   - Use the same student slug as the conversation file.
    - Each rating file must identify the student/command inside the Markdown
      body, not in the filename.
    - Use the same collision rule as conversation files.
 5. After all individual ratings are saved, write one central evaluation file.
-   - Directory: `simulations/rating`
-   - Filename format: `student_rating_dd.MM.YYYY-HH-mm-ss.md`
+   - Directory: `.simulations/rating`
+   - Filename format: `central_rating_dd.MM.YYYY-HH-mm-ss.md`
    - Title it `# Central Thesis Simulation Evaluation`.
    - Summarize pass/fail, scores, recurring skill failures, and recommended
      improvements across all students.
@@ -89,7 +92,6 @@ Each individual rating file must include:
 - Do not assume computer science, machine learning, or company fit. Route by
   the simulated student's department and profile.
 - Keep generated fictional data only in `.simulations/convo` and
-  `simulations/rating`, both of which must be gitignored.
+  `.simulations/rating`, both of which must be gitignored.
 - If web access is unavailable but the command requires live evidence, mark the
   affected ratings down under evidence discipline and state the limitation.
-

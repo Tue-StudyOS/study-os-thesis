@@ -208,8 +208,7 @@ tempCodeRunnerFile.py
 .ruff_cache/
 
 # Generated thesis-finder simulation artifacts
-.simulations/convo/
-simulations/rating/
+.simulations/
 
 # PyPI configuration file
 .pypirc
