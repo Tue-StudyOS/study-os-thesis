@@ -207,6 +207,10 @@ tempCodeRunnerFile.py
 # Ruff stuff:
 .ruff_cache/
 
+# Generated thesis-finder simulation artifacts
+.simulations/convo/
+simulations/rating/
+
 # PyPI configuration file
 .pypirc
 
@@ -245,6 +249,18 @@ Thumbs.db
 .claude-flow/
 .swarm/
 .claude/
+!.claude/
+!.claude/commands/
+!.claude/commands/*.md
+!.claude/skills/
+!.claude/skills/**/
+!.claude/skills/**/*.md
+.codex/*
+!.codex/prompts/
+!.codex/prompts/*.md
+!.codex/skills/
+!.codex/skills/**/
+!.codex/skills/**/*.md
 *.docx
 COMBINED_PR_GUIDE.md
 ISSUE_ROUTER.md
