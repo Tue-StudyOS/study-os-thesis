@@ -1,0 +1,35 @@
+{
+  "persona_id": "neuro-student",
+  "scenario_id": "medicine-discovery-baseline",
+  "runner": "fixture",
+  "model": "fixture",
+  "arm": "baseline",
+  "max_turns": 8,
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hallo, ich studiere Neurowissenschaften im Master und suche eine Masterarbeit im Bereich Neurodegeneration — Parkinson, Alzheimer. Kann mir jemand helfen?"
+    },
+    {
+      "role": "assistant",
+      "content": "Hallo! Das ist ein sehr spannendes Forschungsfeld. Für eine Masterarbeit im Bereich Neurodegeneration in Tübingen empfehle ich dir, dich ans Hertie Institute for Clinical Brain Research (HIH) zu wenden — das ist das führende klinische Neurowissenschaftsinstitut in Tübingen mit Schwerpunkten in Parkinson, Alzheimer und anderen neurologischen Erkrankungen. Die Webseite findest du unter https://www.hih-tuebingen.de. Schau dir dort die Forschungsabteilungen an und identifiziere Gruppen, die zu deinem Interesse passen. Du kannst auch das Vorlesungsverzeichnis nach Masterseminaren in Neurologie und Neurowissenschaften durchsuchen."
+    },
+    {
+      "role": "user",
+      "content": "Gibt es bestimmte Professoren am HIH, die ich kontaktieren sollte?"
+    },
+    {
+      "role": "assistant",
+      "content": "Am HIH gibt es mehrere Forschungsgruppen zu neurodegenerativen Erkrankungen. Ich empfehle dir, die Research-Seite des HIH (https://www.hih-tuebingen.de/en/research/) selbst zu besuchen — dort sind alle Abteilungen mit ihren Schwerpunkten aufgelistet. Für Parkinson und Alzheimer wirst du dort entsprechende Gruppen finden. Außerdem hilft ein Blick in PubMed: suche nach \"Tübingen Parkinson research\" oder \"Tübingen Alzheimer\" um aktiv publizierende Gruppen zu identifizieren. Die Neurologie-Klinik am Universitätsklinikum Tübingen hat ebenfalls Forschungsgruppen, die für eine Masterarbeit relevant sein könnten."
+    },
+    {
+      "role": "user",
+      "content": "Ich habe Erfahrung in MD-Simulationen und Wet-Lab — passt das gut für eine Masterarbeit dort?"
+    },
+    {
+      "role": "assistant",
+      "content": "Ja, das ist eine sehr gute Kombination für die Neurodegeneration. Molekulardynamik-Simulationen sind relevant für die Protein-Aggregationsforschung (z.B. alpha-Synuclein-Faltung), und Wet-Lab-Erfahrung (Zellkultur, Immunhistochemie) ist in experimentellen Gruppen sehr gefragt. Mit diesem Hintergrund bist du gut für translationale oder mechanistische Gruppen am HIH aufgestellt. Ich würde dir empfehlen, dich auf der Institutswebseite über die verschiedenen Abteilungen zu informieren, dann Publikationen von Gruppen zu lesen, die dich ansprechen, und anschließend eine kurze Initiativbewerbungs-E-Mail zu schicken."
+    }
+  ],
+  "completion_reason": "fixture_complete"
+}

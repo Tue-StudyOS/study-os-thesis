@@ -10,7 +10,7 @@ Help a student discover recent research papers that can guide a thesis direction
 ## Workflow
 
 1. Clarify the search intent from the user's interests, courses, skills, preferred methods, constraints, or target chairs.
-2. If chairs or professors are relevant, read the professor seed list at `../find-university-chairs/references/professors/INDEX.md` to find official starting URIs.
+2. If chairs or professors are relevant, use the `find-university-chairs` skill (or search the web directly) to identify official lab or profile pages as starting URIs.
 3. Use the active agent's native websearch/browser tools on official profile, lab, publication, Google Scholar, OpenAlex, DBLP, or publisher pages to find papers.
 4. Prefer recent, primary, and traceable sources. Use `references/paper-search-rubric.md` for source ranking and output rules.
 5. Return a short ranked list, not an exhaustive bibliography.

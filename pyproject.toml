@@ -14,6 +14,9 @@ eval = [
   "deepeval",
 ]
 
+[tool.setuptools]
+packages = []
+
 [tool.pytest.ini_options]
 testpaths = ["skills/tests"]
 markers = [

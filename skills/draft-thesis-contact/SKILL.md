@@ -10,9 +10,10 @@ Write first-contact messages that help students avoid generic cold emails.
 ## Workflow
 
 1. Use the student's in-session profile, the selected chair/person, one concrete proposal sketch, and 1-2 evidence points.
-2. Draft a short email with a clear subject, specific motivation, relevant background, a tentative research question, and a low-friction ask.
-3. Keep claims modest. Do not imply the chair has an advertised topic unless a current official source explicitly says so.
-4. Offer a shorter variant when the first draft is too long.
+2. Before drafting, make sure 1-2 relevant recent papers from the target person/lab are available. If they were not already surfaced earlier in the session (e.g. from `find-university-chairs` or `find-company-thesis-options`), call the `find-recent-papers` skill to get them.
+3. Draft a short email with a clear subject, specific motivation, relevant background, a tentative research question, and a low-friction ask.
+4. Keep claims modest. Do not imply the chair has an advertised topic unless a current official source explicitly says so.
+5. Offer a shorter variant when the first draft is too long.
 
 ## Output
 
@@ -21,6 +22,7 @@ Return:
 - subject line
 - email draft
 - one-sentence rationale for why the email is specific
+- the 1-2 papers surfaced for this person/lab, with a recommendation that the student skim them before sending — arriving without a sense of what the researcher actually works on reads as generic and undermines the high-signal contact this skill is meant to produce
 - optional checklist of details the student should verify before sending
 
 ## Rules

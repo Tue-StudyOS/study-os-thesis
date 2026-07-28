@@ -30,3 +30,34 @@ single answer in isolation.
 ## Shared Threshold
 
 Each metric should pass at `0.75` or higher for live LLM evals.
+
+---
+
+# Discovery Rubric (medicine-discovery scenarios)
+
+These metrics apply specifically to the medicine-discovery scenario pair and are
+scored deterministically (no LLM judge required) by the comparison runner.
+
+## Metrics
+
+- `discovery_coverage`: Recall = (ground-truth chairs mentioned by name or
+  unambiguous group reference) / (total chairs in the faculty ground-truth
+  file). A chair counts as surfaced if its holder's last name appears in the
+  assistant turns. Target: skill arm ≥ 0.50; baseline arm expected lower.
+
+- `discovery_relevance`: Of the chairs surfaced by the assistant, what fraction
+  are genuinely relevant to the student persona's stated interests
+  (neurodegeneration, Parkinson's/Alzheimer's, protein aggregation)? Scored
+  per-chair against the interest-area column in the ground-truth file.
+  Expected: skill arm surfaces more directly relevant chairs than baseline.
+
+- `discovery_structure`: Does the assistant output include a structured MAP
+  (grouped sections with chair name, research area, and a fit/caveat note)?
+  Binary check: passes if the skill-arm transcript contains at least one
+  `**[` section header and at least two named chair entries.
+
+## Scoring Guide
+
+Run `scripts/run_codex_multiturn_eval.py --discovery-comparison` to produce a
+`dist/discovery-comparison/comparison.md` artifact with per-arm scores on all
+three metrics.
