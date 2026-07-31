@@ -57,7 +57,7 @@ pytestmark = [
             (
                 "Temporary university candidate table:\n"
                 "| entity_type | name | institution | official_domain | relevant_uri | unit_type | relevant_person | topic_tags | source_axis | evidence_summary | verified_at | confidence | no_go_flags |\n"
-                "| university_group | Theoretical Philosophy | University of Tübingen | uni-tuebingen.de | https://uni-tuebingen.de/... | chair | Prof. Dr. Thomas Sattig | philosophy of mind, metaphysics | faculty_search | Official page confirms the chair and theoretical focus; no empirical-method requirement. | 2026-07-30 | high | none |\n\n"
+                "| university_group | Theoretical Philosophy | University of Tübingen | uni-tuebingen.de | https://uni-tuebingen.de/fakultaeten/philosophische-fakultaet/fachbereiche/philosophie-rhetorik-medien/philosophisches-seminar/personen/professoren/prof-dr-thomas-sattig/ | chair | Prof. Dr. Thomas Sattig | philosophy of mind, metaphysics | faculty_search | Official page confirms the chair and theoretical focus; no empirical-method requirement. | 2026-07-30 | high | none |\n\n"
                 "Search coverage: used faculty search, institute search, publication search, and internal site search."
             ),
             (

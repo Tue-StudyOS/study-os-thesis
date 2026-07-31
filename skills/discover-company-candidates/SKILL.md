@@ -22,7 +22,8 @@ Do not guess candidates from model memory.
 ## Workflow
 
 1. Extract German and English search terms for the student's interests, methods,
-   domain, and no-gos.
+   and domain. Treat no-gos as local filters; only convert them into broad,
+   non-identifying query categories when needed to avoid an obvious mismatch.
 2. Read `references/company-discovery-rules.md`.
 3. Run at least four independent source axes before ranking candidates. Company
    ranking lists are allowed as one axis only; they must not contribute more than
@@ -32,8 +33,9 @@ Do not guess candidates from model memory.
 5. Verify each surviving candidate from official or authoritative public pages:
    Baden-Württemberg presence, R&D or product-development relevance, profile
    fit, and a reachable official domain or relevant page.
-6. Apply no-gos before returning candidates. Keep ambiguous conflicts only with a
-   clear no-go flag.
+6. Apply no-gos before returning candidates. Keep sensitive or personal no-go
+   wording out of web queries. Keep ambiguous conflicts only with a clear no-go
+   flag.
 7. Return 8-12 candidates where possible, never more than 20.
 
 ## Output
@@ -56,9 +58,11 @@ confidence: high | medium | low
 no_go_flags: string
 ```
 
-Do not include rejected candidates in the final table unless they explain a
-no-fit result. Include a short "Search coverage" note naming which source axes
-were used and which axes were thin or unavailable.
+Final Baden-Württemberg company candidates must use `bw_scope: confirmed`.
+Do not include `uncertain` or `rejected` candidates in the final table unless
+they are in a separate note explaining a no-fit or thin-field result. Include a
+short "Search coverage" note naming which source axes were used and which axes
+were thin or unavailable.
 
 ## Evidence Rules
 

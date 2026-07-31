@@ -22,7 +22,9 @@ sources. Do not guess candidates from model memory.
 
 ## Workflow
 
-1. Extract German and English terms for interests, methods, domain, and no-gos.
+1. Extract German and English terms for interests, methods, and domain. Treat
+   no-gos as local filters; only convert them into broad, non-identifying query
+   categories when needed to avoid an obvious mismatch.
 2. Read `references/university-discovery-rules.md`.
 3. Run at least four independent source axes before ranking candidates.
 4. Build a raw pool of 15-30 chairs, labs, institutes, clinics, centers, or
@@ -31,8 +33,9 @@ sources. Do not guess candidates from model memory.
    associated-institute pages that describe the same group.
 6. Verify each surviving candidate from official or authoritative public pages:
    Tübingen affiliation, current activity, topic fit, and reachable relevant URI.
-7. Apply no-gos before returning candidates. Keep ambiguous conflicts only with a
-   clear no-go flag.
+7. Apply no-gos before returning candidates. Keep sensitive or personal no-go
+   wording out of web queries. Keep ambiguous conflicts only with a clear no-go
+   flag.
 8. Return 8-12 candidates where possible, never more than 20.
 
 ## Output

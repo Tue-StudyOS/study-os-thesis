@@ -66,6 +66,32 @@ def test_rating_parser_extracts_scores_and_diagnostics(tmp_path: Path) -> None:
     assert parsed.guardrail_failures == []
 
 
+def test_latest_rating_uses_parsed_timestamp_not_lexical_filename_order(tmp_path: Path) -> None:
+    script = _load_script()
+    rating_dir = tmp_path / "rating"
+    rating_dir.mkdir()
+    older = rating_dir / "jan_rating_31.07.2026-12-00-00.md"
+    newer = rating_dir / "jan_rating_01.08.2026-12-00-00.md"
+    for path in (older, newer):
+        path.write_text(
+            "\n".join(
+                [
+                    "# Rating",
+                    "| Dimension | Score | Notes |",
+                    "|---|---:|---|",
+                    "| Evidence discipline | 2 | ok |",
+                    "Total: 16",
+                    "Company/CS misrouting: no",
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+    selected = script.latest_rating_for_slug(tmp_path, "thesis-sim-jan")
+
+    assert selected == newer
+
+
 def test_comparison_applies_acceptance_gates(tmp_path: Path) -> None:
     script = _load_script()
     baseline = tmp_path / "baseline"

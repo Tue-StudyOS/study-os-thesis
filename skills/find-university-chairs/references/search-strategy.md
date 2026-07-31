@@ -10,9 +10,11 @@ Extract:
 - `{TOPIC_DE}`, `{TOPIC_EN}` from interests
 - `{METHOD_DE}`, `{METHOD_EN}` from methods
 - `{DOMAIN_DE}`, `{DOMAIN_EN}` from domain
-- `{NOGO_TERM}` from no-gos
 
-Use thesis style and skills for fit assessment and first-contact framing.
+Use thesis style, skills, and no-gos for local fit assessment and first-contact
+framing. Do not send sensitive or personal no-go wording to search providers;
+if a no-go must shape discovery, convert it to a coarse, non-identifying
+category such as `non-clinical`, `software role`, or `no animal experiments`.
 
 ## Enrichment Queries
 

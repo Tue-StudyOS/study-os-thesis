@@ -23,14 +23,19 @@ most 10 may come only from ranking/top-company lists.
 A candidate can be returned only if the run verifies:
 
 - official domain or official careers/research page is reachable
-- Baden-Württemberg presence is confirmed or explicitly marked `uncertain`
+- Baden-Württemberg presence is confirmed from an official or authoritative
+  public source
 - R&D, product development, research collaboration, or student work is plausibly
   relevant to the profile
 - no-go conflicts are absent or explicitly flagged
 - evidence has a source URL and access date
 
+Do not include `bw_scope: uncertain` companies in the final candidate table for
+Baden-Württemberg thesis options. Keep them in scratch notes or a separate
+"uncertain / excluded" note only when they explain a no-fit or thin-field result.
 Use `bw_scope: rejected` only in scratch notes, not in the final candidate table,
-unless the result is needed to explain a no-fit outcome.
+unless the result is needed to explain why a plausible source-axis hit was not a
+BW option.
 
 ## Ranking
 

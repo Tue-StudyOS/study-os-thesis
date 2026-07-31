@@ -39,16 +39,19 @@ say so and do not guess from model memory.
    `relevant_uri`, `location`, `bw_scope`, `sector_tags`, `size`,
    `source_axis`, `evidence_summary`, `verified_at`, `confidence`, and
    `no_go_flags`.
-5. If fewer than five candidates return, broaden once through the candidate
+5. Exclude `bw_scope: uncertain` and `bw_scope: rejected` from the final BW
+   option map. Keep them only in a separate caveat or no-fit note when they
+   explain a thin field.
+6. If fewer than five confirmed-BW candidates return, broaden once through the candidate
    skill. If the field remains thin, continue with an honest short map or
    recommend the university track.
-6. Enrich each candidate using the query skeletons and filters in
+7. Enrich each confirmed-BW candidate using the query skeletons and filters in
    `references/company-search-strategy.md`.
-7. Classify thesis signal as `explicit opening`, `active program`, or `unclear`.
-8. Verify every contact/careers/R&D URL immediately before final output.
-9. Apply final no-go filtering. Do not silently drop borderline entries; keep
+8. Classify thesis signal as `explicit opening`, `active program`, or `unclear`.
+9. Verify every contact/careers/R&D URL immediately before final output.
+10. Apply final no-go filtering. Do not silently drop borderline entries; keep
    them with a clear warning unless a no-go is confirmed.
-10. Produce the option map grouped by the student's interest dimension.
+11. Produce the option map grouped by the student's interest dimension.
 
 ## Output
 
@@ -69,7 +72,7 @@ For each entry include:
   determinable
 - **Sector tags** - from the candidate table or live verification
 - **Size** - `startup`, `SME`, `corporate`, or `unknown`
-- **Location** - city/region and BW-scope status
+- **Location** - city/region with confirmed BW-scope evidence
 - **Relevance rationale** - tied to interests, domain, methods, and thesis style
 - **Pros & likely difficulties** - structure, supervision uncertainty,
   confidentiality/IP, language, or application lead time

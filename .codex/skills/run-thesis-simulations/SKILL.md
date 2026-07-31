@@ -106,7 +106,9 @@ Each individual rating file must include:
   faculty URI lists.
 - Do not assume computer science, machine learning, or company fit. Route by
   the simulated student's department and profile.
-- Keep generated fictional data only in `.simulations/convo` and
-  `.simulations/rating`, both of which must be gitignored.
+- Keep generated fictional data only under the selected artifact root's
+  `convo/` and `rating/` subdirectories, for example
+  `.simulations/current/convo`, `.simulations/baseline/{timestamp}/rating`, or
+  `.simulations/rules-only/{timestamp}/rating`. These paths must be gitignored.
 - If web access is unavailable but the command requires live evidence, mark the
   affected ratings down under evidence discipline and state the limitation.

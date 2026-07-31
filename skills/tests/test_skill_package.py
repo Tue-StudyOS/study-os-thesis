@@ -7,6 +7,7 @@ from pathlib import Path
 
 
 SKILLS_DIR = Path(__file__).resolve().parents[1]
+REPO_ROOT = SKILLS_DIR.parent
 EXPECTED_SKILLS = {
     "build-student-profile",
     "design-agent-skill",
@@ -141,6 +142,56 @@ def test_discovery_skills_carry_no_runtime_seed_data() -> None:
 
     assert (SKILLS_DIR / "discover-company-candidates" / "references" / "company-discovery-rules.md").is_file()
     assert (SKILLS_DIR / "discover-university-candidates" / "references" / "university-discovery-rules.md").is_file()
+
+
+def test_company_discovery_requires_confirmed_bw_scope_for_final_options() -> None:
+    discovery_skill = (SKILLS_DIR / "discover-company-candidates" / "SKILL.md").read_text(encoding="utf-8")
+    discovery_rules = (
+        SKILLS_DIR / "discover-company-candidates" / "references" / "company-discovery-rules.md"
+    ).read_text(encoding="utf-8")
+    parent_skill = (SKILLS_DIR / "find-company-thesis-options" / "SKILL.md").read_text(encoding="utf-8")
+
+    assert "Final Baden-Württemberg company candidates must use `bw_scope: confirmed`." in discovery_skill
+    assert "Baden-Württemberg presence is confirmed from an official or authoritative" in discovery_rules
+    assert "Do not include `bw_scope: uncertain` companies in the final candidate table" in discovery_rules
+    assert "Exclude `bw_scope: uncertain` and `bw_scope: rejected` from the final BW" in parent_skill
+    assert "Enrich each confirmed-BW candidate" in parent_skill
+
+
+def test_no_gos_are_local_filters_not_raw_search_terms() -> None:
+    discovery_files = [
+        SKILLS_DIR / "discover-company-candidates" / "SKILL.md",
+        SKILLS_DIR / "discover-university-candidates" / "SKILL.md",
+        SKILLS_DIR / "find-company-thesis-options" / "references" / "company-search-strategy.md",
+        SKILLS_DIR / "find-university-chairs" / "references" / "search-strategy.md",
+    ]
+
+    for path in discovery_files:
+        text = path.read_text(encoding="utf-8")
+        normalized_text = " ".join(text.split())
+        assert "{NOGO_TERM}" not in text
+        assert "Do not send sensitive or personal no-go wording to search providers" in normalized_text or (
+            "Keep sensitive or personal no-go" in text and "wording out of web queries" in text
+        )
+
+
+def test_simulation_artifact_paths_use_selected_root_and_zip_is_ignored() -> None:
+    for path in (
+        REPO_ROOT / ".codex" / "skills" / "run-thesis-simulations" / "SKILL.md",
+        REPO_ROOT / ".claude" / "skills" / "run-thesis-simulations" / "SKILL.md",
+    ):
+        text = path.read_text(encoding="utf-8")
+        assert "selected artifact root's" in text
+        assert ".simulations/baseline/{timestamp}/rating" in text
+        assert "Keep generated fictional data only in `.simulations/convo`" not in text
+
+    assert ".simulations.zip" in (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
+
+
+def test_optional_llm_eval_fixtures_do_not_use_placeholder_urls() -> None:
+    eval_text = (SKILLS_DIR / "tests" / "evals" / "test_skill_quality.py").read_text(encoding="utf-8")
+
+    assert "https://uni-tuebingen.de/..." not in eval_text
 
 
 def test_static_acceptance_fixture_covers_full_student_flow() -> None:

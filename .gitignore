@@ -209,6 +209,7 @@ tempCodeRunnerFile.py
 
 # Generated thesis-finder simulation artifacts
 .simulations/
+.simulations.zip
 
 # PyPI configuration file
 .pypirc

@@ -13,6 +13,7 @@ import argparse
 import json
 import re
 from dataclasses import asdict, dataclass
+from datetime import datetime
 from pathlib import Path
 
 
@@ -178,17 +179,23 @@ def parse_rating(path: Path) -> Rating:
 
 def latest_rating_for_slug(root: Path, slug: str) -> Path:
     student_slug = student_slug_for_command(slug)
-    candidates = sorted(
-        [
-            *(root / "rating").glob(f"{slug}_rating_*.md"),
-            *(root / "rating").glob(f"{student_slug}_rating_*.md"),
-            *root.glob(f"{slug}.md"),
-            *root.glob(f"{student_slug}.md"),
-        ]
-    )
+    candidates = [
+        *(root / "rating").glob(f"{slug}_rating_*.md"),
+        *(root / "rating").glob(f"{student_slug}_rating_*.md"),
+        *root.glob(f"{slug}.md"),
+        *root.glob(f"{student_slug}.md"),
+    ]
     if not candidates:
         raise FileNotFoundError(f"No rating artifact found for {slug!r} under {root}")
-    return candidates[-1]
+    return max(candidates, key=_rating_recency_key)
+
+
+def _rating_recency_key(path: Path) -> tuple[int, datetime, int, str]:
+    match = re.search(r"_rating_(\d{2})\.(\d{2})\.(\d{4})-(\d{2})-(\d{2})-(\d{2})\.md$", path.name)
+    if match:
+        day, month, year, hour, minute, second = map(int, match.groups())
+        return (1, datetime(year, month, day, hour, minute, second), path.stat().st_mtime_ns, path.name)
+    return (0, datetime.min, path.stat().st_mtime_ns, path.name)
 
 
 def load_ratings(root: Path, slugs: list[str]) -> dict[str, Rating]:
