@@ -56,8 +56,8 @@ pytestmark = [
             "Find University of Tübingen candidate groups for a theory-heavy philosophy thesis on mind, logic, and explanation.",
             (
                 "Temporary university candidate table:\n"
-                "| entity_type | name | institution | official_domain | relevant_uri | unit_type | relevant_person | topic_tags | source_axis | evidence_summary | verified_at | confidence | no_go_flags |\n"
-                "| university_group | Theoretical Philosophy | University of Tübingen | uni-tuebingen.de | https://uni-tuebingen.de/fakultaeten/philosophische-fakultaet/fachbereiche/philosophie-rhetorik-medien/philosophisches-seminar/personen/professoren/prof-dr-thomas-sattig/ | chair | Prof. Dr. Thomas Sattig | philosophy of mind, metaphysics | faculty_search | Official page confirms the chair and theoretical focus; no empirical-method requirement. | 2026-07-30 | high | none |\n\n"
+                "| entity_type | name | institution | affiliation_status | official_domain | relevant_uri | unit_type | relevant_person | topic_tags | source_axis | evidence_summary | verified_at | confidence | no_go_flags |\n"
+                "| university_group | Theoretical Philosophy | University of Tübingen | confirmed | uni-tuebingen.de | https://uni-tuebingen.de/fakultaeten/philosophische-fakultaet/fachbereiche/philosophie-rhetorik-medien/philosophisches-seminar/personen/professoren/prof-dr-thomas-sattig/ | chair | Prof. Dr. Thomas Sattig | philosophy of mind, metaphysics | faculty_search | Official page confirms the chair and theoretical focus; no empirical-method requirement. | 2026-07-30 | high | none |\n\n"
                 "Search coverage: used faculty search, institute search, publication search, and internal site search."
             ),
             (
@@ -119,10 +119,10 @@ pytestmark = [
             "find-university-chairs",
             "Which university chairs might fit a thesis on neural data analysis and machine learning?",
             (
-                "I need a complete six-dimension profile before ranking chairs. Once the profile is complete, I would call `discover-university-candidates` to build a temporary live-verified table with entity_type, name, institution, official_domain, relevant_uri, unit_type, relevant_person, topic_tags, source_axis, evidence_summary, verified_at, confidence, and no_go_flags. Then `find-university-chairs` would enrich that table with PI/affiliation verification and return a ranked option map with dated URLs. Without live search access, I would stop instead of guessing Tübingen groups from memory."
+                "I need a complete six-dimension profile before ranking chairs. Once the profile is complete, I would call `discover-university-candidates` to build a temporary live-verified table with entity_type, name, institution, affiliation_status, official_domain, relevant_uri, unit_type, relevant_person, topic_tags, source_axis, evidence_summary, verified_at, confidence, and no_go_flags. Then `find-university-chairs` would enrich confirmed-affiliation candidates with PI/affiliation verification and return a ranked option map with dated URLs. Without live search access, I would stop instead of guessing Tübingen groups from memory."
             ),
             (
-                "Score high only if the answer behaves like the rules-only find-university-chairs flow: it gates on a complete profile, delegates candidate discovery to `discover-university-candidates`, requires a live-verified candidate table with source axes and `verified_at`, enriches PI/affiliation and ranking only after discovery, cites dated verified URLs, and avoids invented openings, quotas, team sizes, citation counts, or willingness to supervise."
+                "Score high only if the answer behaves like the rules-only find-university-chairs flow: it gates on a complete profile, delegates candidate discovery to `discover-university-candidates`, requires a live-verified candidate table with source axes, `affiliation_status`, and `verified_at`, enriches confirmed-affiliation candidates only after discovery, cites dated verified URLs, and avoids invented openings, quotas, team sizes, citation counts, or willingness to supervise."
             ),
         ),
         (

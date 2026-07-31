@@ -22,12 +22,20 @@ first-class axes, not optional enrichment.
 A candidate can be returned only if the run verifies:
 
 - official or authoritative page is reachable
-- Tübingen affiliation is current or explicitly marked uncertain
+- Tübingen affiliation is confirmed from an official or authoritative current
+  public source
 - topic fit is supported by page text, recent publications, projects, teaching,
   or center descriptions
 - relevant person is confirmed on an official/current page or set to `unknown`
 - no-go conflicts are absent or explicitly flagged
 - evidence has a source URL and access date
+
+Do not include `affiliation_status: uncertain` entries in the final candidate
+table for Tübingen thesis options. Keep them in scratch notes or a separate
+"uncertain / excluded" note only when they explain a no-fit or thin-field
+result. Use `affiliation_status: rejected` only in scratch notes, not in the
+final candidate table, unless the result is needed to explain why a plausible
+source-axis hit was not a Tübingen option.
 
 ## Ranking
 

@@ -158,6 +158,26 @@ def test_company_discovery_requires_confirmed_bw_scope_for_final_options() -> No
     assert "Enrich each confirmed-BW candidate" in parent_skill
 
 
+def test_university_discovery_requires_confirmed_affiliation_for_final_options() -> None:
+    discovery_skill = (SKILLS_DIR / "discover-university-candidates" / "SKILL.md").read_text(encoding="utf-8")
+    discovery_rules = (
+        SKILLS_DIR / "discover-university-candidates" / "references" / "university-discovery-rules.md"
+    ).read_text(encoding="utf-8")
+    parent_skill = (SKILLS_DIR / "find-university-chairs" / "SKILL.md").read_text(encoding="utf-8")
+    parent_strategy = (SKILLS_DIR / "find-university-chairs" / "references" / "search-strategy.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "affiliation_status: confirmed | uncertain | rejected" in discovery_skill
+    assert "Final university candidates must use `affiliation_status: confirmed`." in discovery_skill
+    assert "Tübingen affiliation is confirmed from an official or authoritative" in discovery_rules
+    assert "Do not include `affiliation_status: uncertain` entries in the final candidate" in discovery_rules
+    assert "table for Tübingen thesis options" in discovery_rules
+    assert "Exclude `affiliation_status: uncertain` and `affiliation_status: rejected`" in parent_skill
+    assert "Enrich each confirmed-affiliation candidate" in parent_skill
+    assert "Final options must have `affiliation_status: confirmed`." in parent_strategy
+
+
 def test_no_gos_are_local_filters_not_raw_search_terms() -> None:
     discovery_files = [
         SKILLS_DIR / "discover-company-candidates" / "SKILL.md",

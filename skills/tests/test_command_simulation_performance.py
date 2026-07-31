@@ -66,6 +66,28 @@ def test_rating_parser_extracts_scores_and_diagnostics(tmp_path: Path) -> None:
     assert parsed.guardrail_failures == []
 
 
+def test_rating_parser_accepts_bulleted_guardrail_diagnostics(tmp_path: Path) -> None:
+    script = _load_script()
+    rating = tmp_path / "maja_rating_30.07.2026-12-00-00.md"
+    rating.write_text(
+        "\n".join(
+            [
+                "# Rating",
+                "| Dimension | Score | Notes |",
+                "|---|---:|---|",
+                "| Evidence discipline | 2 | ok |",
+                "Total: 16",
+                "- Company/CS misrouting: no",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    parsed = script.parse_rating(rating)
+
+    assert parsed.guardrail_failures == []
+
+
 def test_latest_rating_uses_parsed_timestamp_not_lexical_filename_order(tmp_path: Path) -> None:
     script = _load_script()
     rating_dir = tmp_path / "rating"
@@ -132,6 +154,79 @@ def test_comparison_applies_acceptance_gates(tmp_path: Path) -> None:
     assert result["passed"] is True
     assert result["gates"]["mean_score_not_lower"] is True
     assert result["gates"]["all_commands_at_least_14"] is True
+
+
+def test_comparison_allows_candidate_only_new_commands(tmp_path: Path) -> None:
+    script = _load_script()
+    baseline = tmp_path / "baseline"
+    candidate = tmp_path / "rules-only"
+    (baseline / "rating").mkdir(parents=True)
+    (candidate / "rating").mkdir(parents=True)
+    baseline_slugs = {
+        "thesis-sim-jan",
+        "thesis-sim-maja",
+        "thesis-sim-simon",
+        "thesis-sim-tina",
+    }
+
+    for slug in sorted(script.REQUIRED_COMMANDS):
+        student_slug = script.student_slug_for_command(slug)
+        guardrail = (
+            "Both tracks or structural company limit: yes"
+            if slug == "thesis-sim-tina"
+            else "Company/CS misrouting: no"
+        )
+        (candidate / "rating" / f"{student_slug}_rating_30.07.2026-12-00-00.md").write_text(
+            "\n".join(
+                [
+                    "# Rating",
+                    "| Dimension | Score | Notes |",
+                    "|---|---:|---|",
+                    "| Workflow compliance | 2 | ok |",
+                    "| Profile depth | 2 | ok |",
+                    "| Department routing | 2 | ok |",
+                    "| Evidence discipline | 2 | ok |",
+                    "| Recommendation quality | 2 | ok |",
+                    "| Persona realism | 3 | ok |",
+                    "| Conversation usefulness | 3 | ok |",
+                    "Total: 16",
+                    guardrail,
+                ]
+            ),
+            encoding="utf-8",
+        )
+        if slug in baseline_slugs:
+            (baseline / "rating" / f"{student_slug}_rating_30.07.2026-12-00-00.md").write_text(
+                "\n".join(
+                    [
+                        "# Rating",
+                        "| Dimension | Score | Notes |",
+                        "|---|---:|---|",
+                        "| Workflow compliance | 2 | ok |",
+                        "| Profile depth | 2 | ok |",
+                        "| Department routing | 2 | ok |",
+                        "| Evidence discipline | 2 | ok |",
+                        "| Recommendation quality | 2 | ok |",
+                        "| Persona realism | 3 | ok |",
+                        "| Conversation usefulness | 3 | ok |",
+                        "Total: 15",
+                        guardrail,
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+    result = script.compare_runs(baseline, candidate)
+
+    assert result["passed"] is True
+    assert result["comparable_commands"] == sorted(baseline_slugs)
+    assert set(result["missing_baseline_ratings"]) == script.REQUIRED_COMMANDS - baseline_slugs
+    assert result["baseline_mean"] == 15
+    assert result["candidate_mean"] == 16
+    assert result["candidate_mean_all"] == 16
+    marvin_row = next(row for row in result["rows"] if row["slug"] == "thesis-sim-marvin")
+    assert marvin_row["baseline_total"] is None
+    assert marvin_row["delta"] is None
 
 
 def test_comparison_fails_when_required_guardrail_diagnostic_is_missing(tmp_path: Path) -> None:

@@ -26,7 +26,8 @@ Skill frontmatter and code-quality properties, verified directly from SKILL.md f
 ---
 
 ### 2. **behavior-comparison.svg**
-Pre-written fixture conversations comparing skill performance vs. a naive baseline across 4 university faculties.
+Legacy deterministic fixture conversations comparing skill behavior vs. a naive
+baseline across 4 university faculties.
 
 **What it measures:**
 - **Turns**: Number of conversation steps (user input + assistant output combined)
@@ -39,11 +40,13 @@ Pre-written fixture conversations comparing skill performance vs. a naive baseli
 - Match rates show actual chair recovery: skill recovers 5-7 of 6-7 ground-truth chairs per faculty
 - This validates the behavioral contract: thesis-finder enables accurate discovery
 
-**Why fixture conversations?**
-- Pre-written, deterministic, reproducible
-- Tests intended behavior (not live LLM variance)
-- Fast to run, no external API costs
-- Focused on the single most important output: did the skill name correct chairs?
+**Why keep fixture conversations?**
+- They are pre-written, deterministic, reproducible smoke checks.
+- They guard against obvious regressions in routing and evidence discipline.
+- They are not the primary release gate for rules-only discovery quality.
+
+The primary performance comparison for the current architecture is the
+`run-thesis-simulations` workflow over the repo-local `/commands` simulations.
 
 ---
 
@@ -63,10 +66,10 @@ Architecture diagram showing the skill invocation graph and data-access strategy
    - Output: routing decision + invitation to discovery skills
 
 3. **③ DISCOVER**
-   - **University track** (`find-university-chairs`): live web search of university faculty
-   - **Industry track** (`find-company-thesis-options`): live web search of company R&D / thesis programs
-   - Both use parameterized search strategies tuned per faculty/sector
-   - Reference files: `faculty-backbone.md`, `company-backbone.md`, search strategies
+   - **University track** (`find-university-chairs`): delegates candidate discovery to `discover-university-candidates`, then enriches confirmed-affiliation options
+   - **Industry track** (`find-company-thesis-options`): delegates candidate discovery to `discover-company-candidates`, then enriches confirmed-BW options
+   - Both tracks use live source axes, verification rules, and profile-derived query strategies
+   - Reference files contain search, source-priority, verification, and ranking rules only; they do not contain runtime URI catalogs
 
 4. **④ CONTACT** (`draft-thesis-contact`)
    - Drafts personalized cold-outreach emails
@@ -74,10 +77,11 @@ Architecture diagram showing the skill invocation graph and data-access strategy
    - Output: concise, high-signal first contact
 
 **Key design principle:**
-- University discovery: live faculty pages, no external file.
-- Company discovery: curated BW-region seed backbone (Markdown, ~1x/year refresh) + live
-  enrichment in Pass 2 for current context.
-- No runtime database or job-board scraping in either skill.
+- Backbone now means discovery rules, not a static company, chair, faculty, or
+  URL list.
+- Candidate data is temporary and live-verified during each run.
+- No runtime database, backend service, job-board scrape, or maintained URI
+  catalog is required by the student-facing skill package.
 
 ---
 
@@ -92,6 +96,12 @@ Architecture diagram showing the skill invocation graph and data-access strategy
 1. Open **behavior-comparison.svg**
 2. Run the fixture conversations (in `findings/no_db_universal_skill/fixtures/`)
 3. Check: does your skill output match or exceed the ✓ yes results and match rates?
+
+### If you're testing release performance:
+1. Run `run-thesis-simulations` for the current repo-local `/commands`
+2. Store baseline and candidate artifacts under `.simulations/<label>/<timestamp>/`
+3. Compare ratings with `scripts/compare_command_simulation_performance.py`
+4. Treat fixture SVGs as supporting diagnostics, not as the release gate
 
 ### If you're onboarding or understanding the architecture:
 1. Open **skill-architecture.svg**
@@ -121,7 +131,10 @@ Fixtures are **not live measurements**—they test the intended behavioral contr
 
 - **Quality properties** are checked on every commit (no API call)
 - **Behavioral fixtures** are pre-written, deterministic, reproducible
-- **Match rates** use last-name string matching against ground-truth
-- **No-DB rule** is enforced: all data flows are live-sourced or static-reference only
+- **Match rates** use last-name string matching against eval-only ground truth
+- **Command simulations** are the primary before/after performance comparison
+  for rules-only candidate discovery
+- **No-DB rule** is enforced: student-facing skills use live-sourced temporary
+  candidates and rule references, not runtime databases or URI backbones
 
 These evaluations measure the thesis-finder's ability to deliver on its core promise: help students find thesis advisors accurately and efficiently.

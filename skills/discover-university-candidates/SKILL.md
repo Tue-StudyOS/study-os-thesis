@@ -46,6 +46,7 @@ Return a Markdown table with these fields:
 entity_type: university_group
 name: string
 institution: University of Tübingen | associated_institute
+affiliation_status: confirmed | uncertain | rejected
 official_domain: string
 relevant_uri: string
 unit_type: chair | institute | clinic | lab | center | research_group
@@ -57,6 +58,10 @@ verified_at: YYYY-MM-DD
 confidence: high | medium | low
 no_go_flags: string
 ```
+
+Final university candidates must use `affiliation_status: confirmed`.
+Do not include `uncertain` or `rejected` candidates in the final table unless
+they are in a separate note explaining a no-fit or thin-field result.
 
 Include a short "Search coverage" note naming which source axes were used and
 which axes were thin or unavailable.

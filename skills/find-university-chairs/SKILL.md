@@ -37,21 +37,25 @@ say so and do not guess from model memory.
    dead-end exclusions from the session.
 4. Require the exact temporary candidate table schema from
    `discover-university-candidates`: `entity_type`, `name`, `institution`,
-   `official_domain`, `relevant_uri`, `unit_type`, `relevant_person`,
-   `topic_tags`, `source_axis`, `evidence_summary`, `verified_at`,
-   `confidence`, and `no_go_flags`.
-5. If fewer than five candidates return, broaden once through the candidate
-   skill. If the field remains thin, continue with an honest short map or no-fit
-   explanation.
-6. Enrich each candidate using the query skeletons and filters in
+   `affiliation_status`, `official_domain`, `relevant_uri`, `unit_type`,
+   `relevant_person`, `topic_tags`, `source_axis`, `evidence_summary`,
+   `verified_at`, `confidence`, and `no_go_flags`.
+5. Exclude `affiliation_status: uncertain` and `affiliation_status: rejected`
+   from the final Tübingen option map unless they appear only in a separate
+   caveat or no-fit note. Do not enrich uncertain-affiliation entries as normal
+   thesis options.
+6. If fewer than five confirmed-affiliation candidates return, broaden once
+   through the candidate skill. If the field remains thin, continue with an
+   honest short map or no-fit explanation.
+7. Enrich each confirmed-affiliation candidate using the query skeletons and filters in
    `references/search-strategy.md`.
-7. Confirm current affiliation before naming any person as a chair-holder,
+8. Confirm current affiliation before naming any person as a chair-holder,
    supervisor, or lab head. If current affiliation is not confirmable, set the
    person to `unknown` or flag the entry.
-8. Verify every URL immediately before final output.
-9. Apply final no-go filtering. Do not silently drop borderline entries; keep
+9. Verify every URL immediately before final output.
+10. Apply final no-go filtering. Do not silently drop borderline entries; keep
    them with a clear warning unless a no-go is confirmed.
-10. Produce the option map grouped by the student's interest dimension.
+11. Produce the option map grouped by the student's interest dimension.
 
 ## Output
 
@@ -98,7 +102,8 @@ Before delivering the map, confirm:
 - all six profile dimensions were present
 - `discover-university-candidates` returned a live-verified candidate table
 - at least four source axes were attempted, unless unavailable and documented
-- every named person has current affiliation evidence or is marked uncertain
+- every named person in an included option has current affiliation evidence
+- every included option has `affiliation_status: confirmed`
 - every included URL was verified during this run
 - no-go conflicts were handled explicitly
 - output is grouped by student interest, not by source axis or faculty

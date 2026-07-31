@@ -60,6 +60,10 @@ Name a person only when current affiliation is confirmed on an official/current
 page. If a personal page or publication result conflicts with the unit page,
 flag the entry and rank it lower.
 
+Final options must have `affiliation_status: confirmed`. Keep uncertain or
+rejected Tübingen affiliation cases out of the option map unless they are only
+used in a separate caveat explaining why a plausible route was excluded.
+
 ## Quality Filters
 
 - Official/current university or clinic pages outrank stale PDFs and snippets.

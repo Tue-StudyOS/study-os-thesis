@@ -124,7 +124,11 @@ def student_slug_for_command(slug: str) -> str:
 
 
 def _extract_yes_no(label: str, text: str) -> bool | None:
-    match = re.search(rf"^{re.escape(label)}\s*:\s*(yes|no)\s*$", text, flags=re.IGNORECASE | re.MULTILINE)
+    match = re.search(
+        rf"^\s*(?:[-*+]\s*)?(?:\d+\.\s*)?{re.escape(label)}\s*:\s*(yes|no)\s*$",
+        text,
+        flags=re.IGNORECASE | re.MULTILINE,
+    )
     if not match:
         return None
     return match.group(1).lower() == "yes"
@@ -202,40 +206,61 @@ def load_ratings(root: Path, slugs: list[str]) -> dict[str, Rating]:
     return {slug: parse_rating(latest_rating_for_slug(root, slug)) for slug in slugs}
 
 
+def load_optional_ratings(root: Path, slugs: list[str]) -> tuple[dict[str, Rating], list[str]]:
+    ratings: dict[str, Rating] = {}
+    missing: list[str] = []
+    for slug in slugs:
+        try:
+            ratings[slug] = parse_rating(latest_rating_for_slug(root, slug))
+        except FileNotFoundError:
+            missing.append(slug)
+    return ratings, missing
+
+
 def compare_runs(baseline_dir: Path, candidate_dir: Path) -> dict[str, object]:
     sync = check_command_sync()
     slugs = sorted(REQUIRED_COMMANDS)
-    baseline = load_ratings(baseline_dir, slugs)
+    baseline, missing_baseline_ratings = load_optional_ratings(baseline_dir, slugs)
     candidate = load_ratings(candidate_dir, slugs)
+    comparable_slugs = [slug for slug in slugs if slug in baseline and slug in candidate]
     rows = []
     for slug in slugs:
-        before = baseline[slug]
         after = candidate[slug]
+        before = baseline.get(slug)
         rows.append(
             {
                 "slug": slug,
-                "baseline_total": before.total_score,
+                "baseline_total": None if before is None else before.total_score,
                 "candidate_total": after.total_score,
-                "delta": after.total_score - before.total_score,
+                "delta": None if before is None else after.total_score - before.total_score,
                 "candidate_evidence_score": after.evidence_score,
                 "verified_urls_delta": None
-                if before.verified_urls is None or after.verified_urls is None
+                if before is None or before.verified_urls is None or after.verified_urls is None
                 else after.verified_urls - before.verified_urls,
                 "unconfirmed_claims_delta": None
-                if before.unconfirmed_claims is None or after.unconfirmed_claims is None
+                if before is None or before.unconfirmed_claims is None or after.unconfirmed_claims is None
                 else after.unconfirmed_claims - before.unconfirmed_claims,
                 "wall_clock_seconds_delta": None
-                if before.wall_clock_seconds is None or after.wall_clock_seconds is None
+                if before is None or before.wall_clock_seconds is None or after.wall_clock_seconds is None
                 else round(after.wall_clock_seconds - before.wall_clock_seconds, 3),
                 "guardrail_failures": after.guardrail_failures,
             }
         )
 
-    baseline_mean = sum(r.total_score for r in baseline.values()) / len(slugs)
-    candidate_mean = sum(r.total_score for r in candidate.values()) / len(slugs)
+    baseline_mean = (
+        sum(baseline[slug].total_score for slug in comparable_slugs) / len(comparable_slugs)
+        if comparable_slugs
+        else None
+    )
+    candidate_mean = (
+        sum(candidate[slug].total_score for slug in comparable_slugs) / len(comparable_slugs)
+        if comparable_slugs
+        else None
+    )
+    candidate_mean_all = sum(r.total_score for r in candidate.values()) / len(slugs)
     gates = {
         "commands_synced": sync.ok and set(sync.slugs) == REQUIRED_COMMANDS,
-        "mean_score_not_lower": candidate_mean >= baseline_mean,
+        "mean_score_not_lower": baseline_mean is not None and candidate_mean is not None and candidate_mean >= baseline_mean,
         "all_commands_at_least_14": all(r.total_score >= 14 for r in candidate.values()),
         "all_evidence_at_least_2": all((r.evidence_score or 0) >= 2 for r in candidate.values()),
         "no_guardrail_failures": all(not r.guardrail_failures for r in candidate.values()),
@@ -244,12 +269,23 @@ def compare_runs(baseline_dir: Path, candidate_dir: Path) -> dict[str, object]:
         "baseline_dir": str(baseline_dir),
         "candidate_dir": str(candidate_dir),
         "command_sync": asdict(sync),
-        "baseline_mean": round(baseline_mean, 3),
-        "candidate_mean": round(candidate_mean, 3),
+        "baseline_mean": None if baseline_mean is None else round(baseline_mean, 3),
+        "candidate_mean": None if candidate_mean is None else round(candidate_mean, 3),
+        "candidate_mean_all": round(candidate_mean_all, 3),
+        "comparable_commands": comparable_slugs,
+        "missing_baseline_ratings": missing_baseline_ratings,
         "rows": rows,
         "gates": gates,
         "passed": all(gates.values()),
     }
+
+
+def _format_optional(value: object, *, signed: bool = False) -> str:
+    if value is None:
+        return "n/a"
+    if signed and isinstance(value, int):
+        return f"{value:+d}"
+    return str(value)
 
 
 def write_markdown(result: dict[str, object], path: Path) -> None:
@@ -258,8 +294,9 @@ def write_markdown(result: dict[str, object], path: Path) -> None:
         "",
         f"Baseline: `{result['baseline_dir']}`",
         f"Candidate: `{result['candidate_dir']}`",
-        f"Baseline mean: **{result['baseline_mean']}**",
-        f"Candidate mean: **{result['candidate_mean']}**",
+        f"Baseline mean over comparable commands: **{_format_optional(result['baseline_mean'])}**",
+        f"Candidate mean over comparable commands: **{_format_optional(result['candidate_mean'])}**",
+        f"Candidate mean over all current commands: **{result['candidate_mean_all']}**",
         f"Passed: **{result['passed']}**",
         "",
         "## Per Command",
@@ -270,9 +307,19 @@ def write_markdown(result: dict[str, object], path: Path) -> None:
     for row in result["rows"]:  # type: ignore[index]
         failures = ", ".join(row["guardrail_failures"]) or "none"
         lines.append(
-            f"| {row['slug']} | {row['baseline_total']} | {row['candidate_total']} | "
-            f"{row['delta']:+d} | {row['candidate_evidence_score']} | {failures} |"
+            f"| {row['slug']} | {_format_optional(row['baseline_total'])} | {row['candidate_total']} | "
+            f"{_format_optional(row['delta'], signed=True)} | {row['candidate_evidence_score']} | {failures} |"
         )
+    missing_baseline = result.get("missing_baseline_ratings") or []
+    if missing_baseline:
+        lines += [
+            "",
+            "## Candidate-Only Commands",
+            "",
+            "These commands were present in the candidate run but absent from the baseline run, so they are excluded from delta and mean-regression gates while still counting toward absolute score, evidence, and guardrail gates.",
+            "",
+            ", ".join(f"`{slug}`" for slug in missing_baseline),
+        ]
     lines += [
         "",
         "## Gates",
