@@ -176,11 +176,10 @@ pytestmark = [
             "find-company-thesis-options",
             "I want to find companies in Baden-Württemberg for a master's thesis in machine learning applied to automotive systems. I have Python, PyTorch, and want a structured environment.",
             (
-                "Candidate companies:\n"
-                "1. Daimler / Mercedes-Benz AI Research — automotive AI, large structured program.\n"
-                "2. Bosch Center for AI — automotive and robotics AI, competitive, apply via careers.\n"
-                "3. Zeiss — optical systems + ML, smaller team, unclear thesis signal.\n\n"
-                "For each, the output includes: company size, R&D focus, thesis signal (explicit opening / active program / unclear), contact path, and evidence date. All marked with verification caveats and sources."
+                "I would first call `discover-company-candidates` with the complete profile to build a temporary live-verified BW candidate table with entity_type, name, official_domain, relevant_uri, location, bw_scope, sector_tags, size, source_axis, evidence_summary, verified_at, confidence, and no_go_flags. "
+                "Only `bw_scope: confirmed` candidates continue into the option map; uncertain or rejected locations stay in a separate no-fit/thin-field note.\n\n"
+                "After discovery, the option map groups confirmed-BW automotive ML candidates by fit area, enriches each with official company or careers/research-page evidence, labels thesis signal as confirmed program, inferred student route, or unclear, and gives a contact path without inventing openings or contacts.\n\n"
+                "Coverage caveat: this map covers publicly visible BW company options found through live discovery across multiple source axes as of today's date. Companies with weak web presence, non-indexed pages, or informal thesis paths may be missing."
             ),
             (
                 "Score high only if the answer behaves like find-company-thesis-options: delegates candidate discovery to discover-company-candidates, "

@@ -280,8 +280,8 @@ company list.
 Outputs:
 
 - 8-12 live-verified candidates where possible, never more than 20
-- official domain, relevant URI, BW scope, sector tags, size, source axis,
-  evidence summary, verification date, confidence, and no-go flags
+- official domain, relevant URI, location, BW scope, sector tags, size, source
+  axis, evidence summary, verification date, confidence, and no-go flags
 
 Guardrails:
 
