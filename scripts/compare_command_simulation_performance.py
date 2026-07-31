@@ -31,6 +31,13 @@ REQUIRED_COMMANDS = {
     "thesis-sim-tina",
     "thesis-sim-timo",
 }
+BASELINE_REQUIRED_COMMANDS = {
+    "thesis-sim-jan",
+    "thesis-sim-maja",
+    "thesis-sim-simon",
+    "thesis-sim-tina",
+}
+BASELINE_OPTIONAL_COMMANDS = REQUIRED_COMMANDS - BASELINE_REQUIRED_COMMANDS
 MISROUTING_GUARDRAIL_COMMANDS = {
     "thesis-sim-jan",
     "thesis-sim-simon",
@@ -258,8 +265,11 @@ def compare_runs(baseline_dir: Path, candidate_dir: Path) -> dict[str, object]:
         else None
     )
     candidate_mean_all = sum(r.total_score for r in candidate.values()) / len(slugs)
+    missing_required_baseline_ratings = sorted(set(missing_baseline_ratings) & BASELINE_REQUIRED_COMMANDS)
+    candidate_only_commands = sorted(set(missing_baseline_ratings) & BASELINE_OPTIONAL_COMMANDS)
     gates = {
         "commands_synced": sync.ok and set(sync.slugs) == REQUIRED_COMMANDS,
+        "required_baseline_ratings_present": not missing_required_baseline_ratings,
         "mean_score_not_lower": baseline_mean is not None and candidate_mean is not None and candidate_mean >= baseline_mean,
         "all_commands_at_least_14": all(r.total_score >= 14 for r in candidate.values()),
         "all_evidence_at_least_2": all((r.evidence_score or 0) >= 2 for r in candidate.values()),
@@ -274,6 +284,8 @@ def compare_runs(baseline_dir: Path, candidate_dir: Path) -> dict[str, object]:
         "candidate_mean_all": round(candidate_mean_all, 3),
         "comparable_commands": comparable_slugs,
         "missing_baseline_ratings": missing_baseline_ratings,
+        "missing_required_baseline_ratings": missing_required_baseline_ratings,
+        "candidate_only_commands": candidate_only_commands,
         "rows": rows,
         "gates": gates,
         "passed": all(gates.values()),
@@ -310,15 +322,23 @@ def write_markdown(result: dict[str, object], path: Path) -> None:
             f"| {row['slug']} | {_format_optional(row['baseline_total'])} | {row['candidate_total']} | "
             f"{_format_optional(row['delta'], signed=True)} | {row['candidate_evidence_score']} | {failures} |"
         )
-    missing_baseline = result.get("missing_baseline_ratings") or []
-    if missing_baseline:
+    candidate_only = result.get("candidate_only_commands") or []
+    if candidate_only:
         lines += [
             "",
             "## Candidate-Only Commands",
             "",
             "These commands were present in the candidate run but absent from the baseline run, so they are excluded from delta and mean-regression gates while still counting toward absolute score, evidence, and guardrail gates.",
             "",
-            ", ".join(f"`{slug}`" for slug in missing_baseline),
+            ", ".join(f"`{slug}`" for slug in candidate_only),
+        ]
+    missing_required = result.get("missing_required_baseline_ratings") or []
+    if missing_required:
+        lines += [
+            "",
+            "## Missing Required Baseline Ratings",
+            "",
+            ", ".join(f"`{slug}`" for slug in missing_required),
         ]
     lines += [
         "",

@@ -259,9 +259,9 @@ faculty URL list.
 Outputs:
 
 - 8-12 live-verified candidates where possible, never more than 20
-- official domain, relevant URI, unit type, relevant person or `unknown`,
-  topic tags, source axis, evidence summary, verification date, confidence, and
-  no-go flags
+- official domain, relevant URI, affiliation status, unit type, relevant person
+  or `unknown`, topic tags, source axis, evidence summary, verification date,
+  confidence, and no-go flags
 
 Guardrails:
 

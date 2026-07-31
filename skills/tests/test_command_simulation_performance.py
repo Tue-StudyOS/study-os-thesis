@@ -221,12 +221,62 @@ def test_comparison_allows_candidate_only_new_commands(tmp_path: Path) -> None:
     assert result["passed"] is True
     assert result["comparable_commands"] == sorted(baseline_slugs)
     assert set(result["missing_baseline_ratings"]) == script.REQUIRED_COMMANDS - baseline_slugs
+    assert result["missing_required_baseline_ratings"] == []
+    assert set(result["candidate_only_commands"]) == script.REQUIRED_COMMANDS - script.BASELINE_REQUIRED_COMMANDS
     assert result["baseline_mean"] == 15
     assert result["candidate_mean"] == 16
     assert result["candidate_mean_all"] == 16
     marvin_row = next(row for row in result["rows"] if row["slug"] == "thesis-sim-marvin")
     assert marvin_row["baseline_total"] is None
     assert marvin_row["delta"] is None
+
+
+def test_comparison_fails_when_original_baseline_command_is_missing(tmp_path: Path) -> None:
+    script = _load_script()
+    baseline = tmp_path / "baseline"
+    candidate = tmp_path / "rules-only"
+    (baseline / "rating").mkdir(parents=True)
+    (candidate / "rating").mkdir(parents=True)
+    intentionally_missing = "thesis-sim-jan"
+
+    for slug in sorted(script.REQUIRED_COMMANDS):
+        student_slug = script.student_slug_for_command(slug)
+        guardrail = (
+            "Both tracks or structural company limit: yes"
+            if slug == "thesis-sim-tina"
+            else "Company/CS misrouting: no"
+        )
+        rating_text = "\n".join(
+            [
+                "# Rating",
+                "| Dimension | Score | Notes |",
+                "|---|---:|---|",
+                "| Workflow compliance | 2 | ok |",
+                "| Profile depth | 2 | ok |",
+                "| Department routing | 2 | ok |",
+                "| Evidence discipline | 2 | ok |",
+                "| Recommendation quality | 2 | ok |",
+                "| Persona realism | 3 | ok |",
+                "| Conversation usefulness | 3 | ok |",
+                "Total: 16",
+                guardrail,
+            ]
+        )
+        (candidate / "rating" / f"{student_slug}_rating_30.07.2026-12-00-00.md").write_text(
+            rating_text,
+            encoding="utf-8",
+        )
+        if slug in script.BASELINE_REQUIRED_COMMANDS and slug != intentionally_missing:
+            (baseline / "rating" / f"{student_slug}_rating_30.07.2026-12-00-00.md").write_text(
+                rating_text,
+                encoding="utf-8",
+            )
+
+    result = script.compare_runs(baseline, candidate)
+
+    assert result["passed"] is False
+    assert result["gates"]["required_baseline_ratings_present"] is False
+    assert result["missing_required_baseline_ratings"] == [intentionally_missing]
 
 
 def test_comparison_fails_when_required_guardrail_diagnostic_is_missing(tmp_path: Path) -> None:
