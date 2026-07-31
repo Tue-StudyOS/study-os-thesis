@@ -23,5 +23,5 @@
 
 - **Recall rule:** a company is counted as surfaced if the skill's option map names it by name or its relevant division. "Carl Zeiss" → counts; "Zeiss Meditec" → also counts.
 - **Thesis signal scoring:** correct classification for Carl Zeiss, Karl Storz, and Roche is `explicit opening` or `active program`. For Hartmann it is `active program`. For Bosch Sensortec it is `active program` (or `unclear` if the skill cannot confirm independently — not a failure).
-- Heidelberg Engineering GmbH (backbone entry, `[medtech, imaging]`) and eye2you GmbH (`[AI/ML, medtech]`) are not in this seed but are valid bonus finds.
-- Roche Diagnostics is headquartered in Mannheim (BW). The skill should include it as a BW company (no "BW-adjacent" qualification needed; Mannheim is within BW state boundaries per backbone preamble).
+- Heidelberg Engineering GmbH (`[medtech, imaging]`) and eye2you GmbH (`[AI/ML, medtech]`) are not in this seed but are valid bonus live-discovery finds.
+- Roche Diagnostics is headquartered in Mannheim (BW). The skill should treat it as a BW company when current public evidence confirms the location.

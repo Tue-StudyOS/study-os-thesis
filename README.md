@@ -43,12 +43,12 @@ After discovery, `draft-thesis-contact` can write a first-contact email for any 
 The intelligence lives in two places:
 
 1. **Reference files** — curated Markdown under each skill's `references/` directory:
-   - `tuebingen-faculty-backbone.md` — official `uni-tuebingen.de` listing URLs for every faculty, used as the anti-SEO-bias anchor for university discovery
-   - `search-strategy.md` — 9 sections encoding query logic: how to translate profile dimensions into queries, faculty routing, two-pass strategy, dedup, no-go filters, 18 query skeletons, 2 worked examples
-   - `bw-company-backbone.md` — ~107 BW companies across 7 sectors, tagged for first-pass filtering
-   - `company-search-strategy.md` — parallel query logic for company discovery
+   - `discover-university-candidates/references/university-discovery-rules.md` — source axes, verification rules, and ranking rules for live Tübingen candidate discovery
+   - `discover-company-candidates/references/company-discovery-rules.md` — source axes, verification rules, and ranking rules for live BW company candidate discovery
+   - `find-university-chairs/references/search-strategy.md` — enrichment, PI/affiliation checks, no-go filters, and output rules after university candidates are found
+   - `find-company-thesis-options/references/company-search-strategy.md` — thesis-signal, contact-path, recency, no-go, and output rules after company candidates are found
 
-2. **Live web search** — every discovery run enriches with current information; the backbone files are the structural anchor, not the data source
+2. **Live web search** — every discovery run creates a temporary candidate set and then verifies current information. The backbone is now the discovery logic, not a static URI or entity catalog.
 
 This means the skills never go stale in the way a database does. A student running the skill today gets live R&D pages, not a snapshot from months ago.
 
@@ -62,12 +62,12 @@ thesis-finder                ← single entry point
     │  → 6-dimension profile: interests · methods · domain · thesis style · skills · no-gos
     │  asks which track
     ├──▶ find-university-chairs
-    │       Pass 1: filter official faculty listing pages (backbone)
-    │       Pass 2: live enrichment per chair / research group
+    │       Candidate pass: discover-university-candidates live source axes
+    │       Enrichment pass: PI/affiliation, evidence, thesis-signal checks
     │       → option map grouped by interest dimension
     └──▶ find-company-thesis-options
-            Pass 1: filter ~107 BW companies by sector tags (backbone)
-            Pass 2: live enrichment (R&D focus, thesis signal, contact path)
+            Candidate pass: discover-company-candidates live source axes
+            Enrichment pass: R&D focus, thesis signal, contact path
             → option map grouped by interest dimension
 
 (optional)
@@ -90,7 +90,7 @@ python -m pip install -e ".[dev]"
 python -m pytest -q
 ```
 
-The release builder validates skill structure and packages all 8 skills:
+The release builder validates skill structure and packages all 10 skills:
 
 ```bash
 python scripts/build_skill_release.py
@@ -121,15 +121,19 @@ study-os-thesis/
 │   ├── build-student-profile/
 │   │   ├── SKILL.md
 │   │   └── references/student-profile-schema.md
+│   ├── discover-university-candidates/
+│   │   ├── SKILL.md
+│   │   └── references/university-discovery-rules.md
+│   ├── discover-company-candidates/
+│   │   ├── SKILL.md
+│   │   └── references/company-discovery-rules.md
 │   ├── find-university-chairs/
 │   │   ├── SKILL.md
 │   │   └── references/
-│   │       ├── tuebingen-faculty-backbone.md
 │   │       └── search-strategy.md
 │   ├── find-company-thesis-options/
 │   │   ├── SKILL.md
 │   │   └── references/
-│   │       ├── bw-company-backbone.md
 │   │       └── company-search-strategy.md
 │   ├── thesis-finder/SKILL.md
 │   ├── generate-thesis-directions/SKILL.md
@@ -159,7 +163,7 @@ study-os-thesis-skills-vX.Y.Z/
 ├── find-university-chairs/
 │   ├── SKILL.md
 │   └── references/
-└── ... (8 skills total)
+└── ... (10 skills total)
 ```
 
 Copy the extracted skill folders directly into any agent's skills directory.
@@ -181,5 +185,6 @@ and hardened, and what's still open — is curated in
 [docs/thesis-report/](docs/thesis-report/README.md), written for the thesis submission.
 
 The core argument: a web app with a curated professor database requires a person
-to keep the data fresh. A skill with a search strategy + a backbone of structural
-anchors + live web access is self-refreshing and runs anywhere.
+to keep the data fresh. A skill with live candidate discovery, explicit source
+axes, verification rules, and current web access is self-refreshing and runs
+anywhere.

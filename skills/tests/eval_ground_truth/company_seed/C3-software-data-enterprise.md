@@ -23,6 +23,6 @@
 
 - **Recall rule:** a company is counted as surfaced if the skill names it or its relevant division. "SAP Labs Germany" → counts for SAP; "MHP" without division → counts.
 - **Thesis signal scoring:** for SAP and MHP the correct classification is `explicit opening` or `active program`. For Aleph Alpha and TeamViewer the correct classification is `unclear`. For Porsche Digital it is `active program`.
-- Field 33 GmbH (backbone: `[AI/ML, software]`) and other AI/ML startups in the backbone are in scope for this profile but not in this seed — surfacing them is a bonus, not required.
-- The profile's "no-go on embedded" should cause the skill to deprioritize sensor/hardware companies; confirm the skill does not include backbone entries tagged `[IoT, sensors]` without qualification.
-- Aleph Alpha and TeamViewer are included despite "unclear" thesis signal because both are in the backbone with matching tags — the skill should surface them (with correct `unclear` classification) and the ground truth counts a surfaced `unclear` entry as a recall hit.
+- Field 33 GmbH and other AI/ML startups are in scope for this profile but not in this seed; surfacing them is a bonus, not required.
+- The profile's "no-go on embedded" should cause the skill to deprioritize sensor/hardware companies unless live evidence clearly shows a software/data role.
+- Aleph Alpha and TeamViewer are included despite "unclear" thesis signal because a careful live search should surface them for enterprise AI/software; the ground truth counts a surfaced `unclear` entry as a recall hit.

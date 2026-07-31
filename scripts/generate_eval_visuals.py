@@ -92,7 +92,9 @@ SKILL_ORDER = [
     "build-student-profile",
     "thesis-finder",
     "find-university-chairs",
+    "discover-university-candidates",
     "find-company-thesis-options",
+    "discover-company-candidates",
     "generate-thesis-directions",
     "draft-thesis-contact",
     "find-recent-papers",
@@ -148,6 +150,8 @@ def collect_quality_data() -> list[dict]:
             "Do not depend on the old UI",
             "the only authoritative source during discovery.",
             "No runtime company database",
+            "static company or URI backbone",
+            "static faculty or URI backbone",
         ]
         no_db = any(p in text for p in no_db_phrases)
         no_db_result = "exempt" if name in NO_DB_EXEMPT else ("pass" if no_db else "fail")
@@ -219,7 +223,7 @@ def collect_fixture_data() -> list[dict]:
 # ── SVG 1: Skill Architecture ─────────────────────────────────────────────
 
 def render_architecture() -> str:
-    W, H = 820, 390
+    W, H = 920, 430
     els = []
 
     # title
@@ -242,21 +246,35 @@ def render_architecture() -> str:
             "step": "② ROUTE",
         },
         "find-university-chairs": {
-            "x": 378, "y": 82, "w": 166, "h": 52,
+            "x": 360, "y": 82, "w": 166, "h": 52,
             "bg": "#F0FDF4", "border": GREEN,
             "lines": ["find-university-", "chairs"],
-            "step": "③ DISCOVER",
+            "step": "③ OPTION MAP",
             "badge": "live web",
+        },
+        "discover-university-candidates": {
+            "x": 575, "y": 82, "w": 176, "h": 52,
+            "bg": "#ECFDF5", "border": GREEN,
+            "lines": ["discover-university-", "candidates"],
+            "step": "③a CANDIDATES",
+            "badge": "rules",
         },
         "find-company-thesis-options": {
-            "x": 378, "y": 262, "w": 178, "h": 52,
+            "x": 360, "y": 262, "w": 178, "h": 52,
             "bg": "#F0FDF4", "border": GREEN,
             "lines": ["find-company-", "thesis-options"],
-            "step": "③ DISCOVER",
+            "step": "③ OPTION MAP",
             "badge": "live web",
         },
+        "discover-company-candidates": {
+            "x": 575, "y": 262, "w": 176, "h": 52,
+            "bg": "#ECFDF5", "border": GREEN,
+            "lines": ["discover-company-", "candidates"],
+            "step": "③a CANDIDATES",
+            "badge": "rules",
+        },
         "draft-thesis-contact": {
-            "x": 605, "y": 170, "w": 150, "h": 52,
+            "x": 795, "y": 170, "w": 112, "h": 52,
             "bg": "#FFF7ED", "border": ORANGE,
             "lines": ["draft-thesis-", "contact"],
             "step": "④ DRAFT",
@@ -269,12 +287,16 @@ def render_architecture() -> str:
             ("profile-schema.md", 112),
         ],
         "find-university-chairs": [
-            ("faculty-backbone.md", 118),
             ("search-strategy.md", 108),
         ],
+        "discover-university-candidates": [
+            ("university-discovery-rules.md", 164),
+        ],
         "find-company-thesis-options": [
-            ("bw-company-backbone.md", 130),
             ("company-search-strategy.md", 155),
+        ],
+        "discover-company-candidates": [
+            ("company-discovery-rules.md", 154),
         ],
     }
 
@@ -289,13 +311,17 @@ def render_architecture() -> str:
     # 1. build-student-profile → thesis-finder (horizontal)
     els.append(_path(f'M {164:.0f},{196:.0f} L {205:.0f},{196:.0f}'))
     # 2. thesis-finder → find-university-chairs (diagonal up)
-    els.append(_path(f'M 315,182 C 348,182 348,108 378,108'))
+    els.append(_path(f'M 315,182 C 342,182 342,108 360,108'))
     # 3. thesis-finder → find-company-thesis-options (diagonal down)
-    els.append(_path(f'M 315,208 C 348,208 348,288 378,288'))
-    # 4. find-university-chairs → draft-thesis-contact
-    els.append(_path(f'M 544,108 C 576,108 576,190 605,190'))
-    # 5. find-company-thesis-options → draft-thesis-contact
-    els.append(_path(f'M 556,288 C 582,288 582,210 605,210'))
+    els.append(_path(f'M 315,208 C 342,208 342,288 360,288'))
+    # 4. find-university-chairs → discover-university-candidates
+    els.append(_path(f'M 526,108 L 575,108'))
+    # 5. find-company-thesis-options → discover-company-candidates
+    els.append(_path(f'M 538,288 L 575,288'))
+    # 6. find-university-chairs → draft-thesis-contact
+    els.append(_path(f'M 526,108 C 770,108 770,190 795,190'))
+    # 7. find-company-thesis-options → draft-thesis-contact
+    els.append(_path(f'M 538,288 C 770,288 770,210 795,210'))
 
     # draw boxes
     for bname, b in boxes.items():
@@ -312,11 +338,12 @@ def render_architecture() -> str:
 
         # live web badge
         if b.get("badge"):
-            bw2, bh2 = 58, 18
+            badge = str(b["badge"])
+            bw2, bh2 = 58 if badge == "live web" else 42, 18
             bx2 = x + w - bw2 - 4
             by2 = y + h - bh2 - 4
             els.append(_rect(bx2, by2, bw2, bh2, "#D1FAE5", stroke="#6EE7B7", sw=1, rx=9))
-            els.append(_text(bx2 + bw2 / 2, by2 + 12, "⚡ live web", size=8, fill="#065F46"))
+            els.append(_text(bx2 + bw2 / 2, by2 + 12, badge, size=8, fill="#065F46"))
 
     # draw reference file tags
     tag_h = 20
@@ -333,8 +360,8 @@ def render_architecture() -> str:
             cx += tw + gap
 
     # supporting / optional skills note
-    els.append(_line(12, 352, 590, 352, stroke=BORDER, sw=1, dashed=True))
-    els.append(_text(12, 368, "Also available: find-recent-papers (background papers) · generate-thesis-directions (proposal sketches) · design-agent-skill (meta)",
+    els.append(_line(12, 392, 690, 392, stroke=BORDER, sw=1, dashed=True))
+    els.append(_text(12, 408, "Also available: find-recent-papers (background papers) · generate-thesis-directions (proposal sketches) · design-agent-skill (meta)",
                      anchor="start", size=9, fill=TEXT_LIGHT))
 
     return _svg(W, H, els, defs=ARROW_MARKER)

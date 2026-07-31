@@ -15,14 +15,18 @@ Platz für die **Masterarbeit** finden. Zwei Wege sind möglich: eine Arbeit an 
 **Uni-Lehrstuhl** oder eine Arbeit in einer **Firma in Baden-Württemberg (BW)**.
 
 Das Werkzeug ist kein klassisches Such-Backend, sondern eine Sammlung von **Skills**
-(strukturierte Anleitungen für ein LLM). Fünf Skills greifen ineinander:
+(strukturierte Anleitungen für ein LLM). Fünf student-facing Skills greifen
+ineinander; zwei Candidate-Discovery-Helper übernehmen die live verifizierte
+Kandidatensuche:
 
 | Skill | Aufgabe |
 |---|---|
 | `thesis-finder` | **Single Entry Point** — erkennt ob es einen neuen oder rückkehrenden Nutzer gibt, baut das Profil inline auf, routet zu den Discovery-Skills |
 | `build-student-profile` | Interviewt den Studierenden und legt ein Profil an (standalone nutzbar) |
-| `find-university-chairs` | Findet passende Lehrstühle an der Uni Tübingen |
-| `find-company-thesis-options` | Findet passende Firmen in BW |
+| `discover-university-candidates` | Helper: findet temporäre, live verifizierte Uni-/Instituts-/Lehrstuhl-Kandidaten |
+| `discover-company-candidates` | Helper: findet temporäre, live verifizierte BW-Firmen-Kandidaten |
+| `find-university-chairs` | Student-facing: reichert Uni-Kandidaten an, verifiziert PI/Affiliation und rankt Optionen |
+| `find-company-thesis-options` | Student-facing: reichert Firmen-Kandidaten an, prüft Thesis-Signal/Kontaktpfad und rankt Optionen |
 | `draft-thesis-contact` | Entwirft eine Erst-Kontakt-Mail für eine gefundene Option |
 
 Der rote Faden über alle Skills: **erst verstehen, wen wir vor uns haben (Profil),
@@ -30,30 +34,27 @@ dann gezielt im Web suchen — aber abgesichert, ehrlich und ohne Halluzination.
 
 ---
 
-## 1. Das Grundprinzip: Keine Datenbank, Live-Websuche + „Backbone"
+## 1. Das Grundprinzip: Keine Datenbank, Live-Websuche + Rules-Backbone
 
 ### Entscheidung
 Es gibt **kein laufendes Backend, keine Datenbank, keine gespeicherten Stellen**. Die
-einzige Laufzeit-Quelle ist das **Live-Web**. Der einzige statische Bestandteil ist ein
-sogenanntes **Backbone** — eine kleine, von Hand gepflegte Markdown-Liste (bei Firmen
-~107 Einträge; bei der Uni die offizielle Fakultätsstruktur).
+einzige Laufzeit-Quelle ist das **Live-Web**. Der statische Bestandteil ist kein
+Firmen- oder URL-Katalog mehr, sondern ein **Rules-Backbone**: Suchachsen,
+Verifikationsregeln, Rankingregeln und Output-Verträge.
 
 ### Warum
 - **Portabilität:** Ein Skill ohne Backend läuft überall, muss nicht betrieben, gehostet
   oder gewartet werden. Keine Server, keine Ausfälle, keine Kosten.
 - **Aktualität:** Stellen und Forschungsthemen ändern sich ständig. Eine Datenbank wäre
   sofort veraltet. Das Live-Web ist immer aktuell.
-- **Das Backbone löst das „Kaltstart-Problem":** Würde man einfach „Masterarbeit KI BW"
-  googeln, kämen vor allem **SEO-optimierte Jobbörsen** (StepStone, Indeed) — also Rauschen
-  statt relevanter Akteure. Das Backbone gibt der Suche stattdessen eine **kuratierte
-  Startmenge bekannter, relevanter Firmen/Lehrstühle**, von der aus angereichert wird.
-  Es wirkt also als **Anti-SEO-Bias-Anker**.
+- **Das Rules-Backbone löst das Kaltstart-Problem:** Es zwingt den Agenten, mehrere
+  Quellenachsen zu nutzen, offizielle Seiten zu verifizieren, Ranking-/Top-100-Listen nur
+  als Minderheitsquelle zu behandeln und konkrete URIs live aufzulösen.
 
 ### Was crucial ist
-Das Backbone darf **klein und kuratiert** bleiben (Relevanz schlägt Vollständigkeit).
-Sobald man versucht, „alle Firmen in BW" abzubilden, verliert man genau den Vorteil
-(Wartbarkeit + Anti-SEO-Bias). Diese Spannung — Relevanz vs. Abdeckung — zieht sich durch
-das ganze Projekt (siehe §10).
+Der Backbone darf keine lange, veraltende Entity-Liste sein. Relevanz entsteht durch
+profilbezogene Candidate Discovery: 20-40 Rohkandidaten finden, live verifizieren, auf
+8-12 gute Optionen reduzieren und Unsicherheit offen markieren.
 
 ---
 
@@ -71,16 +72,16 @@ wiederkommt (§9), baut dann ggf. das Profil auf und routet danach zu den Discov
         └─ Rückkehrender Nutzer → Session-Log lesen → Kurzupdate → neu suchen
                                   (§9 Session-Persistenz)
 
-   PROFIL              PASS 1 (offline)          PASS 2 (live)            OUTPUT
+   PROFIL              PASS 1 (live)             PASS 2 (live)            OUTPUT
 ┌───────────┐      ┌──────────────────┐     ┌──────────────────┐    ┌──────────────┐
-│ 6 Dimen-  │ ──▶  │ Backbone filtern  │ ──▶ │ Web-Anreicherung │──▶ │ Options-Map  │
-│ sionen    │      │ (kein Web)        │     │ pro Kandidat     │    │ + Caveat     │
+│ 6 Dimen-  │ ──▶  │ Kandidaten finden │ ──▶ │ Web-Anreicherung │──▶ │ Options-Map  │
+│ sionen    │      │ + verifizieren    │     │ pro Kandidat     │    │ + Caveat     │
 └───────────┘      └──────────────────┘      └──────────────────┘    └──────────────┘
 ```
 
-Der Trick ist die **Zwei-Pass-Struktur**: Erst billig und offline die Kandidaten
-eingrenzen (Pass 1), dann nur für die wenigen verbleibenden Kandidaten teuer im Web
-recherchieren (Pass 2). Das hält die Suche fokussiert und vermeidet Rauschen.
+Der Trick ist die **Zwei-Pass-Struktur**: Erst über mehrere Live-Quellenachsen eine
+kleine, verifizierte Kandidatentabelle erzeugen (Pass 1), dann nur diese Kandidaten
+tief anreichern (Pass 2). Das hält die Suche fokussiert und vermeidet Rauschen.
 
 ---
 
@@ -126,27 +127,27 @@ zusammenhängen). Niemals ein ganzer Fragebogen auf einmal.
 
 ---
 
-## 5. Pass 1 — Das Backbone filtern (ohne Web)
+## 5. Pass 1 — Kandidaten live entdecken
 
 ### Entscheidung
-Pass 1 liest **nur die Backbone-Datei** und filtert sie anhand der Profil-Tags. Kein
-einziger Web-Aufruf. Ziel: eine Kandidatenliste von **5–20 Einträgen**.
+Pass 1 ruft einen dedicated Candidate-Discovery-Skill auf. Ziel ist eine
+temporäre Kandidatenliste von **8–12 Einträgen** (nie mehr als 20).
 
-- Bei **Firmen**: die Markdown-Liste der ~107 BW-Firmen wird nach Sektor-Tags gefiltert,
-  die zu Interessen/Domäne passen. No-Gos werden hier schon angewendet.
-- Bei der **Uni**: statt einer Firmenliste dient die **offizielle Fakultätsstruktur** als
-  Backbone. Eine Routing-Tabelle wählt 1–3 relevante Fakultäten, deren offizielle
-  Lehrstuhl-Listen dann die Kandidaten liefern. (Wichtig: für KI/ML reicht die Informatik-
-  Seite nicht — MPI-IS, ELLIS und Cyber Valley müssen mitgecrawlt werden.)
+- Bei **Firmen**: `discover-company-candidates` sucht über offizielle Seiten,
+  Karriere-/Thesis-Seiten, Forschungscluster, Hochschulpartner, Branchenverbände,
+  regionale Queries und höchstens ergänzend Rankinglisten.
+- Bei der **Uni**: `discover-university-candidates` sucht über offizielle Uni-Suche,
+  Fakultäts-/Instituts-/Klinik-/Zentrumsseiten, associated institutes,
+  Publikationshinweise und ggf. Vorlesungsverzeichnis.
 
 ### Warum
-- **Kosten und Fokus:** Erst grob offline eingrenzen ist billig und vermeidet, dass man
-  20+ irrelevante Firmen teuer im Web recherchiert.
-- **Anti-SEO-Bias:** Die Kandidaten stammen aus einer bekannten, relevanten Menge — nicht
-  aus dem, was eine Suchmaschine gerade nach oben spült.
+- **Keine veraltenden URIs:** Firmen- und Uni-Unterseiten werden bei jedem Lauf neu
+  gefunden und verifiziert.
+- **Bias-Kontrolle:** Top-100-Listen sind selbst size-/brand-biased. Sie dürfen helfen,
+  aber nicht dominieren.
 
 ### Was crucial ist
-- **Zielgröße 5–20:** >20 → Tags enger schneiden; <5 → einen Sekundär-Tag dazunehmen.
+- **Zielgröße 8–12:** >20 → Quellen/Tags enger schneiden; <5 → eine Sekundärachse dazunehmen.
 - **No-Gos nicht stillschweigend droppen:** Mehrdeutige Fälle (z. B. „Robotik" bei No-Go
   „keine Hardware") werden **markiert und behalten**, nicht gelöscht — die Entscheidung
   fällt erst in Pass 2, wenn mehr Information da ist.
@@ -252,8 +253,8 @@ Ein fest formulierter Hinweis macht **drei Dinge ehrlich**:
 1. Die meisten Firmen schreiben Masterarbeiten **nicht** öffentlich aus → `unclear` heißt
    nicht „keine Chance".
 2. Konkrete Outreach-Anleitung je nach Firmengröße (siehe §7).
-3. **Das Backbone ist bewusst unvollständig** — neue Startups, Nischenfirmen und Quereinstiege
-   fehlen evtl.
+3. **Live Discovery ist nicht vollständig** — schwach indexierte Gruppen, informelle
+   Kooperationen und nicht öffentliche Thesis-Wege können fehlen.
 
 ---
 
@@ -320,35 +321,28 @@ Searched: ... / New candidates: ... / Dead-ends: ... / Notes: ...
 
 Diese Punkte sind die **bekannten Schwachstellen** — wichtig für eine ehrliche Bewertung:
 
-1. **Backbone-Abdeckung über Fachbereiche (größtes offenes Risiko).**
-   Das Firmen-Backbone deckt KI/ML, Robotik, Medtech und Fertigung gut ab. Schwächer sind
-   z. B. **Psychologie** (Human Factors, UX), **Bildung/EdTech**, **Umweltwissenschaften**,
-   kleinere **Life-Science-Spinouts**. Da das Tool für **alle** Tübinger Fachbereiche
-   funktionieren soll, ist das eine echte Lücke. Entscheidung: Lücke **ehrlich im Caveat
-   benennen** statt sie durch exhaustives Scrapen zu „schließen" (das würde Wartbarkeit und
-   Anti-SEO-Bias opfern). Für die Uni hat der 2e-Fix (MPI-IS/ELLIS als explizite Pass-1-Quelle)
-   die schlimmsten Lücken bei CS und Psych behoben; generelle Lücken bleiben.
+1. **Live-Discovery-Abdeckung über Fachbereiche (größtes offenes Risiko).**
+   Manche Profile haben schwach indexierte Firmen- oder Uni-Strukturen. Entscheidung:
+   Lücken ehrlich benennen, mehrere Quellenachsen nutzen und keine schwachen Treffer
+   erzwingen.
 
-2. **Zirkuläre Evaluation (Firmen, offen).**
-   Die Uni-Eval wurde durch Task I live validiert (+65 pp über Baseline, alle 4 Fakultäten ≥70 %
-   live recall nach dem I-Fix). Die **Firmen-Eval** hingegen ist noch zirkulär: Ground Truth und
-   Skill filtern aus **demselben** BW-Backbone. Das misst nur „findet der Skill, was im Backbone
-   steht", nicht „deckt das Backbone die Realität ab". Eine unabhängige externe Validation durch
-   eine andere Person/Gruppe steht noch aus.
+2. **Performance-Evaluation über `/commands`.**
+   Die zentrale Regression ist nicht mehr "findet der Skill Einträge aus derselben Liste",
+   sondern ob komplette Simulationen für Jan, Simon, Maja und Tina mindestens so gut sind
+   wie vorher: Profilfit, Routing, Evidenzdisziplin, No-Go-Treue und Nützlichkeit.
 
-3. **Veraltende URLs.**
-   Firmenseiten ändern sich. Abgefangen durch die doppelte Verifikation (§7a), aber nie
-   ganz auszuschließen — daher die Markierung statt stiller Löschung.
+3. **Live-Web-Abhängigkeit.**
+   Ohne Browsing/Search kann Discovery nicht seriös laufen. Dann muss der Skill transparent
+   abbrechen, statt aus Modellgedächtnis Kandidaten zu raten.
 
 4. **Keine erfundenen Kontakte.**
    Firmen-Org-Infos sind schlechter strukturiert als Uni-Fakultätsseiten. Regel: **Ein Name
    wird nur genannt, wenn er auf der firmeneigenen Seite steht** — niemals aus LinkedIn oder
    Konferenzlisten abgeleitet. Verstärkt nach dem Task-I-Fehlattributierungs-Vorfall (§6).
 
-5. **Live-Mehrwert bei Firmen gemessen — aber zirkulär.**
-   Phase-2-Eval: +26 pp über Baseline (100 % Recall alle 3 Profile vs. 74 % Baseline-Mittelwert).
-   Caveat: Ground Truth stammt aus demselben Backbone wie der Skill. Ob der Skill bei einer
-   „fremd" zusammengestellten Firma-Liste genauso gut abschneidet, ist noch unbekannt.
+5. **Rules-only Mehrwert muss gegen den alten Stand gemessen werden.**
+   Vor größeren Discovery-Änderungen wird ein `/commands`-Baseline-Lauf auf `current main`
+   erzeugt; danach wird derselbe Command-Satz gegen die neue Architektur verglichen.
 
 ---
 
@@ -361,8 +355,8 @@ Kompakt, mit Impact (Hoch/Mittel/Niedrig) und ob es nötig ist.
 |---|---|---|---|---|
 | 1 | **Unabhängige Validation durch externe Person/Gruppe** — jemanden außerhalb des Projekts (z. B. Fachschaft, Kommiliton:in) das Tool mit einem echten Profil testen lassen und Recall manuell prüfen. | Hoch | Ja | Behebt die Zirkularität bei Firmen (§10.2). Branch ist package-ready, der Schritt fehlt noch. |
 | 2 | **Distribution anstoßen** — Fachschaft Informatik, Hennig-GitHub, Ersti-Heft ansprechen; ggf. auf Uni-Seiten „Masterarbeit finden" verlinken. | Hoch | Ja | Package ist fertig; die Übergabe ist der einzige noch offene Schritt (Phase 3, außerhalb Branch). |
-| 3 | **Backbone-Lücken für Nicht-MINT-Fächer schließen** — gezielt je ein paar Firmen für Psychologie, EdTech, Umwelt, Life Science ergänzen. | Mittel | Optional | Direkt am „für alle Fachbereiche"-Anspruch (§10.1). Klein halten, kuratiert. |
+| 3 | **Quellenachsen für Nicht-MINT-Fächer schärfen** — gezielt bessere Queries und Quellen für Psychologie, EdTech, Umwelt, Life Science ergänzen. | Mittel | Optional | Direkt am „für alle Fachbereiche"-Anspruch (§10.1), ohne statische Firmenliste. |
 | 4 | **PhD-/Direkt-Anschreiben im Output erklären** — zuerst auf Prof-Seite den Bewerbungsweg prüfen; freundlich, konkret; zweimal nachfragen ist okay. | Mittel | Optional | Macht den Uni-Pfad handlungsfähiger; bisher nur in der Strategie implizit. |
-| 5 | **„Last-verified"-Datum + jährlicher Refresh-Prozess** fürs Backbone festschreiben. | Mittel | Optional | Firmen restrukturieren, Startups verschwinden; ohne Datum altert die Liste unbemerkt. |
+| 5 | **`/commands`-Vergleich regelmäßig laufen lassen** — Baseline vs. Rules-only für Jan, Simon, Maja, Tina. | Mittel | Optional | Verhindert, dass Live Discovery leise schlechter routet. |
 | 6 | **Outreach-/Kontakt-Templates** (Konzern vs. Startup) als fertige Bausteine in den Output legen. | Niedrig | Optional | Senkt die Hürde für den Studierenden; Strategie ist schon definiert (§7b). `draft-thesis-contact` deckt das teilweise ab. |
 | 7 | **Crowdsourced „Gap-Fill"** — Formular, über das fehlende Firmen gemeldet werden. | Niedrig | Nein | Explizit out of scope; erst sinnvoll, wenn das Tool breiter genutzt wird. |
