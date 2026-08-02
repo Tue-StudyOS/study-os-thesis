@@ -19,6 +19,10 @@ Write first-contact messages that help students avoid generic cold emails.
 
 Return:
 
+- an **AI-generated notice**, placed above the draft: state plainly that the draft is
+  AI-generated, that it should not be sent as-is, and that the student should rewrite at
+  least the opening and closing in their own words, cut anything they could not defend if
+  asked about it in person, and verify every factual claim themselves
 - subject line
 - email draft
 - one-sentence rationale for why the email is specific
@@ -30,4 +34,7 @@ Return:
 - Mention at most 1-2 papers or research areas unless the user asks for a longer message.
 - Do not overstate skills, grades, availability, or prior relationship.
 - Do not invent openings, funding, capacity, or promises from the advisor.
+- Never omit the AI-generated notice, including when the user asks only for the email text
+  or for a shortened variant. The notice is student-facing only — do not put a disclosure
+  of AI authorship inside the email itself unless the student explicitly asks for one.
 - Do not depend on the old UI, backend API, database, Docker, Celery, or FastAPI app.
