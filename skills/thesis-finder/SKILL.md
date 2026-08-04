@@ -69,15 +69,31 @@ Populate:
 - **Active Candidates table**: all options surfaced (status: "Found")
 - **Search Log — Session 1**: track chosen, key directions, candidates found, any dead-ends noted during discovery
 
-### Step N5 — Recommend & drill down
+### Step N5 — Recommend, then obey the student's branch choice
+
+This is a two-turn gate. Do not treat the question as rhetorical.
 
 1. From the delivered option map(s), pick 1-2 top options and give a short "why this one" line for each — grounded only in the relevance rationale already present in the map. Do not invent facts not already in the map.
 2. Ask exactly: "Want to go deeper on [the recommended option(s)] before reaching out, or keep exploring other options?"
-3. **If the student wants to go deeper** on an option:
-   - If 1-2 recent papers from that group are not already available in-session, call `find-recent-papers` for that specific person/lab/team (same pattern `draft-thesis-contact` uses).
-   - Present a concrete "what you'd likely work on / learn" summary, derived only from the option's existing relevance rationale (from the map) and the papers' relevance rationale / thesis-angle fields. Do not invent methods or topics not present in those sources.
-   - Update that option's Status to "Recommended" in the Active Candidates table in `session.md`.
-4. **If the student wants to keep exploring**, skip the drill-down and continue.
+3. Stop and wait for the student's answer.
+
+#### Step N5a — If the student wants to go deeper
+
+The next assistant message must be the drill-down, not a contact-email offer and not only a generic outreach angle. Skipping directly to `draft-thesis-contact` after "go deeper" is a workflow failure.
+
+1. If 1-2 recent papers from the selected person/lab/team are not already available in-session, call `find-recent-papers` for that specific option before writing the drill-down. For humanities, social-science, company, or practice-oriented options where recent papers are not the right evidence type or none are found, say that plainly and use only the verified option-map evidence plus any verified project, collection, teaching, careers, or institute pages already gathered.
+2. Present a section headed `## Deeper Look: [selected option]` with:
+   - **Fit in one sentence** — why this option is the top fit, grounded in the option map.
+   - **Evidence anchors** — 1-2 papers, projects, official pages, collections, or job/thesis pages used for the drill-down, with dates or "not found" where appropriate.
+   - **What you'd likely work on / learn** — concrete thesis work derived only from the option map and evidence anchors.
+   - **Feasibility checks** — data/material access, method scope, language, prerequisites, supervision/thesis availability, and any no-go risks to verify.
+   - **First meeting question** — one precise question the student can ask before drafting an email.
+3. Update that option's Status to "Recommended" in the Active Candidates table in `session.md`.
+4. Only after this drill-down is complete, proceed to Step N6.
+
+#### Step N5b — If the student wants to keep exploring
+
+Skip the drill-down and ask what adjacent direction, constraint, or track they want to explore next before running another search.
 
 ### Step N6 — Offer next step
 
@@ -140,17 +156,15 @@ Append a new session block to `~/.claude/thesis-finder/session.md`:
 - Add newly ruled-out items to the Dead-Ends list
 - Update the Student Profile section only if interests changed in Step R3
 
-### Step R6 — Recommend & drill down
+### Step R6 — Recommend, then obey the student's branch choice
 
 Only run this step if Step R4 produced a fresh option map (a new `find-university-chairs` and/or `find-company-thesis-options` run). If the student went straight to `draft-thesis-contact` on an existing candidate in Step R3, skip to Step R7.
 
 1. From the fresh option map, pick 1-2 top options and give a short "why this one" line for each — grounded only in the relevance rationale already present in the map. Do not invent facts not already in the map.
 2. Ask exactly: "Want to go deeper on [the recommended option(s)] before reaching out, or keep exploring other options?"
-3. **If the student wants to go deeper** on an option:
-   - If 1-2 recent papers from that group are not already available in-session, call `find-recent-papers` for that specific person/lab/team (same pattern `draft-thesis-contact` uses).
-   - Present a concrete "what you'd likely work on / learn" summary, derived only from the option's existing relevance rationale (from the map) and the papers' relevance rationale / thesis-angle fields. Do not invent methods or topics not present in those sources.
-   - Update that option's Status to "Recommended" in the Active Candidates table in `session.md`.
-4. **If the student wants to keep exploring**, skip the drill-down and continue.
+3. Stop and wait for the student's answer.
+4. If the student wants to go deeper, follow Step N5a exactly. The next assistant message must be headed `## Deeper Look: [selected option]` and must include the required fit, evidence, likely work, feasibility, and first-meeting fields before Step R7.
+5. If the student wants to keep exploring, follow Step N5b.
 
 ### Step R7 — Offer next step
 

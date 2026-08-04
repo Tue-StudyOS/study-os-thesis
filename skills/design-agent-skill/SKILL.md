@@ -32,9 +32,12 @@ For thesis discovery, split the system into focused skills:
 
 - `build-student-profile` interviews the student deeply enough to capture research taste, motivation, skills, and constraints.
 - `find-recent-papers` uses native web/search tools to find recent papers and explain thesis relevance.
-- `find-university-chairs` uses live web search (faculty backbone + enrichment queries) to identify labs, teams, and research areas across all faculties.
+- `discover-university-candidates` uses live web search rules to build temporary Tübingen chair, institute, clinic, center, and group candidate tables.
+- `discover-company-candidates` uses live web search rules to build temporary BW company candidate tables.
+- `find-university-chairs` enriches and ranks candidates from `discover-university-candidates`.
+- `find-company-thesis-options` enriches and ranks candidates from `discover-company-candidates`.
 - `generate-thesis-directions` turns discovery results and papers into precise research-proposal sketches and conversation starters.
 - `draft-thesis-contact` drafts concise, specific first-contact messages around one proposal sketch.
 - Meta skills create or update the skill package itself.
 
-Student-facing skills must not depend on a database, API, Docker service, FastAPI app, or the old UI. Use native web/search tools when the active agent provides them. If browsing is unavailable, say so explicitly.
+Student-facing skills must not depend on a database, API, Docker service, FastAPI app, the old UI, or long runtime entity/URI backbones. Use native web/search tools when the active agent provides them. If browsing is unavailable, say so explicitly.

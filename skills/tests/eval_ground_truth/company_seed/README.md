@@ -1,9 +1,10 @@
 # Eval Ground Truth — Company Seed
 
-This directory contains hand-curated benchmarks for measuring the recall of the
-`find-company-thesis-options` skill against known, findable BW companies with thesis
-programs. It is the company-sector analogue of the university-chair ground truths in
-the parent `eval_ground_truth/` directory.
+This directory contains hand-curated benchmarks for measuring whether
+`find-company-thesis-options` can surface known, findable BW companies with thesis
+or student-research signals from public live-web evidence. It is the company-sector
+analogue of the university-chair ground truths in the parent `eval_ground_truth/`
+directory.
 
 ## Files
 
@@ -71,6 +72,6 @@ correct signal classification is aspirational; widespread over-classification is
 
 This directory follows the same scoring conventions as the parent `eval_ground_truth/` directory.
 The key difference: university chairs are almost always publicly listed (easy ground truth);
-company thesis programs are inconsistently publicized (harder ground truth). The ≥70% target
-is unchanged because the skill's backbone anchoring should partially compensate for lower
-web-signal quality.
+company thesis programs are inconsistently publicized (harder ground truth). The >=70% target
+is unchanged, but success now depends on live candidate discovery plus evidence discipline,
+not membership in a runtime company list.

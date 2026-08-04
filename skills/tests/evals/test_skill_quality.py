@@ -38,6 +38,34 @@ pytestmark = [
     ("skill_name", "user_prompt", "actual_output", "criteria"),
     [
         (
+            "discover-company-candidates",
+            "I need BW company candidates for a master's thesis on robotics perception with RL. I want software/ML work, no pure hardware.",
+            (
+                "Temporary company candidate table:\n"
+                "| entity_type | name | official_domain | relevant_uri | location | bw_scope | sector_tags | size | source_axis | evidence_summary | verified_at | confidence | no_go_flags |\n"
+                "| company | NEURA Robotics GmbH | neura-robotics.com | https://jobs.neura-robotics.com/ | Metzingen | confirmed | robotics, AI/ML | startup | research_cluster | Official careers page reachable; robotics/AI fit needs software-vs-hardware check. | 2026-07-30 | medium | possible hardware conflict |\n\n"
+                "Search coverage: used research clusters, regional search, official-site queries, and careers/thesis queries. Ranking lists were not the dominant source."
+            ),
+            (
+                "Score high only if the answer behaves like discover-company-candidates: it creates a temporary live-verified candidate table, "
+                "uses multiple source axes, avoids top-company dominance, verifies BW/R&D relevance, marks uncertainty, and does not invent URLs, thesis openings, or contacts."
+            ),
+        ),
+        (
+            "discover-university-candidates",
+            "Find University of Tübingen candidate groups for a theory-heavy philosophy thesis on mind, logic, and explanation.",
+            (
+                "Temporary university candidate table:\n"
+                "| entity_type | name | institution | affiliation_status | official_domain | relevant_uri | unit_type | relevant_person | topic_tags | source_axis | evidence_summary | verified_at | confidence | no_go_flags |\n"
+                "| university_group | Theoretical Philosophy | University of Tübingen | confirmed | uni-tuebingen.de | https://uni-tuebingen.de/fakultaeten/philosophische-fakultaet/fachbereiche/philosophie-rhetorik-medien/philosophisches-seminar/personen/professoren/prof-dr-thomas-sattig/ | chair | Prof. Dr. Thomas Sattig | philosophy of mind, metaphysics | faculty_search | Official page confirms the chair and theoretical focus; no empirical-method requirement. | 2026-07-30 | high | none |\n\n"
+                "Search coverage: used faculty search, institute search, publication search, and internal site search."
+            ),
+            (
+                "Score high only if the answer behaves like discover-university-candidates: it creates a temporary live-verified candidate table, "
+                "uses multiple source axes, verifies current Tübingen affiliation, marks uncertainty, and does not invent chairs, people, thesis openings, or URLs."
+            ),
+        ),
+        (
             "build-student-profile",
             "I liked ML, statistics, and neural data analysis courses. I can code Python and want a master thesis with real data.",
             (
@@ -91,15 +119,10 @@ pytestmark = [
             "find-university-chairs",
             "Which university chairs might fit a thesis on neural data analysis and machine learning?",
             (
-                "Potential matches to investigate:\n"
-                "1. Machine Learning / probabilistic modeling groups: strong fit if their recent publications mention neural data, representation learning, or Bayesian inference. Conversation starter: ask whether a thesis could evaluate ML models on neural recordings.\n"
-                "2. Computational neuroscience or neural data science groups: strong fit for the application area, especially if current lab pages or recent papers discuss spike trains, calcium imaging, or brain-computer interfaces.\n"
-                "3. Biomedical data analysis groups: possible fit when they combine statistical learning with biological signals.\n"
-                "Before contacting anyone, verify each chair's official university page and recent publications, then write a short email linking your coursework, ML experience, and one specific paper. Public pages can be stale, so do not assume openings or supervision capacity."
+                "I need a complete six-dimension profile before ranking chairs. Once the profile is complete, I would call `discover-university-candidates` to build a temporary live-verified table with entity_type, name, institution, affiliation_status, official_domain, relevant_uri, unit_type, relevant_person, topic_tags, source_axis, evidence_summary, verified_at, confidence, and no_go_flags. Then `find-university-chairs` would enrich confirmed-affiliation candidates with PI/affiliation verification and return a ranked option map with dated URLs. Without live search access, I would stop instead of guessing Tübingen groups from memory."
             ),
             (
-                "Score high only if the answer behaves like find-university-chairs: it ranks plausible chair types or supervisors by research fit, "
-                "uses evidence-aware caveats, prepares high-signal contact, distinguishes research areas from fixed thesis openings, and does not invent quotas, team sizes, citation counts, or willingness to supervise."
+                "Score high only if the answer behaves like the rules-only find-university-chairs flow: it gates on a complete profile, delegates candidate discovery to `discover-university-candidates`, requires a live-verified candidate table with source axes, `affiliation_status`, and `verified_at`, enriches confirmed-affiliation candidates only after discovery, cites dated verified URLs, and avoids invented openings, quotas, team sizes, citation counts, or willingness to supervise."
             ),
         ),
         (
@@ -153,15 +176,14 @@ pytestmark = [
             "find-company-thesis-options",
             "I want to find companies in Baden-Württemberg for a master's thesis in machine learning applied to automotive systems. I have Python, PyTorch, and want a structured environment.",
             (
-                "Candidate companies:\n"
-                "1. Daimler / Mercedes-Benz AI Research — automotive AI, large structured program.\n"
-                "2. Bosch Center for AI — automotive and robotics AI, competitive, apply via careers.\n"
-                "3. Zeiss — optical systems + ML, smaller team, unclear thesis signal.\n\n"
-                "For each, the output includes: company size, R&D focus, thesis signal (explicit opening / active program / unclear), contact path, and evidence date. All marked with verification caveats and sources."
+                "I would first call `discover-company-candidates` with the complete profile to build a temporary live-verified BW candidate table with entity_type, name, official_domain, relevant_uri, location, bw_scope, sector_tags, size, source_axis, evidence_summary, verified_at, confidence, and no_go_flags. "
+                "Only `bw_scope: confirmed` candidates continue into the option map; uncertain or rejected locations stay in a separate no-fit/thin-field note.\n\n"
+                "After discovery, the option map groups confirmed-BW automotive ML candidates by fit area, enriches each with official company or careers/research-page evidence, labels thesis signal as confirmed program, inferred student route, or unclear, and gives a contact path without inventing openings or contacts.\n\n"
+                "Coverage caveat: this map covers publicly visible BW company options found through live discovery across multiple source axes as of today's date. Companies with weak web presence, non-indexed pages, or informal thesis paths may be missing."
             ),
             (
-                "Score high only if the answer behaves like find-company-thesis-options: filters from BW backbone, "
-                "enriches with live web evidence, marks thesis signal clearly (never invents availability), links all URLs to company pages, and includes the map-level coverage caveat."
+                "Score high only if the answer behaves like find-company-thesis-options: delegates candidate discovery to discover-company-candidates, "
+                "enriches verified candidates with live web evidence, marks thesis signal clearly (never invents availability), links all URLs to official/company pages, and includes the live-discovery coverage caveat."
             ),
         ),
     ],

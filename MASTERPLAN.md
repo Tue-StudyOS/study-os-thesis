@@ -31,8 +31,8 @@ honestly stated, beats a precise database that decays.
 The durable product is:
 
 - portable `skills/` folders with concise `SKILL.md` entrypoints
-- Markdown `references/` files that encode search strategy, the Tübingen faculty
-  backbone, rubrics, and schemas
+- Markdown `references/` files that encode search strategy, live source axes,
+  verification rules, rubrics, and schemas
 - `AGENTS.md` as the maintainer and agent operating guide
 - an eval harness that compares the skill against a plain-Claude baseline
 - durable findings under `findings/`
@@ -43,7 +43,8 @@ The student-facing skill flow:
 raw input ("I like deep learning + healthcare, hate hardware setup")
    |
    v  build-student-profile      ordered interview (one question, max two per turn)
-   v  discover-thesis-options    profile -> search templates -> faculty backbone + live web -> MAP of options
+   v  find-university-chairs / find-company-thesis-options
+      -> dedicated live candidate discovery -> verified candidates -> MAP of options
    v  draft-thesis-contact       (optional) first-contact message for a chosen option
 ```
 
@@ -75,21 +76,21 @@ data is kept **only as an evaluation ground truth**, never as a runtime source.
 
 ## 3. The core IP — how the skill searches
 
-The value over "just ask Claude" lives in two references the discovery skill
+The value over "just ask Claude" lives in the discovery rules the skill package
 carries:
 
-1. **Search strategy** — the reusable mapping from profile dimensions (interests,
-   methods, domain, thesis style, no-gos) to precise web queries, plus quality
-   filters, dedup rules, and profile→faculty routing.
-2. **Faculty backbone** — the official `uni-tuebingen.de` listing pages per
-   faculty, crawled first so discovery starts from the real org structure and not
-   only from SEO-strong pages.
+1. **Candidate discovery rules** — reusable source axes for companies and
+   university groups, including official sites, research clusters, partner lists,
+   internal site search, and profile-generated queries.
+2. **Enrichment strategy** — reusable checks for topic fit, recency, thesis
+   signals, PI/contact verification, no-go handling, dedup, and output shape.
 
-The discovery is **two-pass**: (1) crawl the backbone to get the structured chair
-set per relevant faculty; (2) enrich with live queries for topics, recent work,
-and openings. Output is a **map of options** grouped by interest dimension, each
-with relevance rationale, pros/cons & difficulties, dated evidence, and a
-conversation starter — ending with an honest coverage caveat.
+The discovery is **two-pass**: (1) build a temporary, profile-specific candidate
+table from multiple live source axes; (2) enrich the verified candidates with
+live queries for topics, recent work, people, contact paths, and openings. Output
+is a **map of options** grouped by interest dimension, each with relevance
+rationale, pros/cons & difficulties, dated evidence, and a conversation starter
+— ending with an honest coverage caveat.
 
 ---
 
@@ -112,8 +113,8 @@ Each task is one agent run.
 | Task | What it is about | Depends on |
 |---|---|---|
 | A | Conversation discipline in `build-student-profile` (one question, max two per turn; precise answers) | – |
-| B | Faculty backbone reference: official Tübingen faculty/chair listing URLs | – |
-| C | Search-strategy reference: profile → precise queries, two-pass, filters, faculty routing | B |
+| B | University candidate discovery rules: source axes without static faculty URI lists | – |
+| C | Search-strategy reference: profile → precise queries, two-pass, filters, routing | B |
 | D | Rework `find-university-chairs` into the faculty-agnostic discovery skill (map output, no DB) | B, C |
 | E | Retire DB assets (`match-thesis-advisors`, `update-openalex-paper-index`, seed data → eval-only) | D |
 | F | Eval ground truth for 3–4 faculties + coverage metric | – |
@@ -124,7 +125,7 @@ Dependency graph:
 
 ```text
 A (interview) ----------------------------------.
-B (backbone) -> C (search strategy) -> D (skill) -> E (retire DB)
+B (candidate rules) -> C (search strategy) -> D (skill) -> E (retire DB)
                                           \         \
 F (ground truth) --------------------------+-------- G (harness) -> H (results)
 ```
@@ -140,11 +141,11 @@ Gate Phase 1 → Phase 2:
 
 ## 6. Phase 2 — Company discovery (later)
 
-Add external-company thesis discovery only after the university arm is proven. The
-likely approach is a **one-time** curated list (e.g. companies in
-Baden-Württemberg) tagged by area/hashtags — the one acceptable static asset,
-because there is no clean live-search equivalent. New startups are a known later
-gap.
+Add external-company thesis discovery only after the university arm is proven.
+The current approach is rules-only: a dedicated candidate-discovery skill builds
+a temporary BW company set from multiple live source axes. "Top 100" company
+lists may be consulted as one minority source axis, but they are not the
+backbone; they are size/brand-biased and cannot be the main path.
 
 ---
 
@@ -187,8 +188,8 @@ and independently verified elsewhere in the same evidence) — it flags the verd
 
 ## 9. Phase 5 — Independent validation, scope experiment & distribution (scoped 2026-07-05)
 
-Phase 5 was "not yet scoped" as of 2026-07-04 — Task L (company-backbone taxonomy) is the
-only Phase-5 task done so far. The 2026-07-05 independent 1.0-readiness review scoped the
+Phase 5 was "not yet scoped" as of 2026-07-04 — Task L (company-backbone taxonomy) has been
+superseded by the rules-only discovery architecture. The 2026-07-05 independent 1.0-readiness review scoped the
 remaining path to 1.0, for both a thesis committee and real students, into a concrete task
 table. **The project is paused here (2026-07-05) with Phase 5 fully scoped but not
 started** — see `STATUS.md` "Current phase" for the exact re-entry point.

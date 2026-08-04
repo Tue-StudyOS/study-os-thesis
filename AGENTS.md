@@ -203,8 +203,9 @@ already provided enough profile context.
 Inputs:
 
 - deep student profile
+- temporary candidate table from `discover-university-candidates`
 - named chairs, professors, topics, or paper leads
-- professor seed index and current public chair/lab sources
+- current public chair/lab/institute sources
 
 Outputs:
 
@@ -218,6 +219,7 @@ Guardrails:
 - do not invent openings, capacity, team sizes, quotas, or willingness to
   supervise
 - date public evidence when freshness matters
+- do not rely on static faculty URI backbones at runtime
 
 ### `find-company-thesis-options`
 
@@ -231,7 +233,7 @@ for the company track.
 Inputs:
 
 - deep student profile (6-dimension output from `build-student-profile`)
-- BW company backbone (`references/bw-company-backbone.md`)
+- temporary candidate table from `discover-company-candidates`
 
 Outputs:
 
@@ -244,6 +246,49 @@ Guardrails:
 - label entries with thesis-signal strength (confirmed program vs. inferred from careers page)
 - do not invent open topics, supervision capacity, or application deadlines
 - date public evidence when freshness matters
+- do not rely on static company or URI backbones at runtime
+
+### `discover-university-candidates`
+
+Intent: build a temporary, live-verified candidate set of Tübingen chairs,
+institutes, clinics, centers, and research groups for a complete student profile.
+
+Use when `find-university-chairs` needs candidate discovery without a static
+faculty URL list.
+
+Outputs:
+
+- 8-12 live-verified candidates where possible, never more than 20
+- official domain, relevant URI, affiliation status, unit type, relevant person
+  or `unknown`, topic tags, source axis, evidence summary, verification date,
+  confidence, and no-go flags
+
+Guardrails:
+
+- use multiple live source axes
+- stop if search/browsing is unavailable
+- do not invent chairs, people, URLs, affiliation, or thesis availability
+
+### `discover-company-candidates`
+
+Intent: build a temporary, live-verified candidate set of Baden-Württemberg
+company thesis options for a complete student profile.
+
+Use when `find-company-thesis-options` needs candidate discovery without a static
+company list.
+
+Outputs:
+
+- 8-12 live-verified candidates where possible, never more than 20
+- official domain, relevant URI, location, BW scope, sector tags, size, source
+  axis, evidence summary, verification date, confidence, and no-go flags
+
+Guardrails:
+
+- do not use "Top 100" company lists as the primary path
+- company rankings may be one source axis only
+- stop if search/browsing is unavailable
+- do not invent companies, URLs, locations, contacts, or thesis availability
 
 ### `match-thesis-advisors` *(retired)*
 
