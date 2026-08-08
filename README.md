@@ -14,6 +14,14 @@ thesis-finder
 The skill interviews you, builds a structured profile of your interests and constraints,
 and returns a map of matching university chairs or BW companies.
 
+**Install the skills as a set.** `thesis-finder` is a router: it invokes the discovery,
+paper, proposal, and contact-draft skills by name, and they invoke each other. Installing a
+subset leaves those calls unresolved. Copy the whole `skills/` folder.
+
+`thesis-finder` keeps a session log so a search can resume weeks later. It prefers
+`~/.claude/thesis-finder/session.md`; if your client cannot write there, it falls back to
+`./thesis-finder-session.md` in the working directory and tells you which path it used.
+
 ---
 
 ## What you get

@@ -398,7 +398,14 @@ Guardrails:
   fragile or repetitive.
 - Prefer portable Markdown and standard files over client-specific features.
 - If a client-specific instruction is unavoidable, document it explicitly and
-  keep the portable path usable.
+  keep the portable path usable. Current example: `thesis-finder` prefers the
+  home-scoped session path `~/.claude/thesis-finder/session.md` and falls back
+  to `./thesis-finder-session.md` in the working directory when that path is
+  unavailable, announcing which one it used.
+- The skills are designed and released **as a set**, not as independent units.
+  `thesis-finder` routes into the discovery skills by name and they invoke each
+  other; a partial install leaves those calls unresolved. Keep cross-skill
+  invocations working, and do not assume a skill can be shipped alone.
 - Make every change traceable to a student workflow, maintainer workflow, or
   evidence-quality improvement.
 - Do not add speculative configurability or broad abstractions before there is a

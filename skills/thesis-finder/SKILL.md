@@ -5,16 +5,18 @@ description: Single entry point for thesis discovery. Builds the student profile
 
 # Thesis Finder
 
-Single entry point for thesis-option discovery. Routes to the appropriate discovery skill(s) and maintains a persistent session log at `~/.claude/thesis-finder/session.md` so searches can resume across weeks without starting over.
+Single entry point for thesis-option discovery. Routes to the appropriate discovery skill(s) and maintains a persistent session log (see **Session File Location** below) so searches can resume across weeks without starting over.
 
 ---
 
 ## Step 0 — Detect session state (do this before anything else)
 
-Attempt to read `~/.claude/thesis-finder/session.md`.
+Resolve the session file path (see **Session File Location** below), then attempt to read it.
 
 - **File not found** → new user. Follow the **New User Flow** below.
 - **File found** → returning user. Follow the **Returning User Flow** below.
+
+Use the resolved path for every later read and write in this skill.
 
 ---
 
@@ -62,7 +64,7 @@ Wait for the student's answer before continuing.
 
 ### Step N4 — Write session file
 
-After delivering results, create `~/.claude/thesis-finder/session.md` (create the `~/.claude/thesis-finder/` directory if it does not exist). Use the session file format defined at the end of this skill.
+After delivering results, create the session file at the path resolved in Step 0 (create its parent directory if it does not exist). Use the session file format defined at the end of this skill.
 
 Populate:
 - **Student Profile section**: compact 6D snapshot from the interview
@@ -105,7 +107,7 @@ Skip the drill-down and ask what adjacent direction, constraint, or track they w
 
 ### Step R1 — Load session state
 
-Read `~/.claude/thesis-finder/session.md` in full. Extract:
+Read the session file (the path resolved in Step 0) in full. Extract:
 - Student profile (6D snapshot)
 - Active candidates and their statuses
 - Dead-ends list
@@ -150,7 +152,7 @@ Pass the dead-ends from the session file as explicit exclusions to the discovery
 
 ### Step R5 — Update session file
 
-Append a new session block to `~/.claude/thesis-finder/session.md`:
+Append a new session block to the session file (the path resolved in Step 0):
 - New entry in the Search Log (date, track, directions, new candidates, new dead-ends)
 - Refresh the Active Candidates table: add new finds; update statuses the student mentioned
 - Add newly ruled-out items to the Dead-Ends list
@@ -174,9 +176,15 @@ Only run this step if Step R4 produced a fresh option map (a new `find-universit
 
 ## Session File Format
 
-**Location:** `~/.claude/thesis-finder/session.md`
+### Session File Location
 
-This file is runtime state — it is never bundled in skill releases. The path is the convention; the file is owned by the user.
+**Preferred path:** `~/.claude/thesis-finder/session.md`
+
+**Fallback:** if that path is unavailable — the client has no home-directory access, writes outside the working directory are refused, or the read fails for any reason other than "file does not exist" — keep the session log at `./thesis-finder-session.md` in the current working directory instead, and **say so in your first reply**: name the path you are using and that the log will be found there next time.
+
+Check the fallback path too when detecting session state in Step 0, so a returning student is recognised regardless of which path the previous run used. If both exist, use the preferred path and mention the duplicate.
+
+This file is runtime state — it is never bundled in skill releases. The path is a convention; the file is owned by the user.
 
 ```markdown
 # Thesis Search Session
