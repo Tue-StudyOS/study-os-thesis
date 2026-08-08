@@ -47,6 +47,7 @@ skill:
 
 ```text
 study-os-thesis-skills-vX.Y.Z/     ← this wrapper folder is NOT what you copy
+├── INSTALL.md                     ← this guide; leave it here
 ├── build-student-profile/
 │   ├── SKILL.md
 │   └── references/
@@ -55,8 +56,9 @@ study-os-thesis-skills-vX.Y.Z/     ← this wrapper folder is NOT what you copy
 └── ...  (10 skills in total)
 ```
 
-You copy the **contents** of that folder — the ten skill directories — not the folder
-itself. That is what the `/*` in the next step is for.
+You copy the **ten skill directories** out of that folder — not the folder itself, and not
+`INSTALL.md`. That is what the `*/` in the next step is for: the trailing slash matches
+directories only, so this guide stays behind.
 
 ---
 
@@ -66,8 +68,9 @@ itself. That is what the `/*` in the next step is for.
 
 1. Create the personal skills directory if it does not exist:
    `mkdir -p ~/.claude/skills`
-2. Copy **all** skill folders into it:
-   `cp -r study-os-thesis-skills-vX.Y.Z/* ~/.claude/skills/`
+2. Copy **all** skill folders into it — the trailing slash on `*/` copies the ten
+   directories and leaves `INSTALL.md` behind:
+   `cp -r study-os-thesis-skills-vX.Y.Z/*/ ~/.claude/skills/`
 3. Confirm the layout is `~/.claude/skills/thesis-finder/SKILL.md` — one folder per skill,
    each with its own `SKILL.md`. If you see `~/.claude/skills/study-os-thesis-skills-vX.Y.Z/`,
    you copied the wrapper folder instead of its contents; move them up one level.

@@ -37,6 +37,12 @@ def test_release_artifact_contains_only_installable_skill_folders(tmp_path: Path
     assert not (package_dir / "skills").exists()
     assert not (package_dir / "tests").exists()
 
+    # The archive is what the student unpacks. Without INSTALL.md in it, the "install all
+    # skills, not a subset" requirement lives only in the repo README, which they may
+    # never see.
+    assert (package_dir / "INSTALL.md").is_file()
+    assert {path.name for path in package_dir.iterdir() if path.is_file()} == {"INSTALL.md"}
+
     forbidden_entries = {
         ".github",
         "AGENTS.md",

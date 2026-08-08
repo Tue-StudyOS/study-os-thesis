@@ -140,6 +140,15 @@ def build_release(dist_dir: Path, tag: str | None = None) -> tuple[Path, Path, P
     for skill_dir in skill_dirs():
         copy_skill(skill_dir, package_dir)
 
+    # The archive is what a student actually receives; INSTALL.md is the only file in it
+    # that tells them the skills need a capable agent, live web access, and a full-set
+    # install. Leaving it behind in the repo puts the instructions where the audience
+    # for them will never look.
+    install_guide = REPO_ROOT / "INSTALL.md"
+    if not install_guide.is_file():
+        raise BuildError("INSTALL.md is missing; the release archive must ship install instructions")
+    shutil.copy2(install_guide, package_dir / "INSTALL.md")
+
     validate_package(package_dir)
     tar_path, zip_path = create_archives(package_dir, dist_dir)
     return package_dir, tar_path, zip_path
