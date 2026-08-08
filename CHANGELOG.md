@@ -88,3 +88,59 @@ This project follows Semantic Versioning for the released skill package:
 
 - The skills are designed to be installed **as a set**. `thesis-finder` routes into the discovery skills by name and they invoke each other, so a partial install leaves those calls unresolved.
 - Release `skills-v1.0.0` (2026-07-06) is superseded: it ships the backbone architecture deleted on 2026-07-31.
+
+## [1.0.0] - 2026-07-06
+
+> Recovered from `git show skills-v1.0.0:CHANGELOG.md` on 2026-08-08. Until then this
+> section existed only on the `release/skills` branch, because the old release workflow
+> finalized the changelog there and never merged it back — the same gap that left `main`
+> stuck at version 0.1.0. Wording is reproduced as published; empty placeholder
+> subsections were dropped. **This release ships the backbone architecture** that was
+> deleted on 2026-07-31, which is why the entry below still says "company backbone".
+
+### No-DB Universal Skill Rewrite
+
+- `thesis-finder` rebuilt as a single, database-less, university-wide entry-point skill covering all faculties, with inline student-profile building (no separate pre-skill call needed).
+- `find-company-thesis-options` — company/R&D thesis discovery across the Baden-Württemberg company backbone.
+- `draft-thesis-contact` — first-contact message drafting to potential advisors, with a paper-first gate.
+- `find-university-chairs` rewritten as a faculty-agnostic discovery skill, extended from a fixed subset to all Tübingen faculties.
+- Persistent session state across searches, a no-invented-URLs rule, and mandatory existence/activity verification for discovered chairs and companies.
+- Breaking: `thesis-finder` is now the sole entry point; the previous flow requiring a separate profile-building skill call before search is no longer required and may not match older invocations.
+
+### Breaking Changes
+
+- As published, this section read "None." — inaccurate even at the time, since the entry-point change above is marked `Breaking:`.
+
+## [0.1.2] - 2026-06-19
+
+> Recovered from `git show skills-v1.0.0:CHANGELOG.md` on 2026-08-08, same reason as above.
+
+### Added
+
+- Skill-only release artifacts as `.tar.gz` and `.zip`, containing only installable skill folders.
+- Automated release workflow with version bumping, release branch publishing, and GitHub App authentication.
+- Human-readable changelog workflow for GitHub Release notes.
+
+### Changed
+
+- Moved maintainer and test configuration into `pyproject.toml`.
+- Updated distribution documentation to describe release artifacts and the `release/skills` branch.
+
+### Fixed
+
+- Prevented release artifacts from including tests, scripts, docs, or maintainer files.
+- Fixed release version bumping so SemVer values are replaced correctly.
+
+### Removed
+
+- Removed standalone `pytest.ini` in favor of `pyproject.toml`.
+
+### Breaking Changes
+
+- None.
+
+## [0.1.1] - 2026-06-19
+
+- Tagged before the changelog workflow existed; `skills-v0.1.1` carries no `CHANGELOG.md`,
+  so no section was ever written and none can be recovered. Recorded here so the tag list
+  and this file agree. See `git log skills-v0.1.1` for what it contained.
