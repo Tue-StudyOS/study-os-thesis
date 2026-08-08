@@ -83,14 +83,25 @@ thesis-finder                ← single entry point
             Candidate pass: discover-company-candidates live source axes
             Enrichment pass: R&D focus, thesis signal, contact path
             → option map grouped by interest dimension
+    │
+    │  recommends 1–2 options, then asks: go deeper, or keep exploring?
+    ├──▶ go deeper
+    │       find-recent-papers   → 1–2 papers from that specific person or lab
+    │       → "Deeper Look": fit, evidence, likely work, feasibility, first question
+    └──▶ keep exploring          → next direction, then search again
 
-(optional)
-generate-thesis-directions   → research-proposal sketches from the chosen option
+(optional, on request)
 draft-thesis-contact         → first-contact email for a specific chair or company
+                               (also calls find-recent-papers if none surfaced yet)
 ```
 
-Supporting skills (not part of the student flow):
-- `find-recent-papers` — relevant papers as background evidence
+`find-recent-papers` is invoked by the flow above, not by you. `draft-thesis-contact`
+runs only when you ask for it.
+
+Not reachable from `thesis-finder` — invoke by name if you want them:
+- `generate-thesis-directions` — research-proposal sketches. Deliberately outside the
+  student flow: the product is a *map of options you reflect on*, not a finished
+  proposal. See [MASTERPLAN.md](MASTERPLAN.md) §1.
 - `design-agent-skill` — meta-skill for designing or reviewing new skills
 
 ---

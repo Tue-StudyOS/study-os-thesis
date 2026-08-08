@@ -21,8 +21,10 @@ Require a deep student profile covering all six dimensions:
 5. Skills
 6. No-gos
 
-If any dimension is missing or shallow, stop here. Invoke `build-student-profile`
-before producing a shortlist.
+If any dimension is missing or shallow, stop here and complete the profile first —
+through `thesis-finder`'s inline interview when you were invoked from the router,
+or by invoking `build-student-profile` when you were invoked directly. Either path
+must end with all six dimensions present.
 
 This skill requires live web/search access. If browsing or search is unavailable,
 say so and do not guess from model memory.

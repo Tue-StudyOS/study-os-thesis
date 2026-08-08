@@ -12,8 +12,8 @@ does the final thesis-signal enrichment, ranking, and student-facing option map.
 ## Prerequisites
 
 Require a complete six-dimension profile: interests, methods, domain, thesis
-style, skills, and no-gos. If any dimension is missing or shallow, return to
-`build-student-profile` before searching.
+style, skills, and no-gos. If any dimension is missing or shallow, return to the
+caller and let it complete the profile before searching.
 
 This skill requires live web/search access. If browsing or search is unavailable,
 stop and say that company candidate discovery cannot be run without live sources.

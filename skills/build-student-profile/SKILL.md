@@ -1,11 +1,13 @@
 ---
 name: build-student-profile
-description: Build a deep in-session student research profile through an interview about interests, taste, skills, constraints, and thesis preferences. Use when asked to understand a student before generating research proposals, infer a thesis profile, prepare matching inputs, or turn course/interests text into a structured profile without storing private data.
+description: Build a deep in-session student research profile through an interview about interests, taste, skills, constraints, and thesis preferences. The interview is itself part of the value — it helps the student sharpen what kind of thesis actually fits them. Use when asked to understand a student before searching for thesis options, infer a thesis profile, prepare matching inputs, or turn course/interests text into a structured profile without storing private data.
 ---
 
 # Build Student Profile
 
-Create a private, in-session profile that downstream thesis-finder skills can use to create precise research proposals. Do not persist student data to bundled resources.
+Create a private, in-session profile that downstream thesis-finder skills can use to find precise thesis options. Do not persist student data to bundled resources.
+
+The interview has two outputs, and the second one matters as much as the first: a structured profile for the search, and a student who now understands their own preferences better than when they started. Ask questions that make the student weigh one thing against another — those are what produce the reflection.
 
 ## Workflow
 
@@ -17,7 +19,7 @@ Create a private, in-session profile that downstream thesis-finder skills can us
 6. Ask whether the student wants to provide optional evidence sources such as a Transcript of Records, CV, project portfolio, GitHub profile, LinkedIn profile, module handbook excerpts, thesis/exam regulations, or job descriptions. Continue without them if the student prefers.
 7. Probe for concrete evidence: favorite lectures, seminars, exercises, papers, projects, internships, work experience, frustrating topics, tools they enjoy, methods they want to learn, and what kind of result would make the thesis feel successful.
 8. Explicitly infer and summarize research skills, not only interests: technical execution, experimental design, literature reading, mathematical comfort, data handling, engineering maturity, communication, and domain knowledge.
-9. Continue until the profile is strong enough to generate proposals, or explicitly label the remaining uncertainty.
+9. Continue until the profile is strong enough to drive a precise search, or explicitly label the remaining uncertainty.
 10. Capture the student's degree program and thesis level. Ask the student directly — their own answer is the primary source, for every faculty. `references/tuebingen-degree-programs.md` covers the **Computer Science department only**; use it to recognize those programs and the level each implies (for example, Machine Learning is Master only). For any other faculty, take the student's answer and verify level or thesis duration live against the faculty's own pages if it matters for scoping. There is no university-wide program list here, and a program missing from that file is not evidence that it does not exist.
 11. Normalize the profile into concise sections using `references/student-profile-schema.md`.
 12. Mark confidence levels when information is inferred rather than explicitly stated.

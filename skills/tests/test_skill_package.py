@@ -313,8 +313,14 @@ def test_static_acceptance_fixture_covers_full_student_flow() -> None:
 
     # Both discovery skills gate on a deep profile and search the live web.
     assert "live web" in chair_skill
-    assert "If any dimension is missing or shallow, stop here." in chair_skill
-    assert "If any dimension is missing or shallow, stop here." in company_skill
+    # The gate is "incomplete profile => do not search"; both routes into the skill
+    # (thesis-finder's inline interview, or build-student-profile on a direct call)
+    # must be named, so a directly-invoked skill does not point at a path the router
+    # never takes.
+    for skill_text in (chair_skill, company_skill):
+        assert "If any dimension is missing or shallow, stop here" in skill_text
+        assert "thesis-finder`'s inline interview" in skill_text
+        assert "`build-student-profile` when you were invoked directly" in skill_text
     assert "discover-university-candidates" in chair_skill
     assert "discover-company-candidates" in company_skill
 
