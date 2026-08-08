@@ -233,6 +233,61 @@ deren Seiten sind oft einfach nicht aktuell.
 
 ---
 
+## 7a. Der AI-Hinweis über jedem Kontakt-Entwurf
+
+> Entschieden am 2026-08-02 von Valentin Schmidt (Commit `1d43de7`), hier nachträglich
+> dokumentiert (2026-08-08). Steht neben §7, weil es die zweite Entscheidung ist, die
+> nicht technisch, sondern ethisch begründet ist.
+
+### Die Entscheidung
+`draft-thesis-contact` stellt über **jeden** Entwurf einen AI-Hinweis. Er sagt offen, dass
+der Entwurf KI-generiert ist, dass er nicht so verschickt werden soll, und dass der
+Studierende mindestens Anfang und Schluss in eigenen Worten neu schreiben, alles streichen
+soll, was er im Gespräch nicht verteidigen könnte, und jede Tatsachenbehauptung selbst
+prüfen muss.
+
+Zwei Regeln machen das verbindlich:
+
+1. Der Hinweis darf **nie** weggelassen werden — auch nicht, wenn jemand ausdrücklich nur
+   den E-Mail-Text oder eine Kurzfassung anfordert.
+2. Die Offenlegung ist **ausschließlich studentenseitig**. In die E-Mail an den Professor
+   kommt sie *nicht* — es sei denn, der Studierende verlangt es explizit.
+
+### Warum studentenseitig und nicht in der Mail?
+Weil die beiden Adressaten unterschiedliche Probleme haben.
+
+Der Studierende hat das Problem, dass ein flüssiger Entwurf sich fertig anfühlt. Der
+Hinweis unterbricht genau das: er verwandelt den Entwurf von einem Ergebnis in einen
+Rohstoff und macht die Nacharbeit zur ausdrücklichen Bedingung. Er ist ein
+Handlungsauftrag, kein Etikett.
+
+Eine Zeile „diese Mail wurde mit KI erstellt" am Ende der Mail leistet das Gegenteil: sie
+kostet den Studierenden nichts, ändert am Text nichts, und lädt dazu ein, den Entwurf
+unverändert zu verschicken — die Offenlegung ersetzt dann die Überarbeitung, statt sie zu
+erzwingen. Zudem wäre die Angabe irreführend, wenn der Studierende den Text tatsächlich
+gründlich überarbeitet hat: dann ist es seine Mail. Die Verantwortung für den Inhalt liegt
+in jedem Fall bei ihm, und genau das sagt der Hinweis ihm.
+
+### Verbindung zur Professoren-Recherche vom Mai
+Die Regel ist kein Einzelfall, sondern dieselbe Haltung eine Stufe später im Ablauf.
+„Bob" empfahl in der Professoren-Recherche (2026-05, ausgewertet in
+[`detailed_analysis.md`](docs/thesis-report/00-problem-and-research/2026-06-12-professor-research-package/detailed_analysis.md),
+Abschnitt 1.4) eine Disclaimer-Formulierung, die das Paket „nahezu wörtlich übernehmen"
+wollte: Themen seien *„starting points only; an essential part of doing a thesis is the
+formulation and refinement of the problem itself."*
+
+Damals ging es um Themenvorschläge, jetzt um den Kontakt-Entwurf. Die Aussage ist beide
+Male dieselbe: **Was das Tool ausgibt, ist ein Ausgangspunkt — die eigene Formulierung ist
+der Teil, den der Studierende nicht delegieren darf.** Beim Themenvorschlag betrifft das
+das Denken, beim Entwurf die Sprache.
+
+Beides deckt sich mit Gehlers Antwort vom 2026-08-05 auf Valentins Frage, was ihm als
+Professor wichtiger sei — die Vorschläge oder dass Studierende nachgedacht haben:
+*„Students that have reflected about what topic they would like to work on."* Die
+Disclaimer-Regel entstand unabhängig davon, drei Tage vorher.
+
+---
+
 ## 8. Output — gruppiert nach Interesse, mit ehrlichem Caveat
 
 ### Entscheidung
