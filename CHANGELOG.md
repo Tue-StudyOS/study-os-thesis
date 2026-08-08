@@ -10,6 +10,28 @@ This project follows Semantic Versioning for the released skill package:
 
 ## [Unreleased]
 
+### Added
+
+- ...
+
+### Changed
+
+- ...
+
+### Fixed
+
+- ...
+
+### Removed
+
+- ...
+
+### Breaking Changes
+
+- None.
+
+## [2.0.0] - 2026-08-08
+
 ### No-DB Universal Skill Rewrite (this branch)
 
 - `thesis-finder` rebuilt as a single, database-less, university-wide entry-point skill covering all faculties, with inline student-profile building (no separate pre-skill call needed).
@@ -33,16 +55,26 @@ This project follows Semantic Versioning for the released skill package:
 
 - Moved maintainer and test configuration into `pyproject.toml`.
 - Updated distribution documentation to describe release artifacts and the `release/skills` branch.
+- `thesis-finder` no longer hardcodes `~/.claude/thesis-finder/session.md`. It prefers that path and falls back to `./thesis-finder-session.md` in the working directory when the home-scoped path is unavailable, naming the path it used in its first reply.
+- `build-student-profile/references/tuebingen-degree-programs.md` is now titled and used as what it is — a Computer Science department list, not a university-wide one. Students in other faculties are asked directly and their answer verified live.
+- `INSTALL.md` added at the repo root with per-client install steps, honest prerequisites, and a troubleshooting table.
 
 ### Fixed
 
 - Prevented release artifacts from including tests, scripts, docs, or maintainer files.
 - Fixed release version bumping so SemVer values are replaced correctly.
+- Fixed the release workflow's version drift: the version is read from `pyproject.toml` on the dispatched ref instead of being bumped on the release branch, which previously left `main` permanently behind the published tag.
 
 ### Removed
 
 - Removed standalone `pytest.ini` in favor of `pyproject.toml`.
+- Removed `find-recent-papers/references/papers/` — a pre-pivot static OpenAlex snapshot (59 files) that conflated two different researchers named "Matthias Hein" and was the last static URI catalog in the package. `find-recent-papers` never referenced it; the skill searches live. Its orphaned tooling (`scripts/update_openalex_index.py`) went with it.
 
 ### Breaking Changes
 
 - Static runtime company/faculty backbones are no longer part of the discovery contract. Candidate discovery now requires live search/browsing and returns transient verified candidate tables.
+
+### Notes
+
+- The skills are designed to be installed **as a set**. `thesis-finder` routes into the discovery skills by name and they invoke each other, so a partial install leaves those calls unresolved.
+- Release `skills-v1.0.0` (2026-07-06) is superseded: it ships the backbone architecture deleted on 2026-07-31.
