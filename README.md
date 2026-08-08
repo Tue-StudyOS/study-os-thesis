@@ -3,6 +3,13 @@
 Portable AI-agent skills that take a Tübingen student from vague research interests to a
 prepared first contact with a fitting thesis supervisor — no login, no database, no backend.
 
+**What it is actually for.** The map of chairs and companies is the visible output, but it
+is not the point. The point is that you end up with a sharper idea of what kind of thesis
+fits you than you started with. The skill asks you at the outset what you think you are
+looking for, and asks again at the end — in your own words, both times — and keeps both so
+you can see what moved. A search that changes your mind, or convinces you a direction is
+wrong, has done its job even if you contact nobody from the list.
+
 ## Quickstart
 
 **Installing as a student? → [INSTALL.md](INSTALL.md)** — per-client setup steps, what you

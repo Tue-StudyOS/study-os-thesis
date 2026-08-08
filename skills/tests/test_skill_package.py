@@ -200,6 +200,29 @@ def test_shipped_resources_are_not_static_uri_catalogs() -> None:
     )
 
 
+def test_entry_point_captures_thesis_self_understanding_before_and_after() -> None:
+    # The graded outcome variable is the student's own change in understanding, not the
+    # quality of the option map (P. Gehler, 2026-08-05: "Students that have reflected
+    # about what topic they would like to work on"). The skill therefore has to produce
+    # that measurement itself: a verbatim statement before the first search and one after,
+    # kept append-only in the session file so it survives across sessions.
+    finder_skill = (SKILLS_DIR / "thesis-finder" / "SKILL.md").read_text(encoding="utf-8")
+
+    assert "Step N0 — Capture the starting point" in finder_skill
+    assert "what kind of thesis do you think you're looking for right now?" in finder_skill
+    assert "what kind of thesis are you looking for now?" in finder_skill
+    assert "## Thesis Self-Understanding (append-only, student's own words)" in finder_skill
+
+    # Verbatim, in both directions, is the whole point: a paraphrase would launder the
+    # student's own wording and destroy the comparison.
+    assert finder_skill.count("verbatim") >= 3
+    assert "never overwrite an earlier statement" in finder_skill
+
+    # An honest null result must stay sayable, or the instrument only ever reports success.
+    assert "close to identical" in finder_skill
+    assert "less certain" in finder_skill
+
+
 def test_shipped_resources_have_no_hardcoded_calendar_years() -> None:
     # The package's central claim is that it does not go stale without maintenance
     # (README "Architecture", MASTERPLAN §2). Recency filters written as literal years
