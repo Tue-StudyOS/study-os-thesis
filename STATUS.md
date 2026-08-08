@@ -16,8 +16,9 @@ outcome variable, and adds three chapters he explicitly asked for (user studies 
 memory, a future-feedback plan, a realistic survival plan). New authoritative plan:
 [2026-08-08-final-1.0-plan.md](findings/no_db_universal_skill/2026-08-08-final-1.0-plan.md)
 (Tasks AJ, V′, AK, AL, AA′, AB′, AC′, Z′, AD, AM, AN, AO, AE′, AF–AI; W optional).
-**Next up: Task V′** — and it must run first, in a fresh conversation, before anything else
-touches the eval material.
+**Task V′ done 2026-08-08** (blind Theology run: 83% recall / 100% precision — see the log).
+**Next up: Task AK** — re-measure CS + Law post-pivot, so all faculty numbers are comparable
+against the shipping architecture.
 
 ---
 
@@ -36,8 +37,9 @@ touches the eval material.
 > Phases 1–4 are done but Phase 4's GO is provisional on two counts (blindness gap
 > 2026-07-05; architecture change 2026-07-31).
 >
-> **What is NOT done and matters most:** no clean blind hard-faculty run in any
-> architecture (V′); no post-pivot faculty measurement at all (AK); no committed evidence
+> **What is NOT done and matters most:** ~~no clean blind hard-faculty run~~ — **done
+> 2026-08-08 (V′: Theology, blind, 83%/100%, on the post-pivot architecture)**; CS and Law
+> still carry pre-pivot numbers (AK); no committed evidence
 > for the shipping architecture (AL); nobody outside the project has ever installed the
 > tool (Z′); the reflection outcome Gehler grades has never been measured (AC′/Z′).
 >
@@ -142,7 +144,10 @@ Decision doc: [2026-07-03-core-done-go-no-go.md](findings/no_db_universal_skill/
 **Flagged provisional twice.** (1) 2026-07-05 — the Humanities and Law numbers behind this
 verdict are not clean blind measurements
 ([independent review](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md));
-Task V′ (blind Theology run) is the named repair. (2) **2026-08-08 — the architecture this
+Task V′ (blind Theology run) was the named repair — **done 2026-08-08: Theology 83% recall /
+100% precision, genuinely blind, on the post-pivot architecture.** That closes the blindness
+gap but does not retroactively clean the Humanities/Law numbers, which stay flagged.
+(2) **2026-08-08 — the architecture this
 verdict certifies no longer ships.** All numbers above were produced by the backbone-crawl
 architecture, deleted 2026-07-31. Tasks AJ (label every number), AK (re-measure two
 faculties post-pivot) and AL (commit evidence for the shipping architecture) are the named
@@ -262,7 +267,7 @@ superseded outright by the pivot.
 
 | Task | Step | Status | Owner | Notes / difficulties |
 |---|---|---|---|---|
-| V′ | Blind Theology run — the only untouched hard-faculty ground truth | ⬜ open | — | **Run FIRST, in a fresh conversation** that has not read the final plan §2 or the Task T/U analyses. ~30 min. Now doubly valuable: first clean blind number *and* an early post-pivot faculty number. Also exercises the N.N.-vacant-chair honesty case. G5. |
+| V′ | Blind Theology run — the only untouched hard-faculty ground truth | ✅ done 2026-08-08 | `15954ef` | **Recall 5/6 = 83%, precision 9/9 = 100%.** Blindness held (only the GT `Sample interest:` line grepped). First hard faculty to clear 80% on a first blind run with no prior fix, and a post-pivot number: 83% across *both* theology faculties with no backbone file at all. N.N. case passed on the harder variant — 6 vacancies reported honestly, incl. the two on-focus ones (AT I, NT II "Evangelienforschung"), no invented holders. Two flags left open on purpose: (a) is the GT's Witt row over-inclusive for a late-antique persona? (b) the §21 vacancy scenario for an *ethics* persona is still unrun. G5. |
 | AJ | Pivot evidence audit — tag every number in the repo with the architecture + date that produced it | ⬜ open | — | **Blocker for AE′.** Every recall/precision figure measures the backbone architecture deleted 2026-07-31. Also permanently demotes the company eval (closes old Y). G5/G4. |
 | AK | Post-pivot ground-truth re-measurement: CS + Law (Humanities optional) | ⬜ open | — | The sharp test. `search-strategy.md` went 461→52 lines; Task U's enrich-before-exclude rule survived as one sentence but the **Remmert** worked example did not. Does the rule still find her without it? Report her row explicitly. Do not patch in this task. G5/G1/G3. |
 | AL | Reflection rubric dimension + committed simulation evidence set | ⬜ open | — | PR #71's before/after (baseline 20.0 → rules-only 20.75, 6/6 gates) exists **only in the PR description**; `.simulations/` is gitignored. Recover those numbers, re-run the 8-persona suite, commit conversations + ratings + a limitations README. G5/G4. |
