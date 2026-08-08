@@ -321,6 +321,51 @@ architecture-tagged. W optional.
 
 ## Log
 
+- **2026-08-08** — **Task V′: blind Theology run — 83% recall / 100% precision, and the
+  first clean post-pivot faculty measurement.** Session was held blind on `theology.md`, on
+  the final-1.0 plan and on the architecture question; only the GT's `Sample interest:` line
+  was read (via `grep`) before the live run. Output:
+  `dist/live-validation/theology-skill.md`; full account in the
+  [live-eval runbook](findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md),
+  2026-08-08 entry; scorecard updated.
+
+  **Recall 5/6 = 83%** (Leuenberger, Kamlah, Tilly, Landmesser, Drecoll; missed **Witt**).
+  **Precision 9/9 = 100%.** Theology is the **only** hard faculty to clear ≥80% on a first
+  blind run with no fix applied first — Humanities needed a protocol fix, Law the §5 fix.
+  Discovery recall was 6/6: Witt was enumerated and recorded in the map's explicit exclusion
+  list, then excluded on *period* grounds (his chair is Reformation/Middle Ages; the sample
+  interest says "early-church / late-antique"). That is a defensible call and arguably a
+  GT-generosity question — flagged, deliberately not resolved in the session that scored it.
+
+  **Why this run matters more than its number.** Per the entry below, every recall figure
+  this project owns was produced by the backbone architecture deleted on 2026-07-31.
+  `references/tuebingen-faculty-backbone.md` **no longer exists**; `find-university-chairs`
+  now delegates discovery to `discover-university-candidates`. This run hit 83% recall and
+  reached **both** Tübingen theology faculties **with no backbone file at all** — real
+  post-pivot, in-repo evidence for the no-DB direction, independently produced while blind
+  to the plan that predicted it. Caveat: the delegation is prose-level — one agent ran both
+  skills' workflows inline, so the hand-off boundary itself (schema conformance, thin-field
+  path) is still untested.
+
+  **Vacancy/N.N. handling passed on the harder variant.** The faculty carries **6 vacant
+  chairs of 16**. The run listed all six *before* the option map, invented no holders, and
+  said explicitly that a chair designation is not an available supervisor — including for the
+  two vacancies **directly on the persona's focus** (Altes Testament I; Neues Testament II
+  "Evangelienforschung", the faculty's closest label to plain NT exegesis). Per GT §21 this is
+  recorded as a robustness result, not a recall figure. The GT's sharpest version — an
+  *ethics* persona hitting the vacant Systematische Theologie II/III — is still unrun.
+
+  **Precision detail worth keeping:** 3 of the 9 surfaced options are **Catholic-faculty**
+  chairs (Eisele, Jürgasch, Scoralick), outside the GT's stated scope but squarely inside the
+  sample interest. Crossing the faculty boundary unprompted is a coverage win — Tübingen
+  splits biblical studies across two theology faculties, and the persona says "biblical
+  studies," not "Protestant biblical studies."
+
+  **Also:** a fourth independent URL-drift 404 (the Catholic Alte-Kirchengeschichte
+  chair-holder page), after CS/Cyber Valley, Humanities/interfaculty-centres and
+  Law/Juniorprofessur. And doc drift: the runbook's "When to run this" still names the
+  deleted backbone file.
+
 - **2026-08-08** — **Phase 5 finally scoped; STATUS resynced after a month of undocumented
   work.** Switched to `main`, fast-forwarded 166 commits, and audited what happened between
   2026-07-06 and 2026-08-04 — none of which had been logged here. Wrote

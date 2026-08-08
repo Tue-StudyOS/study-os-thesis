@@ -25,7 +25,7 @@ strawman) and do not count as evidence. See `2026-06-28-live-eval-results.md`.**
 | CS | 100% (7/7) | 60% (3/5) → **100%** post-fix | 60% (3/5) → **100%** post-fix | 75% (9/12) → **100%** (10/10) post-Task-O | `2026-06-28-live-eval-results.md` → `2026-06-28-I-fix-revalidation.md` → `2026-07-02-live-eval-runbook.md` (Roadmap-J run 1, Task O re-run) |
 | Humanities (hard) | — | 60% (3/5) → **100%** (5/5) post-protocol-fix | — (recall-only, no distinct strict pass run) | **100%** (5/5) | `2026-07-02-live-eval-runbook.md`, 2026-07-03 entries (Task Q run 1 → Task T corrected re-score) — see caveat below |
 | Law (hard) | — | 60% (3/5) → **80%** (4/5) post-§5-fix | — (recall-only, no distinct strict pass run) | 100% (3/3) → **100%** (4/4) | `2026-07-02-live-eval-runbook.md`, 2026-07-03 + 2026-07-04 entries (Task T blind run → Task U re-run after §5 enrich-before-exclude fix) |
-| Theology (hard) | — | not yet run | not yet run | not yet run | GT exists (`.../theology.md`), blind live run not yet exercised |
+| Theology (hard) | — | **83%** (5/6) | — (recall-only, no distinct strict pass run) | **100%** (9/9) | `2026-07-02-live-eval-runbook.md`, 2026-08-08 entry (Task V′ blind run) |
 | Interdisciplinary | — | **100%** (5/5 GT anchors) | — | not scored as recall/precision | `2026-07-03-task-r-edge-cases.md` (Task R, routing-breadth check: 3/3 faculties/centers covered) |
 | **Baseline (plain Claude + Websearch), Task I** | — | ~17% mean | ~17% mean | not measured | `2026-06-28-live-eval-results.md` |
 
@@ -46,13 +46,33 @@ the one miss — his own page shows no constitutional/human-rights/tech focus ev
 enrichment, an honest, defensible remaining gap distinct from the Remmert defect class. Full
 account: `2026-07-02-live-eval-runbook.md`, 2026-07-04 entry.
 
+**Theology note (added 2026-08-08, Task V′):** the **cleanest blind run in the table** —
+`theology.md` was the one hard-faculty GT never opened mid-run, and this was also one of the
+first measurements of the *current* skill version (no static backbone; discovery delegated to
+`discover-university-candidates`). It clears ≥80% **on a first blind run with no fix applied
+first**, unlike Humanities (needed a protocol fix) and Law (needed the §5 skill fix). The one
+miss, **Witt** (Kirchengeschichte I — Reformation/Middle Ages), was *enumerated* in Pass 1 and
+recorded in the map's explicit exclusion list, then excluded on period grounds because the
+sample interest specifies "early-church / **late-antique** church history" — a defensible
+call, and arguably a GT-generosity question rather than a skill defect (flagged, deliberately
+not resolved in the session that scored it). Precision 9/9 includes three **Catholic-faculty**
+chairs (Eisele, Jürgasch, Scoralick) that the GT's own scope note excludes but that fit the
+sample interest — unprompted cross-faculty coverage, since Tübingen splits biblical studies
+across two theology faculties. Separately, the faculty's **six N.N. vacancies** were all
+reported honestly, including the two on-focus ones (AT I; NT II "Evangelienforschung"), with
+no invented holders — recorded per GT §21 as a robustness result, not a recall figure. The
+GT's sharpest vacancy scenario (an *ethics* persona facing the vacant Syst. Theol. II/III)
+remains formally unrun. Full account: `2026-07-02-live-eval-runbook.md`, 2026-08-08 entry.
+
 **What this table says about the roadmap's "core is done" bar (§4: recall ≥80% across ≥6
 faculties incl. ≥1 hard faculty):** **MET (as of 2026-07-04, post-Task-U).** All 6 measured
 faculties clear 80% (Medicine, Psychology, WiSo, CS at ≥83–100%; Humanities and Law — both
-hard faculties — at 100% and 80% respectively). Theology has ground truth but no live run yet
-(not required for the bar, which needs ≥6 faculties incl. ≥1 hard, already satisfied by 2 of
-6 being hard). Precision has been formally measured for 4 of 6 faculties (CS, Humanities,
-Law, plus company evals in §2) and is ≥80% everywhere it's been measured. See
+hard faculties — at 100% and 80% respectively). **Strengthened 2026-08-08 (Task V′):**
+Theology now has a blind live run too — 83% recall / 100% precision — so the bar holds across
+**7** faculties including **3** hard ones, and Theology is the only one that cleared it on a
+first blind run with no prior fix. Precision has been formally measured for 5 of 7 faculties
+(CS, Humanities, Law, Theology, plus company evals in §2) and is ≥80% everywhere it's been
+measured. See
 `2026-07-03-core-done-go-no-go.md` for the full go/no-go call (verdict: **GO**).
 
 ---
@@ -122,13 +142,19 @@ example added to `find-university-chairs/SKILL.md` Step 8. Source:
 
 ## 6. Bottom line
 
-**Updated 2026-07-04, post-Task-U.** Recall and precision are strong across all 6 measured
-faculties (four "easy" faculties ≥83% strict, two "hard" faculties — Humanities 100%, Law
-80% — both cleared after their respective protocol/skill fixes) and on companies (100%/94%).
+**Updated 2026-08-08, post-Task-V′.** Recall and precision are strong across all 7 measured
+faculties (four "easy" faculties ≥83% strict, three "hard" faculties — Humanities 100%, Law
+80%, Theology 83%; the first two cleared only after their respective protocol/skill fixes,
+Theology cleared on a first blind run with none) and on companies (100%/94%).
 Steering is confirmed on one faculty. Output quality (Task S) and robustness edge cases
 (Task R) both pass. **The roadmap's own "core is done" recall bar (≥80% across ≥6 faculties
 incl. ≥1 hard) is now MET** — see `2026-07-03-core-done-go-no-go.md` for the formal **GO**
-call. Remaining open items are lower-stakes: Theology has ground truth but no live run yet
-(not required for the bar); company-eval circularity (§2) and single-agent/small-n scoring
-across every table here remain standing methodological caveats, tracked in
-`docs/thesis-report/03-hardening-and-evaluation/README.md`.
+call. Remaining open items are lower-stakes: the Theology run left two things flagged but
+unresolved — whether the GT's **Witt** row is over-inclusive for a late-antique persona, and
+the GT §21 vacancy scenario for an *ethics* persona, which no run has yet exercised.
+Company-eval circularity (§2) and single-agent/small-n scoring across every table here remain
+standing methodological caveats, tracked in
+`docs/thesis-report/03-hardening-and-evaluation/README.md`. Note also that most numbers above
+predate the current skill architecture (static backbone removed, discovery delegated to
+`discover-university-candidates`); Theology is one of the first measurements *of that
+version*, which is why the CS + Law re-measurement (Task AK) matters.

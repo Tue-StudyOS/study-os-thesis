@@ -68,6 +68,81 @@ could plausibly affect recall or precision. Skip for pure prose/typo edits.
 
 *(append one entry per re-validation run; newest first)*
 
+- **2026-08-08 — Blind Theology run (Task V′). The cleanest blind measurement the project
+  has.** `theology.md` is the one hard-faculty ground truth never opened mid-run; this
+  session was kept blind on it by instruction, and only its `Sample interest:` line was
+  read (via `grep`) before Pass 1. The remaining five persona dimensions were reconstructed
+  from the discipline (historical-critical exegesis; ancient-religion domain; text-based
+  monograph; Hebrew/Greek/Latin; no-gos practical theology, Religionspädagogik, quantitative
+  religion-sociology — systematic theology deliberately marked *off-core rather than a hard
+  no-go*, to avoid re-creating the Humanities over-exclusion class). Output:
+  `dist/live-validation/theology-skill.md`.
+
+  **Recall: 5/6 = 83%** (found: Leuenberger, Kamlah, Tilly, Landmesser, Drecoll; **missed:
+  Witt**). **Precision: 9/9 = 100%.** Clears the ≥80% bar on a first, genuinely blind run,
+  with no fix applied first — the first hard faculty to do so (Humanities needed a protocol
+  fix, Law needed the §5 skill fix).
+
+  **Precision detail.** Nine surfaced options, all judged relevant: the five GT core chairs;
+  **Zellentin**, whom the GT file explicitly instructs be scored relevant rather than noise
+  (flagged in the map as drifting toward Qur'anic/early-Islamic work under his ERC project
+  QaSLA, which is an accurate read of his current output); and three **Catholic-faculty**
+  chairs — **Eisele** (NT; habilitation on Gospel-of-Thomas transmission history),
+  **Jürgasch** (Alte Kirchengeschichte und Patrologie), **Scoralick** (AT). The GT file's own
+  Note 3 says Catholic Theology "is a separate faculty covering the same disciplines; not
+  crawled for this file," so these are outside GT scope but squarely inside the sample
+  interest — relevant under the README's "a correct option missing from it is still relevant,
+  not noise" rule. **Crossing the faculty boundary unprompted is a genuine coverage win**:
+  the persona says "biblical studies," not "Protestant biblical studies," and Tübingen splits
+  that discipline across two faculties.
+
+  **The Witt miss is an honest, defensible exclusion — closer to the Saurer class than the
+  Remmert class.** Discovery recall was **6/6**: Witt was enumerated in Pass 1 and appears by
+  name in the map's "Excluded (recorded, not silently dropped)" section, so this is a
+  downstream filtering decision, not a crawl miss. He was excluded on *period*: his chair is
+  "Reformationsgeschichte und Mittelalter," while the sample interest specifies
+  "early-church / **late-antique** church history." Reading that line literally, excluding a
+  Reformation/medieval chair is the correct behaviour, and including him would arguably be
+  the padding that precision exists to catch. The GT counts him relevant on a broader
+  "church history writ large" reading. **Open question for the GT, not obviously a skill
+  defect:** either `theology.md` should note why the Reformation/medieval chair counts for a
+  late-antique persona, or that row is over-inclusive. Flagged rather than resolved here,
+  since resolving it in the same session that scored it would defeat the point.
+
+  **N.N. / vacancy handling: passed, and on the harder version of the test.** The faculty
+  carries **six vacant chairs of sixteen**. The run enumerated all six by name *before* the
+  option map, named no holder for any of them, and stated explicitly that a chair
+  designation must not be read as an available supervisor. Two vacancies sit **directly on
+  this persona's focus** — **Altes Testament I** ("Literaturgeschichte des AT") and
+  **Neues Testament II** ("Evangelienforschung", the closest label in the faculty to plain NT
+  exegesis) — and the run reported both as unavailable instead of routing around them; it
+  also noted that Leuenberger consequently carries the department's OT load one chair short,
+  and that Eisele partly fills the Evangelienforschung gap from the Catholic side. **Caveat
+  on what was actually tested:** the GT's §21 vacancy scenario is written for a *theological
+  ethics / fundamental theology* persona (Systematische Theologie II/III), which this
+  biblical-studies persona does not exercise — Syst. Theol. II was correctly listed as vacant
+  but was off-core here either way. The on-focus AT-I/NT-II vacancies are arguably the
+  stronger test and were handled correctly, but the ethics-persona case remains formally
+  unrun. Per GT §21 this is recorded as a **robustness/coverage result, not a recall figure**.
+
+  **Two architecture observations, recorded neutrally.** (1) `find-university-chairs` no
+  longer carries a static backbone — `references/tuebingen-faculty-backbone.md` **no longer
+  exists**, and the skill now delegates candidate discovery to a separate
+  `discover-university-candidates` skill. This run reached 5/6 recall and both theology
+  faculties **with no backbone file at all**, which is a real data point for the no-DB
+  direction. Note that this runbook's §"When to run this" still names the deleted backbone
+  file — doc drift worth a cleanup. (2) The delegation is prose-level: one agent executed
+  both skills' workflows inline rather than crossing a hard tool boundary, so this run does
+  not test the hand-off itself (schema conformance, what happens when the delegate returns
+  fewer than five candidates). Whether that boundary should be enforced is out of scope here.
+
+  **One honest note on what broke:** the Catholic faculty's
+  `.../alte-kirchengeschichte-patrologie-und-christliche-archaeologie/team/lehrstuhlinhaber/`
+  returned **HTTP 404**; recovered via search fallback (Jürgasch's W3 appointment confirmed
+  through the university's own Personalnachrichten 1/2026). Fourth independent URL-drift hit
+  after CS/Cyber Valley, Humanities/interfaculty-centres and Law/Juniorprofessur — the
+  pattern is now well past coincidence.
+
 - **2026-07-04 — Law re-run after Task U's §5 enrich-before-exclude fix.** Blind re-run
   under the same persona as the Task T blind run (public law — constitutional law,
   international/European law + human rights, legal regulation of new technologies;
