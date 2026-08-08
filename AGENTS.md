@@ -374,33 +374,6 @@ Guardrails:
 - do not overstate skills, grades, availability, or prior relationships
 - do not invent openings, funding, capacity, or promises from the advisor
 
-### `update-openalex-paper-index` *(retired)*
-
-Intent: maintain optional Markdown paper data from OpenAlex for reviewed
-researchers.
-
-Use for scheduled or manual maintenance workflows, not for live student
-advising.
-
-Inputs:
-
-- maintainer-reviewed researcher profiles and OpenAlex Author IDs
-- OpenAlex works data or approved fixtures
-
-Outputs:
-
-- updated researcher profiles and paper indexes
-- preserved source links, dates, DOI/OpenAlex IDs, and `last_updated`
-- concise maintenance summary
-
-Guardrails:
-
-- maintenance-only; never use it as a shortcut around student-facing advising
-- respect OpenAlex rate limits and polite-pool configuration
-- do not overwrite maintainer-owned seed indexes unless the skill explicitly
-  allows it
-- run deterministic skill tests after generation
-
 ## Evidence, Privacy, And Data Rules
 
 - Keep student-private data in the active session only.
