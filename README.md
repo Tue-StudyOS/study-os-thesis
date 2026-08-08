@@ -5,7 +5,13 @@ prepared first contact with a fitting thesis supervisor — no login, no databas
 
 ## Quickstart
 
-Open this repository in any capable coding agent (Claude Code, Codex, Gemini CLI) and type:
+**Installing as a student? → [INSTALL.md](INSTALL.md)** — per-client setup steps, what you
+need before you start, and a troubleshooting table. Grab the archive from the
+[latest release](https://github.com/Tue-StudyOS/study-os-thesis/releases/latest); you do not
+need this repository.
+
+To run it from a checkout instead, open the repository in any capable coding agent
+(Claude Code, Codex, Gemini CLI) and type:
 
 ```
 thesis-finder
