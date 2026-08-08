@@ -1,9 +1,12 @@
-# University of Tübingen Degree Programs
+# University of Tübingen — Computer Science Degree Programs
 
-Reference list of the study programs offered by the Department of Computer
-Science at the University of Tübingen. Use it to recognize the student's
-`Degree program` in the profile, validate the thesis level, and ask the right
-follow-up when the program implies a specific level or curriculum.
+**Scope: the Department of Computer Science only.** This is not a
+university-wide program list, and no university-wide list ships with these
+skills — see "For students outside Computer Science" below.
+
+Use it to recognize the `Degree program` of a CS-department student, validate
+the thesis level, and ask the right follow-up when the program implies a
+specific level or curriculum.
 
 | Program | Levels offered | Notes |
 | --- | --- | --- |
@@ -13,6 +16,23 @@ follow-up when the program implies a specific level or curriculum.
 | Bioinformatics | Bachelor, Master | Joint with biology/biochemistry; sequence and biological data methods. |
 | Machine Learning | Master only | No bachelor track; assume a Master thesis. |
 | Computer Science for Teachers (Lehramt Informatik) | Bachelor of Education, Master of Education | Teacher-education track; thesis expectations differ from the research Master. |
+
+## For students outside Computer Science
+
+The table above covers one department out of seven faculties. Do not force a
+non-CS student's program into it, and do not treat its absence from the table as
+evidence that a program does not exist.
+
+Instead:
+
+- Ask the student for their program name and thesis level directly. Their own
+  answer is the primary source.
+- If the level or the formal thesis duration matters for scoping, verify it live
+  against the faculty's or the examination office's own pages rather than
+  inferring it from this file.
+- The thesis durations below were recorded for the CS department. Treat them as
+  an order-of-magnitude default elsewhere and confirm them per faculty before
+  using them to scope a proposal.
 
 ## Thesis duration
 
