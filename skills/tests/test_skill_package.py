@@ -118,12 +118,13 @@ def test_student_facing_skills_reject_old_runtime_dependencies() -> None:
     # design-agent-skill is a meta-skill; thesis-finder is a thin router that does no
     # data retrieval of its own. Every other student-facing skill must explicitly
     # disclaim any runtime database/backend dependency — the no-DB product invariant.
-    # The legacy carry-over skills carry the canonical disclaimer; the rewritten
-    # discovery skills phrase the same stance in their own words.
+    # The disclaimer states what is true now ("no runtime database, index, or bundled
+    # …data"); until 2026-08-08 it instead named the UI/Celery/FastAPI stack that the
+    # project had already deleted, which is project history an installing agent cannot
+    # act on. Phrase the invariant, not its history.
     no_db_disclaimers = (
-        "Do not depend on the old UI, backend API, database, Docker, Celery, or FastAPI app.",
+        "has no runtime database, index, or bundled",
         "the only authoritative source during discovery.",
-        "No runtime company database",
         "static company or URI backbone",
         "static faculty or URI backbone",
     )

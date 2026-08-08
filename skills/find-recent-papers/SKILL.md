@@ -37,5 +37,4 @@ End with suggested next searches or chair/supervisor connections when evidence s
 - Do not fabricate citation counts, venues, acceptance status, or author affiliations.
 - If sources disagree or data may be stale, say so.
 - Use absolute dates for "recent" results whenever possible.
-- Do not treat old bundled paper or researcher profiles as the primary source.
-- Do not depend on the old UI, backend API, database, Docker, Celery, or FastAPI app.
+- This skill has no runtime database, index, or bundled paper data. Every paper must come from a live source verified during this run.

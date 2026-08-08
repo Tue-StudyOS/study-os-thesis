@@ -100,4 +100,4 @@ When using these sources:
 
 - Do not store transcripts, grades, GPA, or private profile data in `references/` or `assets/`.
 - If GPA is needed later, use a deterministic local script only when available; do not ask an LLM to estimate grades.
-- Do not depend on the old UI, backend API, database, Docker, Celery, or FastAPI app.
+- This skill has no runtime database, index, or bundled entity data. Everything it needs comes from the student in this conversation.

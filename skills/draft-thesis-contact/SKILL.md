@@ -37,4 +37,4 @@ Return:
 - Never omit the AI-generated notice, including when the user asks only for the email text
   or for a shortened variant. The notice is student-facing only — do not put a disclosure
   of AI authorship inside the email itself unless the student explicitly asks for one.
-- Do not depend on the old UI, backend API, database, Docker, Celery, or FastAPI app.
+- This skill has no runtime database, index, or bundled entity data. Every fact about the person or lab must come from a live source verified during this run.

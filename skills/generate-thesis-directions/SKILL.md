@@ -35,5 +35,4 @@ For each proposal include:
 - Do not invent datasets, hardware access, supervision capacity, or chair approval.
 - Prefer fewer, sharper proposals over many generic ideas.
 - Make the student's personal fit visible: why this proposal fits their skills, curiosity, and preferred working style.
-- Do not treat old bundled chair, researcher, or paper profiles as the primary source.
-- Do not depend on the old UI, backend API, database, Docker, Celery, or FastAPI app.
+- This skill has no runtime database, index, or bundled entity data. Ground every proposal in evidence gathered live during this session.

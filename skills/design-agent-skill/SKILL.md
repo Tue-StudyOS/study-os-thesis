@@ -40,4 +40,4 @@ For thesis discovery, split the system into focused skills:
 - `draft-thesis-contact` drafts concise, specific first-contact messages around one proposal sketch.
 - Meta skills create or update the skill package itself.
 
-Student-facing skills must not depend on a database, API, Docker service, FastAPI app, the old UI, or long runtime entity/URI backbones. Use native web/search tools when the active agent provides them. If browsing is unavailable, say so explicitly.
+Student-facing skills must not depend on a runtime database, backend service, or long entity/URI backbone. The intelligence is the search rules; the data comes from the live web. Use native web/search tools when the active agent provides them. If browsing is unavailable, say so explicitly.

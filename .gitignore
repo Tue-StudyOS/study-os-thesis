@@ -252,6 +252,9 @@ Thumbs.db
 !.claude/
 !.claude/commands/
 !.claude/commands/*.md
+# Per-machine client config (hooks, permissions) — never the project's business.
+.claude/settings.json
+.claude/settings.local.json
 !.claude/skills/
 !.claude/skills/**/
 !.claude/skills/**/*.md
