@@ -20,6 +20,12 @@ memory, a future-feedback plan, a realistic survival plan). New authoritative pl
 **Tasks AA′ + AB′ done 2026-08-08** — hygiene sweep (5 items) and `skills-v2.0.0` prepared:
 versioning bug fixed, `INSTALL.md` written and cold-install tested in 48 s. The publish step
 itself (`gh release create` + superseding `skills-v1.0.0`) is the one thing still open.
+**Coherence sweep 2026-08-08** (branch `chore/skill-package-coherence`): nine further
+package-vs-docs mismatches fixed — hardcoded recency years, dead-stack prose, documented
+flow ≠ actual flow, undisclosed company-arm evidence gap, `INSTALL.md` missing from the
+archive, silently ignored eval evidence. **The G3 reframe is now in the artifact**:
+`thesis-finder` records the student's thesis self-understanding verbatim before and after
+the search, so AC′ inherits its primary instrument instead of building one.
 **Next up: Task AC′** — beta protocol + feedback form, reflection-first.
 
 ---
@@ -327,6 +333,78 @@ architecture-tagged. W optional.
 ---
 
 ## Log
+
+- **2026-08-08** — **Skill-package coherence sweep — the audit AA′ did not cover, plus the
+  G3 reframe made real in the artifact.** Branch `chore/skill-package-coherence`, off `main`
+  after AA′/AB′ merged. A read-through of the *built* package against the project's own
+  docs turned up nine mismatches that the hygiene sweep's five items missed, because AA′
+  looked for static catalogs and this looked for statements the package makes about itself
+  that are no longer true. Grouped by what they cost:
+
+  **Contradicted the core claim.** Three shipped references carried `2024 OR 2025 OR 2026`
+  recency filters and an "evidence from 2022 or later" floor. The README and MASTERPLAN §2
+  sell the package as maintenance-free and never-stale; these expire on a one-year fuse,
+  and a 2027 student would have searched a window excluding everything new. Now relative to
+  run time (`{THIS_YEAR}`), with an invariant test — the old three forms all trip it, the
+  new template and `YYYY-MM-DD` placeholders do not.
+
+  **Project history shipped as instructions.** Five skills told the agent not to depend on
+  "the old UI, backend API, database, Docker, Celery, or FastAPI app", two more warned about
+  "old bundled chair, researcher, or paper profiles". None of it exists; an agent installing
+  from a release archive cannot act on any of it, and the package's own authoring rules
+  forbid project history in a `SKILL.md`. Replaced with the invariant they stood for. A test
+  had pinned the literal legacy sentence, so it was widened, not deleted.
+
+  **Documented flow ≠ actual flow.** Both discovery skills told a thin-profile caller to
+  invoke `build-student-profile` — a path `thesis-finder` never takes, since it interviews
+  inline. README called `find-recent-papers` "not part of the student flow" while it is
+  mandatory in the drill-down and in `draft-thesis-contact`, and drew
+  `generate-thesis-directions` under "(optional)" although nothing invokes it at all.
+
+  **Evidence asymmetry hidden from the student.** The track question offered university and
+  company as equal choices. They are not: the university arm is measured against
+  hand-checked ground truth, the company eval was permanently demoted (AJ). Now stated once
+  at the choice and once atop the company map — disclosure, not steering.
+
+  **`INSTALL.md` was not in the archive.** AB′ wrote it and linked it from the README, but
+  the build never packed it, so the student who downloads the release — the only path
+  `INSTALL.md` itself documents — never saw it, including the "install all skills, not a
+  subset" rule. Now packed, build fails without it, and its unpack instructions were fixed
+  for the file it now contains (`*/` copies directories only). Re-verified by cold install
+  from the built tarball: 10 skill folders land correctly, `INSTALL.md` stays behind.
+
+  **Evidence was being dropped silently.** `!dist/live-validation/` never worked — git
+  cannot re-include files inside an excluded directory, so those files are tracked only
+  because they predate the rule, and anything new in either evidence subtree vanished
+  without a word. Same failure mode AL already complains about for `.simulations/`. Ignore
+  now excludes `dist/*`; verified that new evidence files are tracked while build output
+  stays ignored.
+
+  **The G3 reframe, made measurable.** MASTERPLAN §9 decided on 2026-08-08 to *reframe and
+  measure, not rewrite the skills* after Gehler's answer that the value is student
+  reflection. But the shipped skill still sold itself purely as a search and never asked the
+  student to reflect — so there was nothing for AC′ to measure. `thesis-finder` now asks, in
+  the student's own words, what kind of thesis they think they are looking for *before* any
+  search (Step N0) and again at the end (N6/R7), shows both side by side, and keeps them in
+  an append-only session-file log so the comparison survives across sessions weeks apart.
+  Discovery, verification and output rules are untouched — this is the reframe, not a
+  rewrite. **Consequence for AC′: its primary instrument now exists in the tool**, so the
+  beta protocol collects the pre/post statement instead of having to construct it. Null
+  results are named as legitimate on purpose ("close to identical", "less certain than
+  before"), so the instrument cannot only ever report success — a test pins that.
+
+  **Deliberately not done.** (1) The evidence subtrees stay at their `dist/` paths: moving
+  them would break ~15 STATUS citations, and every-claim-linked-to-an-artifact is worth more
+  than tidy directory semantics. (2) Tübingen remains baked into skill names, descriptions
+  and prose — extending to other universities has no seam, and that belongs in AO as a
+  stated limit, not in a refactor now. (3) The local `~/.claude/skills/` install is from
+  2026-06-28 and holds **5 of 10** skills in their pre-pivot form — it cannot resolve the
+  `discover-*` calls at all. Anything hand-tested against it is testing the deleted
+  architecture; reinstall from `dist/study-os-thesis-skills-v2.0.0/` before any manual run.
+
+  Folded into the pending `[2.0.0]` CHANGELOG section rather than a follow-up version,
+  since `skills-v2.0.0` is not tagged yet. `pytest -q` 45 passed / 10 skipped; release build
+  green.
 
 - **2026-08-08** — **Task AB′: `skills-v2.0.0` prepared — versioning bug fixed, INSTALL.md
   cold-install tested in 48 s.** Branch `chore/hygiene-and-rerelease`.

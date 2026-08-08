@@ -50,6 +50,8 @@ This project follows Semantic Versioning for the released skill package:
 - `scripts/compare_command_simulation_performance.py` for comparing `.claude/commands` / `.codex/prompts` simulation ratings before and after architecture changes.
 - Automated release workflow with version bumping, release branch publishing, and GitHub App authentication.
 - Human-readable changelog workflow for GitHub Release notes.
+- `thesis-finder` records the student's **thesis self-understanding** in their own words: Step N0 asks what kind of thesis they think they are looking for before any search, Steps N6/R7 ask again at the end and show both statements side by side. The session file gains an append-only log, so the comparison also works across sessions weeks apart. Null results ("unchanged", "less certain than before") are named as legitimate outcomes.
+- `INSTALL.md` now ships inside the release archive, not only in the repo. The build fails if it is missing.
 
 ### Changed
 
@@ -58,12 +60,20 @@ This project follows Semantic Versioning for the released skill package:
 - `thesis-finder` no longer hardcodes `~/.claude/thesis-finder/session.md`. It prefers that path and falls back to `./thesis-finder-session.md` in the working directory when the home-scoped path is unavailable, naming the path it used in its first reply.
 - `build-student-profile/references/tuebingen-degree-programs.md` is now titled and used as what it is — a Computer Science department list, not a university-wide one. Students in other faculties are asked directly and their answer verified live.
 - `INSTALL.md` added at the repo root with per-client install steps, honest prerequisites, and a troubleshooting table.
+- The value proposition is stated as what it is: the map of options is the visible output, but the point is that the student ends up with a sharper idea of what kind of thesis fits them. `build-student-profile` and the README say so; the leftover "generate research proposals" framing is gone.
+- Search recency is expressed relative to run time (`{THIS_YEAR}`, `{THIS_YEAR-1}`) instead of the literal `2024 OR 2025 OR 2026` windows and the "2022 or later" floor that three shipped references carried. Those contradicted the package's no-maintenance claim on a one-year fuse.
+- `thesis-finder` and the company option map now disclose that the company track has not been validated against a reference list the way the university track has, so the student can weigh the two choices.
+- The no-DB rule in five skills states the invariant ("no runtime database, index, or bundled entity data") instead of naming the deleted UI/Celery/FastAPI stack, which an installing agent has no way to act on.
 
 ### Fixed
 
 - Prevented release artifacts from including tests, scripts, docs, or maintainer files.
 - Fixed release version bumping so SemVer values are replaced correctly.
 - Fixed the release workflow's version drift: the version is read from `pyproject.toml` on the dispatched ref instead of being bumped on the release branch, which previously left `main` permanently behind the published tag.
+- Both discovery skills told a thin-profile caller to invoke `build-student-profile`, a path `thesis-finder` never takes because it interviews inline. Both entry routes are now named.
+- The README described `find-recent-papers` as "not part of the student flow" although it is mandatory in the drill-down and in `draft-thesis-contact`, and showed `generate-thesis-directions` as if a path led there although nothing invokes it.
+- New eval evidence written under `dist/live-validation/` and `dist/codex-multiturn-evals/` was silently ignored: git cannot re-include files inside an excluded directory, so the existing `!dist/live-validation/` rule never worked. The ignore now excludes `dist/*`.
+- Invariant tests added for the two failure modes above that can silently return: literal calendar years in shipped resources, and loss of the self-understanding instrument.
 
 ### Removed
 
