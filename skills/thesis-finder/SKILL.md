@@ -60,9 +60,15 @@ Once the profile is confirmed complete, ask exactly this:
 > "Which option type do you want to explore?
 > (a) University thesis at Tübingen
 > (b) Company thesis in **Baden-Württemberg** (BW-region only)
-> (c) Both"
+> (c) Both
+>
+> One caveat so you can weigh this: the university search is the one that has been
+> measured against hand-checked reference lists across several faculties. The company
+> search uses the same method but has not been validated to the same standard, so treat
+> its results as leads to check rather than as a survey you can rely on."
 
-Wait for the student's answer before continuing.
+Wait for the student's answer before continuing. Do not talk the student out of the
+company track — state the caveat once, then follow their choice.
 
 ### Step N3 — Route
 

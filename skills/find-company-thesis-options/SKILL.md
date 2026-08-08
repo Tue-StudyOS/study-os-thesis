@@ -66,6 +66,11 @@ Append this map-level caveat once at the top:
 > large companies and follow up, or contact the R&D/product team directly at
 > startups and SMEs. Live discovery is not exhaustive; companies with weak web
 > presence or non-public university contacts may be missing.
+>
+> Coverage of the company track has not been measured against a reference list
+> the way the university track has. Every entry below was verified live during
+> this run, but treat the map as a set of leads to check rather than as a survey
+> of what exists.
 
 For each entry include:
 
