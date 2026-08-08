@@ -2,6 +2,7 @@
 
 **Task AC′** of [the final 1.0 plan](2026-08-08-final-1.0-plan.md). Executed per tester in
 Task Z′. **Recruiting texts:** [2026-08-08-beta-recruiting-message.md](2026-08-08-beta-recruiting-message.md).
+**Per-session capture sheet:** [2026-08-08-session-capture-sheet.md](2026-08-08-session-capture-sheet.md) — one copy per tester, filled live.
 
 **What this measures.** Not "did the tool name the right chairs" — that is what every
 existing recall/precision number measures. This measures the variable P. Gehler named on
@@ -170,7 +171,7 @@ only and is not part of the form.
 |---|---|
 | Protocol committed | ✅ this file |
 | Recruiting sent | ⬜ texts ready ([recruiting message](2026-08-08-beta-recruiting-message.md)); **sending requires Domi** |
-| Form live | ⬜ questions specified (Appendix A); **creating the form requires a Google account** |
+| Form live | ⬜ questions specified (Appendix A) and scripted ([`scripts/create_beta_feedback_form.gs`](../../scripts/create_beta_feedback_form.gs)); **running it requires a Google account** |
 | Pilot completed, protocol frozen | ⬜ **requires a real student**; freeze date to be noted at the top of this file |
 
 The last three cannot be completed from inside the repository. They are the first actions of
