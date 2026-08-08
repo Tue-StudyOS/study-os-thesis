@@ -17,8 +17,10 @@ memory, a future-feedback plan, a realistic survival plan). New authoritative pl
 [2026-08-08-final-1.0-plan.md](findings/no_db_universal_skill/2026-08-08-final-1.0-plan.md)
 (Tasks AJ, V′, AK, AL, AA′, AB′, AC′, Z′, AD, AM, AN, AO, AE′, AF–AI; W optional).
 **Task V′ done 2026-08-08** (blind Theology run: 83% recall / 100% precision — see the log).
-**Next up: Task AK** — re-measure CS + Law post-pivot, so all faculty numbers are comparable
-against the shipping architecture.
+**Tasks AA′ + AB′ done 2026-08-08** — hygiene sweep (5 items) and `skills-v2.0.0` prepared:
+versioning bug fixed, `INSTALL.md` written and cold-install tested in 48 s. The publish step
+itself (`gh release create` + superseding `skills-v1.0.0`) is the one thing still open.
+**Next up: Task AC′** — beta protocol + feedback form, reflection-first.
 
 ---
 
@@ -271,8 +273,8 @@ superseded outright by the pivot.
 | AJ | Pivot evidence audit — tag every number in the repo with the architecture + date that produced it | ⬜ open | — | **Blocker for AE′.** Every recall/precision figure measures the backbone architecture deleted 2026-07-31. Also permanently demotes the company eval (closes old Y). G5/G4. |
 | AK | Post-pivot ground-truth re-measurement: CS + Law (Humanities optional) | ⬜ open | — | The sharp test. `search-strategy.md` went 461→52 lines; Task U's enrich-before-exclude rule survived as one sentence but the **Remmert** worked example did not. Does the rule still find her without it? Report her row explicitly. Do not patch in this task. G5/G1/G3. |
 | AL | Reflection rubric dimension + committed simulation evidence set | ⬜ open | — | PR #71's before/after (baseline 20.0 → rules-only 20.75, 6/6 gates) exists **only in the PR description**; `.simulations/` is gitignored. Recover those numbers, re-run the 8-persona suite, commit conversations + ratings + a limitations README. G5/G4. |
-| AA′ | Hygiene sweep, post-pivot — 5 items | ⬜ open | — | **Release blocker.** 4 of the original 8 items were resolved by the pivot itself. Remaining: delete the static paper index (the last URI catalog, wrong Matthias Hein), fix the CS-only degree file, fix the hardcoded `~/.claude/` session path, generalise the no-static-catalog invariant test (currently named-file assertions only), and document the AI-disclaimer decision. G4/G3. |
-| AB′ | Re-release + `INSTALL.md`, cold-install tested | ⬜ open | — | Depends: AA′. `skills-v1.0.0` (2026-07-06) ships the **deleted** architecture — supersede it. Version bump decision (1.1.0 vs 2.0.0) belongs to the task; CHANGELOG lists breaking entries. G5/G4. |
+| AA′ | Hygiene sweep, post-pivot — 5 items | ✅ | Domi | All 5 done on `chore/hygiene-and-rerelease`, one commit each. (1) Deleted `find-recent-papers/references/papers/` (59 files, 308 KB, 287 absolute URLs) — the skill never referenced it, so pure orphan removal; took `scripts/update_openalex_index.py` (already non-runnable: reads a path Task E moved) and its fixture with it. (2) Degree file retitled CS-only + a "for students outside CS" section; SKILL.md step 10 now asks the student first. Did **not** build a university-wide list. (3) Session path: preferred `~/.claude/…`, documented fallback to `./thesis-finder-session.md` with a must-announce rule; README/AGENTS state the skills install **as a set**. (4) New `test_shipped_resources_are_not_static_uri_catalogs` — max 5 absolute URLs per shipped resource, `site:` lines exempt; the two named-file assertions kept as special cases. Proven four ways in `5cf3030`: suite green, fails on a planted 12-row catalog, flags 9 files of the old paper index (54 and 39 URLs at the top), `site:` exemption holds. (5) `Design-Entscheidungen.md` §7a records the AI-disclaimer decision + why disclosure is student-facing + the link to Bob's May recommendation. **Correction to the brief:** the backbone assertions are *not* in `evals/test_skill_quality.py` (an opt-in LLM-judge file with no such criteria) — they were all in `test_skill_package.py`. `pytest -q` 42→**43 passed / 10 skipped**; release build green. G4/G3. |
+| AB′ | Re-release + `INSTALL.md`, cold-install tested | ✅ | Domi | **Version: `skills-v2.0.0`**, not 1.1.0 — the CHANGELOG's own SemVer policy maps breaking trigger/contract changes to MAJOR, and `[Unreleased]` carried three `Breaking:` entries plus a `### Breaking Changes` section (sole entry point; backbones out of the discovery contract). Fixed the versioning bug first: the workflow bumped on `release/skills` and never merged back, so `main` sat at 0.1.0 against a published 1.0.0 and local builds produced artifacts matching no tag — the version is now read from `pyproject.toml` on the dispatched ref and `main` is the single source. Also found and fixed a second release-pipeline gap: `dist/release-notes.md` was only generated on `workflow_dispatch`, so the tag-push path would publish with a missing `body_path`. `INSTALL.md` written and linked from README. **Cold install: 48 s** for the mechanical steps, both archive formats, into fresh skills dirs with no dev checkout — an agent-executed lower bound, not a human number (that is Z′'s job). It surfaced two real guide defects, both fixed: "unpack it" assumed `unzip` (absent on a bare WSL box), and Step 1 wrongly claimed there was no wrapper folder. Installed set verified: 10 skills, no unresolved cross-skill calls, no broken `references/` paths, no non-Markdown files. G5/G4. |
 | AC′ | Beta protocol + feedback form, reflection-first | ⬜ open | — | Depends: AB′. Primary instrument is a **verbatim pre/post** "what kind of thesis am I looking for" pair — the operationalisation of Gehler's outcome variable. Secondary: unknown-option hit, factual-error count, unaided setup, would-contact. Co-scored with the tester (absorbs old X). G2/G5. |
 | Z′ | Protocolled external test, 2–3 students, ≥1 non-CS | ⬜ open | — | Depends: AC′. Scoped down from 3–5 on 2026-08-08 (realistic recruiting capacity). Longest calendar clock — start recruiting the day AB′ lands. n=1 fallback is reportable but does not clear the gate. G2/G5. |
 | AD | Distribution outreach: Fachschaft Informatik + Menth/Gehler channel question | ⬜ open | — | Depends: AB′; overlaps Z′. **No self-sent Rundmail** — the sender must be an institution. Ersti-Heft & uni site deferred to backlog. G5. |
@@ -325,6 +327,80 @@ architecture-tagged. W optional.
 ---
 
 ## Log
+
+- **2026-08-08** — **Task AB′: `skills-v2.0.0` prepared — versioning bug fixed, INSTALL.md
+  cold-install tested in 48 s.** Branch `chore/hygiene-and-rerelease`.
+  **Version choice: 2.0.0, not 1.1.0.** The CHANGELOG's own SemVer policy sends breaking
+  trigger/contract changes to MAJOR, and `[Unreleased]` carried three `Breaking:` entries
+  plus a `### Breaking Changes` section — `thesis-finder` became the sole entry point (old
+  invocations may not match) and the static backbones left the discovery contract entirely.
+  Shipping that as a minor would have contradicted the repo's own stated rule.
+  **The versioning bug, fixed first as instructed.** The release workflow checked out
+  `release/skills`, merged `main` into it, bumped the version *there*, tagged, and never
+  merged back — so `main` sat at 0.1.0 while the published branch was at 1.0.0, and local
+  `build_skill_release.py` runs produced `v0.1.0` artifacts matching no published tag. The
+  workflow no longer bumps: it reads the version from `pyproject.toml` on the dispatched
+  ref, `main` is the single source, and `bump_project_version.py` stays as the local
+  pre-merge helper. **A second pipeline gap surfaced while preparing the release:**
+  `dist/release-notes.md` was only generated on the `workflow_dispatch` path, so a tag push
+  would reach "Publish GitHub release" with a missing `body_path`. That path had evidently
+  never been exercised — and publishing manually creates and pushes a tag, so it was about
+  to be. Fixed by extracting the tag's section from the finalized CHANGELOG, failing loudly
+  when no such section exists.
+  **Cold-install test: 48 seconds**, both archive formats, into fresh skills directories
+  with no dev checkout. That number is an *agent* executing the commands, not a student
+  reading the guide and downloading an archive — a lower bound and evidence that no step
+  blocks, not the usability figure. The human number is Z′'s to produce. The test earned
+  its keep by breaking the guide twice: "unpack it" assumed a working `unzip` (absent on a
+  bare Linux/WSL box — the first attempt failed there), and Step 1 claimed the archive had
+  no wrapper folder when it expands to exactly one. Both fixed, then re-run clean. The
+  installed set checks out: 10 skills, no unresolved cross-skill invocations, no broken
+  `references/` paths, frontmatter names matching folders, no non-Markdown files shipped.
+  **Not yet done at the time of writing:** `gh release create` and the supersede note on
+  `skills-v1.0.0` — both outward-facing, held for confirmation.
+
+- **2026-08-08** — **Task AA′: hygiene sweep done, 5 items, 5 commits.** Branch
+  `chore/hygiene-and-rerelease`, cut from `main` after fast-forwarding the
+  `docs/final-1.0-plan` branch into it — the plan is merged, so the 2026-07-16 failure mode
+  (a plan left unmerged for three weeks while PR #69 was cut from an older branch state)
+  does not repeat.
+  (1) **Static paper index deleted** — `find-recent-papers/references/papers/`, 59 files,
+  308 KB, 287 absolute URLs, conflating two people named "Matthias Hein". Confirmed orphan:
+  `find-recent-papers/SKILL.md` never referenced it. Its tooling went too —
+  `scripts/update_openalex_index.py` was itself already non-runnable, reading a researcher
+  index that Task E had moved to `eval_ground_truth/cs_seed/`, and its `--fixture` input
+  had no test consumer. Pre-existing dead code left alone and merely noted:
+  `skills/tests/fixtures/ground_truth_phds.json` has no consumer either.
+  (2) **CS-only degree file named honestly** — retitled, given a "for students outside
+  Computer Science" section that sends the skill to the student's own answer and live
+  verification, and `SKILL.md` step 10 corrected. No university-wide list was built; that
+  would have reintroduced the static asset the pivot removed.
+  (3) **Session path made portable** — `thesis-finder/SKILL.md` defined the location once
+  (preferred `~/.claude/thesis-finder/session.md`, fallback `./thesis-finder-session.md`,
+  must announce which), and the five later mentions now refer to the resolved path.
+  README + AGENTS.md state that the skills install **as a set**, since the router calls the
+  others by name.
+  (4) **No-static-catalog invariant generalised.** The old assertions were named-file only
+  and would not have caught the paper index. The new
+  `test_shipped_resources_are_not_static_uri_catalogs` checks shape: at most 5 absolute
+  URLs per shipped `references/`/`assets/` file, `site:` query lines exempt. Every shipped
+  reference file currently has **zero**, so the threshold is pure headroom. Proven four
+  ways in commit `5cf3030` — suite green; fails on a deliberately planted 12-row faculty
+  catalog; flags 9 files when the old paper index is restored (`by-year/2026.md` at 54 URLs,
+  `INDEX.md` at 39); and the `site:` exemption verified both directions.
+  (5) **AI-disclaimer decision documented** — `Design-Entscheidungen.md` §7a, next to §7 as
+  the second ethics-shaped decision: the rule itself, the argument for why disclosure is
+  student-facing rather than in the email (a notice in the mail costs the student nothing
+  and invites sending the draft unchanged — it would replace the rewrite instead of forcing
+  it), and the link to Bob's May 2026 recommendation that topics are "starting points only".
+  Unblocks Task AH.
+  **One correction to the task brief:** it said the backbone assertions also live in
+  `skills/tests/evals/test_skill_quality.py`. They do not — that file is an opt-in
+  LLM-judge eval with no backbone or URI criteria. All of them were in
+  `test_skill_package.py`; the "static … URI backbone" strings there are required SKILL.md
+  disclaimer phrases, a different check, left untouched.
+  `pytest -q` 42 → **43 passed / 10 skipped**; `build_skill_release.py` green after every
+  commit.
 
 - **2026-08-08** — **Task V′: blind Theology run — 83% recall / 100% precision, and the
   first clean post-pivot faculty measurement.** Session was held blind on `theology.md`, on
