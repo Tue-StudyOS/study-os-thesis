@@ -4,23 +4,53 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-05 — Independent 1.0-readiness review completed and actioned:
-Phase 5 is now fully **scoped** (Tasks V–AA, MASTERPLAN.md §9), the Phase 4 GO verdict is
-flagged **provisional** (hard-faculty blindness gap, see below), and `docs/thesis-report/03`
-and `04` were corrected to match the current state instead of a stale 2026-07-03 snapshot.
-Before that: Task M2 done and committed, closing out the Task M (Gehler feedback) plan
-(M1, M2, M3 all done); Task L merged (BW company backbone extended to all 7 Tübingen
-faculties + ZITh via a 13-field employment taxonomy). Working tree clean. **Next up when
-work resumes:** Task V (blind Theology run, ~20 min, repairs the Phase 4 evidentiary gap),
-then Task W (scope-erosion experiment — the single highest-value remaining task). See
-"Current phase" below for the full, exact re-entry summary.
+**Last update:** 2026-08-08 — **Phase 5 finally scoped; STATUS resynced after a month of
+undocumented work.** Everything between 2026-07-06 and 2026-08-04 happened on `main` via
+PRs #69/#70/#71 and was never logged here: the no-DB branch was merged, an 8-persona
+black-box simulation suite landed, and on 2026-07-31 the **static backbones were deleted**
+in favour of rules-only live discovery. Two consequences drive the new plan: (1) every
+recall/precision number this project owns measures an architecture that no longer ships,
+and the post-pivot evidence that does exist is gitignored; (2) P. Gehler's answer of
+2026-08-05 — *the value is that students reflected, not the proposals* — moves the graded
+outcome variable, and adds three chapters he explicitly asked for (user studies from
+memory, a future-feedback plan, a realistic survival plan). New authoritative plan:
+[2026-08-08-final-1.0-plan.md](findings/no_db_universal_skill/2026-08-08-final-1.0-plan.md)
+(Tasks AJ, V′, AK, AL, AA′, AB′, AC′, Z′, AD, AM, AN, AO, AE′, AF–AI; W optional).
+**Next up: Task V′** — and it must run first, in a fresh conversation, before anything else
+touches the eval material.
 
 ---
 
 ## Current phase
 
+> ▶ **Resumed 2026-08-08 on `main`.** Phase 5 is scoped for the last time — see
+> [the final 1.0 plan](findings/no_db_universal_skill/2026-08-08-final-1.0-plan.md) and
+> MASTERPLAN §9. The 2026-07-05 pause banner below is kept for the record; its
+> *methodological* findings still hold, but its architecture assumptions do not.
+>
+> **Exact state (2026-08-08):** branch `main` at `4d3a726`, plus the planning branch
+> `docs/final-1.0-plan`. `pytest -q` → **42 passed / 10 skipped**;
+> `python3 scripts/build_skill_release.py` green; last CI run green. 11 skills ship.
+> Public release `skills-v1.0.0` exists (2026-07-06) but **ships the deleted backbone
+> architecture**. `.simulations/` is gitignored, so no post-pivot evidence is committed.
+> Phases 1–4 are done but Phase 4's GO is provisional on two counts (blindness gap
+> 2026-07-05; architecture change 2026-07-31).
+>
+> **What is NOT done and matters most:** no clean blind hard-faculty run in any
+> architecture (V′); no post-pivot faculty measurement at all (AK); no committed evidence
+> for the shipping architecture (AL); nobody outside the project has ever installed the
+> tool (Z′); the reflection outcome Gehler grades has never been measured (AC′/Z′).
+>
+> **Superseded:** the unmerged `feat/no-db-universal-skill` commits `44dc48e`/`8538bba`
+> (2026-07-16 grading-aligned plan). Its rubric mapping survives inside the 2026-08-08
+> plan; roughly half its concrete steps were invalidated by the pivot. Do not execute it
+> directly.
+
+<details>
+<summary>Historical: the 2026-07-05 pause banner (architecture assumptions now stale)</summary>
+
 > ⏸ **Project paused here as of 2026-07-05, after the independent 1.0-readiness review.**
-> No further work is planned on this branch until further notice. This section is written
+> This section was written
 > to be a precise, self-contained re-entry point — read it first when work resumes, before
 > touching anything else.
 >
@@ -94,6 +124,8 @@ then Task W (scope-erosion experiment — the single highest-value remaining tas
 > the provisional-GO caveat directly. **Recommended first move on re-entry: Task V**, then
 > **Task W**.
 
+</details>
+
 **Phase 3 — Orchestration & Distribution: COMPLETE.** Backbone maintenance, entry-point skill,
 distribution artifacts, and smoke test are all done. Branch `feat/no-db-universal-skill` is
 package-ready; beta-ready after independent live test by another person/group.
@@ -107,26 +139,25 @@ gap (§5 "enrich before excluding" a candidate whose dense multi-strand title bu
 core-interest term). All 6 measured faculties now clear 80% (CS 100%, Medicine ≥83%,
 Psychology ≥83%, WiSo ≥83%, Humanities 100%, Law 80%), 2 of them hard.
 Decision doc: [2026-07-03-core-done-go-no-go.md](findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md).
-**Flagged provisional 2026-07-05** — see "Current phase" above and the
-[independent review](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md):
-the Humanities and Law numbers behind this verdict are not clean blind measurements: Task V
-(blind Theology run) is the named repair.
+**Flagged provisional twice.** (1) 2026-07-05 — the Humanities and Law numbers behind this
+verdict are not clean blind measurements
+([independent review](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md));
+Task V′ (blind Theology run) is the named repair. (2) **2026-08-08 — the architecture this
+verdict certifies no longer ships.** All numbers above were produced by the backbone-crawl
+architecture, deleted 2026-07-31. Tasks AJ (label every number), AK (re-measure two
+faculties post-pivot) and AL (commit evidence for the shipping architecture) are the named
+repair. Do not quote any figure above without its architecture tag.
 
-**Phase 5 — Task L done, merged 2026-07-04; fully scoped 2026-07-05.** Task U was the last
-task on the critical path to GO; candidates discussed (Theology blind run, independent
-external validation, the scope-erosion experiment, company-backbone taxonomy) — Domi picked
-**company-backbone taxonomy (Task L)**, run in worktree `study-os-thesis-taskL` (branch
-`task/L-company-backbone`). Extended `bw-company-backbone.md` from a MINT-heavy ~90-entry
-list to a 99-entry list covering all 13 employment fields derived from Uni Tübingen's actual
-faculty structure (not the CS-only reference file the task brief originally pointed at — see
-the findings doc §0 for that correction). Merged fast-forward into
-`feat/no-db-universal-skill`; worktree and branch removed. Full write-up:
-[2026-07-04-taskL-taxonomy-and-gap-analysis.md](findings/no_db_universal_skill/2026-07-04-taskL-taxonomy-and-gap-analysis.md).
-The other three candidates named that day (Theology blind run, independent external
-validation, scope-erosion experiment) are no longer just "undecided" — the 2026-07-05
-independent review formally scoped them (plus two new tasks, independent scoring and
-non-circular company GT) as **Tasks V–AA** in MASTERPLAN.md §9. See "Current phase" above
-for the full task table and evidence.
+**Phase 5 — scoped three times; final scoping 2026-08-08.** Task L (BW company backbone,
+merged 2026-07-04) was **superseded outright** by the rules-only pivot — the file it
+produced, `bw-company-backbone.md`, was deleted on 2026-07-31. Its taxonomy research
+survives as a findings document
+([2026-07-04-taskL-taxonomy-and-gap-analysis.md](findings/no_db_universal_skill/2026-07-04-taskL-taxonomy-and-gap-analysis.md))
+and remains useful as G1/G3 evidence for how the project reasoned about curated assets
+right before deciding to stop maintaining them. The 2026-07-05 scoping (Tasks V–AA) and the
+never-merged 2026-07-16 grading-aligned re-scoping (AA–AI) are both superseded by
+[2026-08-08-final-1.0-plan.md](findings/no_db_universal_skill/2026-08-08-final-1.0-plan.md).
+See the Phase 5 table below.
 
 Phase 1 is **complete** with live validation (all 4 faculties ≥70% live recall on fixture-based
 evaluation; gate passed 2026-06-28). Phase 1 build plan: [2026-06-26-build-plan.md](findings/no_db_universal_skill/2026-06-26-build-plan.md).
@@ -218,27 +249,43 @@ to Fachschaft Informatik, Hennig-GitHub, and Ersti-Heft editors (outside scope o
 | Task U | §5 enrich-before-exclude fix + Law re-run (the remaining path to GO) | ✅ | Domi | (1) **Skill fix committed** — added an "Enrich before excluding" row to `search-strategy.md` §5 (symmetric dual of the Butz worked example) + a matching one-liner in `SKILL.md` Step 7: do not exclude a candidate from a title-only reading when its title names a core-interest field amid off-interest strands; run Pass-2 enrichment first. (2) **Law blind re-run: 4/5 = 80% recall, 4/4 = 100% precision** (found von Bernstorff, Nettesheim, Finck, **Remmert**; missed Saurer). Remmert's dense multi-strand title still reads economic/municipal on its face, but Pass-2 enrichment of her own Schwerpunkte surfaced "Allgemeine Grundrechtslehren" — a core constitutional-law/human-rights match — and she was included. Droege and Seiler were also enriched (not title-judged) and correctly excluded, independently matching the GT file's own exclusion notes. Saurer's own page shows no constitutional/human-rights/tech focus even after enrichment — an honest, defensible remaining miss, not the same defect class as Remmert. **Outcome: §4 criterion 1 now MET — all 6 measured faculties clear 80% (2 of 6 hard). Go/no-go flipped to GO.** Write-ups: `findings/no_db_universal_skill/2026-07-02-live-eval-runbook.md` (2026-07-04 log entry), `2026-07-03-core-done-go-no-go.md` (GO banner). Output: `dist/live-validation/law-skill.md`. `pytest -q` 29 passed/8 skipped; release build OK. |
 | Task L | BW company backbone — extend to all Tübingen faculties + routing features (Phase 5) | ✅ | Domi | Live-researched all 7 faculties + ZITh (the `tuebingen-degree-programs.md` file the task brief pointed at turned out to be CS-only — corrected via Domi's live steer to research the actual faculty structure first). Derived a 13-employment-field taxonomy, gap-analyzed the existing backbone against it, and added 6 new sections (Chemie/Materialwissenschaft, extended Umwelt/Energie/Geowissenschaften, Wirtschaft/Consulting/Versicherung, Sozialwissenschaften/Marktforschung, Bildung/EdTech, Medien/Verlage/Sprache, Sport/Gesundheitstechnologie) with 16 new live-verified entries (every URL opened via WebFetch), plus a `Thesis-Kultur` column across all 13 tables and a Studiengangs-Routing table mapping every field to its backbone sections/tags. Rejected two candidates after failed verification (an acquired consultancy resolving to an unrelated same-named firm; an unconfirmed legal-tech HQ) rather than guess. Honestly documents fields that stayed thin despite real search effort (Recht/Legal Tech: 0 entries, Sozialwissenschaften: 1, Sport: 2) and one pre-existing 30%-cap breach (Informatik/AI, ~36% — predates this task, left alone as out of scope). EdTech persona smoke test returned only 2–3 candidates (below the 5–20 target) — an honest reflection of a thin field, correctly handled by the skill's existing "ask to broaden scope" fallback, not a bug. `pytest -q` 29 passed/8 skipped; release build OK. Full write-up: `findings/no_db_universal_skill/2026-07-04-taskL-taxonomy-and-gap-analysis.md`. |
 
-### Phase 5 — Independent validation, scope experiment & distribution (scoped 2026-07-05)
+### Phase 5 — 1.0: repair the evidence, ship, tell (final scoping 2026-08-08)
 
-Scoped by the [independent 1.0-readiness review](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md);
-full justification and evidence per task lives there. Task letters continue from Task U
-(no collision with the post-Phase-3 hardening table above).
+Scoped three times: 2026-07-05 (Tasks V–AA, thesis framing — the
+[independent review](findings/no_db_universal_skill/2026-07-05-fable-1.0-readiness-review.md),
+still the methodological evidence base); 2026-07-16 (Tasks AA–AI, grading-aligned — on the
+never-merged `feat/no-db-universal-skill`, written before the pivot); **2026-08-08, final**
+— [2026-08-08-final-1.0-plan.md](findings/no_db_universal_skill/2026-08-08-final-1.0-plan.md),
+which folds in the rules-only pivot and Gehler's 2026-08-05 answers. Old Task X folds into
+Z′ (tester co-scoring), old Task Y is closed by AJ item 4 (permanent demotion), Task L was
+superseded outright by the pivot.
 
 | Task | Step | Status | Owner | Notes / difficulties |
 |---|---|---|---|---|
-| V | Blind live run, Theology faculty — repairs the Phase 4 hard-faculty blindness gap | ⬜ open | — | Ground truth exists (`skills/tests/eval_ground_truth/theology.md`), never opened mid-run. Cheapest remaining task (~20 min via the live-eval runbook). Also exercises the known N.N.-vacant-chair honesty case. Recommended first task on re-entry. |
-| W | Scope-erosion experiment (gesamtplan §3 Idee 6 / §6 T3) — 2×2 {tool, baseline} × {Tübingen, TUM or KIT}, foreign GT curated by a second person | ⬜ open | — | The project's central scientific claim is untested. Trimmed version (one foreign university, one faculty, ~6-chair GT) estimated at 2–4 working days. Named by the review as the single highest-value remaining task. |
-| X | Independent scoring pass — second person re-scores ~20% of surfaced options against existing live-eval outputs | ⬜ open | — | Every recall/precision/steering number to date is single-agent authored and scored; cheapest mitigation the gesamtplan already prescribed (§7) and never executed. |
-| Y | Non-circular company ground truth (gesamtplan T4) | ⬜ open | — | Company recall/thesis-signal numbers measure "does the skill find what's in the backbone," not "does the backbone reflect reality." Alternative: explicitly demote company numbers to "plumbing check" in the write-up instead of running this task. |
-| Z | Protocolled external test (3–5 students, incl. non-CS) on the shipped release artifact + one distribution channel (Fachschaft Informatik first) | ⬜ open | — | Closes Design-Entscheidungen.md TODOs 1 ("Hoch/Ja") and 2 ("Hoch/Ja"). Nobody outside the project has run the shipped `build_skill_release.py` artifact; Gehler's informal test used a dev checkout with no protocol. |
-| AA | Hygiene sweep: fix the wrong-person paper index, the CS-only degree-programs file, portability contradictions, backbone link audit, small wording defects; also covers a post-M1–M3 live runbook re-exercise | ⬜ open | — | Bundle of small, independently-cheap fixes named by the review §7/O1–O6; none block the other Phase 5 tasks but should not be forgotten before a real 1.0 tag. |
+| V′ | Blind Theology run — the only untouched hard-faculty ground truth | ⬜ open | — | **Run FIRST, in a fresh conversation** that has not read the final plan §2 or the Task T/U analyses. ~30 min. Now doubly valuable: first clean blind number *and* an early post-pivot faculty number. Also exercises the N.N.-vacant-chair honesty case. G5. |
+| AJ | Pivot evidence audit — tag every number in the repo with the architecture + date that produced it | ⬜ open | — | **Blocker for AE′.** Every recall/precision figure measures the backbone architecture deleted 2026-07-31. Also permanently demotes the company eval (closes old Y). G5/G4. |
+| AK | Post-pivot ground-truth re-measurement: CS + Law (Humanities optional) | ⬜ open | — | The sharp test. `search-strategy.md` went 461→52 lines; Task U's enrich-before-exclude rule survived as one sentence but the **Remmert** worked example did not. Does the rule still find her without it? Report her row explicitly. Do not patch in this task. G5/G1/G3. |
+| AL | Reflection rubric dimension + committed simulation evidence set | ⬜ open | — | PR #71's before/after (baseline 20.0 → rules-only 20.75, 6/6 gates) exists **only in the PR description**; `.simulations/` is gitignored. Recover those numbers, re-run the 8-persona suite, commit conversations + ratings + a limitations README. G5/G4. |
+| AA′ | Hygiene sweep, post-pivot — 5 items | ⬜ open | — | **Release blocker.** 4 of the original 8 items were resolved by the pivot itself. Remaining: delete the static paper index (the last URI catalog, wrong Matthias Hein), fix the CS-only degree file, fix the hardcoded `~/.claude/` session path, generalise the no-static-catalog invariant test (currently named-file assertions only), and document the AI-disclaimer decision. G4/G3. |
+| AB′ | Re-release + `INSTALL.md`, cold-install tested | ⬜ open | — | Depends: AA′. `skills-v1.0.0` (2026-07-06) ships the **deleted** architecture — supersede it. Version bump decision (1.1.0 vs 2.0.0) belongs to the task; CHANGELOG lists breaking entries. G5/G4. |
+| AC′ | Beta protocol + feedback form, reflection-first | ⬜ open | — | Depends: AB′. Primary instrument is a **verbatim pre/post** "what kind of thesis am I looking for" pair — the operationalisation of Gehler's outcome variable. Secondary: unknown-option hit, factual-error count, unaided setup, would-contact. Co-scored with the tester (absorbs old X). G2/G5. |
+| Z′ | Protocolled external test, 2–3 students, ≥1 non-CS | ⬜ open | — | Depends: AC′. Scoped down from 3–5 on 2026-08-08 (realistic recruiting capacity). Longest calendar clock — start recruiting the day AB′ lands. n=1 fallback is reportable but does not clear the gate. G2/G5. |
+| AD | Distribution outreach: Fachschaft Informatik + Menth/Gehler channel question | ⬜ open | — | Depends: AB′; overlaps Z′. **No self-sent Rundmail** — the sender must be an institution. Ersti-Heft & uni site deferred to backlog. G5. |
+| AM | Reconstructed user-study chapter with per-entry provenance | ⬜ open | — | Explicitly invited by Gehler ("from memory, with a note to that effect"). Inventory every user contact ever, marked documented vs. reconstructed. No invented counts or quotes. G2/G5. |
+| AN | Future-feedback plan: what / when / by whom / how many | ⬜ open | — | Explicitly invited by Gehler. A table with named responsibilities and trigger conditions, not prose. Depends on AO for the ownership question. G5. |
+| AO | Survival & maintenance plan | ⬜ open | — | Explicitly invited by Gehler ("not just hoping someone takes over a GitHub project"). Core argument: **the rules-only pivot is the sustainability strategy**. Needs the real maintenance-hours number, ownership options with failure modes, and the graceful-degradation case. G5/G3/G1. |
+| AE′ | Benchmark consolidation across both architectures | ⬜ open | — | Depends: AJ, V′, AK, AL. Must keep the two instruments separate — rubric scores and ground-truth recall answer different questions and are not one series. Names the reflection variable as measured only qualitatively. G5/G4. |
+| AF | Report chapter: problem framing & evolution | ⬜ open | — | Writing. The evolution story now has **three** dated steps (DB app → no-DB + backbone → rules-only): the same argument applied twice, one level deeper. G1. |
+| AG | Report chapter: user research & evidence | ⬜ open | — | Depends: Z′, AM. The weakest graded component. Personas + user story + evidence-of-contact table with honest team attribution. G2. |
+| AH | Report chapter: concept & solution design | ⬜ open | — | Depends: AO, AA′ item 5. Value proposition **reframed to reflection**; feature-prioritization table including the honest cost of the backbone deletion; the three-signal convergence (professor research May / Gehler August / the AI-disclaimer). G3. |
+| AI | Final written report assembly | ⬜ open | — | Depends: AE′, AF, AG, AH, AM, AN, AO, Z′. Written report only (no slide deck, decided 2026-08-08). G4 has no chapter task of its own — assembled here. All five components. |
+| W | Scope-erosion experiment (2×2 Tübingen vs. TUM/KIT) | ⬜ optional | — | Reachable in the 4+ week window, but its hypothesis needs restating: under rules-only there is much less Tübingen-specific curation left to erode. Only after AI is drafted. G5/G1. |
 
-**Gate Phase 5 (draft, to be confirmed on re-entry):** Task V done (clean hard-faculty
-blind number exists) · Task W done with either outcome reported (Δ_in ≫ Δ_out confirmed,
-or an honest negative result discussed) · Tasks X/Y done or explicitly and visibly
-demoted in the write-up · Task Z done (external test run, one channel contacted) · Task AA
-swept. Not all six need to complete for a defensible thesis submission — see the review's
-§0 bottom line for which items are strictly blocking vs. optional.
+**Gate Phase 5 / 1.0 (per plan §8):** (1) evidence honest and current — AJ, V′, AK, AL done;
+(2) product shippable and shipped — AA′, AB′, AD done; (3) real users touched it — Z′ with
+≥2 protocolled sessions and ≥1 resulting change; (4) the three chapters Gehler asked for
+exist — AM, AN, AO; (5) report assembled — AE′, AF–AI, every claim linked, every number
+architecture-tagged. W optional.
 
 ---
 
@@ -273,6 +320,93 @@ swept. Not all six need to complete for a defensible thesis submission — see t
 ---
 
 ## Log
+
+- **2026-08-08** — **Phase 5 finally scoped; STATUS resynced after a month of undocumented
+  work.** Switched to `main`, fast-forwarded 166 commits, and audited what happened between
+  2026-07-06 and 2026-08-04 — none of which had been logged here. Wrote
+  [2026-08-08-final-1.0-plan.md](findings/no_db_universal_skill/2026-08-08-final-1.0-plan.md)
+  on branch `docs/final-1.0-plan`, rewrote MASTERPLAN §9, and updated this file's banner,
+  Phase-4/5 sections and task table. **Findings that drove the plan:** (1) *The evidence
+  broke.* Every recall/precision/steering number this project owns was produced by the
+  backbone architecture deleted on 2026-07-31 — the Phase-4 GO is now provisional on two
+  counts, and every figure in the repo needs an architecture tag (Task AJ). (2) *There is
+  post-pivot evidence, but not in the repo.* PR #71 gated the pivot on the simulation
+  suite and passed — baseline mean 20.0 → rules-only 20.75 over four comparable personas,
+  6/6 gates — but the artifacts are gitignored by explicit decision, so the numbers exist
+  only in a PR description; and rubric scores cannot answer recall questions anyway
+  (Tasks AL, AK). (3) *The reference files were condensed 461→52 and 554→52 lines.* Task U's
+  enrich-before-exclude rule survived as one sentence; the **Remmert** worked example that
+  demonstrated it did not — and Remmert is the single data point that flipped the Phase-4
+  verdict to GO. Whether a rule without its example still finds her is the sharpest open
+  question, and Task AK is built to answer it. (4) *Gehler's 2026-08-05 answer moves the
+  outcome variable* — the value is the student's reflection, not the proposals. Chosen
+  response: reframe and measure, do not rewrite the skills (value proposition in G3, a
+  verbatim pre/post reflection pair in the beta protocol, a reflection dimension in the
+  simulation rubric). Notably this converges with two independent earlier signals: the May
+  professor research ("topics are starting points only; an essential part of doing a thesis
+  is the formulation and refinement of the problem itself") and Valentin's AI-disclaimer
+  rule of 2026-08-02. (5) *Three chapters Gehler explicitly asked for do not exist* —
+  reconstructed user studies, a future-feedback plan, and a realistic survival plan
+  (Tasks AM, AN, AO). Decisions taken this session: deadline 4+ weeks; external test scoped
+  down to 2–3 mixed testers; reframe-and-measure over product rewrite; written report only,
+  no slide deck. **Next: Task V′, in a fresh conversation, before anything else touches the
+  eval material.**
+
+- **2026-08-04** — **PR #71 merged (Maximilian Schnitt): the rules-only pivot.**
+  *Reconstructed from git history and the PR description on 2026-08-08 — not logged at the
+  time.* Static runtime backbones were deleted (`tuebingen-faculty-backbone.md`,
+  `bw-company-backbone.md`) and replaced by two new skills, `discover-university-candidates`
+  and `discover-company-candidates`, which build a temporary live-verified candidate table
+  per run from multiple source axes. Rationale
+  ([2026-07-30-rules-only-backbone.md](findings/dev_process/2026-07-30-rules-only-backbone.md)):
+  a maintained URI catalog is an LLM/search-generated snapshot that stales and needs an
+  owner; the runtime backbone should be discovery *logic*, not a catalog. Also in this PR:
+  four new simulation personas (Timo, Simone, Marvin, Lilly), the eval visuals regenerated,
+  `AGENTS.md`/`README.md`/`Design-Entscheidungen.md`/`MASTERPLAN.md` updated for rules-only,
+  architecture invariants added to the test suite, and a late fix enforcing the
+  `thesis-finder` drill-down branch after a "go deeper" answer
+  ([2026-08-04-go-deeper-branch-validation.md](findings/dev_process/2026-08-04-go-deeper-branch-validation.md)
+  — a genuine harness→finding→fix loop). Validation reported in the PR: pytest 33 passed /
+  10 skipped; simulation before/after 20.0 → 20.75 with all six gates passing; the four new
+  personas at 20/21 with evidence discipline 3/3. **Artifacts deliberately not committed.**
+  Side effects this repo has to live with: the reference files lost their worked examples
+  (see the 2026-08-08 entry), and the public release `skills-v1.0.0` now ships an
+  architecture that no longer exists in `main`.
+
+- **2026-08-02** — **AI-disclaimer rule added (Valentin Schmidt, commit `1d43de7`).**
+  *Reconstructed 2026-08-08.* `draft-thesis-contact` must now place an AI-generated notice
+  above every draft: the draft must not be sent as-is; the student should rewrite at least
+  the opening and closing in their own words, cut anything they could not defend in person,
+  and verify every factual claim. The notice may never be omitted, including when only the
+  email text is requested — and it is deliberately **student-facing**, not a disclosure
+  inside the email to the professor. Same commit symlinked the skills into `.claude/skills/`
+  for Valentin and Domi. This is a real design decision and it is documented in no design
+  file; Task AA′ item 5 fixes that. Also this week: Valentin asked Gehler the question
+  (2026-08-02) that produced the reflection answer of 2026-08-05.
+
+- **2026-07-28** — **PRs #69 and #70 merged.** *Reconstructed 2026-08-08.* #69 merged the
+  whole no-DB universal skill rewrite (Phases 1–4) from `feat/no-db-universal-skill` into
+  `main` — note that it merged the branch as of 2026-07-06, so the two later planning
+  commits (`44dc48e`, `8538bba`, the 2026-07-16 grading-aligned plan) were left behind and
+  are still unmerged. #70 (Maximilian Schnitt) added the simulation infrastructure: four
+  repo-local persona commands mirrored across `.claude/commands/` and `.codex/prompts/`,
+  the `run-thesis-simulations` runner skill with a black-box harness split and a 7-dimension
+  rubric, a creator skill for new personas, and `.gitignore` rules keeping generated
+  conversations and ratings out of git while versioning the command markdowns.
+
+- **2026-07-16** — **Grading-aligned Phase 5 re-scoping written — and never merged.**
+  Commits `44dc48e`/`8538bba` on `feat/no-db-universal-skill`: after the course published
+  its grading rubric on 2026-07-09 (five components × 20%), Phase 5 was re-planned so every
+  task mapped to a graded component (Tasks AA–AI + V, W optional). PR #69 had already been
+  cut from an earlier point on the branch, so this work never reached `main` and sat
+  unnoticed for three weeks. Its rubric mapping survives inside the 2026-08-08 plan; roughly
+  half its concrete steps were invalidated by the pivot two weeks later. Superseded — do not
+  execute it directly.
+
+- **2026-07-06** — **Release `skills-v1.0.0` published** (tag + GitHub release, via the
+  automated release workflow). *Reconstructed 2026-08-08.* This is still the latest public
+  artifact and it ships the backbone architecture deleted on 2026-07-31. Task AB′ supersedes
+  it.
 
 - **2026-07-05** — **Independent 1.0-readiness review completed and actioned; project
   re-paused with Phase 5 fully scoped.** Ran a from-scratch, deliberately skeptical review
