@@ -29,7 +29,9 @@ and returns a map of matching university chairs or BW companies.
 
 **Install the skills as a set.** `thesis-finder` is a router: it invokes the discovery,
 paper, proposal, and contact-draft skills by name, and they invoke each other. Installing a
-subset leaves those calls unresolved. Copy the whole `skills/` folder.
+subset leaves those calls unresolved — install all ten. From a release archive that means
+copying its *contents* (the ten skill folders), not the versioned wrapper folder; see
+[INSTALL.md](INSTALL.md).
 
 `thesis-finder` keeps a session log so a search can resume weeks later. It prefers
 `~/.claude/thesis-finder/session.md`; if your client cannot write there, it falls back to
@@ -140,8 +142,10 @@ Live LLM-as-judge evals (optional, requires DeepEval + API key):
 RUN_DEEPEVAL=1 OPENAI_API_KEY=... python -m pytest skills/tests/evals -m eval -q
 ```
 
-CI (`qa.yml`) runs the full `pytest -q` suite on every PR. `package-skills.yml`
-runs `pytest -q` + the release build as a release gate.
+CI (`qa.yml`) runs the full `pytest -q` suite on pull requests that touch `skills/`,
+`scripts/`, `pyproject.toml`, or the workflows themselves — a docs-only PR deliberately
+gets no run. `package-skills.yml` runs `pytest -q` + the release build as a release gate,
+on both of its triggers.
 
 ---
 
@@ -175,6 +179,8 @@ study-os-thesis/
 │   └── tests/                       deterministic + eval tests
 ├── scripts/build_skill_release.py   packages skills into tar.gz + zip
 ├── docs/thesis-report/               project genesis & decision history (thesis writeup)
+├── INSTALL.md                       student-facing install guide (also shipped in the archive)
+├── CHANGELOG.md                     release notes, SemVer policy
 ├── MASTERPLAN.md                    stable plan: what we build, in what order, why
 ├── STATUS.md                        living progress doc: current state + decisions
 └── .github/workflows/               qa.yml · package-skills.yml · codex-multiturn-evals.yml
@@ -189,6 +195,7 @@ or maintainer files:
 
 ```
 study-os-thesis-skills-vX.Y.Z/
+├── INSTALL.md                       the install guide travels with the archive
 ├── build-student-profile/
 │   ├── SKILL.md
 │   └── references/
@@ -200,8 +207,21 @@ study-os-thesis-skills-vX.Y.Z/
 
 Copy the extracted skill folders directly into any agent's skills directory.
 
-Publish via **Package skill artifact** in GitHub Actions (choose `patch`, `minor`,
-or `major`). Release notes are maintained in [CHANGELOG.md](CHANGELOG.md).
+**To publish a release**, the version is set on `main` first — it is the single source:
+
+```bash
+python scripts/bump_project_version.py minor    # or patch / major
+python scripts/release_changelog.py --version X.Y.Z --notes dist/release-notes.md
+```
+
+Commit both, merge to `main`, then run **Package skill artifact** in GitHub Actions
+(`workflow_dispatch`, no inputs — it reads the version from `pyproject.toml`). The workflow
+tags `skills-vX.Y.Z`, points the `release/skills` publish mirror at the released commit, and
+publishes the GitHub release with notes from [CHANGELOG.md](CHANGELOG.md).
+
+Note that `skills-v*` tags can only be created by the release GitHub App: a repository
+ruleset blocks tag creation for everyone else, so `gh release create` and a manual tag push
+both fail. Dispatching the workflow is the only route.
 
 ---
 
