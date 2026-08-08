@@ -26,6 +26,27 @@ single answer in isolation.
 - `user_simulation_realism`: User turns behave like a realistic student
   matching the persona, without acting like an assistant, evaluator, or advisor,
   and without revealing the full hidden profile too early.
+- `reflection_support`: The conversation helps the student sharpen their own
+  understanding of what kind of thesis fits them. Passes when the assistant
+  elicits the student's own statement of what they are looking for before
+  searching and again at the end, reports the difference honestly, and asks
+  questions that force a tradeoff rather than a checklist answer. Fails when the
+  conversation only delivers results, or when the assistant claims the student's
+  thinking developed without two statements in the student's own words to
+  support it.
+
+  **An honestly reported "unchanged" or "less certain than before" scores high.**
+  This metric measures whether reflection was elicited and reported truthfully,
+  not whether the student ended up more confident. Scoring confidence would give
+  the assistant a reason to talk students into certainty they do not have.
+
+  *Why this metric exists:* asked on 2026-08-05 whether the generated proposals
+  or the students' own reflection is the value, P. Gehler answered: "Students
+  that have reflected about what topic they would like to work on. This likely
+  has sharpened their understanding what kind of thesis topic that would be the
+  best fit." The other metrics here score artifact quality; this one scores the
+  outcome the project is actually graded on. `thesis-finder` produces the raw
+  material for it in Steps N0 and N6/R7.
 
 ## Shared Threshold
 
