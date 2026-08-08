@@ -36,7 +36,11 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Checkout release branch
+      # release/skills is a publish mirror, not a place where anything is decided: it is
+      # reset to the exact dispatched commit. It used to be merged into and bumped here,
+      # which is what let it drift to 1.0.0 while main sat at 0.1.0 — and would now
+      # conflict in pyproject.toml, since both sides changed the version line.
+      - name: Point release branch at the dispatched commit
         if: github.event_name == 'workflow_dispatch'
         run: |
           git config user.name "github-actions[bot]"
@@ -47,58 +51,59 @@ jobs:
             exit 1
           fi
 
-          if git ls-remote --exit-code --heads origin "${RELEASE_BRANCH}" >/dev/null 2>&1; then
-            git fetch origin "${RELEASE_BRANCH}"
-            git checkout -B "${RELEASE_BRANCH}" "origin/${RELEASE_BRANCH}"
-          else
-            git checkout -B "${RELEASE_BRANCH}"
-          fi
+          git checkout -B "${RELEASE_BRANCH}" "${GITHUB_SHA}"
 
-          git merge --no-edit "${GITHUB_SHA}"
-
-      - name: Read project version
-        if: github.event_name == 'workflow_dispatch'
+      - name: Resolve release version
         id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
-          PROJECT_VERSION="$(python - <<'PY'
+          if [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
+            VERSION="$(python - <<'PY'
           from scripts.build_skill_release import read_project_version
           print(read_project_version())
           PY
           )"
+          else
+            VERSION="${REF_NAME#skills-v}"
+          fi
 
-          echo "version=${PROJECT_VERSION}" >> "${GITHUB_OUTPUT}"
-          echo "tag=skills-v${PROJECT_VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "tag=skills-v${VERSION}" >> "${GITHUB_OUTPUT}"
 
-      - name: Finalize changelog
-        if: github.event_name == 'workflow_dispatch'
-        run: python scripts/release_changelog.py --version "${{ steps.version.outputs.version }}" --notes dist/release-notes.md
-
-      # On a tag push the changelog was already finalized on the branch, so there is no
-      # [Unreleased] section left to cut. Extract the existing section for this tag
-      # instead — without this, dist/release-notes.md does not exist on the tag-push path
-      # and "Publish GitHub release" fails on its missing body_path.
-      - name: Extract release notes for pushed tag
-        if: github.event_name != 'workflow_dispatch'
+      # Both triggers need dist/release-notes.md, and the changelog may or may not have
+      # been cut already: the release ref can carry a finished section for this version
+      # (a release prepared on main), or still carry it under [Unreleased]. Handle both,
+      # so neither trigger depends on which of the two happened.
+      - name: Prepare release notes
         env:
-          TAG_NAME: ${{ github.ref_name }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           python - <<'PY'
-          import os, re, sys
+          import os, re, subprocess, sys
           from pathlib import Path
 
-          version = os.environ["TAG_NAME"].removeprefix("skills-v")
+          version = os.environ["VERSION"]
           text = Path("CHANGELOG.md").read_text(encoding="utf-8")
-          pattern = re.compile(
+          section = re.compile(
               rf"^## \[{re.escape(version)}\][^\n]*$.*?(?=^## \[|\Z)",
               re.MULTILINE | re.DOTALL,
-          )
-          match = pattern.search(text)
-          if not match:
-              sys.exit(f"CHANGELOG.md has no section for version {version}")
+          ).search(text)
 
           notes = Path("dist/release-notes.md")
           notes.parent.mkdir(parents=True, exist_ok=True)
-          notes.write_text(match.group(0).strip() + "\n", encoding="utf-8")
+
+          if section:
+              notes.write_text(section.group(0).strip() + "\n", encoding="utf-8")
+              print(f"reused the existing CHANGELOG section for {version}")
+          else:
+              subprocess.run(
+                  [sys.executable, "scripts/release_changelog.py",
+                   "--version", version, "--notes", str(notes)],
+                  check=True,
+              )
+              print(f"cut [Unreleased] into {version}")
           PY
 
       - name: Install dev dependencies
@@ -107,25 +112,8 @@ jobs:
       - name: Run skill tests
         run: python -m pytest -q
 
-      - name: Resolve release tag
-        id: release
-        run: |
-          PROJECT_VERSION="$(python - <<'PY'
-          from scripts.build_skill_release import read_project_version
-          print(read_project_version())
-          PY
-          )"
-
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
-            TAG_NAME="${{ steps.version.outputs.tag }}"
-          else
-            TAG_NAME="${GITHUB_REF_NAME}"
-          fi
-
-          echo "tag=${TAG_NAME}" >> "${GITHUB_OUTPUT}"
-
       - name: Build skill-only release artifact
-        run: python scripts/build_skill_release.py --tag "${{ steps.release.outputs.tag }}"
+        run: python scripts/build_skill_release.py --tag "${{ steps.version.outputs.tag }}"
 
       - name: Validate release artifact rules
         run: python -m pytest skills/tests/test_distribution_package.py -q
@@ -133,15 +121,22 @@ jobs:
       - name: Create and push release tag
         if: github.event_name == 'workflow_dispatch'
         run: |
-          TAG_NAME="${{ steps.release.outputs.tag }}"
+          TAG_NAME="${{ steps.version.outputs.tag }}"
           if git ls-remote --exit-code --tags origin "refs/tags/${TAG_NAME}" >/dev/null 2>&1; then
             echo "Tag ${TAG_NAME} already exists on origin" >&2
             exit 1
           fi
-          git add pyproject.toml CHANGELOG.md
-          git commit -m "chore: release ${TAG_NAME}"
+
+          # The version and the changelog section are prepared on main before dispatch, so
+          # there is normally nothing left to commit here. Only make a commit if the
+          # release ref actually differs — an unconditional commit would abort the run.
+          if ! git diff --quiet || ! git diff --cached --quiet; then
+            git add pyproject.toml CHANGELOG.md
+            git commit -m "chore: release ${TAG_NAME}"
+          fi
+
           git tag "${TAG_NAME}" HEAD
-          git push origin "HEAD:${RELEASE_BRANCH}"
+          git push --force origin "HEAD:${RELEASE_BRANCH}"
           git push origin "refs/tags/${TAG_NAME}"
 
       - name: Upload artifact
@@ -157,7 +152,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.release_app.outputs.token }}
         with:
-          tag_name: ${{ steps.release.outputs.tag }}
+          tag_name: ${{ steps.version.outputs.tag }}
           body_path: dist/release-notes.md
           files: |
             dist/study-os-thesis-skills-v*.tar.gz
