@@ -36,6 +36,9 @@ ABSOLUTE_URL_PATTERN = re.compile(r"https?://")
 # purpose and are the correct shape under rules-only discovery. They carry no scheme, but
 # skip their lines explicitly so the intent survives a future rewrite that adds one.
 SITE_QUERY_PATTERN = re.compile(r"\bsite:")
+# A bare four-digit year in a shipped resource is almost always a recency filter with a
+# one-year fuse. `YYYY-MM-DD` placeholders and `{THIS_YEAR-1}` style templates are fine.
+CALENDAR_YEAR_PATTERN = re.compile(r"(?<![-\w{])(?:19|20)\d{2}(?![-\w}])")
 
 
 def _parse_frontmatter(skill_md: Path) -> dict[str, str]:
@@ -194,6 +197,29 @@ def test_shipped_resources_are_not_static_uri_catalogs() -> None:
     assert not offenders, (
         "shipped resources look like static URI catalogs "
         f"(limit {MAX_ABSOLUTE_URLS_PER_RESOURCE_FILE} absolute URLs per file): " + "; ".join(offenders)
+    )
+
+
+def test_shipped_resources_have_no_hardcoded_calendar_years() -> None:
+    # The package's central claim is that it does not go stale without maintenance
+    # (README "Architecture", MASTERPLAN §2). Recency filters written as literal years
+    # break that claim on a one-year fuse: until 2026-08-08 the two search-strategy
+    # references and the university discovery rules shipped `2024 OR 2025 OR 2026`, so a
+    # 2027 student would have searched a window that excludes everything new. Recency must
+    # be expressed relative to run time, e.g. `{THIS_YEAR}` / `{THIS_YEAR-1}`.
+    offenders = []
+    for path in _shipped_resource_files():
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue  # binary asset; nothing to read
+        for number, line in enumerate(text.splitlines(), start=1):
+            if CALENDAR_YEAR_PATTERN.search(line):
+                offenders.append(f"{path.relative_to(SKILLS_DIR)}:{number}: {line.strip()}")
+
+    assert not offenders, (
+        "shipped resources hardcode calendar years; express recency relative to run time "
+        "({THIS_YEAR}, {THIS_YEAR-1}, …) instead: " + "; ".join(offenders)
     )
 
 

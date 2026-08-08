@@ -51,13 +51,17 @@ Name a coordinator only if the person appears on the company's own public page.
 
 ### Recency
 
+Resolve `{THIS_YEAR}` to the current calendar year at run time and derive the
+window from it. Never paste a fixed set of years into a query — a hardcoded
+window silently stops finding new work the year after it is written.
+
 ```text
-site:{COMPANY_DOMAIN} "{TOPIC_EN}" 2024 OR 2025 OR 2026
-"{COMPANY_NAME}" "{TOPIC_EN}" Forschung OR research press OR news 2024 OR 2025 OR 2026
+site:{COMPANY_DOMAIN} "{TOPIC_EN}" {THIS_YEAR} OR {THIS_YEAR-1} OR {THIS_YEAR-2}
+"{COMPANY_NAME}" "{TOPIC_EN}" Forschung OR research press OR news {THIS_YEAR} OR {THIS_YEAR-1}
 ```
 
-Evidence from 2022 or later can count as recent. Older evidence must be marked
-stale.
+Evidence from the last four years counts as recent. Older evidence must be
+marked stale, with its actual date shown.
 
 ## Quality Filters
 

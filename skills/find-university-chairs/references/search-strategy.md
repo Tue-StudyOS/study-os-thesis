@@ -32,13 +32,17 @@ broad department labels.
 
 ### Current Activity
 
+Resolve `{THIS_YEAR}` to the current calendar year at run time and derive the
+window from it. Never paste a fixed set of years into a query — a hardcoded
+window silently stops finding new work the year after it is written.
+
 ```text
-"{GROUP_OR_PERSON}" "{TOPIC_EN}" 2024 OR 2025 OR 2026
-site:{OFFICIAL_DOMAIN} "{GROUP_OR_PERSON}" 2024 OR 2025 OR 2026
+"{GROUP_OR_PERSON}" "{TOPIC_EN}" {THIS_YEAR} OR {THIS_YEAR-1} OR {THIS_YEAR-2}
+site:{OFFICIAL_DOMAIN} "{GROUP_OR_PERSON}" {THIS_YEAR} OR {THIS_YEAR-1}
 ```
 
-Evidence from 2022 or later can count as recent. Older evidence must be marked
-stale.
+Evidence from the last four years counts as recent. Older evidence must be
+marked stale, with its actual date shown.
 
 ### Thesis Signal
 
@@ -53,7 +57,7 @@ Absence of a public thesis page is normal. Do not infer supervision capacity.
 
 ```text
 site:{OFFICIAL_DOMAIN} "{PERSON_NAME}" Tübingen
-"{PERSON_NAME}" Universität Tübingen OR University of Tübingen 2024 OR 2025 OR 2026
+"{PERSON_NAME}" Universität Tübingen OR University of Tübingen {THIS_YEAR} OR {THIS_YEAR-1}
 ```
 
 Name a person only when current affiliation is confirmed on an official/current

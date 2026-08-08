@@ -11,11 +11,15 @@ one search ranking.
 | Institute search | Find departments, institutes, seminars, clinics, and research groups | `site:uni-tuebingen.de {domain_de} Institut Forschung Tübingen` |
 | Center search | Catch cross-faculty centers and special structures | `site:uni-tuebingen.de {topic_de} Zentrum Forschung Tübingen` |
 | Associated institutes | Catch Tübingen research groups outside faculty listing pages | `{topic_en} Tübingen research group MPI-IS Cyber Valley ELLIS` |
-| Publication search | Confirm current research areas and people | `{person_or_group} {topic_en} 2024 2025 2026` |
+| Publication search | Confirm current research areas and people | `{person_or_group} {topic_en} {THIS_YEAR} {THIS_YEAR-1} {THIS_YEAR-2}` |
 | Course catalog | Support teaching/supervision fit when research pages are thin | `{topic_de} Tübingen Vorlesungsverzeichnis Seminar` |
 
 For AI/ML/neuroscience profiles, associated institutes and centers are
 first-class axes, not optional enrichment.
+
+Resolve `{THIS_YEAR}` to the current calendar year at run time. Never paste a
+fixed set of years into a query — a hardcoded window silently stops finding new
+work the year after it is written.
 
 ## Verification
 
