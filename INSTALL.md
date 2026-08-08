@@ -31,12 +31,22 @@ they call each other. A partial install fails at the first hand-off.
 
 Download the latest release archive from
 <https://github.com/Tue-StudyOS/study-os-thesis/releases/latest> — either
-`study-os-thesis-skills-vX.Y.Z.zip` or `.tar.gz` — and unpack it.
+`study-os-thesis-skills-vX.Y.Z.zip` or `study-os-thesis-skills-vX.Y.Z.tar.gz` — and unpack
+it:
 
-You get a folder containing one directory per skill:
+```bash
+# .tar.gz — works on macOS and Linux out of the box
+tar xzf study-os-thesis-skills-vX.Y.Z.tar.gz
+
+# .zip — if `unzip` is not installed (it often isn't on a bare Linux/WSL box):
+python3 -m zipfile -e study-os-thesis-skills-vX.Y.Z.zip .
+```
+
+Either way you get **one folder named after the version**, containing one directory per
+skill:
 
 ```text
-study-os-thesis-skills-vX.Y.Z/
+study-os-thesis-skills-vX.Y.Z/     ← this wrapper folder is NOT what you copy
 ├── build-student-profile/
 │   ├── SKILL.md
 │   └── references/
@@ -45,8 +55,8 @@ study-os-thesis-skills-vX.Y.Z/
 └── ...  (10 skills in total)
 ```
 
-There is no outer `skills/` wrapper inside the archive — the skill folders are at the top
-level. That matters for the copy step below.
+You copy the **contents** of that folder — the ten skill directories — not the folder
+itself. That is what the `/*` in the next step is for.
 
 ---
 
