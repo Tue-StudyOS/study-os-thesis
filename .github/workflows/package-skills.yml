@@ -73,6 +73,34 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: python scripts/release_changelog.py --version "${{ steps.version.outputs.version }}" --notes dist/release-notes.md
 
+      # On a tag push the changelog was already finalized on the branch, so there is no
+      # [Unreleased] section left to cut. Extract the existing section for this tag
+      # instead — without this, dist/release-notes.md does not exist on the tag-push path
+      # and "Publish GitHub release" fails on its missing body_path.
+      - name: Extract release notes for pushed tag
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          python - <<'PY'
+          import os, re, sys
+          from pathlib import Path
+
+          version = os.environ["TAG_NAME"].removeprefix("skills-v")
+          text = Path("CHANGELOG.md").read_text(encoding="utf-8")
+          pattern = re.compile(
+              rf"^## \[{re.escape(version)}\][^\n]*$.*?(?=^## \[|\Z)",
+              re.MULTILINE | re.DOTALL,
+          )
+          match = pattern.search(text)
+          if not match:
+              sys.exit(f"CHANGELOG.md has no section for version {version}")
+
+          notes = Path("dist/release-notes.md")
+          notes.parent.mkdir(parents=True, exist_ok=True)
+          notes.write_text(match.group(0).strip() + "\n", encoding="utf-8")
+          PY
+
       - name: Install dev dependencies
         run: python -m pip install -e ".[dev]"
 
