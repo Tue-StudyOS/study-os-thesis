@@ -27,6 +27,15 @@ FORBIDDEN_PRIVATE_DATA_PATH_TERMS = {
     "student-profile",
     "transcript",
 }
+# A rules-only reference file cites a handful of anchor sources; a static catalog cites
+# dozens. Every shipped reference file currently contains zero absolute URLs, so this
+# threshold is pure headroom — see test_shipped_resources_are_not_static_uri_catalogs.
+MAX_ABSOLUTE_URLS_PER_RESOURCE_FILE = 5
+ABSOLUTE_URL_PATTERN = re.compile(r"https?://")
+# `site:uni-tuebingen.de/...` query templates and source-priority prose name domains on
+# purpose and are the correct shape under rules-only discovery. They carry no scheme, but
+# skip their lines explicitly so the intent survives a future rewrite that adds one.
+SITE_QUERY_PATTERN = re.compile(r"\bsite:")
 
 
 def _parse_frontmatter(skill_md: Path) -> dict[str, str]:
@@ -132,8 +141,9 @@ def test_discovery_skills_carry_no_runtime_seed_data() -> None:
     for forbidden in ("professors", "chairs", "researchers"):
         assert not (chair_references / forbidden).exists(), f"runtime seed data {forbidden}/ must not live under {chair_references}"
 
-    # The reference files that ARE the intelligence must be present. Static
-    # entity/URI backbones are intentionally not runtime resources.
+    # The reference files that ARE the intelligence must be present. The two named
+    # backbones deleted by the 2026-07-31 pivot are kept as explicit special cases of the
+    # general rule in test_shipped_resources_are_not_static_uri_catalogs.
     assert (chair_references / "search-strategy.md").is_file()
     assert not (chair_references / "tuebingen-faculty-backbone.md").exists()
     company_references = SKILLS_DIR / "find-company-thesis-options" / "references"
@@ -142,6 +152,48 @@ def test_discovery_skills_carry_no_runtime_seed_data() -> None:
 
     assert (SKILLS_DIR / "discover-company-candidates" / "references" / "company-discovery-rules.md").is_file()
     assert (SKILLS_DIR / "discover-university-candidates" / "references" / "university-discovery-rules.md").is_file()
+
+
+def _shipped_resource_files() -> list[Path]:
+    """Every file the release bundles under a skill's references/ or assets/ directory."""
+    files: list[Path] = []
+    for skill_dir in _skill_dirs():
+        for resource_name in ("references", "assets"):
+            resource_dir = skill_dir / resource_name
+            if resource_dir.is_dir():
+                files.extend(sorted(path for path in resource_dir.rglob("*") if path.is_file()))
+    return files
+
+
+def _count_catalog_urls(text: str) -> int:
+    return sum(
+        len(ABSOLUTE_URL_PATTERN.findall(line))
+        for line in text.splitlines()
+        if not SITE_QUERY_PATTERN.search(line)
+    )
+
+
+def test_shipped_resources_are_not_static_uri_catalogs() -> None:
+    # The no-static-catalog invariant, generalised. The named-file assertions above only
+    # catch a resurrection of the two backbones deleted on 2026-07-31; they did not catch
+    # find-recent-papers/references/papers/ (287 absolute URLs across 59 files, deleted
+    # 2026-08-08), which was a static URI catalog by any reading. This check is about
+    # shape, not filename: under rules-only discovery the intelligence is search rules,
+    # so no shipped resource should read like an entity list with a URL per row.
+    offenders = []
+    for path in _shipped_resource_files():
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue  # binary asset; nothing to count
+        count = _count_catalog_urls(text)
+        if count > MAX_ABSOLUTE_URLS_PER_RESOURCE_FILE:
+            offenders.append(f"{path.relative_to(SKILLS_DIR)} has {count} absolute URLs")
+
+    assert not offenders, (
+        "shipped resources look like static URI catalogs "
+        f"(limit {MAX_ABSOLUTE_URLS_PER_RESOURCE_FILE} absolute URLs per file): " + "; ".join(offenders)
+    )
 
 
 def test_company_discovery_requires_confirmed_bw_scope_for_final_options() -> None:
