@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -100,7 +101,26 @@ def test_metric_specs_cover_required_eval_dimensions() -> None:
         "evidence_discipline",
         "student_usefulness",
         "user_simulation_realism",
+        "reflection_support",
     } <= names
+
+
+def test_rubric_and_runner_declare_the_same_metrics() -> None:
+    # The rubric is the human-readable contract and metric_specs() is what actually runs.
+    # They were allowed to drift once already: the rubric scored only artifact quality
+    # long after reflection became the graded outcome. Keep them in lockstep, in both
+    # directions — a metric documented but not scored is as bad as one scored but
+    # undocumented.
+    runner = _load_runner()
+    rubric = (SIM_DIR / "rubrics" / "conversation-rubric.md").read_text(encoding="utf-8")
+    conversation_section = rubric.split("# Discovery Rubric", 1)[0]
+
+    for name in {spec["name"] for spec in runner.metric_specs()}:
+        assert f"`{name}`" in conversation_section, f"{name} is scored but not documented in the rubric"
+
+    documented = set(re.findall(r"^- `([a-z_]+)`:", conversation_section, flags=re.MULTILINE))
+    scored = {spec["name"] for spec in runner.metric_specs()}
+    assert documented == scored, f"rubric documents {documented - scored}, runner scores {scored - documented}"
 
 
 def test_user_simulator_prompt_is_student_only() -> None:

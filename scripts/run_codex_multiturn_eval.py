@@ -532,6 +532,21 @@ def metric_specs() -> list[dict[str, str]]:
             "name": "user_simulation_realism",
             "criteria": "Evaluate whether the user turns behave like a realistic student matching the user description: consistent persona, natural disclosure, no assistant-like advising, no evaluation commentary, and no premature full hidden-profile dump.",
         },
+        {
+            "name": "reflection_support",
+            "criteria": (
+                "Evaluate whether the conversation helps the student sharpen their own understanding of what "
+                "kind of thesis fits them — the outcome the project is graded on, not the quality of the option "
+                "list. Score high when the assistant asks for the student's own statement of what they are "
+                "looking for before searching and again at the end, reports the difference honestly, and asks "
+                "questions that make the student weigh one option against another. Score low when the "
+                "conversation only delivers results, or when the assistant asserts that the student's thinking "
+                "developed without two statements in the student's own words to show it. "
+                "An honestly reported unchanged or less certain outcome scores HIGH, not low: the metric "
+                "measures whether the reflection was elicited and reported truthfully, not whether the student "
+                "ended up more confident."
+            ),
+        },
     ]
 
 
