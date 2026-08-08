@@ -28,7 +28,11 @@ flow ≠ actual flow, undisclosed company-arm evidence gap, `INSTALL.md` missing
 archive, silently ignored eval evidence. **The G3 reframe is now in the artifact**:
 `thesis-finder` records the student's thesis self-understanding verbatim before and after
 the search, so AC′ inherits its primary instrument instead of building one.
-**Next up: Task AC′** — beta protocol + feedback form, reflection-first.
+**Task AC′ protocol done 2026-08-08** — the
+[beta test protocol](findings/no_db_universal_skill/2026-08-08-beta-test-protocol.md) is
+committed and the [recruiting texts](findings/no_db_universal_skill/2026-08-08-beta-recruiting-message.md)
+are ready to send. Form creation, sending, and the pilot need a human and are the first
+actions of **Z′ — now the critical path and the longest calendar clock in the plan.**
 
 ---
 
@@ -283,7 +287,7 @@ superseded outright by the pivot.
 | AL | Reflection rubric dimension + committed simulation evidence set | ⬜ open | — | PR #71's before/after (baseline 20.0 → rules-only 20.75, 6/6 gates) exists **only in the PR description**; `.simulations/` is gitignored. Recover those numbers, re-run the 8-persona suite, commit conversations + ratings + a limitations README. G5/G4. |
 | AA′ | Hygiene sweep, post-pivot — 5 items | ✅ | Domi | All 5 done on `chore/hygiene-and-rerelease`, one commit each. (1) Deleted `find-recent-papers/references/papers/` (59 files, 308 KB, 287 absolute URLs) — the skill never referenced it, so pure orphan removal; took `scripts/update_openalex_index.py` (already non-runnable: reads a path Task E moved) and its fixture with it. (2) Degree file retitled CS-only + a "for students outside CS" section; SKILL.md step 10 now asks the student first. Did **not** build a university-wide list. (3) Session path: preferred `~/.claude/…`, documented fallback to `./thesis-finder-session.md` with a must-announce rule; README/AGENTS state the skills install **as a set**. (4) New `test_shipped_resources_are_not_static_uri_catalogs` — max 5 absolute URLs per shipped resource, `site:` lines exempt; the two named-file assertions kept as special cases. Proven four ways in `5cf3030`: suite green, fails on a planted 12-row catalog, flags 9 files of the old paper index (54 and 39 URLs at the top), `site:` exemption holds. (5) `Design-Entscheidungen.md` §7a records the AI-disclaimer decision + why disclosure is student-facing + the link to Bob's May recommendation. **Correction to the brief:** the backbone assertions are *not* in `evals/test_skill_quality.py` (an opt-in LLM-judge file with no such criteria) — they were all in `test_skill_package.py`. `pytest -q` 42→**43 passed / 10 skipped**; release build green. G4/G3. |
 | AB′ | Re-release + `INSTALL.md`, cold-install tested | ✅ | Domi | **Version: `skills-v2.0.0`**, not 1.1.0 — the CHANGELOG's own SemVer policy maps breaking trigger/contract changes to MAJOR, and `[Unreleased]` carried three `Breaking:` entries plus a `### Breaking Changes` section (sole entry point; backbones out of the discovery contract). Fixed the versioning bug first: the workflow bumped on `release/skills` and never merged back, so `main` sat at 0.1.0 against a published 1.0.0 and local builds produced artifacts matching no tag — the version is now read from `pyproject.toml` on the dispatched ref and `main` is the single source. Also found and fixed a second release-pipeline gap: `dist/release-notes.md` was only generated on `workflow_dispatch`, so the tag-push path would publish with a missing `body_path`. `INSTALL.md` written and linked from README. **Cold install: 48 s** for the mechanical steps, both archive formats, into fresh skills dirs with no dev checkout — an agent-executed lower bound, not a human number (that is Z′'s job). It surfaced two real guide defects, both fixed: "unpack it" assumed `unzip` (absent on a bare WSL box), and Step 1 wrongly claimed there was no wrapper folder. Installed set verified: 10 skills, no unresolved cross-skill calls, no broken `references/` paths, no non-Markdown files. **Published 2026-08-08 as [`skills-v2.0.0`](https://github.com/Tue-StudyOS/study-os-thesis/releases/tag/skills-v2.0.0)** via `workflow_dispatch` (direct tag creation is blocked by a repository ruleset — only the release App token may create `skills-v*` tags), which required three further workflow fixes in `9aa551a`. `skills-v1.0.0` annotated as superseded, original notes kept. Gap in my own cold-install test, caught by the coherence session: it read `INSTALL.md` from the dev checkout, so it never noticed the archive did not contain it — fixed in `5f848a4`, re-verified against the published artifact. G5/G4. |
-| AC′ | Beta protocol + feedback form, reflection-first | ⬜ open | — | Depends: AB′. Primary instrument is a **verbatim pre/post** "what kind of thesis am I looking for" pair — the operationalisation of Gehler's outcome variable. Secondary: unknown-option hit, factual-error count, unaided setup, would-contact. Co-scored with the tester (absorbs old X). G2/G5. |
+| AC′ | Beta protocol + feedback form, reflection-first | 🟡 protocol done 2026-08-08; form + pilot open | Domi | Protocol committed: [2026-08-08-beta-test-protocol.md](findings/no_db_universal_skill/2026-08-08-beta-test-protocol.md); recruiting texts ready to send: [2026-08-08-beta-recruiting-message.md](findings/no_db_universal_skill/2026-08-08-beta-recruiting-message.md). Primary instrument is the **verbatim pre/post** pair, which `thesis-finder` now collects itself (N0/N6/R7 + append-only log) — AC′ inherited it instead of building it. Two decisions settled by reading the skill: the pre-statement is **also** taken outside the tool (N0 persists only in N4, so aborted runs lose it — and aborted runs are counted as measurements; the framing message also primes the outcome before N0 is asked), and the post-statement **is** the tool's N6 answer (anything asked later is contaminated by N6's own side-by-side comment). Secondary: unknown-option hit, factual-error count, unaided setup, would-contact — (a)+(b) co-scored with the tester (absorbs old X). **Still open, all needing a human:** form live (questions specified, Appendix A), recruiting sent, pilot run + protocol frozen. G2/G5. |
 | Z′ | Protocolled external test, 2–3 students, ≥1 non-CS | ⬜ open | — | Depends: AC′. Scoped down from 3–5 on 2026-08-08 (realistic recruiting capacity). Longest calendar clock — start recruiting the day AB′ lands. n=1 fallback is reportable but does not clear the gate. G2/G5. |
 | AD | Distribution outreach: Fachschaft Informatik + Menth/Gehler channel question | ⬜ open | — | Depends: AB′; overlaps Z′. **No self-sent Rundmail** — the sender must be an institution. Ersti-Heft & uni site deferred to backlog. G5. |
 | AM | Reconstructed user-study chapter with per-entry provenance | ⬜ open | — | Explicitly invited by Gehler ("from memory, with a note to that effect"). Inventory every user contact ever, marked documented vs. reconstructed. No invented counts or quotes. G2/G5. |
@@ -335,6 +339,66 @@ architecture-tagged. W optional.
 ---
 
 ## Log
+
+- **2026-08-08** — **Task AC′ — beta protocol written, recruiting texts ready; form and
+  pilot are blocked on a human, not on the repo.** Branch `docs/beta-protocol`, off `main`
+  after PR #72 merged (`9fba43d`).
+
+  **Premise verified first, as required:** `skills-v2.0.0` is genuinely public — tag
+  `9aa551a` on the remote, release not a draft and not a prerelease, both archives uploaded
+  (`.zip` 48660 B, `.tar.gz` 31837 B, one download already). Testers can install for real, so
+  AC′ had no blocker and AB′ needed no repair.
+
+  **Recruiting went out first, before the protocol was written** — deliberately. Z′ is the
+  longest calendar clock in the plan and the release has been public since 2026-08-08, so
+  writing the protocol first would have burned a week of calendar that the 4-week window
+  does not contain. Three ready-to-send texts in
+  [2026-08-08-beta-recruiting-message.md](findings/no_db_universal_skill/2026-08-08-beta-recruiting-message.md):
+  Fachschaft Informatik, a personal non-CS ask, and the channel question to Menth/Gehler —
+  the last still explicitly *not* a Rundmail request (AD rule, unchanged). Plus a screening
+  rule: project members are excluded, because they cannot produce an uncontaminated
+  pre-statement.
+
+  **The protocol inherited its instrument rather than building one.** The coherence sweep
+  (`3cb208f`) had already put the pre/post statement into `thesis-finder` itself. Reading
+  N0/N6/R7 and the session format to check this — instead of trusting the brief — turned up
+  two things that changed the protocol's design:
+
+  1. **N0's statement is persisted only in Step N4, after results are delivered.** A run that
+     dies during installation or discovery leaves no baseline at all — and the protocol
+     declares getting stuck a *measurement*, so aborted runs are expected and are exactly the
+     runs where the tool's own copy is lost. Together with the fact that the session file
+     lives on the tester's machine (`~/.claude/thesis-finder/session.md`, or the documented
+     fallback), this settles the brief's open question: the protocol **does** take an
+     independent copy of the pre-statement outside the tool.
+  2. **The framing message shown before N0 announces the expected outcome** ("most students
+     finish with a sharper sense of what they want than they started with"). The tool's own
+     pre-statement is therefore primed. The external copy is taken before the tool is opened;
+     where the two differ, that difference *is* the measured effect of the framing message,
+     and is reported as such rather than averaged away.
+
+  **One correction to the brief.** It asked for the 2-sentence question to be re-asked
+  externally after the run. That would be contaminated: N6 records the answer verbatim and
+  *then* shows the tester both statements side by side with a comment on what changed, so any
+  later answer is downstream of the tool's own interpretation. The protocol uses **N6's
+  answer as the post-statement** and keeps only the open question ("what is clearer now?")
+  as an external follow-up — with a note that it, too, follows N6's comment. Reported per
+  tester as a verbatim triple: external pre → N0 → N6.
+
+  Secondary measures unchanged from the plan; (a) unknown-option hit and (b) factual-error
+  count are **co-scored with the tester**, with disagreements recorded on both sides rather
+  than resolved in our favour — this is the whole of the old Task X. **Setup time:** the
+  protocol states in its own section that AB′'s **48 s is an agent-executed lower bound on
+  the mechanical steps** and must never be quoted as a human expectation; the human
+  wall-clock number is what Z′ collects and is the actual G4 usability evidence.
+
+  **Not done, and not doable from here:** the Google Form is specified question-for-question
+  (Appendix A, German verbatim) but creating it needs an account; linking it from
+  `INSTALL.md` and the release notes needs its URL, so `INSTALL.md` was deliberately left
+  untouched rather than given a dead link; the pilot needs a real student. All three are the
+  first actions of Z′ and are tracked in the protocol's own status table. `pytest -q` →
+  **46 passed / 10 skipped**; `python3 scripts/build_skill_release.py` green. Docs-only
+  change — no skill, reference or eval file touched. G2/G5.
 
 - **2026-08-08** — **Skill-package coherence sweep — the audit AA′ did not cover, plus the
   G3 reframe made real in the artifact.** Branch `chore/skill-package-coherence`, off `main`
