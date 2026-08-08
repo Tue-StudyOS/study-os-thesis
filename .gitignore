@@ -10,7 +10,10 @@ __pycache__/
 .Python
 build/
 develop-eggs/
-dist/
+# dist/ rules live in the "Node / frontend" section below; they must use dist/* rather
+# than dist/ so the evidence subtrees under it can be re-included. Git cannot re-include
+# anything inside a directory that is itself excluded, so a plain dist/ here would
+# silently defeat those rules.
 downloads/
 eggs/
 .eggs/
@@ -224,8 +227,16 @@ __marimo__/
 
 # --- Node / frontend ---
 node_modules/
-dist/
+dist/*
+# dist/ is build output and stays ignored, but two subtrees under it are durable
+# evidence, not artifacts: live-validation/ holds the faculty run transcripts that
+# STATUS.md cites by path, and codex-multiturn-evals/ is where the eval workflow writes
+# its comparison. Un-ignore both — codex-multiturn-evals/ was tracked only because its
+# files predate this rule, so new evidence there was being dropped silently.
+# Do not "clean" dist/ with rm -rf; the release builder only replaces its own
+# study-os-thesis-skills-v*/ directory.
 !dist/live-validation/
+!dist/codex-multiturn-evals/
 .vite/
 *.tsbuildinfo
 

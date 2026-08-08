@@ -1,0 +1,54 @@
+{
+  "faculty": "psychology",
+  "faculty_label": "MNF — Fachbereich Psychologie",
+  "ground_truth_total": 6,
+  "created_at": "2026-06-27T19:52:34.121718+00:00",
+  "arms": {
+    "skill": {
+      "scenario_id": "psychology-discovery-skill",
+      "coverage": {
+        "total": 6,
+        "surfaced_count": 6,
+        "recall": 1.0,
+        "surfaced": [
+          "Prof. Dr. Andreas Bartels",
+          "Prof. Dr. Hans-Christoph Nürk",
+          "Prof. Dr. Claudia Friedrich",
+          "Prof. Dr. Markus Huff",
+          "Prof. Dr. Jennifer Svaldi",
+          "Prof. Dr. Caterina Gawrilow"
+        ],
+        "missed": []
+      },
+      "relevance": {
+        "surfaced_count": 6,
+        "high_relevance_count": 2,
+        "relevance_ratio": 0.333
+      },
+      "structure_pass": true
+    },
+    "baseline": {
+      "scenario_id": "psychology-discovery-baseline",
+      "coverage": {
+        "total": 6,
+        "surfaced_count": 0,
+        "recall": 0.0,
+        "surfaced": [],
+        "missed": [
+          "Prof. Dr. Andreas Bartels",
+          "Prof. Dr. Hans-Christoph Nürk",
+          "Prof. Dr. Claudia Friedrich",
+          "Prof. Dr. Markus Huff",
+          "Prof. Dr. Jennifer Svaldi",
+          "Prof. Dr. Caterina Gawrilow"
+        ]
+      },
+      "relevance": {
+        "surfaced_count": 0,
+        "high_relevance_count": 0,
+        "relevance_ratio": 0.0
+      },
+      "structure_pass": false
+    }
+  }
+}

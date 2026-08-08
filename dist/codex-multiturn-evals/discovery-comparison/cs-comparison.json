@@ -1,0 +1,56 @@
+{
+  "faculty": "cs",
+  "faculty_label": "MNF — Informatik / Tübingen AI Center",
+  "ground_truth_total": 7,
+  "created_at": "2026-06-27T19:52:34.124847+00:00",
+  "arms": {
+    "skill": {
+      "scenario_id": "cs-discovery-skill",
+      "coverage": {
+        "total": 7,
+        "surfaced_count": 7,
+        "recall": 1.0,
+        "surfaced": [
+          "Prof. Dr. Georg Martius",
+          "Prof. Dr. Philipp Hennig",
+          "Prof. Dr. Matthias Hein",
+          "Prof. Dr. Ulrike von Luxburg",
+          "Prof. Dr. Bernhard Schölkopf",
+          "Prof. Dr. Wieland Brendel",
+          "Prof. Dr. Matthias Bethge"
+        ],
+        "missed": []
+      },
+      "relevance": {
+        "surfaced_count": 7,
+        "high_relevance_count": 7,
+        "relevance_ratio": 1.0
+      },
+      "structure_pass": true
+    },
+    "baseline": {
+      "scenario_id": "cs-discovery-baseline",
+      "coverage": {
+        "total": 7,
+        "surfaced_count": 0,
+        "recall": 0.0,
+        "surfaced": [],
+        "missed": [
+          "Prof. Dr. Georg Martius",
+          "Prof. Dr. Philipp Hennig",
+          "Prof. Dr. Matthias Hein",
+          "Prof. Dr. Ulrike von Luxburg",
+          "Prof. Dr. Bernhard Schölkopf",
+          "Prof. Dr. Wieland Brendel",
+          "Prof. Dr. Matthias Bethge"
+        ]
+      },
+      "relevance": {
+        "surfaced_count": 0,
+        "high_relevance_count": 0,
+        "relevance_ratio": 0.0
+      },
+      "structure_pass": false
+    }
+  }
+}
