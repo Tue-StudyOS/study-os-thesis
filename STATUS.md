@@ -36,6 +36,35 @@ actions of **Z′ — now the critical path and the longest calendar clock in th
 
 ---
 
+## Reading the numbers in this file — architecture labelling (Task AJ, 2026-08-09)
+
+**The static-backbone architecture was removed on 2026-07-31** (commit `44e7e53`, PR #71) in
+favour of rules-only live discovery. Numbers produced before and after that date measure
+different systems and are not comparable.
+
+**This file is chronological, so its dates already carry the label.** The rule, stated once
+here instead of as a tag on every figure:
+
+| A figure in this file dated… | measures | tag |
+|---|---|---|
+| **≤ 2026-07-30** | the deleted static-backbone architecture | `[backbone-crawl, ≤2026-07-30]` |
+| **≥ 2026-07-31** | the shipping rules-only architecture | `[rules-only, ≥2026-07-31]` |
+
+Two consequences worth stating plainly, because they are easy to miss when reading the log
+top-down:
+
+- **Every recall/precision/steering figure in the Phase-1 to Phase-4 task tables below is
+  `[backbone-crawl, ≤2026-07-30]`.** They describe a system nobody can install today.
+- **Exactly one faculty figure is `[rules-only, ≥2026-07-31]`:** Theology, 2026-08-08
+  (Task V′), 83% recall / 100% precision. That is the entire ground-truth evidence base for
+  the shipping architecture until Task AK lands.
+
+The company figures are **permanently demoted** and carry no weight — see the
+[scorecard §2](findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md).
+Per-number detail for the whole project lives in that scorecard's §0 standing note.
+
+---
+
 ## Current phase
 
 > ▶ **Resumed 2026-08-08 on `main`.** Phase 5 is scoped for the last time — see
@@ -282,7 +311,7 @@ superseded outright by the pivot.
 | Task | Step | Status | Owner | Notes / difficulties |
 |---|---|---|---|---|
 | V′ | Blind Theology run — the only untouched hard-faculty ground truth | ✅ done 2026-08-08 | `15954ef` | **Recall 5/6 = 83%, precision 9/9 = 100%.** Blindness held (only the GT `Sample interest:` line grepped). First hard faculty to clear 80% on a first blind run with no prior fix, and a post-pivot number: 83% across *both* theology faculties with no backbone file at all. N.N. case passed on the harder variant — 6 vacancies reported honestly, incl. the two on-focus ones (AT I, NT II "Evangelienforschung"), no invented holders. Two flags left open on purpose: (a) is the GT's Witt row over-inclusive for a late-antique persona? (b) the §21 vacancy scenario for an *ethics* persona is still unrun. G5. |
-| AJ | Pivot evidence audit — tag every number in the repo with the architecture + date that produced it | ⬜ open | — | **Blocker for AE′.** Every recall/precision figure measures the backbone architecture deleted 2026-07-31. Also permanently demotes the company eval (closes old Y). G5/G4. |
+| AJ | Pivot evidence audit — tag every number in the repo with the architecture + date that produced it | ✅ done 2026-08-09 | Domi | **Unblocks AE′.** Scorecard gets a §0 standing note plus a per-row `Architecture` column; MASTERPLAN §8, the go/no-go doc, report chapters 03 and 04, and STATUS all carry the tag. STATUS is labelled by a stated date rule rather than 40 inline tags — the file is chronological, so the date already is the tag, and the rule is checkable. **The 2026-07-04 GO is date-stamped, not deleted,** and now names both counts it is provisional on: the 2026-07-05 blindness gap (closed for one faculty by V′) and the fact that the architecture it certified no longer ships (open, Task AK is the repair). **Company eval permanently demoted** — plumbing check, circular by construction, and measuring a backbone deleted on 2026-07-31; **old Task Y is closed and no independent company GT will be built.** Old Task X recorded as absorbed into Z′ tester co-scoring. `skills/tests/eval_ground_truth/` untouched, as specified — the GT files are architecture-neutral and are reused by V′ and AK. Headline finding: **6 of 7 faculty figures describe a system nobody can install**; the shipping architecture has one. G5/G4. |
 | AK | Post-pivot ground-truth re-measurement: CS + Law (Humanities optional) | ⬜ open | — | The sharp test. `search-strategy.md` went 461→52 lines; Task U's enrich-before-exclude rule survived as one sentence but the **Remmert** worked example did not. Does the rule still find her without it? Report her row explicitly. Do not patch in this task. G5/G1/G3. |
 | AL | Reflection rubric dimension + committed simulation evidence set | ⬜ open | — | PR #71's before/after (baseline 20.0 → rules-only 20.75, 6/6 gates) exists **only in the PR description**; `.simulations/` is gitignored. Recover those numbers, re-run the 8-persona suite, commit conversations + ratings + a limitations README. G5/G4. |
 | AA′ | Hygiene sweep, post-pivot — 5 items | ✅ | Domi | All 5 done on `chore/hygiene-and-rerelease`, one commit each. (1) Deleted `find-recent-papers/references/papers/` (59 files, 308 KB, 287 absolute URLs) — the skill never referenced it, so pure orphan removal; took `scripts/update_openalex_index.py` (already non-runnable: reads a path Task E moved) and its fixture with it. (2) Degree file retitled CS-only + a "for students outside CS" section; SKILL.md step 10 now asks the student first. Did **not** build a university-wide list. (3) Session path: preferred `~/.claude/…`, documented fallback to `./thesis-finder-session.md` with a must-announce rule; README/AGENTS state the skills install **as a set**. (4) New `test_shipped_resources_are_not_static_uri_catalogs` — max 5 absolute URLs per shipped resource, `site:` lines exempt; the two named-file assertions kept as special cases. Proven four ways in `5cf3030`: suite green, fails on a planted 12-row catalog, flags 9 files of the old paper index (54 and 39 URLs at the top), `site:` exemption holds. (5) `Design-Entscheidungen.md` §7a records the AI-disclaimer decision + why disclosure is student-facing + the link to Bob's May recommendation. **Correction to the brief:** the backbone assertions are *not* in `evals/test_skill_quality.py` (an opt-in LLM-judge file with no such criteria) — they were all in `test_skill_package.py`. `pytest -q` 42→**43 passed / 10 skipped**; release build green. G4/G3. |
@@ -339,6 +368,45 @@ architecture-tagged. W optional.
 ---
 
 ## Log
+
+- **2026-08-09** — **Task AJ done — every number in the repo now states which architecture
+  produced it, and the honest headline is worse than it looked.** Branch
+  `chore/pivot-evidence-audit`, off `main`. Unblocks AE′.
+
+  **The finding, stated plainly: 6 of 7 faculty figures describe a system nobody can
+  install.** The scorecard reads as a strong evidence base until the numbers are labelled;
+  once labelled, the shipping architecture has **one** ground-truth faculty measurement
+  (Theology, V′, 83%/100%) and everything else belongs to the backbone architecture deleted
+  on 2026-07-31. The `+65pp` live margin over plain Claude — the strongest comparative number
+  the project owns — is `[backbone-crawl, ≤2026-07-30]` and has never been re-measured. This
+  is not new information; it is the first time it is impossible to read past.
+
+  **What was tagged.** Scorecard: a §0 standing note plus a per-row `Architecture` column,
+  and §2–§5 headers tagged. MASTERPLAN §8: the tag token added to the numbers themselves, not
+  only the surrounding prose, so `git grep` finds them. Go/no-go doc: a standing caveat box.
+  Report chapters 03 and 04: an architecture banner and the resolved items closed.
+
+  **STATUS is labelled by a stated date rule rather than 40 inline tags.** The file is
+  chronological, so the date already *is* the architecture tag; the rule now sits above
+  "Current phase" as a table, which is checkable and does not turn a changelog into noise.
+
+  **The GO is date-stamped, not deleted.** It stands as the 2026-07-04 verdict and now names
+  both counts it is provisional on: the 2026-07-05 blindness gap (closed for one faculty by
+  V′) and the deleted architecture (open — AK is the repair). Deliberately preserved: the
+  *defects found* by those runs keep their full value. Task U's enrich-before-exclude rule
+  and Task T's protocol fix are real and survived the pivot. It is the coverage percentages,
+  not the discoveries, that expired.
+
+  **Company eval permanently demoted, old Task Y closed.** Circular by construction *and*
+  measuring a file deleted on 2026-07-31 *and* testing a removed architecture — triply
+  invalid as a quality claim. No independent company ground truth will be built: the cost is
+  not justified for an arm whose discovery is now rules-only under the same live-verification
+  requirement as the university arm. Old Task X also recorded as absorbed into Z′ co-scoring
+  rather than left dangling.
+
+  `skills/tests/eval_ground_truth/` untouched, as the task specifies — the GT files are
+  architecture-neutral and are reused by V′ and AK. `pytest -q` → 46 passed / 10 skipped;
+  `python3 scripts/build_skill_release.py` green.
 
 - **2026-08-08** — **Task AC′ — beta protocol written, recruiting texts ready; form and
   pilot are blocked on a human, not on the repo.** Branch `docs/beta-protocol`, off `main`

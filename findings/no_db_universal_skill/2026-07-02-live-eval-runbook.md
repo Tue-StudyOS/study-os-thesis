@@ -1,5 +1,13 @@
 # Live-Eval Runbook — Re-validate One Faculty Cheaply
 
+> **Architecture tag (added 2026-08-09, Task AJ): this file is MIXED — check the date on the
+> log entry you are citing.** Entries dated **≤2026-07-30** are `[backbone-crawl, ≤2026-07-30]`
+> and measure the static-backbone architecture removed on 2026-07-31 (Humanities, Law, the
+> Roadmap-J and Task O runs). The entry dated **2026-08-08** (Task V′, Theology) is
+> `[rules-only, ≥2026-07-31]` and is the only run in this file that measures the shipping
+> architecture. Do not aggregate across the two. Current picture:
+> [eval scorecard §0](2026-07-03-eval-aggregate-scorecard.md).
+
 - **Date:** 2026-07-02
 - **Branch:** `feat/no-db-universal-skill`
 - **Role:** roadmap Task J ([core-optimization-roadmap.md §3](2026-06-28-core-optimization-roadmap.md)).
