@@ -11,6 +11,30 @@
 
 ---
 
+> ## ⚠️ Standing caveat — added 2026-08-09 (Task AJ). Read before citing this verdict.
+>
+> **The GO recorded below is not retracted. It is date-stamped, and it is provisional on two
+> counts.**
+>
+> **Every number in this document is `[backbone-crawl, ≤2026-07-30]`.** All of it was
+> produced by the static-backbone architecture, which was **removed on 2026-07-31** (commit
+> `44e7e53`, PR #71) in favour of rules-only live discovery. This verdict therefore certifies
+> a system that no longer ships.
+>
+> | # | The GO is provisional because… | Status |
+> |---|---|---|
+> | 1 | **Blindness gap** (flagged 2026-07-05): the two hard-faculty numbers behind it are not clean blind measurements. Humanities' 100% is a re-score by a session un-blind on that faculty; Law's 80% re-run's session had already read the document naming the missed chair and the fix that flips her. Every genuinely blind hard-faculty run at the time (Humanities 60%, Law 60%) was below the bar. | **Closed for one faculty 2026-08-08** — Task V′ ran Theology blind at 83% recall / 100% precision with no prior fix |
+> | 2 | **The architecture it certified was deleted** (added 2026-08-09). | **Open** — Task AK is the named repair |
+>
+> What this does **not** invalidate: the skill fixes found along the way. Task U's
+> enrich-before-exclude rule and Task T's eval-protocol fix are real, were verified
+> independently within the same evidence, and survived the pivot. The *defects found* keep
+> their value; the *coverage figures* do not describe the current tool.
+>
+> Current picture: [`2026-07-03-eval-aggregate-scorecard.md`](2026-07-03-eval-aggregate-scorecard.md) §0.
+
+---
+
 > **Update — 2026-07-04, post-Task-U. VERDICT FLIPPED TO GO.** Task U (1) added an
 > *enrich-before-exclude* rule to `search-strategy.md` §5 — the symmetric dual of the
 > Butz over-inclusion guard: do not exclude a candidate at the topical-justification
@@ -38,7 +62,7 @@
 > Law re-run), not GO. Full write-up:
 > [`2026-07-03-task-t-recall-closeout.md`](2026-07-03-task-t-recall-closeout.md).
 
-## Verdict: **GO** (as of 2026-07-04, post-Task-U).
+## Verdict: **GO** (as of 2026-07-04, post-Task-U) — `[backbone-crawl, ≤2026-07-30]`, provisional on two counts (see the standing caveat above).
 
 The core clears roadmap §4's bar. All five criteria are now met: criterion 1's
 recall bar clears across all 6 measured faculties (2 of them hard), and criteria

@@ -167,7 +167,8 @@ core (Tübingen) not just *pass the gate* but genuinely *work well* across recal
 precision, steering, output quality, and robustness on structurally hard faculties. The
 explicit go/no-go on the roadmap's "core is done" bar flipped to **GO** on 2026-07-04: all
 6 measured faculties (2 of them hard) clear ≥80% recall, precision/steering/output-quality/
-robustness all measured and passing. Full task list, tracks, and the bar definition:
+robustness all measured and passing — **all of it `[backbone-crawl, ≤2026-07-30]`** (Task AJ,
+2026-08-09). Full task list, tracks, and the bar definition:
 [findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md](findings/no_db_universal_skill/2026-06-28-core-optimization-roadmap.md).
 Verdict and evidence: [2026-07-03-core-done-go-no-go.md](findings/no_db_universal_skill/2026-07-03-core-done-go-no-go.md).
 All numbers: [2026-07-03-eval-aggregate-scorecard.md](findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md).
@@ -179,10 +180,14 @@ found the two hard-faculty numbers behind the GO are not clean blind measurement
 Humanities' 100% is a transparent re-score by a session that was explicitly un-blind on
 that faculty, and Law's 80% was produced by a re-run whose session had already read the
 document naming the missed chair and the fix that flips her. Every genuinely blind
-hard-faculty run to date (Humanities 60%, Law 60%) landed below the 80% bar. This does
+hard-faculty run to date (Humanities 60%, Law 60% — both `[backbone-crawl, ≤2026-07-30]`)
+landed below the 80% bar. This does
 **not** roll back the GO or any skill fix (Task U's enrich-before-exclude rule is real
 and independently verified elsewhere in the same evidence) — it flags the verdict as
 **provisional** pending one clean blind hard-faculty run. See Phase 5 Task V′ below.
+**Closed for one faculty on 2026-08-08:** Task V′ ran Theology blind — 83% recall / 100%
+precision, `[rules-only, ≥2026-07-31]` — the first clean blind hard-faculty run, and
+simultaneously the first faculty measurement of the shipping architecture.
 
 **Architecture caveat (2026-08-08):** every number above was produced by the
 **backbone-crawl architecture**, which was removed on 2026-07-31 (commit `44e7e53`,
