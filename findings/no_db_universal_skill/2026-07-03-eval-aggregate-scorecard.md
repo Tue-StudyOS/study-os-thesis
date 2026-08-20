@@ -59,7 +59,7 @@ strawman) and do not count as evidence. See `2026-06-28-live-eval-results.md`.**
 | CS | `[backbone-crawl, ≤2026-07-30]` | 100% (7/7) | 60% (3/5) → **100%** post-fix | 60% (3/5) → **100%** post-fix | 75% (9/12) → **100%** (10/10) post-Task-O | `2026-06-28-live-eval-results.md` → `2026-06-28-I-fix-revalidation.md` → `2026-07-02-live-eval-runbook.md` (Roadmap-J run 1, Task O re-run) |
 | Humanities (hard) | `[backbone-crawl, ≤2026-07-30]` | — | 60% (3/5) → **100%** (5/5) post-protocol-fix | — (recall-only, no distinct strict pass run) | **100%** (5/5) | `2026-07-02-live-eval-runbook.md`, 2026-07-03 entries (Task Q run 1 → Task T corrected re-score) — see caveat below |
 | Law (hard) | `[backbone-crawl, ≤2026-07-30]` | — | 60% (3/5) → **80%** (4/5) post-§5-fix | — (recall-only, no distinct strict pass run) | 100% (3/3) → **100%** (4/4) | `2026-07-02-live-eval-runbook.md`, 2026-07-03 + 2026-07-04 entries (Task T blind run → Task U re-run after §5 enrich-before-exclude fix) |
-| **Theology (hard)** | **`[rules-only, ≥2026-07-31]`** | — | **83%** (5/6) | — (recall-only, no distinct strict pass run) | **100%** (9/9) | `2026-07-02-live-eval-runbook.md`, 2026-08-08 entry (Task V′ blind run) |
+| **Theology (hard)** | **`[rules-only, ≥2026-07-31]`** | — | **83%** (5/6) | — (recall-only, no distinct strict pass run) | **100%** (9/9) | **[full results doc](2026-08-08-theology-blind-run.md)** (Task V′ blind run) |
 | Interdisciplinary | `[backbone-crawl, ≤2026-07-30]` | — | **100%** (5/5 GT anchors) | — | not scored as recall/precision | `2026-07-03-task-r-edge-cases.md` (Task R, routing-breadth check: 3/3 faculties/centers covered) |
 | **Baseline (plain Claude + Websearch), Task I** | measured 2026-06-28; the baseline arm is architecture-independent by construction (no skills loaded), but it is only a valid comparator for the `[backbone-crawl, ≤2026-07-30]` rows it was run against | — | ~17% mean | ~17% mean | not measured | `2026-06-28-live-eval-results.md` |
 
@@ -84,7 +84,9 @@ the one miss — his own page shows no constitutional/human-rights/tech focus ev
 enrichment, an honest, defensible remaining gap distinct from the Remmert defect class. Full
 account: `2026-07-02-live-eval-runbook.md`, 2026-07-04 entry.
 
-**Theology note (added 2026-08-08, Task V′):** the **cleanest blind run in the table** —
+**Theology note (added 2026-08-08, Task V′)** — full account:
+**[`2026-08-08-theology-blind-run.md`](2026-08-08-theology-blind-run.md)**. Summary: the
+**cleanest blind run in the table** —
 `theology.md` was the one hard-faculty GT never opened mid-run, and this was also one of the
 first measurements of the *current* skill version (no static backbone; discovery delegated to
 `discover-university-candidates`). It clears ≥80% **on a first blind run with no fix applied

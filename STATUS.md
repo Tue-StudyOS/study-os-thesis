@@ -369,6 +369,44 @@ architecture-tagged. W optional.
 
 ## Log
 
+- **2026-08-09** — **Theology result promoted out of a runbook log; README states the
+  measured quality for the first time.** Same branch as AJ — this is the presentation half
+  of the same problem.
+
+  **The finding that prompted it:** the project's single most important number — the only
+  ground-truth measurement of the shipping architecture — lived as a log entry at **line 71
+  of a 421-line file called `2026-07-02-live-eval-runbook.md`**. A runbook is a how-to
+  checklist, and its filename is dated five weeks *before* the result it contains. Nobody
+  looks for a result there. AJ made the number correctly labelled; it was still effectively
+  unfindable.
+
+  Now [`2026-08-08-theology-blind-run.md`](findings/no_db_universal_skill/2026-08-08-theology-blind-run.md):
+  headline up front, the two firsts it represents, how blindness was held, the Witt miss
+  argued as GT-generosity rather than skill defect, the six-of-sixteen vacancy handling with
+  the honest caveat that the GT's *ethics*-persona scenario is still unrun, and an explicit
+  **"what this does not support"** section (one faculty, untested delegation boundary,
+  single-agent scoring). Runbook entry stays as the original record and now points at it.
+
+  **Also recorded there: URL drift is four for four.** CS/Cyber Valley,
+  Humanities/interfaculty-centres, Law/Juniorprofessur, and now Catholic-faculty
+  Patrologie (HTTP 404, recovered via Personalnachrichten 1/2026). Every faculty tested has
+  produced at least one dead official URL. That is the strongest empirical argument in the
+  repo for why a maintained URI catalog was the wrong architecture — each of those would
+  have been a stale row someone had to notice.
+
+  **README now has a `## Measured discovery quality` section**, placed before "Quality
+  gates" because a reader scanning headings wants "how good is it", not "how do I run
+  tests". It leads with the honest sentence — the shipping architecture has been measured
+  on exactly one faculty — and names what is *not* measured: the other six faculties, the
+  steering proof, and the margin over plain Claude.
+
+  **Fixed en route:** the runbook's "When to run this" still named
+  `references/tuebingen-faculty-backbone.md`, deleted 2026-07-31. The 2026-08-08 entry had
+  flagged the drift itself and nobody had acted on it.
+
+  `pytest -q` → 46 passed / 10 skipped (this branch predates the PR #74/#75 bundle tests;
+  on current `main` the suite is 64/10); `python3 scripts/build_skill_release.py` green.
+
 - **2026-08-09** — **Task AJ done — every number in the repo now states which architecture
   produced it, and the honest headline is worse than it looked.** Branch
   `chore/pivot-evidence-audit`, off `main`. Unblocks AE′.

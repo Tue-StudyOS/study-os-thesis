@@ -23,8 +23,12 @@
 ## When to run this
 
 After any change to `skills/find-university-chairs/SKILL.md`,
-`references/search-strategy.md`, or `references/tuebingen-faculty-backbone.md` that
-could plausibly affect recall or precision. Skip for pure prose/typo edits.
+`references/search-strategy.md`, `skills/discover-university-candidates/SKILL.md`, or
+`references/university-discovery-rules.md` that could plausibly affect recall or
+precision. Skip for pure prose/typo edits.
+
+*(Corrected 2026-08-09: this list used to name `references/tuebingen-faculty-backbone.md`,
+deleted on 2026-07-31. The drift was flagged by the 2026-08-08 Theology entry below.)*
 
 ## Checklist (~15–20 min for one faculty)
 
@@ -77,7 +81,9 @@ could plausibly affect recall or precision. Skip for pure prose/typo edits.
 *(append one entry per re-validation run; newest first)*
 
 - **2026-08-08 — Blind Theology run (Task V′). The cleanest blind measurement the project
-  has.** `theology.md` is the one hard-faculty ground truth never opened mid-run; this
+  has.** **→ Promoted to a standalone results document:
+  [`2026-08-08-theology-blind-run.md`](2026-08-08-theology-blind-run.md). Cite that one.**
+  This entry stays as the original dated record. `theology.md` is the one hard-faculty ground truth never opened mid-run; this
   session was kept blind on it by instruction, and only its `Sample interest:` line was
   read (via `grep`) before Pass 1. The remaining five persona dimensions were reconstructed
   from the discipline (historical-critical exegesis; ancient-religion domain; text-based
