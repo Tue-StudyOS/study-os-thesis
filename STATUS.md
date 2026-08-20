@@ -340,6 +340,45 @@ architecture-tagged. W optional.
 
 ## Log
 
+- **2026-08-20** — **Claude-app install path: one upload instead of ten folders.** Branch
+  `feat/claude-app-bundle`, off `main`.
+
+  **The trigger was a real defect, not just convenience.** `thesis-finder/SKILL.md` reaches
+  into a sibling skill with `../build-student-profile/references/deep-advising-interview.md`.
+  That resolves when the ten skills sit side by side in a skills directory — Claude Code,
+  Codex — and it does not resolve in any client that installs one skill at a time, because
+  each upload is isolated. The failure is silent: the interview still runs, just without its
+  guide. Same class of problem for every name-based hand-off, since there is no sibling skill
+  to route to.
+
+  **Fix is a generated bundle, not a second hand-maintained copy.**
+  `scripts/build_app_bundle.py` folds the sources into one uploadable skill: `thesis-finder`
+  stays at the root, the eight skills it hands off to become
+  `skills/<name>/INSTRUCTIONS.md`, every cross-skill path is rewritten to the bundle root,
+  and a routing table inserted after the frontmatter tells the agent where a named skill
+  actually lives. `design-agent-skill` is excluded — it authors skills and is unreachable
+  from the student flow. The ten skill sources are untouched and remain the single point of
+  truth; a test asserts that.
+
+  **Validation is build-time, because an upload is one shot.** The builder refuses to emit a
+  bundle containing a path that leaves the package or points at a missing file. It caught its
+  own routing preamble on the first run, where an illustrative `skills/.../references/...`
+  read as a real path.
+
+  **Install guide restructured around who actually uses it.** Route A is the Claude app: one
+  zip, one upload, no terminal. Route B is the existing ten-folder copy for Claude Code,
+  Codex, Gemini CLI. Route A is named the default for anyone unsure — it is the path a
+  student or a reviewer will take. The release workflow now builds and attaches
+  `thesis-finder-app-vX.Y.Z.zip`, so Route A has a file to download; `make app-bundle` builds
+  it locally.
+
+  **Known gap:** Route A has no durable filesystem, so multi-session continuity depends on
+  the student saving the session file and re-attaching it. The bundle instructs the agent to
+  offer that file at the end of a run, but nothing enforces it, and an un-saved session means
+  the interview is redone. Route B keeps the automatic behaviour.
+
+  Full suite green: 53 passed, 10 skipped.
+
 - **2026-08-08** — **Task AC′ — beta protocol written, recruiting texts ready; form and
   pilot are blocked on a human, not on the repo.** Branch `docs/beta-protocol`, off `main`
   after PR #72 merged (`9fba43d`).
