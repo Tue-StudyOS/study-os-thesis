@@ -19,6 +19,11 @@ This project follows Semantic Versioning for the released skill package:
   thesis level (from the student, never inferred from the program name), and the
   Bearbeitungszeit (from the student's own regulations or the responsible exam office).
 
+- `generate-thesis-directions` now sizes proposal sketches against the student's recorded
+  thesis duration instead of a generic thesis. Where the duration is unresolved it states the
+  scope it assumed rather than defaulting to the longer case. The proposal rubric no longer
+  treats "bachelor or master" as a single yardstick.
+
 ### Fixed
 
 - Students outside Computer Science are no longer scoped against a thesis duration taken
