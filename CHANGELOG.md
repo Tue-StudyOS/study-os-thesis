@@ -12,11 +12,14 @@ This project follows Semantic Versioning for the released skill package:
 
 ### Added
 
-- ...
+- Single-folder Claude-app bundle (`thesis-finder-app-vX.Y.Z.zip`), generated from the ten
+  skill sources by `scripts/build_app_bundle.py` and attached to releases. Clients that
+  take one uploaded skill at a time can now install the whole flow in one upload.
 
 ### Changed
 
-- ...
+- INSTALL.md is organised around two routes: a one-file upload in the Claude app, and the
+  existing ten-folder install for Claude Code, Codex, and Gemini CLI.
 
 ### Fixed
 

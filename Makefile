@@ -1,4 +1,4 @@
-.PHONY: check check-skills evals multiturn-evals
+.PHONY: check check-skills evals multiturn-evals app-bundle
 
 # The web-app backend was removed in the skill-architecture pivot. The old
 # FastAPI/Celery/Postgres stack is archived on the legacy/web-app branch.
@@ -13,3 +13,6 @@ evals:
 
 multiturn-evals:
 	python scripts/run_codex_multiturn_eval.py --runner fixture
+
+app-bundle:
+	python -m scripts.build_app_bundle
