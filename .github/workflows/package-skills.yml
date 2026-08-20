@@ -118,6 +118,18 @@ jobs:
       - name: Validate release artifact rules
         run: python -m pytest skills/tests/test_distribution_package.py -q
 
+      - name: Build single-folder Claude-app bundle
+        run: python scripts/build_app_bundle.py
+
+      - name: Validate app bundle rules
+        run: python -m pytest skills/tests/test_app_bundle.py -q
+
+      - name: Build single-file portable edition
+        run: python scripts/build_portable_bundle.py
+
+      - name: Validate portable edition rules
+        run: python -m pytest skills/tests/test_portable_bundle.py -q
+
       - name: Create and push release tag
         if: github.event_name == 'workflow_dispatch'
         run: |
@@ -146,6 +158,9 @@ jobs:
           path: |
             dist/study-os-thesis-skills-v*.tar.gz
             dist/study-os-thesis-skills-v*.zip
+            dist/thesis-finder-app-v*.zip
+            dist/thesis-finder-portable-v*.md
+            dist/thesis-finder-portable-instructions-v*.txt
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
@@ -157,3 +172,6 @@ jobs:
           files: |
             dist/study-os-thesis-skills-v*.tar.gz
             dist/study-os-thesis-skills-v*.zip
+            dist/thesis-finder-app-v*.zip
+            dist/thesis-finder-portable-v*.md
+            dist/thesis-finder-portable-instructions-v*.txt
