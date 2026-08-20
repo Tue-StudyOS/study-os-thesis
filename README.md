@@ -12,13 +12,12 @@ wrong, has done its job even if you contact nobody from the list.
 
 ## Quickstart
 
-**Installing as a student? → [INSTALL.md](INSTALL.md)** — per-client setup steps, what you
-need before you start, and a troubleshooting table. Grab the archive from the
-[latest release](https://github.com/Tue-StudyOS/study-os-thesis/releases/latest); you do not
-need this repository.
+**Installing as a student? → [INSTALL.md](INSTALL.md)** — step-by-step setup per route, what
+you need before you start, and a troubleshooting table. Grab the artifact for your route from
+the [latest release](https://github.com/Tue-StudyOS/study-os-thesis/releases/latest); you do
+not need this repository.
 
-To run it from a checkout instead, open the repository in any capable coding agent
-(Claude Code, Codex, Gemini CLI) and type:
+Whatever the route, the first prompt is the same:
 
 ```
 thesis-finder
@@ -27,15 +26,62 @@ thesis-finder
 The skill interviews you, builds a structured profile of your interests and constraints,
 and returns a map of matching university chairs or BW companies.
 
-**Install the skills as a set.** `thesis-finder` is a router: it invokes the discovery,
-paper, proposal, and contact-draft skills by name, and they invoke each other. Installing a
-subset leaves those calls unresolved — install all ten. From a release archive that means
-copying its *contents* (the ten skill folders), not the versioned wrapper folder; see
-[INSTALL.md](INSTALL.md).
+---
 
-`thesis-finder` keeps a session log so a search can resume weeks later. It prefers
-`~/.claude/thesis-finder/session.md`; if your client cannot write there, it falls back to
-`./thesis-finder-session.md` in the working directory and tells you which path it used.
+## Which form of the skill to use
+
+The ten skills in [`skills/`](skills/) are the only source. Three artifacts are **generated**
+from them, because the clients students actually use disagree about what a skill is. Pick by
+what the target client can load, not by preference.
+
+| Your client | Artifact | Shape | Why this one |
+|---|---|---|---|
+| **Claude Code, Codex, Gemini CLI** — anything that reads a skills directory | `study-os-thesis-skills-vX.Y.Z.zip` / `.tar.gz` | Ten sibling skill folders | The native form. Name-based hand-offs resolve against sibling folders, and the session log is written to disk automatically. |
+| **Claude app** (Pro/Max/Team/Enterprise) | `thesis-finder-app-vX.Y.Z.zip` | One skill folder, the rest nested inside it | claude.ai installs **one skill per upload**, isolated from every other. Ten separate uploads cannot hand off to each other. |
+| **ChatGPT, Gemini** — Projects, Custom GPTs, Gems | `thesis-finder-portable-vX.Y.Z.md` + `-instructions-vX.Y.Z.txt` | One document, named sections | Neither loads Agent Skills at all. Their containers hold an instructions box and a handful of files. |
+| **Any chat, nothing installed** | the same portable `.md` | Attach and type `thesis-finder` | Works, but nothing is remembered after the chat ends. |
+
+### Why three and not one
+
+Each client breaks the previous form in a specific way:
+
+- **A skills directory** lets `thesis-finder` invoke `find-university-chairs` by name and
+  reach `../build-student-profile/references/...` across folders. Both work only because the
+  ten folders are siblings on a filesystem.
+- **claude.ai** installs one skill per upload, and [skills cannot reference other
+  skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview). Upload
+  the ten separately and every hand-off dangles, silently — the run continues with a thinner
+  interview instead of failing. Hence one bundle with a routing table.
+- **ChatGPT and Gemini** cap a container at roughly ten knowledge files, and ChatGPT caps
+  instructions at 8000 characters. The bundle is 21 files and its entry point alone is 17 KB.
+  Hence one flat document plus a ~3 KB bootstrap block.
+
+**Do not hand-edit the generated artifacts.** Change the skills under [`skills/`](skills/) and
+rebuild — the builders rewrite every cross-skill path for the target shape and refuse to emit
+an artifact whose pointers do not resolve:
+
+```bash
+make app-bundle         # dist/thesis-finder-app-vX.Y.Z.zip
+make portable-bundle    # dist/thesis-finder-portable-vX.Y.Z.md
+```
+
+### Session continuity per form
+
+`thesis-finder` keeps a session log so a search can resume weeks later without repeating the
+interview. It is handed to the student **twice** per run — once the moment the profile
+interview completes, before any searching, and again at the end — because the searching is
+the long, abandonable part while the interview is the part that cannot cheaply be redone.
+
+| Form | Where the log lives | Automatic? |
+|---|---|---|
+| Ten folders (CLI) | `~/.claude/thesis-finder/session.md`, or `./thesis-finder-session.md` if the client cannot write there | Yes |
+| App bundle | The Claude **project's** knowledge base | No — the student must add the file |
+| Portable | The **project / Custom GPT / Gem** the chat runs in | No — the student must add the file |
+
+Outside the CLI form there is no durable filesystem, so both generated artifacts override the
+path instructions at the heading where they are read, and search attached files and container
+knowledge instead. The one manual step that remains — dropping the handed-back file into the
+container — is what [INSTALL.md](INSTALL.md) is built around.
 
 ---
 
@@ -177,7 +223,10 @@ study-os-thesis/
 │   ├── find-recent-papers/SKILL.md
 │   ├── design-agent-skill/SKILL.md
 │   └── tests/                       deterministic + eval tests
-├── scripts/build_skill_release.py   packages skills into tar.gz + zip
+├── scripts/
+│   ├── build_skill_release.py       packages skills into tar.gz + zip
+│   ├── build_app_bundle.py          folds them into one Claude-app skill
+│   └── build_portable_bundle.py     flattens them into one portable document
 ├── docs/thesis-report/               project genesis & decision history (thesis writeup)
 ├── INSTALL.md                       student-facing install guide (also shipped in the archive)
 ├── CHANGELOG.md                     release notes, SemVer policy
@@ -188,10 +237,12 @@ study-os-thesis/
 
 ---
 
-## Release artifact
+## Release artifacts
 
-GitHub releases (`skills-vX.Y.Z`) publish a skill-only archive — no tests, scripts,
-or maintainer files:
+GitHub releases (`skills-vX.Y.Z`) publish **five files** — no tests, scripts, or maintainer
+files. See [Which form of the skill to use](#which-form-of-the-skill-to-use) for picking one.
+
+**1. Skill directory archive** — `study-os-thesis-skills-vX.Y.Z.zip` / `.tar.gz`
 
 ```
 study-os-thesis-skills-vX.Y.Z/
@@ -199,13 +250,36 @@ study-os-thesis-skills-vX.Y.Z/
 ├── build-student-profile/
 │   ├── SKILL.md
 │   └── references/
-├── find-university-chairs/
-│   ├── SKILL.md
-│   └── references/
 └── ... (10 skills total)
 ```
 
-Copy the extracted skill folders directly into any agent's skills directory.
+Copy the extracted skill folders — the contents, not the versioned wrapper — into any agent's
+skills directory. All ten: `thesis-finder` routes into the others by name, so a partial
+install dangles at the first hand-off.
+
+**2. Claude-app bundle** — `thesis-finder-app-vX.Y.Z.zip`, built by
+[`scripts/build_app_bundle.py`](scripts/build_app_bundle.py)
+
+```
+thesis-finder/
+├── SKILL.md                         entry point + generated routing table
+└── skills/
+    ├── build-student-profile/
+    │   ├── INSTRUCTIONS.md          not SKILL.md: only the root is a registered skill
+    │   └── references/
+    └── ... (8 skills; design-agent-skill is excluded)
+```
+
+Uploaded as-is, never unpacked. Cross-skill paths are rewritten to the bundle root.
+
+**3. Portable edition** — `thesis-finder-portable-vX.Y.Z.md` plus
+`thesis-finder-portable-instructions-vX.Y.Z.txt`, built by
+[`scripts/build_portable_bundle.py`](scripts/build_portable_bundle.py)
+
+One document whose sections (`## Skill: x`, `## Reference: x/references/y.md`) are what
+hand-offs point at, since there is no filesystem to resolve a path against. The `.txt` is the
+same bootstrap block that appears inside the `.md`, split out so it can be pasted into an
+instructions box without opening the document.
 
 **To publish a release**, the version is set on `main` first — it is the single source:
 
