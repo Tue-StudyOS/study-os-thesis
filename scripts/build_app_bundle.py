@@ -117,6 +117,28 @@ file is the one to use; say which one you read.
 """
 
 
+SESSION_LOCATION_HEADING = re.compile(r"^(#+ Session File Location)$", flags=re.M)
+
+
+def override_session_location(text: str, source: str, note: str) -> str:
+    """Contradict the filesystem path where it is read, not only in a preamble.
+
+    The instructions describe a session file at `~/.claude/...`. A client with no
+    home directory cannot resolve that, and an override sitting a hundred lines
+    earlier is easy to read past at the moment it matters.
+    """
+    if not SESSION_LOCATION_HEADING.search(text):
+        raise AppBundleError(f"{source} has no 'Session File Location' heading left to override")
+    return SESSION_LOCATION_HEADING.sub(rf"\1\n\n{note}", text, count=1)
+
+
+ROOT_SESSION_NOTE = """> **In this bundle, ignore the paths below.** There is no filesystem that survives
+> the conversation. Read the session log from the files attached to the conversation
+> and from the project knowledge, and hand it back as a downloadable file for the
+> student to store in their project, as described at the top of this file. The
+> **format** described below still applies exactly."""
+
+
 def rewrite_bundled_skill(text: str, skill_name: str) -> str:
     """Repoint a bundled skill's own `references/...` paths at the bundle root."""
     return OWN_REFERENCE_PATTERN.sub(
@@ -184,6 +206,7 @@ def build_app_bundle(dist_dir: Path) -> tuple[Path, Path]:
     validate_source_skill(root_source)
     root_text = (root_source / "SKILL.md").read_text(encoding="utf-8")
     root_text = rewrite_root_skill(root_text, bundled_names)
+    root_text = override_session_location(root_text, f"{ROOT_SKILL}/SKILL.md", ROOT_SESSION_NOTE)
     root_text = insert_preamble(root_text, routing_preamble(bundled_names))
     (package_dir / "SKILL.md").write_text(root_text, encoding="utf-8")
     copy_resources(root_source, package_dir)

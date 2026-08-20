@@ -21,7 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.build_app_bundle import EXCLUDED_SKILLS, ROOT_SKILL
+from scripts.build_app_bundle import EXCLUDED_SKILLS, ROOT_SKILL, override_session_location
 from scripts.build_skill_release import (
     REPO_ROOT,
     BuildError,
@@ -184,6 +184,8 @@ def build_portable_bundle(dist_dir: Path) -> tuple[Path, Path]:
         description, body = split_frontmatter(
             (skill_dir / "SKILL.md").read_text(encoding="utf-8"), f"{name}/SKILL.md"
         )
+        if name == ROOT_SKILL:
+            body = override_session_location(body, f"{name}/SKILL.md", PORTABLE_SESSION_NOTE)
         parts.append(f"## {skill_heading(name)}\n")
         parts.append(f"*{description}*\n")
         parts.append(demote_headings(rewrite_references(body, name, known), f"{name}/SKILL.md") + "\n")
@@ -222,6 +224,13 @@ def validate_document(document: str, bundled_names: list[str]) -> None:
 
     for leftover in set(re.findall(r"`(\.\./[^`]+)`", document)):
         raise PortableBundleError(f"document kept a filesystem path {leftover!r}")
+
+
+PORTABLE_SESSION_NOTE = """> **In this edition, ignore the paths below.** You are running in an assistant with
+> no filesystem. Read the session log from the files attached to this conversation and
+> from the knowledge of this project, GPT, or Gem, and hand it back as a downloadable
+> file for the student to store there. The **format** described below still applies
+> exactly."""
 
 
 HUMAN_PREFACE = """This one file contains everything the thesis-search advisor needs. It is meant for

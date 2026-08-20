@@ -9,12 +9,14 @@ from pathlib import Path
 import pytest
 
 from scripts.build_app_bundle import (
+    ROOT_SESSION_NOTE,
     BUNDLED_DIR,
     BUNDLED_INSTRUCTIONS,
     EXCLUDED_SKILLS,
     ROOT_SKILL,
     AppBundleError,
     build_app_bundle,
+    override_session_location,
     rewrite_bundled_skill,
     rewrite_root_skill,
 )
@@ -111,3 +113,20 @@ def test_rewrites_repoint_paths_at_the_bundle_root() -> None:
 def test_a_handoff_to_an_unbundled_skill_fails_the_build() -> None:
     with pytest.raises(AppBundleError, match="not in the bundle"):
         rewrite_root_skill("use `../design-agent-skill/references/x.md`", ["build-student-profile"])
+
+
+def test_the_filesystem_path_is_overridden_where_it_is_read(tmp_path: Path) -> None:
+    package_dir, _ = build_app_bundle(tmp_path)
+    root_text = (package_dir / "SKILL.md").read_text(encoding="utf-8")
+
+    # The override has to sit at the heading, not only in the preamble: an agent
+    # reading Step 0 must not try to resolve ~/.claude/thesis-finder/session.md.
+    heading_at = root_text.index("Session File Location")
+    note_at = root_text.index(ROOT_SESSION_NOTE)
+    path_at = root_text.index("`~/.claude/thesis-finder/session.md`")
+    assert heading_at < note_at < path_at
+
+
+def test_a_renamed_session_section_fails_the_build_rather_than_dropping_the_override() -> None:
+    with pytest.raises(AppBundleError, match="Session File Location"):
+        override_session_location("# Some Skill\n\nno such heading\n", "x/SKILL.md", "note")

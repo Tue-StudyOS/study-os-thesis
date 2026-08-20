@@ -10,6 +10,7 @@ import pytest
 from scripts.build_app_bundle import EXCLUDED_SKILLS, ROOT_SKILL
 from scripts.build_portable_bundle import (
     INSTRUCTIONS_LIMIT,
+    PORTABLE_SESSION_NOTE,
     PortableBundleError,
     build_portable_bundle,
     demote_headings,
@@ -116,3 +117,12 @@ def test_sources_are_left_untouched(tmp_path: Path) -> None:
     before = {path: path.read_bytes() for path in sorted(SKILLS_DIR.rglob("*.md"))}
     build_portable_bundle(tmp_path)
     assert {path: path.read_bytes() for path in sorted(SKILLS_DIR.rglob("*.md"))} == before
+
+
+def test_the_filesystem_path_is_overridden_where_it_is_read(tmp_path: Path) -> None:
+    document_path, _ = build_portable_bundle(tmp_path)
+    document = document_path.read_text(encoding="utf-8")
+
+    note_at = document.index(PORTABLE_SESSION_NOTE)
+    path_at = document.index("`~/.claude/thesis-finder/session.md`")
+    assert note_at < path_at, "the override must come before the path it overrides"
