@@ -6,8 +6,8 @@ searches the live web for University of Tübingen chairs or Baden-Württemberg c
 fit, and hands you a map of real options with contact paths.
 
 **Who it is for.** Students at the University of Tübingen looking for a Bachelor's or
-Master's thesis, in any faculty. You do not need to be able to program: Route A below is a
-single file upload in the Claude app.
+Master's thesis, in any faculty. You do not need to be able to program — Routes A and B below
+are a file upload and some copy-paste, in Claude, ChatGPT, or Gemini.
 
 ---
 
@@ -15,7 +15,7 @@ single file upload in the Claude app.
 
 | You need | Why | How to check |
 |---|---|---|
-| An agent that loads Agent Skills — the **Claude app**, **Claude Code**, **Codex**, or **Gemini CLI** | The skills are instructions *for an agent*. They do nothing on their own. | See Route A or Route B below |
+| An AI assistant — **Claude**, **ChatGPT**, **Gemini**, or a terminal agent | These are instructions *for an assistant*. They do nothing on their own. | Pick a route below |
 | **Web search / browsing enabled**, with quota to spare | Every run searches live. **One discovery run makes dozens of web calls** — expect it to be the most expensive thing you do that day, and expect it to take several minutes. | Ask your agent to search for something and see if it can |
 
 There is no account, no database, no server, and nothing to configure. Nothing is installed
@@ -25,14 +25,15 @@ outside the skills folder.
 
 ## Pick your route
 
-| | Route A — Claude app | Route B — Claude Code / Codex / Gemini CLI |
-|---|---|---|
-| For | Anyone. No terminal needed. | People who already work in a terminal agent. |
-| Install | Upload **one file** | Copy **ten folders** into a directory |
-| Picking up weeks later | Works, if you run it inside a Claude project | Automatic — the session log stays on disk |
+| | Route A — Claude app | Route B — ChatGPT, Gemini, or any chat | Route C — Claude Code, Codex, Gemini CLI |
+|---|---|---|---|
+| For | Claude Pro/Max users | Anyone else, including free ChatGPT and Gemini | People already working in a terminal agent |
+| Install | Upload **one zip** | Attach **one file**, paste one text block | Copy **ten folders** into a directory |
+| Terminal needed | No | No | Yes |
 
-Route A is the short path and the one to use if you are unsure. Both run the same
-searches and produce the same output.
+All three run the same searches and produce the same output. Whichever you pick,
+**read "Never type it all again" below before your first run** — that is the part that
+decides whether you have to repeat the interview next month.
 
 ---
 
@@ -48,34 +49,49 @@ execution and file creation** switched on.
    search**. Both are under the capabilities/features section; the exact wording of the menu
    changes from time to time.
 3. Still in Settings, find **Skills**, add a skill, and pick the zip you downloaded.
-4. **Create a project** for your thesis search — this is what lets you stop and continue
-   weeks later. See below.
+4. **Create a project** for your thesis search (see "Never type it all again").
 5. Open a chat inside that project and type `thesis-finder`. Continue at **Run it**.
 
-That is the whole install. The single zip contains the entry-point skill and everything it
-hands off to, so there is nothing else to upload.
-
-## Why a project, and how to come back later
-
-A chat in the Claude app forgets everything when it ends. A **project** does not: files you
-put in its knowledge base are loaded into every chat inside that project, and the project
-keeps its own memory, separate from your other conversations.
-
-So the loop is:
-
-1. Run your search in a chat inside the project.
-2. At the end, the skill hands you a **session file**. Add it to the project's knowledge base.
-3. Weeks later, open a new chat **in the same project** and type `thesis-finder`. It finds
-   the session file by itself, and picks up where you stopped — no second interview.
-
-Skip the project and you will be interviewed again from scratch every time.
+The single zip contains the entry-point skill and everything it hands off to, so there is
+nothing else to upload.
 
 ---
 
-# Route B — Claude Code, Codex, Gemini CLI
+# Route B — ChatGPT, Gemini, or any other assistant
+
+ChatGPT and Gemini do not load Agent Skills. They do let you build a container — a Project,
+a Custom GPT, a Gem — that holds an instructions text and a few files. The portable edition
+is built for exactly that: **one file, plus one block of text to paste.**
+
+1. Download **`thesis-finder-portable-vX.Y.Z.md`** from
+   <https://github.com/Tue-StudyOS/study-os-thesis/releases/latest>.
+2. Create the container:
+   - **ChatGPT:** a **Project** (best — you can add files to it later), or a **Custom GPT**.
+   - **Gemini:** a **Gem**.
+   - **Claude:** a **Project**, if you would rather not install the skill from Route A.
+3. Attach `thesis-finder-portable-vX.Y.Z.md` to it as a knowledge or project file.
+4. Open the file, copy the block between `-----BEGIN INSTRUCTIONS-----` and
+   `-----END INSTRUCTIONS-----`, and paste it into the container's instructions field. (It is
+   also shipped separately as `thesis-finder-portable-instructions-vX.Y.Z.txt` if that is
+   easier.) It is under 3000 characters, so it fits every instructions box.
+5. Make sure web search is on for that assistant.
+6. Start a chat **inside the container** and type `thesis-finder`. Continue at **Run it**.
+
+**Why one file and not ten.** ChatGPT and Gemini cap a container at roughly ten knowledge
+files, and ChatGPT caps instructions at 8000 characters. The full instruction set is far
+larger than that, so it travels as a single document with named sections, and the pasted
+block tells the assistant how to navigate it.
+
+**Quick try without any setup:** attach the file to a normal chat and type `thesis-finder`. It
+works, but nothing is remembered once that chat ends.
+
+---
+
+# Route C — Claude Code, Codex, Gemini CLI
 
 **Install all ten skills, not a subset.** `thesis-finder` calls the other skills by name and
-they call each other. A partial install fails at the first hand-off.
+they call each other. A partial install fails at the first hand-off. (Routes A and B have no
+such trap — everything travels in one artifact.)
 
 ## Step 1 — Get the files
 
@@ -169,18 +185,41 @@ whether you want to search university chairs, companies, or both.
 **It will take a while.** The search phase makes many live web requests and verifies what it
 finds. Let it run.
 
-### Coming back later
+---
 
-`thesis-finder` writes a session log so you can resume weeks later without repeating the
-interview.
+# Never type it all again
 
-- **Route B:** it prefers `~/.claude/thesis-finder/session.md`; if your client cannot write
-  there it uses `./thesis-finder-session.md` in the directory you started the agent in, and
-  tells you which one it picked. Start the agent in the same directory next time, and type
-  `thesis-finder` again.
-- **Route A:** a chat keeps nothing, so the session file has to live in the knowledge base of
-  the project you run the search in. Add it there when a run ends, and start your next chat
-  inside that same project.
+Finding a thesis takes weeks, not one afternoon. The interview that produces your profile is
+the expensive part — the searching can always be repeated, your answers cannot, and nobody
+wants to reconstruct them from memory a month later.
+
+So the advisor writes a **session file**: your profile, what was already searched, what you
+ruled out, and how your own thinking about the thesis changed. It hands you that file
+**twice** — once the moment the interview is done, before any searching, and again at the end
+of the run. The early one exists precisely because searches are long and tabs get closed.
+
+**What you have to do: put that file somewhere the next chat can see it.**
+
+| Where you run it | Where the session file goes | Next time |
+|---|---|---|
+| Claude project (Route A or B) | The project's knowledge base | New chat in the same project |
+| ChatGPT project (Route B) | The project's files | New chat in the same project |
+| ChatGPT Custom GPT (Route B) | Edit the GPT, add it to its knowledge | Any chat with that GPT |
+| Gemini Gem (Route B) | Edit the Gem, add it to its knowledge | Any chat with that Gem |
+| Claude Code / Codex / Gemini CLI (Route C) | Nothing to do — written to disk automatically | Start the agent in the same directory |
+| A plain chat, no container | Nowhere. Keep the file and attach it by hand | Attach it to your first message |
+
+The advisor checks all of these at the start of every run before it asks you anything: the
+files attached to the conversation, the container's knowledge, and whatever it remembers
+about you. If it finds a session file it tells you which one it used and confirms your
+profile back to you in a sentence or two — correct it there if something has changed.
+
+**Route C** is the only one where this is fully automatic: `thesis-finder` prefers
+`~/.claude/thesis-finder/session.md`, falls back to `./thesis-finder-session.md` in the
+directory you started the agent in, and tells you which one it picked.
+
+**One habit is enough:** when the advisor hands you a file, drop it into your project. That
+single step is the difference between continuing and starting over.
 
 ---
 
@@ -188,10 +227,11 @@ interview.
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| Agent says it doesn't know `thesis-finder`, or just chats normally | Skill not loaded — the upload did not finish, the client was not restarted, or it does not support Agent Skills | Restart the client, then ask `which skills do you have?`. If nothing is listed, use the paste fallback at the end of Route B Step 2. |
-| **Route A:** the upload is rejected, or the skill appears with the wrong name | The wrong file was uploaded, or it was unpacked first | Upload `thesis-finder-app-vX.Y.Z.zip` as downloaded. The ten-folder `study-os-thesis-skills-vX.Y.Z.zip` is for Route B and will not upload as one skill. |
-| **Route A:** it asks the full interview again on a later visit | The chat was not started inside the project, or the session file was never added to the project knowledge | Open a chat inside the project holding your session file and type `thesis-finder` again. If no session file was ever saved, the interview has to be redone. |
-| **Route B:** agent finds *some* skills but breaks partway ("I don't have a skill called `discover-university-candidates`"), or the folder listing looks wrong | Wrong folder level, or a partial install | The path must be `<skills-dir>/thesis-finder/SKILL.md`, **not** `<skills-dir>/study-os-thesis-skills-vX.Y.Z/thesis-finder/SKILL.md`. Move the contents up one level and make sure **all** skill folders are there. |
+| Agent says it doesn't know `thesis-finder`, or just chats normally | Skill not loaded — the upload did not finish, the client was not restarted, or it does not support Agent Skills | Restart the client, then ask `which skills do you have?`. If nothing is listed, use Route B instead — it needs no skill support at all. |
+| **Route A:** the upload is rejected, or the skill appears with the wrong name | The wrong file was uploaded, or it was unpacked first | Upload `thesis-finder-app-vX.Y.Z.zip` as downloaded. The ten-folder `study-os-thesis-skills-vX.Y.Z.zip` is for Route C and will not upload as one skill. |
+| **Routes A/B:** it asks the full interview again on a later visit | The chat was not started inside the project/GPT/Gem, or the session file was never added to it | Open a chat inside the container holding your session file and type `thesis-finder` again. If no session file was ever saved, the interview has to be redone. |
+| **Route B:** it answers from general knowledge instead of following the instructions | The document was attached but the instructions block was never pasted in | Paste the block from `-----BEGIN INSTRUCTIONS-----` into the container's instructions field. Without it the assistant has no reason to open the document. |
+| **Route C:** agent finds *some* skills but breaks partway ("I don't have a skill called `discover-university-candidates`"), or the folder listing looks wrong | Wrong folder level, or a partial install | The path must be `<skills-dir>/thesis-finder/SKILL.md`, **not** `<skills-dir>/study-os-thesis-skills-vX.Y.Z/thesis-finder/SKILL.md`. Move the contents up one level and make sure **all** skill folders are there. |
 | Results are thin, generic, or the agent says it cannot verify anything | No web access, or search quota exhausted | Confirm web search is enabled in your client and that you have quota left. These skills cannot work offline — everything they output is verified live, by design. |
 
 ---

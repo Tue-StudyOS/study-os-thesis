@@ -95,8 +95,12 @@ knowledge of the current project. If you find one, treat it exactly as the
 instructions treat a found session file, and follow the Returning User Flow. If
 there is none, follow the New User Flow.
 
-**Writing it (end of every run).** Produce the session log as a downloadable
-file, and tell the student in plain words what to do with it:
+**Writing it — twice, not once.** Produce the session log as a downloadable file
+the moment the profile interview is complete, *before* any searching begins, and
+again at the end of the run with the results added. The interview is the part a
+student cannot cheaply redo; a run that dies mid-search, or a tab closed while
+the searches are still running, must not cost them that. Both times, tell the
+student in plain words what to do with the file:
 
 > Add this file to your project's knowledge base. Every future chat in this
 > project will then start with your profile and search history already loaded,
