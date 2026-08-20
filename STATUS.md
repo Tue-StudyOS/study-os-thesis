@@ -297,6 +297,7 @@ superseded outright by the pivot.
 | AF | Report chapter: problem framing & evolution | ⬜ open | — | Writing. The evolution story now has **three** dated steps (DB app → no-DB + backbone → rules-only): the same argument applied twice, one level deeper. G1. |
 | AG | Report chapter: user research & evidence | ⬜ open | — | Depends: Z′, AM. The weakest graded component. Personas + user story + evidence-of-contact table with honest team attribution. G2. |
 | AH | Report chapter: concept & solution design | ⬜ open | — | Depends: AO, AA′ item 5. Value proposition **reframed to reflection**; feature-prioritization table including the honest cost of the backbone deletion; the three-signal convergence (professor research May / Gehler August / the AI-disclaimer). G3. |
+| AP | Degree-program recognition for all faculties | ✅ done 2026-08-20 | Domi | **Chose rules over catalog (Option A).** The brief's tempting fix — extend the CS table to all ~200 Tübingen programs — is a maintained entity list, i.e. the artifact the 2026-07-31 pivot removed, minus the URLs. Three reasons it loses on merits, not just precedent: (1) no maintainer (MASTERPLAN §1: "no one will keep a database fresh after this project"); (2) **the shipped duration is already wrong** — the table gave one university-wide value (Master 6mo / Bachelor 4mo) taken from CS, but the humanities exam office states the M.A. Bearbeitungszeit in *weeks*, so a humanities student is mis-scoped today, silently ([verified live](https://uni-tuebingen.de/einrichtungen/verwaltung/iv-studierende/zentrales-pruefungsamt/geisteswissenschaftliche-faecher/allgemeine-informationen/), 2026-08-20); (3) the table's level data was near-worthless anyway — students know their own level; what they often don't know is the *duration*, precisely the value that varies per faculty and per Fassung. `tuebingen-degree-programs.md` → `degree-program-rules.md`, resolving exactly three things (program name verbatim; level from the student, never inferred from the name; Bearbeitungszeit from their regulations or the exam office, never assumed). SKILL.md step 10 now states a procedure instead of describing the gap. **Invariant test sharpened (G5):** `test_shipped_resources_are_not_static_uri_catalogs` counts URLs, so a 200-row table with zero URLs passed it — verified by planting one. Added `test_shipped_resources_are_not_static_entity_lists` (>15 table rows per shipped file); the planted catalog fails it and passes the old one. `pytest -q` 65 passed/10 skipped (64 on `main` + 1 new — the brief's expected 46 is stale); release build, app-bundle and portable-bundle all green with the renamed file resolving in each. |
 | AI | Final written report assembly | ⬜ open | — | Depends: AE′, AF, AG, AH, AM, AN, AO, Z′. Written report only (no slide deck, decided 2026-08-08). G4 has no chapter task of its own — assembled here. All five components. |
 | W | Scope-erosion experiment (2×2 Tübingen vs. TUM/KIT) | ⬜ optional | — | Reachable in the 4+ week window, but its hypothesis needs restating: under rules-only there is much less Tübingen-specific curation left to erode. Only after AI is drafted. G5/G1. |
 
@@ -339,6 +340,53 @@ architecture-tagged. W optional.
 ---
 
 ## Log
+
+- **2026-08-20 (d)** — **Task AP: degree programs resolved by rule, not by lookup. The
+  catalog was already lying.** Branch `feat/degree-program-discovery`, off `main`.
+
+  **The trap worked as advertised, and the CI would not have caught it.** The task is
+  "recognise programs for all seven faculties", and the obvious shape of that answer is a
+  table of all ~200 Tübingen programs. That is a maintained entity list — the exact artifact
+  the 2026-07-31 rules-only pivot deleted — with the one property that makes it invisible to
+  the guard: no URLs. `test_shipped_resources_are_not_static_uri_catalogs` counts absolute
+  URLs, so a 200-row program table scores zero and ships green. I confirmed this by planting
+  one rather than reasoning about it.
+
+  **The argument that actually decided it was not precedent, it was a wrong number already in
+  the file.** The shipped table carried one university-wide thesis duration — Master 6 months,
+  Bachelor 4 months — with a note that it came from Computer Science. The humanities exam
+  office states the M.A. Bearbeitungszeit in weeks, not those months. So the file is not
+  merely CS-shaped, it is *already wrong for other faculties today*, and wrong in the worst
+  way: a run reads a plausible value, scopes a proposal to it, and nothing surfaces the error.
+  Extending that table to 200 rows would have multiplied the failure, not fixed it — every new
+  row a duration nobody verified and nobody will refresh.
+
+  **A quieter finding: the level data was near-worthless from the start.** The table's stated
+  value was recognising that e.g. Machine Learning is Master-only. But students know their own
+  level — that is not the fact they are missing. The fact they often *don't* know is the
+  Bearbeitungszeit, which is set per faculty **and per Fassung** and therefore is exactly the
+  thing a bundled table can never hold correctly. The catalog was strongest where it was least
+  needed and absent where it mattered.
+
+  So the file resolves three things and nothing else: program name (verbatim, never normalised
+  against a list), level (from the student; never inferred from the name), duration (from their
+  regulations or the responsible exam office; never assumed, and when unavailable, scoped
+  against a stated assumption the student can correct). Renamed to `degree-program-rules.md`.
+  No program names, no durations, no PO numbers are shipped — the live-verified humanities and
+  CS figures live in this log as *evidence for the decision*, deliberately not in the artifact.
+
+  **Closed the hole on the way out (G5).** Added
+  `test_shipped_resources_are_not_static_entity_lists`, which measures the tell that survives
+  URL removal: row count. Rules tabulate a bounded set of axes (largest shipped: 8 rows);
+  entity lists exist for coverage and do not stay small. Limit 15. Verified in both directions
+  — the planted 200-row catalog fails the new test and passes the old one.
+
+  **Two things worth knowing for the next task.** A URL returned by a *fresh* search of the
+  Tübingen exam-office pages 404'd when fetched, which is a small live demonstration of the
+  link-rot argument the pivot rests on. And `make app-bundle` / `make portable-bundle` fail on
+  this machine because the Makefile calls `python` while only `python3` exists — pre-existing,
+  unrelated to this change, left alone as out of scope; both builders run clean via
+  `python3 -m scripts.build_*`.
 
 - **2026-08-20 (c)** — **Release 2.1.0 prepared: version bumped, changelog cut, every CI step
   rehearsed locally.** Branch `chore/release-2.1.0`, off `main` after #74 and #75 merged.
