@@ -10,25 +10,31 @@ This project follows Semantic Versioning for the released skill package:
 
 ## [Unreleased]
 
-### Added
-
-- ...
-
 ### Changed
 
-- ...
+- `build-student-profile` now resolves degree programs by rule instead of by lookup.
+  `references/tuebingen-degree-programs.md` listed six Computer Science programs and one
+  university-wide thesis duration; it is replaced by `references/degree-program-rules.md`,
+  which resolves three things for any faculty: the program name (recorded verbatim), the
+  thesis level (from the student, never inferred from the program name), and the
+  Bearbeitungszeit (from the student's own regulations or the responsible exam office).
 
 ### Fixed
 
-- ...
+- Students outside Computer Science are no longer scoped against a thesis duration taken
+  from the CS department. The old file shipped Master 6 months / Bachelor 4 months as a
+  single university-wide value; the Bearbeitungszeit is set per faculty and per Fassung,
+  and faculties that state it in weeks were silently mis-scoped.
 
 ### Removed
 
-- ...
+- `build-student-profile/references/tuebingen-degree-programs.md` — replaced by
+  `degree-program-rules.md` (see Changed).
 
 ### Breaking Changes
 
-- None.
+- None. The renamed reference is internal to the skill package; no skill name, trigger, or
+  expected input/output changes.
 
 ## [2.1.0] - 2026-08-20
 
