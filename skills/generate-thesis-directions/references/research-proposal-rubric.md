@@ -13,7 +13,7 @@ A strong proposal sketch should include:
 
 Prefer proposals that are:
 
-- narrow enough for a bachelor or master thesis
+- narrow enough for the student's actual thesis duration, not for a generic bachelor-or-master default
 - specific enough to write in an email without sounding generic
 - exploratory without claiming that the topic is already offered
 - honest about data access, supervision, and feasibility uncertainty
@@ -21,6 +21,7 @@ Prefer proposals that are:
 Avoid:
 
 - broad labels such as "medical AI" without a testable question
+- a scope justified by the level label alone when the recorded duration says otherwise
 - proposal titles that could fit any chair
 - invented datasets, clinical access, hardware access, or supervision capacity
 - citation counts, acceptance status, or metrics that are not sourced

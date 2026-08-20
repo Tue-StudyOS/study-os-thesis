@@ -10,6 +10,7 @@ This project follows Semantic Versioning for the released skill package:
 
 ## [Unreleased]
 
+
 ### Added
 
 - ...
@@ -84,16 +85,31 @@ this project's SemVer policy puts at MINOR.
   live for a search to resume.
 - README gained a client-keyed table for choosing an artifact, and now lists all five
   published files.
+- `build-student-profile` now resolves degree programs by rule instead of by lookup.
+  `references/tuebingen-degree-programs.md` listed six Computer Science programs and one
+  university-wide thesis duration; it is replaced by `references/degree-program-rules.md`,
+  which resolves three things for any faculty: the program name (recorded verbatim), the
+  thesis level (from the student, never inferred from the program name), and the
+  Bearbeitungszeit (from the student's own regulations or the responsible exam office).
+- `generate-thesis-directions` now sizes proposal sketches against the student's recorded
+  thesis duration instead of a generic thesis. Where the duration is unresolved it states the
+  scope it assumed rather than defaulting to the longer case. The proposal rubric no longer
+  treats "bachelor or master" as a single yardstick.
 
 ### Fixed
 
 - Both generated artifacts override the `~/.claude/thesis-finder/session.md` path at the
   heading where it is read, not only in a preamble. An agent reading Step 0 in an uploaded
   skill or an attached document would otherwise try to resolve a path that cannot exist.
+- Students outside Computer Science are no longer scoped against a thesis duration taken
+  from the CS department. The old file shipped Master 6 months / Bachelor 4 months as a
+  single university-wide value; the Bearbeitungszeit is set per faculty and per Fassung,
+  and faculties that state it in weeks were silently mis-scoped.
 
 ### Removed
 
-- None.
+- `build-student-profile/references/tuebingen-degree-programs.md` — replaced by
+  `degree-program-rules.md` (see Changed).
 
 ### Breaking Changes
 

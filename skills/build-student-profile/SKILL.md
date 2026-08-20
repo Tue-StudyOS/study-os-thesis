@@ -20,7 +20,7 @@ The interview has two outputs, and the second one matters as much as the first: 
 7. Probe for concrete evidence: favorite lectures, seminars, exercises, papers, projects, internships, work experience, frustrating topics, tools they enjoy, methods they want to learn, and what kind of result would make the thesis feel successful.
 8. Explicitly infer and summarize research skills, not only interests: technical execution, experimental design, literature reading, mathematical comfort, data handling, engineering maturity, communication, and domain knowledge.
 9. Continue until the profile is strong enough to drive a precise search, or explicitly label the remaining uncertainty.
-10. Capture the student's degree program and thesis level. Ask the student directly — their own answer is the primary source, for every faculty. `references/tuebingen-degree-programs.md` covers the **Computer Science department only**; use it to recognize those programs and the level each implies (for example, Machine Learning is Master only). For any other faculty, take the student's answer and verify level or thesis duration live against the faculty's own pages if it matters for scoping. There is no university-wide program list here, and a program missing from that file is not evidence that it does not exist.
+10. Capture the student's degree program, thesis level, and thesis duration, following `references/degree-program-rules.md`. The student is the primary source for all three, in every faculty. Record the program name verbatim, never infer the level from the program name, and never assume a thesis duration — the Bearbeitungszeit is set per faculty and per Fassung, so a guessed value silently mis-scopes the proposal. When the student is unsure and the fact changes the scope, verify it live against the exam office or the program's regulations.
 11. Normalize the profile into concise sections using `references/student-profile-schema.md`.
 12. Mark confidence levels when information is inferred rather than explicitly stated.
 13. Keep the profile in the current conversation only. Do not write it to shared skill files.
@@ -32,7 +32,7 @@ Return a compact profile with:
 - **canonical six-dimension summary** — one line each for Interests, Methods, Domain,
   Thesis style, Skills, No-gos (see `references/student-profile-schema.md`), so the
   profile is immediately usable by `thesis-finder` and the discovery skills
-- thesis level and program, if known
+- thesis level and program, plus the thesis duration and where it came from (or that it is still unresolved)
 - interests and preferred research areas
 - relevant courses and skills
 - professional or research experience

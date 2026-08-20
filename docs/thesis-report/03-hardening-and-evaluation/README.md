@@ -19,6 +19,26 @@ under `findings/`; this section synthesizes and links rather than duplicates:
   the mechanism and design are sound but disputes the blindness of the two hard-faculty
   numbers behind the GO verdict (see the updated "Honest limitations" paragraph below).
 
+---
+
+> ## ⚠️ Architecture banner — added 2026-08-09 (Task AJ)
+>
+> **Unless a number below is explicitly marked otherwise, it is `[backbone-crawl, ≤2026-07-30]`
+> — it was produced by the static-backbone architecture that was removed on 2026-07-31**
+> (commit `44e7e53`, PR #71) in favour of rules-only live discovery.
+>
+> The only faculty measurement of the shipping architecture is **Theology, 2026-08-08 (Task V′):
+> 83% recall / 100% precision, `[rules-only, ≥2026-07-31]`**, on a first blind run with no
+> prior fix.
+>
+> This section is kept as written because it is the honest record of how the *evaluation
+> method* developed — and that development, not the coverage figures, is what this chapter is
+> actually about. The circularity discovery, the live-run rule, the steering proof design and
+> the blindness critique are all method results, and they survive the pivot intact. The
+> percentages do not describe the tool a user installs today.
+>
+> Per-number detail: [the scorecard's §0 standing note](../../../findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md).
+
 ## Synthesis
 
 The single most important methodological turn in this project happened right after Phase 1
@@ -32,7 +52,10 @@ plain-Claude-plus-Websearch baseline (not a scripted strawman), counts as eviden
 re-ran all four Phase-1 faculties live under that discipline and found a materially different,
 more honest picture: primary recall ~82% (not 96%), and — critically — the "0% baseline" was
 actually ~17%, because plain Claude does know some correct names. The real, defensible margin
-over baseline is ~+65 percentage points, not the fixture's fictional +96. The same live run
+over baseline is ~+65 percentage points, not the fixture's fictional +96
+— `[backbone-crawl, ≤2026-07-30]`, and worth flagging on its own: this is the strongest
+comparative number the project owns, and it belongs to the deleted architecture. It has never
+been re-measured post-pivot. The same live run
 surfaced two concrete, fixable defects: a professor **misattribution** in Psychology (the
 wrong chair-holder named for a unit, because a search result described a *different* group
 with a similar name) and a **coverage gap** in CS (MPI-IS-affiliated researchers, not listed
@@ -42,11 +65,14 @@ Pass-1 sources) and re-validated live — all four faculties then cleared ≥70%
 lenient ("primary") and strict ("recommended and correctly attributed") reading of recall.
 
 The Phase-2 (company) eval followed the same live-validation discipline and also cleared its
-bar (100% recall across 3 profiles, +26pp mean over baseline) — but it carries an honest,
-still-open caveat: the ground truth was built from the **same** BW company backbone the skill
-searches, so the eval measures "does the skill find what's in the backbone," not "does the
-backbone reflect reality." This circularity is explicitly logged as unresolved (see
-[04](../04-open-work/README.md)).
+bar (100% recall across 3 profiles, +26pp mean over baseline) — but it carried a caveat that
+has since hardened into a permanent demotion: the ground truth was built from the **same** BW
+company backbone the skill searched, so the eval measured "does the skill find what's in the
+backbone," not "does the backbone reflect reality." **Settled 2026-08-09 (Task AJ):** that
+backbone was itself deleted on 2026-07-31, so the eval is now circular *and* measures a file
+that no longer exists *and* tests an architecture that no longer ships. It is demoted to a
+**plumbing check** and carries no weight as a quality claim; old Task Y (build an independent
+company ground truth) is closed permanently rather than left open. Full reasoning: scorecard §2.
 
 The post-Phase-3 "hardening" track (`core-optimization-roadmap.md`) exists because passing a
 recall threshold isn't the same as being *good* — the roadmap names five independent quality
@@ -76,24 +102,35 @@ ground truth but no live run yet. Task R separately exercised three robustness e
 (a niche topic with no Tübingen match, a shallow/resistant student, interdisciplinary routing
 across three faculties) and passed all three cleanly, fixing two small spec gaps along the way.
 
-**Honest limitations, stated plainly for the write-up (updated 2026-07-05):** every live
-run to date has been designed, executed, and scored by a single agent in a single
+**Honest limitations, stated plainly for the write-up (updated 2026-08-09, Task AJ):** every
+live run to date has been designed, executed, and scored by a single agent in a single
 session — a confirmation-bias risk mitigated only by grounding every factual claim in a
 live-verified source, not by independent review. Sample sizes per faculty are n=1–3, not
-enough to claim the filters generalize. The company eval's ground-truth circularity is
-unresolved. The roadmap's own "core is done" recall bar (≥80% across ≥6 faculties incl.
-one hard faculty) was declared **MET** on 2026-07-04 (Task T's eval-protocol fix + Task
-U's skill fix), flipping the go/no-go to **GO** — but an independent 2026-07-05 review
-found the two hard-faculty numbers behind that verdict are not clean blind measurements:
+enough to claim the filters generalize. The company eval is permanently demoted (see above).
+
+**The largest limitation is now the architecture break, not any single number.** Six of the
+seven faculty figures were produced by an architecture deleted on 2026-07-31; the shipping
+architecture has exactly one ground-truth faculty measurement. No amount of care in the old
+runs compensates for that, and the honest statement in the write-up is that current discovery
+quality rests on **one faculty**, with Task AK named as the repair.
+
+On the recall bar itself: it was declared **MET** on 2026-07-04 (Task T's eval-protocol fix +
+Task U's skill fix), flipping the go/no-go to **GO** — but an independent 2026-07-05 review
+found the two hard-faculty numbers behind that verdict were not clean blind measurements:
 Humanities' 100% is a re-score by a session that was explicitly un-blind on that faculty,
 and Law's 80% re-run's session had already read the document naming the missed chair and
-the fix that flips her. Every genuinely blind hard-faculty run to date (Humanities 60%,
-Law 60%) landed below the 80% bar. Treat the GO as **provisional** until one clean blind
-hard-faculty run exists — Theology's ground truth has never been opened mid-run and is the
-cheapest remaining repair (`STATUS.md` Phase 5 Task V). Output quality (Task S) is now
-scored (4/5 criteria pass cleanly; the one repeated gap was found and fixed), but, like
-everything else here, by the same single-agent process — an independent re-scoring pass
-is still open (Phase 5 Task X). These are named explicitly rather than smoothed over, in
+the fix that flips her. Every genuinely blind hard-faculty run at that point (Humanities 60%,
+Law 60%) landed below the 80% bar. **Partially repaired 2026-08-08:** Task V′ ran Theology
+blind — 83% recall / 100% precision, no prior fix — which is simultaneously the first clean
+blind hard-faculty run *and* the first post-pivot faculty measurement. The GO stands as
+dated, provisional on the two counts recorded in the scorecard.
+
+Output quality (Task S) is scored (4/5 criteria pass cleanly; the one repeated gap was found
+and fixed), but, like everything else here, by the same single-agent process. The independent
+re-scoring pass that used to be Phase 5 Task X is no longer a standalone task: it is absorbed
+into **Task Z′**, where the beta testers co-score the unknown-option and factual-error
+measures with us — the only genuinely independent evaluation this project will get. These are
+named explicitly rather than smoothed over, in
 keeping with the project's own evidence-rules discipline (never invent, never claim
 completeness, flag what's uncertain). Full numbers, per-faculty, with sources:
 [2026-07-03-eval-aggregate-scorecard.md](../../../findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md).

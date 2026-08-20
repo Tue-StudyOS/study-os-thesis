@@ -161,6 +161,27 @@ Not reachable from `thesis-finder` — invoke by name if you want them:
 
 ---
 
+## Measured discovery quality
+
+Honest version first: **the architecture that ships has been measured on exactly one
+faculty.**
+
+| | |
+|---|---|
+| **Theology, blind, 2026-08-08** | **83 % recall / 100 % precision** — [full results](findings/no_db_universal_skill/2026-08-08-theology-blind-run.md) |
+| Conditions | First run, genuinely blind, no fix applied first. The only hard faculty to clear the ≥80 % bar without a preceding repair. |
+| Everything else | Six further faculties were measured at ≥80 % recall between June and early July 2026 — but **against the static-backbone architecture removed on 2026-07-31**. Those numbers are real and honestly obtained; they do not describe what you install today. |
+
+Every figure in this repository is tagged `[backbone-crawl, ≤2026-07-30]` or
+`[rules-only, ≥2026-07-31]` so the two cannot be read as one series. Start at the
+[scorecard's standing note](findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md).
+
+Not yet measured on the current architecture: the other six faculties, the steering proof,
+and the margin over plain Claude. The company track has never been measured against an
+independent reference list at all and says so to the student at run time.
+
+---
+
 ## Quality gates
 
 Tests are dependency-free (`pytest` only) and run from the repo root:

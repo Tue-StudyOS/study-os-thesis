@@ -36,6 +36,35 @@ actions of **Z′ — now the critical path and the longest calendar clock in th
 
 ---
 
+## Reading the numbers in this file — architecture labelling (Task AJ, 2026-08-09)
+
+**The static-backbone architecture was removed on 2026-07-31** (commit `44e7e53`, PR #71) in
+favour of rules-only live discovery. Numbers produced before and after that date measure
+different systems and are not comparable.
+
+**This file is chronological, so its dates already carry the label.** The rule, stated once
+here instead of as a tag on every figure:
+
+| A figure in this file dated… | measures | tag |
+|---|---|---|
+| **≤ 2026-07-30** | the deleted static-backbone architecture | `[backbone-crawl, ≤2026-07-30]` |
+| **≥ 2026-07-31** | the shipping rules-only architecture | `[rules-only, ≥2026-07-31]` |
+
+Two consequences worth stating plainly, because they are easy to miss when reading the log
+top-down:
+
+- **Every recall/precision/steering figure in the Phase-1 to Phase-4 task tables below is
+  `[backbone-crawl, ≤2026-07-30]`.** They describe a system nobody can install today.
+- **Exactly one faculty figure is `[rules-only, ≥2026-07-31]`:** Theology, 2026-08-08
+  (Task V′), 83% recall / 100% precision. That is the entire ground-truth evidence base for
+  the shipping architecture until Task AK lands.
+
+The company figures are **permanently demoted** and carry no weight — see the
+[scorecard §2](findings/no_db_universal_skill/2026-07-03-eval-aggregate-scorecard.md).
+Per-number detail for the whole project lives in that scorecard's §0 standing note.
+
+---
+
 ## Current phase
 
 > ▶ **Resumed 2026-08-08 on `main`.** Phase 5 is scoped for the last time — see
@@ -282,21 +311,22 @@ superseded outright by the pivot.
 | Task | Step | Status | Owner | Notes / difficulties |
 |---|---|---|---|---|
 | V′ | Blind Theology run — the only untouched hard-faculty ground truth | ✅ done 2026-08-08 | `15954ef` | **Recall 5/6 = 83%, precision 9/9 = 100%.** Blindness held (only the GT `Sample interest:` line grepped). First hard faculty to clear 80% on a first blind run with no prior fix, and a post-pivot number: 83% across *both* theology faculties with no backbone file at all. N.N. case passed on the harder variant — 6 vacancies reported honestly, incl. the two on-focus ones (AT I, NT II "Evangelienforschung"), no invented holders. Two flags left open on purpose: (a) is the GT's Witt row over-inclusive for a late-antique persona? (b) the §21 vacancy scenario for an *ethics* persona is still unrun. G5. |
-| AJ | Pivot evidence audit — tag every number in the repo with the architecture + date that produced it | ⬜ open | — | **Blocker for AE′.** Every recall/precision figure measures the backbone architecture deleted 2026-07-31. Also permanently demotes the company eval (closes old Y). G5/G4. |
+| AJ | Pivot evidence audit — tag every number in the repo with the architecture + date that produced it | ✅ done 2026-08-09 | Domi | **Unblocks AE′.** Scorecard gets a §0 standing note plus a per-row `Architecture` column; MASTERPLAN §8, the go/no-go doc, report chapters 03 and 04, and STATUS all carry the tag. STATUS is labelled by a stated date rule rather than 40 inline tags — the file is chronological, so the date already is the tag, and the rule is checkable. **The 2026-07-04 GO is date-stamped, not deleted,** and now names both counts it is provisional on: the 2026-07-05 blindness gap (closed for one faculty by V′) and the fact that the architecture it certified no longer ships (open, Task AK is the repair). **Company eval permanently demoted** — plumbing check, circular by construction, and measuring a backbone deleted on 2026-07-31; **old Task Y is closed and no independent company GT will be built.** Old Task X recorded as absorbed into Z′ tester co-scoring. `skills/tests/eval_ground_truth/` untouched, as specified — the GT files are architecture-neutral and are reused by V′ and AK. Headline finding: **6 of 7 faculty figures describe a system nobody can install**; the shipping architecture has one. G5/G4. |
 | AK | Post-pivot ground-truth re-measurement: CS + Law (Humanities optional) | ⬜ open | — | The sharp test. `search-strategy.md` went 461→52 lines; Task U's enrich-before-exclude rule survived as one sentence but the **Remmert** worked example did not. Does the rule still find her without it? Report her row explicitly. Do not patch in this task. G5/G1/G3. |
 | AL | Reflection rubric dimension + committed simulation evidence set | ⬜ open | — | PR #71's before/after (baseline 20.0 → rules-only 20.75, 6/6 gates) exists **only in the PR description**; `.simulations/` is gitignored. Recover those numbers, re-run the 8-persona suite, commit conversations + ratings + a limitations README. G5/G4. |
 | AA′ | Hygiene sweep, post-pivot — 5 items | ✅ | Domi | All 5 done on `chore/hygiene-and-rerelease`, one commit each. (1) Deleted `find-recent-papers/references/papers/` (59 files, 308 KB, 287 absolute URLs) — the skill never referenced it, so pure orphan removal; took `scripts/update_openalex_index.py` (already non-runnable: reads a path Task E moved) and its fixture with it. (2) Degree file retitled CS-only + a "for students outside CS" section; SKILL.md step 10 now asks the student first. Did **not** build a university-wide list. (3) Session path: preferred `~/.claude/…`, documented fallback to `./thesis-finder-session.md` with a must-announce rule; README/AGENTS state the skills install **as a set**. (4) New `test_shipped_resources_are_not_static_uri_catalogs` — max 5 absolute URLs per shipped resource, `site:` lines exempt; the two named-file assertions kept as special cases. Proven four ways in `5cf3030`: suite green, fails on a planted 12-row catalog, flags 9 files of the old paper index (54 and 39 URLs at the top), `site:` exemption holds. (5) `Design-Entscheidungen.md` §7a records the AI-disclaimer decision + why disclosure is student-facing + the link to Bob's May recommendation. **Correction to the brief:** the backbone assertions are *not* in `evals/test_skill_quality.py` (an opt-in LLM-judge file with no such criteria) — they were all in `test_skill_package.py`. `pytest -q` 42→**43 passed / 10 skipped**; release build green. G4/G3. |
 | AB′ | Re-release + `INSTALL.md`, cold-install tested | ✅ | Domi | **Version: `skills-v2.0.0`**, not 1.1.0 — the CHANGELOG's own SemVer policy maps breaking trigger/contract changes to MAJOR, and `[Unreleased]` carried three `Breaking:` entries plus a `### Breaking Changes` section (sole entry point; backbones out of the discovery contract). Fixed the versioning bug first: the workflow bumped on `release/skills` and never merged back, so `main` sat at 0.1.0 against a published 1.0.0 and local builds produced artifacts matching no tag — the version is now read from `pyproject.toml` on the dispatched ref and `main` is the single source. Also found and fixed a second release-pipeline gap: `dist/release-notes.md` was only generated on `workflow_dispatch`, so the tag-push path would publish with a missing `body_path`. `INSTALL.md` written and linked from README. **Cold install: 48 s** for the mechanical steps, both archive formats, into fresh skills dirs with no dev checkout — an agent-executed lower bound, not a human number (that is Z′'s job). It surfaced two real guide defects, both fixed: "unpack it" assumed `unzip` (absent on a bare WSL box), and Step 1 wrongly claimed there was no wrapper folder. Installed set verified: 10 skills, no unresolved cross-skill calls, no broken `references/` paths, no non-Markdown files. **Published 2026-08-08 as [`skills-v2.0.0`](https://github.com/Tue-StudyOS/study-os-thesis/releases/tag/skills-v2.0.0)** via `workflow_dispatch` (direct tag creation is blocked by a repository ruleset — only the release App token may create `skills-v*` tags), which required three further workflow fixes in `9aa551a`. `skills-v1.0.0` annotated as superseded, original notes kept. Gap in my own cold-install test, caught by the coherence session: it read `INSTALL.md` from the dev checkout, so it never noticed the archive did not contain it — fixed in `5f848a4`, re-verified against the published artifact. G5/G4. |
 | AC′ | Beta protocol + feedback form, reflection-first | 🟡 protocol done 2026-08-08; form + pilot open | Domi | Protocol committed: [2026-08-08-beta-test-protocol.md](findings/no_db_universal_skill/2026-08-08-beta-test-protocol.md); recruiting texts ready to send: [2026-08-08-beta-recruiting-message.md](findings/no_db_universal_skill/2026-08-08-beta-recruiting-message.md). Primary instrument is the **verbatim pre/post** pair, which `thesis-finder` now collects itself (N0/N6/R7 + append-only log) — AC′ inherited it instead of building it. Two decisions settled by reading the skill: the pre-statement is **also** taken outside the tool (N0 persists only in N4, so aborted runs lose it — and aborted runs are counted as measurements; the framing message also primes the outcome before N0 is asked), and the post-statement **is** the tool's N6 answer (anything asked later is contaminated by N6's own side-by-side comment). Secondary: unknown-option hit, factual-error count, unaided setup, would-contact — (a)+(b) co-scored with the tester (absorbs old X). **Still open, all needing a human:** form live (questions specified, Appendix A), recruiting sent, pilot run + protocol frozen. G2/G5. |
-| Z′ | Protocolled external test, 2–3 students, ≥1 non-CS | ⬜ open | — | Depends: AC′. Scoped down from 3–5 on 2026-08-08 (realistic recruiting capacity). Longest calendar clock — start recruiting the day AB′ lands. n=1 fallback is reportable but does not clear the gate. G2/G5. |
+| Z′ | Protocolled external test, 2–3 students, ≥1 non-CS | 🟡 started 2026-08-08; **blocked on recruiting being sent** | Domi | Depends: AC′ (merged, PR #73). Scoped down from 3–5 on 2026-08-08 (realistic recruiting capacity). Longest calendar clock — start recruiting the day AB′ lands. Repo-side prep done: [session capture sheet](findings/no_db_universal_skill/2026-08-08-session-capture-sheet.md) per tester and [`scripts/create_beta_feedback_form.gs`](scripts/create_beta_feedback_form.gs) to build the Appendix A form in one run. **The four remaining steps all need a human and are strictly ordered:** send the recruiting texts (**not sent as of 2026-08-08** — the clock has not started), run the form script and link the URL from `INSTALL.md` + the `skills-v2.0.0` release notes, run the pilot, freeze the protocol. No results doc will be written from anything but real session data. n=1 fallback is reportable but does not clear the gate. G2/G5. |
 | AD | Distribution outreach: Fachschaft Informatik + Menth/Gehler channel question | ⬜ open | — | Depends: AB′; overlaps Z′. **No self-sent Rundmail** — the sender must be an institution. Ersti-Heft & uni site deferred to backlog. G5. |
-| AM | Reconstructed user-study chapter with per-entry provenance | ⬜ open | — | Explicitly invited by Gehler ("from memory, with a note to that effect"). Inventory every user contact ever, marked documented vs. reconstructed. No invented counts or quotes. G2/G5. |
+| AM | Reconstructed user-study chapter with per-entry provenance | 🟡 documented rows done 2026-08-09; **§3 needs Domi's memory** | Domi | [2026-08-09-user-study-inventory.md](findings/no_db_universal_skill/2026-08-09-user-study-inventory.md). Five documented contacts inventoried with what changed as a result: the 27-professor round (May 2026 → the entire platform abandonment), the 2026-06-25 Besprechung, Gehler's 2026-07-04 end-user test (verbatim quotes → M1/M2/M3), Valentin's 2026-08-02 question, Gehler's 2026-08-05 answer (→ the reflection reframe). Four traceable feedback→change loops written up for G5. **Nothing invented:** the Besprechung's attendee list and the 27-professor study's own method are both recorded as *known gaps* rather than filled in plausibly — the largest piece of user research in the project does not document its own instrument, and the report should say so. **§3 holds 7 open slots only Domi can fill** (fellow students, Fachschaft, other advisors, anyone who bounced off the install). Headline stated plainly in the doc: **no student has ever been observed using the tool** — which is exactly what Z′ is for. G2/G5. |
 | AN | Future-feedback plan: what / when / by whom / how many | ⬜ open | — | Explicitly invited by Gehler. A table with named responsibilities and trigger conditions, not prose. Depends on AO for the ownership question. G5. |
-| AO | Survival & maintenance plan | ⬜ open | — | Explicitly invited by Gehler ("not just hoping someone takes over a GitHub project"). Core argument: **the rules-only pivot is the sustainability strategy**. Needs the real maintenance-hours number, ownership options with failure modes, and the graceful-degradation case. G5/G3/G1. |
+| AO | Survival & maintenance plan | ✅ done 2026-08-09 | Domi | [2026-08-09-survival-and-maintenance-plan.md](findings/no_db_universal_skill/2026-08-09-survival-and-maintenance-plan.md). **Unblocks AH.** Core argument as planned — the rules-only pivot *is* the sustainability strategy — plus the detail that makes it more than an assertion: the property is **enforced by CI**, via `test_shipped_resources_are_not_static_uri_catalogs` in `skills/tests/test_skill_package.py`, so a re-added URI catalog fails the build. Four decay risks ranked: the vendor-controlled skill format is **highest** (total impact but shallow — the content is format-independent Markdown and `design-agent-skill` is the port tool), then unmeasurable model drift, then site restructuring and rule staleness. **Maintenance number: one simulation-suite run + one rotating faculty spot-check per semester, ~1–2 h twice a year**, with the honest caveat that it buys detection, not improvement, and a first-timer should budget double. Five ownership options each with its realistic failure mode; the **no-owner default is argued as the serious case** — because there is no DB/backend/scraper it degrades gracefully rather than failing, the sole exception being the format risk. Of the three survival conditions, a documented handover ✅ exists and a channel 🟡 is pending AD, but **a named owner ❌ does not exist and nobody has been asked** — the doc recommends adding that question to the AD mail. G5/G3/G1. |
 | AE′ | Benchmark consolidation across both architectures | ⬜ open | — | Depends: AJ, V′, AK, AL. Must keep the two instruments separate — rubric scores and ground-truth recall answer different questions and are not one series. Names the reflection variable as measured only qualitatively. G5/G4. |
 | AF | Report chapter: problem framing & evolution | ⬜ open | — | Writing. The evolution story now has **three** dated steps (DB app → no-DB + backbone → rules-only): the same argument applied twice, one level deeper. G1. |
 | AG | Report chapter: user research & evidence | ⬜ open | — | Depends: Z′, AM. The weakest graded component. Personas + user story + evidence-of-contact table with honest team attribution. G2. |
 | AH | Report chapter: concept & solution design | ⬜ open | — | Depends: AO, AA′ item 5. Value proposition **reframed to reflection**; feature-prioritization table including the honest cost of the backbone deletion; the three-signal convergence (professor research May / Gehler August / the AI-disclaimer). G3. |
+| AP | Degree-program recognition for all faculties | ✅ done 2026-08-20 | Domi | **Chose rules over catalog (Option A).** The brief's tempting fix — extend the CS table to all ~200 Tübingen programs — is a maintained entity list, i.e. the artifact the 2026-07-31 pivot removed, minus the URLs. Three reasons it loses on merits, not just precedent: (1) no maintainer (MASTERPLAN §1: "no one will keep a database fresh after this project"); (2) **the shipped duration is already wrong** — the table gave one university-wide value (Master 6mo / Bachelor 4mo) taken from CS, but the humanities exam office states the M.A. Bearbeitungszeit in *weeks*, so a humanities student is mis-scoped today, silently ([verified live](https://uni-tuebingen.de/einrichtungen/verwaltung/iv-studierende/zentrales-pruefungsamt/geisteswissenschaftliche-faecher/allgemeine-informationen/), 2026-08-20); (3) the table's level data was near-worthless anyway — students know their own level; what they often don't know is the *duration*, precisely the value that varies per faculty and per Fassung. `tuebingen-degree-programs.md` → `degree-program-rules.md`, resolving exactly three things (program name verbatim; level from the student, never inferred from the name; Bearbeitungszeit from their regulations or the exam office, never assumed). SKILL.md step 10 now states a procedure instead of describing the gap. **Invariant test sharpened (G5):** `test_shipped_resources_are_not_static_uri_catalogs` counts URLs, so a 200-row table with zero URLs passed it — verified by planting one. Added `test_shipped_resources_are_not_static_entity_lists` (>15 table rows per shipped file); the planted catalog fails it and passes the old one. **Downstream closed:** the duration had no consumer — `generate-thesis-directions` never read level or duration, and its rubric said "narrow enough for a bachelor or master thesis", treating the two as one yardstick. It now sizes proposals against the recorded Bearbeitungszeit, states its assumption when the value is unresolved rather than assuming the longer case, and the schema carries the value with its provenance (student / verified page / unresolved). `pytest -q` 65 passed/10 skipped (64 on `main` + 1 new — the brief's expected 46 is stale); release build, app-bundle and portable-bundle all green with the renamed file resolving in each. |
 | AI | Final written report assembly | ⬜ open | — | Depends: AE′, AF, AG, AH, AM, AN, AO, Z′. Written report only (no slide deck, decided 2026-08-08). G4 has no chapter task of its own — assembled here. All five components. |
 | W | Scope-erosion experiment (2×2 Tübingen vs. TUM/KIT) | ⬜ optional | — | Reachable in the 4+ week window, but its hypothesis needs restating: under rules-only there is much less Tübingen-specific curation left to erode. Only after AI is drafted. G5/G1. |
 
@@ -339,6 +369,53 @@ architecture-tagged. W optional.
 ---
 
 ## Log
+
+- **2026-08-20 (d)** — **Task AP: degree programs resolved by rule, not by lookup. The
+  catalog was already lying.** Branch `feat/degree-program-discovery`, off `main`.
+
+  **The trap worked as advertised, and the CI would not have caught it.** The task is
+  "recognise programs for all seven faculties", and the obvious shape of that answer is a
+  table of all ~200 Tübingen programs. That is a maintained entity list — the exact artifact
+  the 2026-07-31 rules-only pivot deleted — with the one property that makes it invisible to
+  the guard: no URLs. `test_shipped_resources_are_not_static_uri_catalogs` counts absolute
+  URLs, so a 200-row program table scores zero and ships green. I confirmed this by planting
+  one rather than reasoning about it.
+
+  **The argument that actually decided it was not precedent, it was a wrong number already in
+  the file.** The shipped table carried one university-wide thesis duration — Master 6 months,
+  Bachelor 4 months — with a note that it came from Computer Science. The humanities exam
+  office states the M.A. Bearbeitungszeit in weeks, not those months. So the file is not
+  merely CS-shaped, it is *already wrong for other faculties today*, and wrong in the worst
+  way: a run reads a plausible value, scopes a proposal to it, and nothing surfaces the error.
+  Extending that table to 200 rows would have multiplied the failure, not fixed it — every new
+  row a duration nobody verified and nobody will refresh.
+
+  **A quieter finding: the level data was near-worthless from the start.** The table's stated
+  value was recognising that e.g. Machine Learning is Master-only. But students know their own
+  level — that is not the fact they are missing. The fact they often *don't* know is the
+  Bearbeitungszeit, which is set per faculty **and per Fassung** and therefore is exactly the
+  thing a bundled table can never hold correctly. The catalog was strongest where it was least
+  needed and absent where it mattered.
+
+  So the file resolves three things and nothing else: program name (verbatim, never normalised
+  against a list), level (from the student; never inferred from the name), duration (from their
+  regulations or the responsible exam office; never assumed, and when unavailable, scoped
+  against a stated assumption the student can correct). Renamed to `degree-program-rules.md`.
+  No program names, no durations, no PO numbers are shipped — the live-verified humanities and
+  CS figures live in this log as *evidence for the decision*, deliberately not in the artifact.
+
+  **Closed the hole on the way out (G5).** Added
+  `test_shipped_resources_are_not_static_entity_lists`, which measures the tell that survives
+  URL removal: row count. Rules tabulate a bounded set of axes (largest shipped: 8 rows);
+  entity lists exist for coverage and do not stay small. Limit 15. Verified in both directions
+  — the planted 200-row catalog fails the new test and passes the old one.
+
+  **Two things worth knowing for the next task.** A URL returned by a *fresh* search of the
+  Tübingen exam-office pages 404'd when fetched, which is a small live demonstration of the
+  link-rot argument the pivot rests on. And `make app-bundle` / `make portable-bundle` fail on
+  this machine because the Makefile calls `python` while only `python3` exists — pre-existing,
+  unrelated to this change, left alone as out of scope; both builders run clean via
+  `python3 -m scripts.build_*`.
 
 - **2026-08-20 (c)** — **Release 2.1.0 prepared: version bumped, changelog cut, every CI step
   rehearsed locally.** Branch `chore/release-2.1.0`, off `main` after #74 and #75 merged.
@@ -435,6 +512,170 @@ architecture-tagged. W optional.
   the interview is redone. Route B keeps the automatic behaviour.
 
   Full suite green: 53 passed, 10 skipped.
+- **2026-08-09** — **Theology result promoted out of a runbook log; README states the
+  measured quality for the first time.** Same branch as AJ — this is the presentation half
+  of the same problem.
+
+  **The finding that prompted it:** the project's single most important number — the only
+  ground-truth measurement of the shipping architecture — lived as a log entry at **line 71
+  of a 421-line file called `2026-07-02-live-eval-runbook.md`**. A runbook is a how-to
+  checklist, and its filename is dated five weeks *before* the result it contains. Nobody
+  looks for a result there. AJ made the number correctly labelled; it was still effectively
+  unfindable.
+
+  Now [`2026-08-08-theology-blind-run.md`](findings/no_db_universal_skill/2026-08-08-theology-blind-run.md):
+  headline up front, the two firsts it represents, how blindness was held, the Witt miss
+  argued as GT-generosity rather than skill defect, the six-of-sixteen vacancy handling with
+  the honest caveat that the GT's *ethics*-persona scenario is still unrun, and an explicit
+  **"what this does not support"** section (one faculty, untested delegation boundary,
+  single-agent scoring). Runbook entry stays as the original record and now points at it.
+
+  **Also recorded there: URL drift is four for four.** CS/Cyber Valley,
+  Humanities/interfaculty-centres, Law/Juniorprofessur, and now Catholic-faculty
+  Patrologie (HTTP 404, recovered via Personalnachrichten 1/2026). Every faculty tested has
+  produced at least one dead official URL. That is the strongest empirical argument in the
+  repo for why a maintained URI catalog was the wrong architecture — each of those would
+  have been a stale row someone had to notice.
+
+  **README now has a `## Measured discovery quality` section**, placed before "Quality
+  gates" because a reader scanning headings wants "how good is it", not "how do I run
+  tests". It leads with the honest sentence — the shipping architecture has been measured
+  on exactly one faculty — and names what is *not* measured: the other six faculties, the
+  steering proof, and the margin over plain Claude.
+
+  **Fixed en route:** the runbook's "When to run this" still named
+  `references/tuebingen-faculty-backbone.md`, deleted 2026-07-31. The 2026-08-08 entry had
+  flagged the drift itself and nobody had acted on it.
+
+  `pytest -q` → 46 passed / 10 skipped (this branch predates the PR #74/#75 bundle tests;
+  on current `main` the suite is 64/10); `python3 scripts/build_skill_release.py` green.
+
+- **2026-08-09** — **Task AJ done — every number in the repo now states which architecture
+  produced it, and the honest headline is worse than it looked.** Branch
+  `chore/pivot-evidence-audit`, off `main`. Unblocks AE′.
+
+  **The finding, stated plainly: 6 of 7 faculty figures describe a system nobody can
+  install.** The scorecard reads as a strong evidence base until the numbers are labelled;
+  once labelled, the shipping architecture has **one** ground-truth faculty measurement
+  (Theology, V′, 83%/100%) and everything else belongs to the backbone architecture deleted
+  on 2026-07-31. The `+65pp` live margin over plain Claude — the strongest comparative number
+  the project owns — is `[backbone-crawl, ≤2026-07-30]` and has never been re-measured. This
+  is not new information; it is the first time it is impossible to read past.
+
+  **What was tagged.** Scorecard: a §0 standing note plus a per-row `Architecture` column,
+  and §2–§5 headers tagged. MASTERPLAN §8: the tag token added to the numbers themselves, not
+  only the surrounding prose, so `git grep` finds them. Go/no-go doc: a standing caveat box.
+  Report chapters 03 and 04: an architecture banner and the resolved items closed.
+
+  **STATUS is labelled by a stated date rule rather than 40 inline tags.** The file is
+  chronological, so the date already *is* the architecture tag; the rule now sits above
+  "Current phase" as a table, which is checkable and does not turn a changelog into noise.
+
+  **The GO is date-stamped, not deleted.** It stands as the 2026-07-04 verdict and now names
+  both counts it is provisional on: the 2026-07-05 blindness gap (closed for one faculty by
+  V′) and the deleted architecture (open — AK is the repair). Deliberately preserved: the
+  *defects found* by those runs keep their full value. Task U's enrich-before-exclude rule
+  and Task T's protocol fix are real and survived the pivot. It is the coverage percentages,
+  not the discoveries, that expired.
+
+  **Company eval permanently demoted, old Task Y closed.** Circular by construction *and*
+  measuring a file deleted on 2026-07-31 *and* testing a removed architecture — triply
+  invalid as a quality claim. No independent company ground truth will be built: the cost is
+  not justified for an arm whose discovery is now rules-only under the same live-verification
+  requirement as the university arm. Old Task X also recorded as absorbed into Z′ co-scoring
+  rather than left dangling.
+
+  `skills/tests/eval_ground_truth/` untouched, as the task specifies — the GT files are
+  architecture-neutral and are reused by V′ and AK. `pytest -q` → 46 passed / 10 skipped;
+  `python3 scripts/build_skill_release.py` green.
+- **2026-08-09** — **Tasks AO and AM — the two chapters Gehler explicitly invited, both
+  written; AM stops where honesty requires Domi's memory.** Branch `docs/gehler-invited-chapters`,
+  off `main`. AO unblocks AH.
+
+  **AO — [survival & maintenance plan](findings/no_db_universal_skill/2026-08-09-survival-and-maintenance-plan.md).**
+  The argument the plan predicted holds up: the rules-only pivot, made on product grounds on
+  2026-07-31, is the sustainability decision. What made it more than an assertion was finding
+  that the property is **enforced by CI** —
+  `test_shipped_resources_are_not_static_uri_catalogs` fails the build if a static URI catalog
+  reappears. That test is the single most important piece of survival infrastructure in the
+  repo, because everything else in the chapter rests on the property it protects.
+
+  Also worth recording: the "maintenance-free" constraint was in **MASTERPLAN §1 from the
+  start** — *"no one will keep a database fresh after this project"* — and the first two
+  architectures quietly violated it. The pivot is that founding constraint finally being taken
+  seriously, two architectures late. That reads better in G1/G3 than presenting it as a
+  late-breaking insight.
+
+  Honest bits that cost something: **model drift is named as unmeasurable from inside the
+  repo** (the simulation suite is self-scored by the same model family, so it cannot separate
+  "the rules stopped working" from "the grader changed"); the maintenance number **buys
+  detection, not improvement**; and of the three survival conditions, **a named owner does not
+  exist and nobody has been asked.** The concrete recommendation is to add that question to
+  the AD mail — not "will you distribute this" but "is there a body for whom owning something
+  like this would make sense." A no is reportable; not asking is not.
+
+  **AM — [user-study inventory](findings/no_db_universal_skill/2026-08-09-user-study-inventory.md).**
+  Five documented contacts with what changed as a result, plus four traceable
+  feedback→change loops. The strongest is loop 1: the 27-professor round caused a ~90%
+  feature-complete FastAPI/Postgres/React app to be **thrown away**. Feedback that discards
+  finished work is expensive, verifiable, and rare — that is the version to put in the report.
+
+  **Two gaps recorded rather than filled.** The 2026-06-25 Besprechung's notes exist but its
+  **attendee list does not**, which decides whether it is a user contact or internal planning —
+  the report must not imply supervisor endorsement that is not evidenced. And the
+  27-professor study **reports results but not its own method**: no interview guide, no
+  per-professor record, no date range finer than "May 2026". That is a real methodological
+  weakness in the project's largest piece of user research and belongs in the report stated
+  plainly.
+
+  **AM is deliberately not marked done.** Its §3 holds seven open slots — informal
+  conversations with fellow students, Fachschaft contacts, other advisors, and anyone who
+  bounced off the install — that only Domi can fill. Filling them with plausible numbers
+  would have been easy and would have poisoned the rows that are real, so they stay open.
+
+  **The headline both chapters converge on: no student has ever been observed using this
+  tool.** Every design decision about the student experience currently rests on one
+  professor's single hands-on test, the 27-professor demand-side study, and simulated
+  personas. That is what Z′ is for, and it is why the unsent recruiting mails are the
+  project's most expensive open item.
+- **2026-08-08** — **Task Z′ started — repo-side prep done, and the task is now blocked on
+  exactly one thing: the recruiting texts have not been sent.** Branch
+  `docs/external-test-results`, off `main` after PR #73 merged (`06d769c`).
+
+  **The honest state.** Z′'s done-when is ≥2 protocolled sessions with real students. None
+  have happened. The four remaining steps are strictly ordered and all need a human: send
+  the recruiting texts → run the form script and link the URL → run the pilot → freeze the
+  protocol. Everything downstream of that is data collection, and **no results document will
+  be written from anything except real session data** — the plan's own §5 rule against
+  padding with self-run sessions applies before the first session as much as after it.
+
+  **Recruiting is the long pole and it has not started.** The release has been public since
+  2026-08-08 and the texts have been ready since the same day; the 1–2 week recruiting clock
+  begins when they go out, not when they were written. This is the single largest schedule
+  risk left in the plan.
+
+  **Two instruments built, because they are the parts that did not need a human.**
+  [`scripts/create_beta_feedback_form.gs`](scripts/create_beta_feedback_form.gs) builds the
+  Appendix A form in one run — nine questions in the verbatim German wording, 1–5 scales
+  labelled *gar nicht*/*sehr*, numeric validation on setup minutes, email collection off per
+  §6. Creating the form needs a Google account and so cannot happen in the repo; scripting it
+  removes the transcription risk from the part that can.
+  [The session capture sheet](findings/no_db_universal_skill/2026-08-08-session-capture-sheet.md)
+  is one copy per tester, filled live. The protocol defined *what* to collect but not the
+  instrument to collect it with, and at n=2 a field missed mid-session is unrecoverable. It
+  front-loads the four rules that are easiest to break under time pressure: take the external
+  pre-statement before *any* exposure to INSTALL.md or the tool, do not help when the tester
+  is stuck (§2 — getting stuck is the measurement), **never re-ask N6 externally** (§3 — a
+  later answer is contaminated by the tool's own side-by-side comment), and co-score (a)+(b)
+  with the tester recording disagreements unresolved (§4). Asking for both session-file paths
+  is a checkbox because the `./thesis-finder-session.md` fallback is real.
+
+  **Correction to the AC′ entry below:** it read "Recruiting went out first", which says the
+  texts were sent. They were not — only written. The AC′ status table was already correct
+  ("sending requires Domi"); the prose was not. Fixed, because Z′'s critical path depends on
+  which of the two is true.
+
+  `pytest -q` → 46 passed / 10 skipped; `python3 scripts/build_skill_release.py` green.
 
 - **2026-08-08** — **Task AC′ — beta protocol written, recruiting texts ready; form and
   pilot are blocked on a human, not on the repo.** Branch `docs/beta-protocol`, off `main`
@@ -445,7 +686,7 @@ architecture-tagged. W optional.
   (`.zip` 48660 B, `.tar.gz` 31837 B, one download already). Testers can install for real, so
   AC′ had no blocker and AB′ needed no repair.
 
-  **Recruiting went out first, before the protocol was written** — deliberately. Z′ is the
+  **The recruiting texts were written first, before the protocol** — deliberately. Z′ is the
   longest calendar clock in the plan and the release has been public since 2026-08-08, so
   writing the protocol first would have burned a week of calendar that the 4-week window
   does not contain. Three ready-to-send texts in

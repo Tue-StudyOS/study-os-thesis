@@ -32,6 +32,16 @@ FORBIDDEN_PRIVATE_DATA_PATH_TERMS = {
 # threshold is pure headroom — see test_shipped_resources_are_not_static_uri_catalogs.
 MAX_ABSOLUTE_URLS_PER_RESOURCE_FILE = 5
 ABSOLUTE_URL_PATTERN = re.compile(r"https?://")
+# A catalog without URLs is still a catalog. The URL check above counts links, so an
+# entity list that happens to cite none slips straight through it — which is how a
+# university-wide degree-program table could have shipped. Rules files tabulate a bounded
+# set of axes or steps; the largest shipped one has 8 rows. Entity lists do not stay that
+# small, because their whole purpose is coverage. A file that needs more rows than this is
+# almost certainly enumerating things rather than describing how to find them; if a rules
+# file legitimately outgrows the limit, raise it deliberately and say why in the commit.
+MAX_TABLE_ROWS_PER_RESOURCE_FILE = 15
+TABLE_ROW_PATTERN = re.compile(r"^\|.*\|$")
+TABLE_SEPARATOR_PATTERN = re.compile(r"^\|[\s:\-|]+\|$")
 # `site:uni-tuebingen.de/...` query templates and source-priority prose name domains on
 # purpose and are the correct shape under rules-only discovery. They carry no scheme, but
 # skip their lines explicitly so the intent survives a future rewrite that adds one.
@@ -157,6 +167,14 @@ def test_discovery_skills_carry_no_runtime_seed_data() -> None:
     assert (SKILLS_DIR / "discover-company-candidates" / "references" / "company-discovery-rules.md").is_file()
     assert (SKILLS_DIR / "discover-university-candidates" / "references" / "university-discovery-rules.md").is_file()
 
+    # The degree-program reference was a six-row Computer Science table until 2026-08-20.
+    # It resolved programs by lookup, which is the catalog shape, and it shipped a single
+    # university-wide thesis duration that is wrong for faculties whose regulations state
+    # weeks rather than the CS department's months. Replaced by resolution rules.
+    profile_references = SKILLS_DIR / "build-student-profile" / "references"
+    assert (profile_references / "degree-program-rules.md").is_file()
+    assert not (profile_references / "tuebingen-degree-programs.md").exists()
+
 
 def _shipped_resource_files() -> list[Path]:
     """Every file the release bundles under a skill's references/ or assets/ directory."""
@@ -197,6 +215,39 @@ def test_shipped_resources_are_not_static_uri_catalogs() -> None:
     assert not offenders, (
         "shipped resources look like static URI catalogs "
         f"(limit {MAX_ABSOLUTE_URLS_PER_RESOURCE_FILE} absolute URLs per file): " + "; ".join(offenders)
+    )
+
+
+def _count_table_rows(text: str) -> int:
+    rows = 0
+    for line in text.splitlines():
+        stripped = line.strip()
+        if TABLE_ROW_PATTERN.match(stripped) and not TABLE_SEPARATOR_PATTERN.match(stripped):
+            rows += 1
+    return rows
+
+
+def test_shipped_resources_are_not_static_entity_lists() -> None:
+    # The shape check the URL counter cannot do. test_shipped_resources_are_not_static_uri_
+    # catalogs measures links, so it only catches catalogs that cite their sources. Strip the
+    # URLs out and a maintained list of entities — degree programs, chairs, companies — passes
+    # it untouched while being exactly the artifact the 2026-07-31 rules-only pivot removed.
+    # The tell that survives is the row count: enumerating entities means many uniform rows,
+    # whereas rules describe a handful of axes. This closes the gap that let a university-wide
+    # degree-program table look like a reasonable fix on 2026-08-20.
+    offenders = []
+    for path in _shipped_resource_files():
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue  # binary asset; nothing to count
+        rows = _count_table_rows(text)
+        if rows > MAX_TABLE_ROWS_PER_RESOURCE_FILE:
+            offenders.append(f"{path.relative_to(SKILLS_DIR)} has {rows} table rows")
+
+    assert not offenders, (
+        "shipped resources look like static entity lists "
+        f"(limit {MAX_TABLE_ROWS_PER_RESOURCE_FILE} table rows per file): " + "; ".join(offenders)
     )
 
 

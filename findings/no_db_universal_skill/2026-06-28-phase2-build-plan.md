@@ -1,5 +1,12 @@
 # Phase 2 — Company Discovery: Build Plan
 
+> **Architecture tag (added 2026-08-09, Task AJ): `[backbone-crawl, ≤2026-07-30]`.**
+> the company figures referenced here were produced by the static-backbone architecture, removed on 2026-07-31 in favour of rules-only
+> live discovery. The findings and critique stand; the percentages do not describe the tool
+> that ships today. Current picture:
+> [eval scorecard §0](2026-07-03-eval-aggregate-scorecard.md).
+
+
 - **Date:** 2026-06-28
 - **Branch:** `feat/no-db-universal-skill`
 - **Decisions:** see [`2026-06-28-phase2-company-decisions.md`](2026-06-28-phase2-company-decisions.md)
