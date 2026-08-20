@@ -288,7 +288,7 @@ superseded outright by the pivot.
 | AA′ | Hygiene sweep, post-pivot — 5 items | ✅ | Domi | All 5 done on `chore/hygiene-and-rerelease`, one commit each. (1) Deleted `find-recent-papers/references/papers/` (59 files, 308 KB, 287 absolute URLs) — the skill never referenced it, so pure orphan removal; took `scripts/update_openalex_index.py` (already non-runnable: reads a path Task E moved) and its fixture with it. (2) Degree file retitled CS-only + a "for students outside CS" section; SKILL.md step 10 now asks the student first. Did **not** build a university-wide list. (3) Session path: preferred `~/.claude/…`, documented fallback to `./thesis-finder-session.md` with a must-announce rule; README/AGENTS state the skills install **as a set**. (4) New `test_shipped_resources_are_not_static_uri_catalogs` — max 5 absolute URLs per shipped resource, `site:` lines exempt; the two named-file assertions kept as special cases. Proven four ways in `5cf3030`: suite green, fails on a planted 12-row catalog, flags 9 files of the old paper index (54 and 39 URLs at the top), `site:` exemption holds. (5) `Design-Entscheidungen.md` §7a records the AI-disclaimer decision + why disclosure is student-facing + the link to Bob's May recommendation. **Correction to the brief:** the backbone assertions are *not* in `evals/test_skill_quality.py` (an opt-in LLM-judge file with no such criteria) — they were all in `test_skill_package.py`. `pytest -q` 42→**43 passed / 10 skipped**; release build green. G4/G3. |
 | AB′ | Re-release + `INSTALL.md`, cold-install tested | ✅ | Domi | **Version: `skills-v2.0.0`**, not 1.1.0 — the CHANGELOG's own SemVer policy maps breaking trigger/contract changes to MAJOR, and `[Unreleased]` carried three `Breaking:` entries plus a `### Breaking Changes` section (sole entry point; backbones out of the discovery contract). Fixed the versioning bug first: the workflow bumped on `release/skills` and never merged back, so `main` sat at 0.1.0 against a published 1.0.0 and local builds produced artifacts matching no tag — the version is now read from `pyproject.toml` on the dispatched ref and `main` is the single source. Also found and fixed a second release-pipeline gap: `dist/release-notes.md` was only generated on `workflow_dispatch`, so the tag-push path would publish with a missing `body_path`. `INSTALL.md` written and linked from README. **Cold install: 48 s** for the mechanical steps, both archive formats, into fresh skills dirs with no dev checkout — an agent-executed lower bound, not a human number (that is Z′'s job). It surfaced two real guide defects, both fixed: "unpack it" assumed `unzip` (absent on a bare WSL box), and Step 1 wrongly claimed there was no wrapper folder. Installed set verified: 10 skills, no unresolved cross-skill calls, no broken `references/` paths, no non-Markdown files. **Published 2026-08-08 as [`skills-v2.0.0`](https://github.com/Tue-StudyOS/study-os-thesis/releases/tag/skills-v2.0.0)** via `workflow_dispatch` (direct tag creation is blocked by a repository ruleset — only the release App token may create `skills-v*` tags), which required three further workflow fixes in `9aa551a`. `skills-v1.0.0` annotated as superseded, original notes kept. Gap in my own cold-install test, caught by the coherence session: it read `INSTALL.md` from the dev checkout, so it never noticed the archive did not contain it — fixed in `5f848a4`, re-verified against the published artifact. G5/G4. |
 | AC′ | Beta protocol + feedback form, reflection-first | 🟡 protocol done 2026-08-08; form + pilot open | Domi | Protocol committed: [2026-08-08-beta-test-protocol.md](findings/no_db_universal_skill/2026-08-08-beta-test-protocol.md); recruiting texts ready to send: [2026-08-08-beta-recruiting-message.md](findings/no_db_universal_skill/2026-08-08-beta-recruiting-message.md). Primary instrument is the **verbatim pre/post** pair, which `thesis-finder` now collects itself (N0/N6/R7 + append-only log) — AC′ inherited it instead of building it. Two decisions settled by reading the skill: the pre-statement is **also** taken outside the tool (N0 persists only in N4, so aborted runs lose it — and aborted runs are counted as measurements; the framing message also primes the outcome before N0 is asked), and the post-statement **is** the tool's N6 answer (anything asked later is contaminated by N6's own side-by-side comment). Secondary: unknown-option hit, factual-error count, unaided setup, would-contact — (a)+(b) co-scored with the tester (absorbs old X). **Still open, all needing a human:** form live (questions specified, Appendix A), recruiting sent, pilot run + protocol frozen. G2/G5. |
-| Z′ | Protocolled external test, 2–3 students, ≥1 non-CS | ⬜ open | — | Depends: AC′. Scoped down from 3–5 on 2026-08-08 (realistic recruiting capacity). Longest calendar clock — start recruiting the day AB′ lands. n=1 fallback is reportable but does not clear the gate. G2/G5. |
+| Z′ | Protocolled external test, 2–3 students, ≥1 non-CS | 🟡 started 2026-08-08; **blocked on recruiting being sent** | Domi | Depends: AC′ (merged, PR #73). Scoped down from 3–5 on 2026-08-08 (realistic recruiting capacity). Longest calendar clock — start recruiting the day AB′ lands. Repo-side prep done: [session capture sheet](findings/no_db_universal_skill/2026-08-08-session-capture-sheet.md) per tester and [`scripts/create_beta_feedback_form.gs`](scripts/create_beta_feedback_form.gs) to build the Appendix A form in one run. **The four remaining steps all need a human and are strictly ordered:** send the recruiting texts (**not sent as of 2026-08-08** — the clock has not started), run the form script and link the URL from `INSTALL.md` + the `skills-v2.0.0` release notes, run the pilot, freeze the protocol. No results doc will be written from anything but real session data. n=1 fallback is reportable but does not clear the gate. G2/G5. |
 | AD | Distribution outreach: Fachschaft Informatik + Menth/Gehler channel question | ⬜ open | — | Depends: AB′; overlaps Z′. **No self-sent Rundmail** — the sender must be an institution. Ersti-Heft & uni site deferred to backlog. G5. |
 | AM | Reconstructed user-study chapter with per-entry provenance | ⬜ open | — | Explicitly invited by Gehler ("from memory, with a note to that effect"). Inventory every user contact ever, marked documented vs. reconstructed. No invented counts or quotes. G2/G5. |
 | AN | Future-feedback plan: what / when / by whom / how many | ⬜ open | — | Explicitly invited by Gehler. A table with named responsibilities and trigger conditions, not prose. Depends on AO for the ownership question. G5. |
@@ -435,6 +435,44 @@ architecture-tagged. W optional.
   the interview is redone. Route B keeps the automatic behaviour.
 
   Full suite green: 53 passed, 10 skipped.
+- **2026-08-08** — **Task Z′ started — repo-side prep done, and the task is now blocked on
+  exactly one thing: the recruiting texts have not been sent.** Branch
+  `docs/external-test-results`, off `main` after PR #73 merged (`06d769c`).
+
+  **The honest state.** Z′'s done-when is ≥2 protocolled sessions with real students. None
+  have happened. The four remaining steps are strictly ordered and all need a human: send
+  the recruiting texts → run the form script and link the URL → run the pilot → freeze the
+  protocol. Everything downstream of that is data collection, and **no results document will
+  be written from anything except real session data** — the plan's own §5 rule against
+  padding with self-run sessions applies before the first session as much as after it.
+
+  **Recruiting is the long pole and it has not started.** The release has been public since
+  2026-08-08 and the texts have been ready since the same day; the 1–2 week recruiting clock
+  begins when they go out, not when they were written. This is the single largest schedule
+  risk left in the plan.
+
+  **Two instruments built, because they are the parts that did not need a human.**
+  [`scripts/create_beta_feedback_form.gs`](scripts/create_beta_feedback_form.gs) builds the
+  Appendix A form in one run — nine questions in the verbatim German wording, 1–5 scales
+  labelled *gar nicht*/*sehr*, numeric validation on setup minutes, email collection off per
+  §6. Creating the form needs a Google account and so cannot happen in the repo; scripting it
+  removes the transcription risk from the part that can.
+  [The session capture sheet](findings/no_db_universal_skill/2026-08-08-session-capture-sheet.md)
+  is one copy per tester, filled live. The protocol defined *what* to collect but not the
+  instrument to collect it with, and at n=2 a field missed mid-session is unrecoverable. It
+  front-loads the four rules that are easiest to break under time pressure: take the external
+  pre-statement before *any* exposure to INSTALL.md or the tool, do not help when the tester
+  is stuck (§2 — getting stuck is the measurement), **never re-ask N6 externally** (§3 — a
+  later answer is contaminated by the tool's own side-by-side comment), and co-score (a)+(b)
+  with the tester recording disagreements unresolved (§4). Asking for both session-file paths
+  is a checkbox because the `./thesis-finder-session.md` fallback is real.
+
+  **Correction to the AC′ entry below:** it read "Recruiting went out first", which says the
+  texts were sent. They were not — only written. The AC′ status table was already correct
+  ("sending requires Domi"); the prose was not. Fixed, because Z′'s critical path depends on
+  which of the two is true.
+
+  `pytest -q` → 46 passed / 10 skipped; `python3 scripts/build_skill_release.py` green.
 
 - **2026-08-08** — **Task AC′ — beta protocol written, recruiting texts ready; form and
   pilot are blocked on a human, not on the repo.** Branch `docs/beta-protocol`, off `main`
@@ -445,7 +483,7 @@ architecture-tagged. W optional.
   (`.zip` 48660 B, `.tar.gz` 31837 B, one download already). Testers can install for real, so
   AC′ had no blocker and AB′ needed no repair.
 
-  **Recruiting went out first, before the protocol was written** — deliberately. Z′ is the
+  **The recruiting texts were written first, before the protocol** — deliberately. Z′ is the
   longest calendar clock in the plan and the release has been public since 2026-08-08, so
   writing the protocol first would have burned a week of calendar that the 4-week window
   does not contain. Three ready-to-send texts in
