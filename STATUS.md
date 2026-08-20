@@ -319,9 +319,9 @@ superseded outright by the pivot.
 | AC′ | Beta protocol + feedback form, reflection-first | 🟡 protocol done 2026-08-08; form + pilot open | Domi | Protocol committed: [2026-08-08-beta-test-protocol.md](findings/no_db_universal_skill/2026-08-08-beta-test-protocol.md); recruiting texts ready to send: [2026-08-08-beta-recruiting-message.md](findings/no_db_universal_skill/2026-08-08-beta-recruiting-message.md). Primary instrument is the **verbatim pre/post** pair, which `thesis-finder` now collects itself (N0/N6/R7 + append-only log) — AC′ inherited it instead of building it. Two decisions settled by reading the skill: the pre-statement is **also** taken outside the tool (N0 persists only in N4, so aborted runs lose it — and aborted runs are counted as measurements; the framing message also primes the outcome before N0 is asked), and the post-statement **is** the tool's N6 answer (anything asked later is contaminated by N6's own side-by-side comment). Secondary: unknown-option hit, factual-error count, unaided setup, would-contact — (a)+(b) co-scored with the tester (absorbs old X). **Still open, all needing a human:** form live (questions specified, Appendix A), recruiting sent, pilot run + protocol frozen. G2/G5. |
 | Z′ | Protocolled external test, 2–3 students, ≥1 non-CS | 🟡 started 2026-08-08; **blocked on recruiting being sent** | Domi | Depends: AC′ (merged, PR #73). Scoped down from 3–5 on 2026-08-08 (realistic recruiting capacity). Longest calendar clock — start recruiting the day AB′ lands. Repo-side prep done: [session capture sheet](findings/no_db_universal_skill/2026-08-08-session-capture-sheet.md) per tester and [`scripts/create_beta_feedback_form.gs`](scripts/create_beta_feedback_form.gs) to build the Appendix A form in one run. **The four remaining steps all need a human and are strictly ordered:** send the recruiting texts (**not sent as of 2026-08-08** — the clock has not started), run the form script and link the URL from `INSTALL.md` + the `skills-v2.0.0` release notes, run the pilot, freeze the protocol. No results doc will be written from anything but real session data. n=1 fallback is reportable but does not clear the gate. G2/G5. |
 | AD | Distribution outreach: Fachschaft Informatik + Menth/Gehler channel question | ⬜ open | — | Depends: AB′; overlaps Z′. **No self-sent Rundmail** — the sender must be an institution. Ersti-Heft & uni site deferred to backlog. G5. |
-| AM | Reconstructed user-study chapter with per-entry provenance | ⬜ open | — | Explicitly invited by Gehler ("from memory, with a note to that effect"). Inventory every user contact ever, marked documented vs. reconstructed. No invented counts or quotes. G2/G5. |
+| AM | Reconstructed user-study chapter with per-entry provenance | 🟡 documented rows done 2026-08-09; **§3 needs Domi's memory** | Domi | [2026-08-09-user-study-inventory.md](findings/no_db_universal_skill/2026-08-09-user-study-inventory.md). Five documented contacts inventoried with what changed as a result: the 27-professor round (May 2026 → the entire platform abandonment), the 2026-06-25 Besprechung, Gehler's 2026-07-04 end-user test (verbatim quotes → M1/M2/M3), Valentin's 2026-08-02 question, Gehler's 2026-08-05 answer (→ the reflection reframe). Four traceable feedback→change loops written up for G5. **Nothing invented:** the Besprechung's attendee list and the 27-professor study's own method are both recorded as *known gaps* rather than filled in plausibly — the largest piece of user research in the project does not document its own instrument, and the report should say so. **§3 holds 7 open slots only Domi can fill** (fellow students, Fachschaft, other advisors, anyone who bounced off the install). Headline stated plainly in the doc: **no student has ever been observed using the tool** — which is exactly what Z′ is for. G2/G5. |
 | AN | Future-feedback plan: what / when / by whom / how many | ⬜ open | — | Explicitly invited by Gehler. A table with named responsibilities and trigger conditions, not prose. Depends on AO for the ownership question. G5. |
-| AO | Survival & maintenance plan | ⬜ open | — | Explicitly invited by Gehler ("not just hoping someone takes over a GitHub project"). Core argument: **the rules-only pivot is the sustainability strategy**. Needs the real maintenance-hours number, ownership options with failure modes, and the graceful-degradation case. G5/G3/G1. |
+| AO | Survival & maintenance plan | ✅ done 2026-08-09 | Domi | [2026-08-09-survival-and-maintenance-plan.md](findings/no_db_universal_skill/2026-08-09-survival-and-maintenance-plan.md). **Unblocks AH.** Core argument as planned — the rules-only pivot *is* the sustainability strategy — plus the detail that makes it more than an assertion: the property is **enforced by CI**, via `test_shipped_resources_are_not_static_uri_catalogs` in `skills/tests/test_skill_package.py`, so a re-added URI catalog fails the build. Four decay risks ranked: the vendor-controlled skill format is **highest** (total impact but shallow — the content is format-independent Markdown and `design-agent-skill` is the port tool), then unmeasurable model drift, then site restructuring and rule staleness. **Maintenance number: one simulation-suite run + one rotating faculty spot-check per semester, ~1–2 h twice a year**, with the honest caveat that it buys detection, not improvement, and a first-timer should budget double. Five ownership options each with its realistic failure mode; the **no-owner default is argued as the serious case** — because there is no DB/backend/scraper it degrades gracefully rather than failing, the sole exception being the format risk. Of the three survival conditions, a documented handover ✅ exists and a channel 🟡 is pending AD, but **a named owner ❌ does not exist and nobody has been asked** — the doc recommends adding that question to the AD mail. G5/G3/G1. |
 | AE′ | Benchmark consolidation across both architectures | ⬜ open | — | Depends: AJ, V′, AK, AL. Must keep the two instruments separate — rubric scores and ground-truth recall answer different questions and are not one series. Names the reflection variable as measured only qualitatively. G5/G4. |
 | AF | Report chapter: problem framing & evolution | ⬜ open | — | Writing. The evolution story now has **three** dated steps (DB app → no-DB + backbone → rules-only): the same argument applied twice, one level deeper. G1. |
 | AG | Report chapter: user research & evidence | ⬜ open | — | Depends: Z′, AM. The weakest graded component. Personas + user story + evidence-of-contact table with honest team attribution. G2. |
@@ -540,6 +540,56 @@ architecture-tagged. W optional.
   `skills/tests/eval_ground_truth/` untouched, as the task specifies — the GT files are
   architecture-neutral and are reused by V′ and AK. `pytest -q` → 46 passed / 10 skipped;
   `python3 scripts/build_skill_release.py` green.
+- **2026-08-09** — **Tasks AO and AM — the two chapters Gehler explicitly invited, both
+  written; AM stops where honesty requires Domi's memory.** Branch `docs/gehler-invited-chapters`,
+  off `main`. AO unblocks AH.
+
+  **AO — [survival & maintenance plan](findings/no_db_universal_skill/2026-08-09-survival-and-maintenance-plan.md).**
+  The argument the plan predicted holds up: the rules-only pivot, made on product grounds on
+  2026-07-31, is the sustainability decision. What made it more than an assertion was finding
+  that the property is **enforced by CI** —
+  `test_shipped_resources_are_not_static_uri_catalogs` fails the build if a static URI catalog
+  reappears. That test is the single most important piece of survival infrastructure in the
+  repo, because everything else in the chapter rests on the property it protects.
+
+  Also worth recording: the "maintenance-free" constraint was in **MASTERPLAN §1 from the
+  start** — *"no one will keep a database fresh after this project"* — and the first two
+  architectures quietly violated it. The pivot is that founding constraint finally being taken
+  seriously, two architectures late. That reads better in G1/G3 than presenting it as a
+  late-breaking insight.
+
+  Honest bits that cost something: **model drift is named as unmeasurable from inside the
+  repo** (the simulation suite is self-scored by the same model family, so it cannot separate
+  "the rules stopped working" from "the grader changed"); the maintenance number **buys
+  detection, not improvement**; and of the three survival conditions, **a named owner does not
+  exist and nobody has been asked.** The concrete recommendation is to add that question to
+  the AD mail — not "will you distribute this" but "is there a body for whom owning something
+  like this would make sense." A no is reportable; not asking is not.
+
+  **AM — [user-study inventory](findings/no_db_universal_skill/2026-08-09-user-study-inventory.md).**
+  Five documented contacts with what changed as a result, plus four traceable
+  feedback→change loops. The strongest is loop 1: the 27-professor round caused a ~90%
+  feature-complete FastAPI/Postgres/React app to be **thrown away**. Feedback that discards
+  finished work is expensive, verifiable, and rare — that is the version to put in the report.
+
+  **Two gaps recorded rather than filled.** The 2026-06-25 Besprechung's notes exist but its
+  **attendee list does not**, which decides whether it is a user contact or internal planning —
+  the report must not imply supervisor endorsement that is not evidenced. And the
+  27-professor study **reports results but not its own method**: no interview guide, no
+  per-professor record, no date range finer than "May 2026". That is a real methodological
+  weakness in the project's largest piece of user research and belongs in the report stated
+  plainly.
+
+  **AM is deliberately not marked done.** Its §3 holds seven open slots — informal
+  conversations with fellow students, Fachschaft contacts, other advisors, and anyone who
+  bounced off the install — that only Domi can fill. Filling them with plausible numbers
+  would have been easy and would have poisoned the rows that are real, so they stay open.
+
+  **The headline both chapters converge on: no student has ever been observed using this
+  tool.** Every design decision about the student experience currently rests on one
+  professor's single hands-on test, the 27-professor demand-side study, and simulated
+  personas. That is what Z′ is for, and it is why the unsent recruiting mails are the
+  project's most expensive open item.
 - **2026-08-08** — **Task Z′ started — repo-side prep done, and the task is now blocked on
   exactly one thing: the recruiting texts have not been sent.** Branch
   `docs/external-test-results`, off `main` after PR #73 merged (`06d769c`).
