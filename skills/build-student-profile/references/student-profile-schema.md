@@ -18,12 +18,18 @@ Courses, projects, and professional experience are not separate dimensions — t
 evidence the interview uses to fill Methods, Domain, and Skills (see
 `build-student-profile/SKILL.md`).
 
+`Thesis duration` is the formal Bearbeitungszeit from the student's exam regulations; it is
+set per faculty and per Fassung, so it is recorded with where it came from and left blank
+rather than guessed (see `degree-program-rules.md`). `Time constraints` is separate — it is
+the student's own situation (a job, a move, a fixed submission target), not a regulation.
+
 ```markdown
 # Student Thesis Profile
 
 ## Context
 - Thesis level:
 - Degree program:
+- Thesis duration (Bearbeitungszeit, with source: student / verified page / unresolved):
 - Preferred language:
 - Time constraints:
 - Optional evidence sources used:

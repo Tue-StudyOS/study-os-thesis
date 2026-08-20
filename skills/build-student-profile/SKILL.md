@@ -32,7 +32,7 @@ Return a compact profile with:
 - **canonical six-dimension summary** — one line each for Interests, Methods, Domain,
   Thesis style, Skills, No-gos (see `references/student-profile-schema.md`), so the
   profile is immediately usable by `thesis-finder` and the discovery skills
-- thesis level and program, if known
+- thesis level and program, plus the thesis duration and where it came from (or that it is still unresolved)
 - interests and preferred research areas
 - relevant courses and skills
 - professional or research experience
