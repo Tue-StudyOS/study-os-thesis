@@ -82,12 +82,31 @@ then return here and continue.
 Every path written in this bundle, in this file and in the bundled instruction
 files, is relative to the bundle root — the folder holding this file.
 
-**Session file in a client without a durable filesystem.** This bundle is often
-run where written files disappear when the conversation ends. If you cannot
-write to a path that will still exist next time, keep the session log in the
-conversation as normal, and at the end of the run give the student the session
-file as a downloadable file, telling them to attach it at the start of their
-next session so the search can resume without repeating the interview.
+## Session continuity without a durable filesystem
+
+This bundle is often run where anything written to disk disappears when the
+conversation ends. The instructions below still describe a session file, and it
+still matters — a returning student must not be re-interviewed. Two adjustments
+make it work:
+
+**Reading it (Step 0).** There is no path to check. Instead, look for the
+session log among the files attached to this conversation and in the project
+knowledge of the current project. If you find one, treat it exactly as the
+instructions treat a found session file, and follow the Returning User Flow. If
+there is none, follow the New User Flow.
+
+**Writing it (end of every run).** Produce the session log as a downloadable
+file, and tell the student in plain words what to do with it:
+
+> Add this file to your project's knowledge base. Every future chat in this
+> project will then start with your profile and search history already loaded,
+> and we can pick up where we left off instead of redoing the interview.
+
+If the student is not working inside a project, say so and ask them to create
+one for their thesis search first — a project keeps this search, its memory, and
+its files separate from their other conversations, and it is the only place the
+session log survives on its own. If they add an updated log each time, the newest
+file is the one to use; say which one you read.
 
 ---
 

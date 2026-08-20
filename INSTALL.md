@@ -29,7 +29,7 @@ outside the skills folder.
 |---|---|---|
 | For | Anyone. No terminal needed. | People who already work in a terminal agent. |
 | Install | Upload **one file** | Copy **ten folders** into a directory |
-| Picking up weeks later | You re-attach the session file yourself | Automatic — the session log stays on disk |
+| Picking up weeks later | Works, if you run it inside a Claude project | Automatic — the session log stays on disk |
 
 Route A is the short path and the one to use if you are unsure. Both run the same
 searches and produce the same output.
@@ -38,21 +38,37 @@ searches and produce the same output.
 
 # Route A — Claude app (no terminal)
 
-You need a Claude plan that includes Skills, and the Skills capability switched on.
+Custom skills in the Claude app need a **Pro, Max, Team, or Enterprise** plan, with **code
+execution and file creation** switched on.
 
 1. Download **`thesis-finder-app-vX.Y.Z.zip`** from
-   <https://github.com/Tue-StudyOS/study-os-thesis/releases/latest>. Do not unpack it.
-2. In the Claude app, open **Settings → Capabilities** and make sure **Skills** is enabled,
-   along with **web search**.
-3. Under **Skills**, choose to upload a skill and pick the zip you just downloaded.
-4. Start a new chat and type `thesis-finder`. Continue at **Run it** below.
+   <https://github.com/Tue-StudyOS/study-os-thesis/releases/latest>. **Do not unpack it** —
+   the zip is what you upload.
+2. In Claude, open **Settings** and enable **code execution and file creation**, and **web
+   search**. Both are under the capabilities/features section; the exact wording of the menu
+   changes from time to time.
+3. Still in Settings, find **Skills**, add a skill, and pick the zip you downloaded.
+4. **Create a project** for your thesis search — this is what lets you stop and continue
+   weeks later. See below.
+5. Open a chat inside that project and type `thesis-finder`. Continue at **Run it**.
 
 That is the whole install. The single zip contains the entry-point skill and everything it
 hands off to, so there is nothing else to upload.
 
-**Coming back later.** The Claude app does not keep files between conversations. At the end
-of a run, ask for the session file and save it. Next time, attach that file to your first
-message and type `thesis-finder` — the search resumes without repeating the interview.
+## Why a project, and how to come back later
+
+A chat in the Claude app forgets everything when it ends. A **project** does not: files you
+put in its knowledge base are loaded into every chat inside that project, and the project
+keeps its own memory, separate from your other conversations.
+
+So the loop is:
+
+1. Run your search in a chat inside the project.
+2. At the end, the skill hands you a **session file**. Add it to the project's knowledge base.
+3. Weeks later, open a new chat **in the same project** and type `thesis-finder`. It finds
+   the session file by itself, and picks up where you stopped — no second interview.
+
+Skip the project and you will be interviewed again from scratch every time.
 
 ---
 
@@ -162,8 +178,9 @@ interview.
   there it uses `./thesis-finder-session.md` in the directory you started the agent in, and
   tells you which one it picked. Start the agent in the same directory next time, and type
   `thesis-finder` again.
-- **Route A:** nothing survives the end of a conversation, so save the session file when the
-  run ends and attach it to your first message next time.
+- **Route A:** a chat keeps nothing, so the session file has to live in the knowledge base of
+  the project you run the search in. Add it there when a run ends, and start your next chat
+  inside that same project.
 
 ---
 
@@ -173,7 +190,7 @@ interview.
 |---|---|---|
 | Agent says it doesn't know `thesis-finder`, or just chats normally | Skill not loaded — the upload did not finish, the client was not restarted, or it does not support Agent Skills | Restart the client, then ask `which skills do you have?`. If nothing is listed, use the paste fallback at the end of Route B Step 2. |
 | **Route A:** the upload is rejected, or the skill appears with the wrong name | The wrong file was uploaded, or it was unpacked first | Upload `thesis-finder-app-vX.Y.Z.zip` as downloaded. The ten-folder `study-os-thesis-skills-vX.Y.Z.zip` is for Route B and will not upload as one skill. |
-| **Route A:** it asks the full interview again on a later visit | The session file was not attached | Attach the session file you saved to your first message, then type `thesis-finder`. If you did not save one, the interview has to be redone. |
+| **Route A:** it asks the full interview again on a later visit | The chat was not started inside the project, or the session file was never added to the project knowledge | Open a chat inside the project holding your session file and type `thesis-finder` again. If no session file was ever saved, the interview has to be redone. |
 | **Route B:** agent finds *some* skills but breaks partway ("I don't have a skill called `discover-university-candidates`"), or the folder listing looks wrong | Wrong folder level, or a partial install | The path must be `<skills-dir>/thesis-finder/SKILL.md`, **not** `<skills-dir>/study-os-thesis-skills-vX.Y.Z/thesis-finder/SKILL.md`. Move the contents up one level and make sure **all** skill folders are there. |
 | Results are thin, generic, or the agent says it cannot verify anything | No web access, or search quota exhausted | Confirm web search is enabled in your client and that you have quota left. These skills cannot work offline — everything they output is verified live, by design. |
 
