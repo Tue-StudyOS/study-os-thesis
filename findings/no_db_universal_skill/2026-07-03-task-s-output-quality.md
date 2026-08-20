@@ -1,5 +1,12 @@
 # Task S — Output & Interview Quality Pass (Track 4, robustness)
 
+> **Architecture tag (added 2026-08-09, Task AJ): `[backbone-crawl, ≤2026-07-30]`.**
+> Every figure in this file was produced by the static-backbone architecture, removed on
+> 2026-07-31 in favour of rules-only live discovery. The numbers are the honest record of
+> that architecture; they do not describe the tool that ships today. Current picture:
+> [eval scorecard §0](2026-07-03-eval-aggregate-scorecard.md).
+
+
 - **Date:** 2026-07-03
 - **Branch:** `feat/no-db-universal-skill`
 - **Role:** roadmap Task S ([core-optimization-roadmap.md §3](2026-06-28-core-optimization-roadmap.md)),

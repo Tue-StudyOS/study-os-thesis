@@ -22,13 +22,18 @@ review's full punch list, not a duplicate of it — see
 [2026-07-05-fable-1.0-readiness-review.md](2026-07-05-fable-1.0-readiness-review.md) and
 `STATUS.md` Phase 5 [Tasks V–AA] for the actionable, current version.)*
 
-- **Theology blind live run** (was: "Law and Theology"). Law was blind-run 2026-07-03/04
+- **Theology blind live run — ✅ DONE 2026-08-08 (Task V′).** Result: **83% recall / 100%
+  precision, `[rules-only, ≥2026-07-31]`**, on a first blind run with no fix applied first.
+  Blindness held. This closed the item on both counts it was raised for: it is the project's
+  first clean blind hard-faculty measurement *and* its first faculty measurement of the
+  shipping architecture. Historical context, unchanged: Law was blind-run 2026-07-03/04
   (60% → 80% recall after a skill fix); Humanities was corrected to 100% via an
   eval-protocol fix, but by a **re-score**, not a fresh blind run — the reviewing session
-  was already un-blind on that faculty. Theology is now the only hard-faculty ground truth
-  no eval session has ever opened mid-run, making it the last clean, uncontaminated data
-  point available (`STATUS.md` Phase 5 Task V; also exercises the known N.N.-vacant-chair
-  case). The interdisciplinary case was covered via Task R's routing check (100%).
+  was already un-blind on that faculty. The N.N.-vacant-chair case was exercised (six
+  vacancies reported honestly, no invented holders); the GT's sharpest vacancy scenario, an
+  *ethics* persona facing the vacant Syst. Theol. II/III, remains unrun. The
+  interdisciplinary case was covered via Task R's routing check (100%,
+  `[backbone-crawl, ≤2026-07-30]`).
 - **Track 2 (backbone audit & repair, weak-web-presence fallback, query-skeleton
   iteration)** — still not started; implicitly skipped because Task I already cleared the
   recall bar that would have triggered it. **Task S (output & interview quality pass) is
@@ -36,13 +41,20 @@ review's full punch list, not a duplicate of it — see
   [03](../03-hardening-and-evaluation/README.md). Task R (edge-case behavior) is also done
   (3/3 pass).
 - **The roadmap's "core is done" recall bar was declared MET on 2026-07-04** (all 6
-  measured faculties ≥80%, 2 hard) — but the independent review found the evidence behind
-  the two hard-faculty numbers is not clean blind measurement (see [03](../03-hardening-and-evaluation/README.md)
-  and the review). Treat the GO as **provisional**, not unmet — a meaningfully different
-  status than either "not yet met" or an unqualified "done."
-- **Company-backbone ground-truth circularity** (named in [03](../03-hardening-and-evaluation/README.md)):
-  an independent, non-backbone-derived ground truth for company discovery is still missing
-  (`STATUS.md` Phase 5 Task Y).
+  measured faculties ≥80%, 2 hard — all `[backbone-crawl, ≤2026-07-30]`) — but the GO is
+  **provisional on two counts**, not unmet, a meaningfully different status than either "not
+  yet met" or an unqualified "done." (1) The independent review found the evidence behind the
+  two hard-faculty numbers is not clean blind measurement — **partially repaired 2026-08-08**
+  by Task V′. (2) **Added 2026-08-09 (Task AJ):** the architecture the bar was measured on was
+  deleted on 2026-07-31. Count 2 is the open one; Task AK is the named repair. See
+  [03](../03-hardening-and-evaluation/README.md) and the review.
+- **Company-backbone ground-truth circularity — ✅ CLOSED 2026-08-09 (Task AJ), by permanent
+  demotion rather than by repair.** The backbone the ground truth was derived from was itself
+  deleted on 2026-07-31, so the eval is circular *and* measures a removed file *and* tests a
+  removed architecture. It is demoted to a plumbing check carrying no weight, and **old Task Y
+  (build an independent company ground truth) is closed and will not be built** — the cost is
+  not justified for an arm whose discovery is now rules-only and covered by the same
+  live-verification requirement as the university arm. Reasoning: scorecard §2.
 - **Non-MINT company backbone coverage** — meaningfully improved by Task L (2026-07-04:
   all 7 faculties + ZITh now have a Studiengangs-Routing entry, even where the honest
   answer is "no company track — use `find-university-chairs` instead"), but still thin in

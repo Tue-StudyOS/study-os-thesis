@@ -1,5 +1,12 @@
 # Tübingen Core — Optimization Roadmap
 
+> **Architecture tag (added 2026-08-09, Task AJ): `[backbone-crawl, ≤2026-07-30]`.**
+> the recall bars and coverage figures in this roadmap were defined and measured against the static-backbone architecture, removed on 2026-07-31 in favour of rules-only
+> live discovery. The findings and critique stand; the percentages do not describe the tool
+> that ships today. Current picture:
+> [eval scorecard §0](2026-07-03-eval-aggregate-scorecard.md).
+
+
 - **Date:** 2026-06-28
 - **Branch:** `feat/no-db-universal-skill`
 - **Purpose:** Make the university-discovery core (Tübingen) not just *pass the
