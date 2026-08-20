@@ -24,7 +24,7 @@ Use the resolved path for every later read and write in this skill.
 
 Before starting the interview, give the student a short one-time framing message:
 
-> "This skill helps you work out what kind of thesis actually fits you, and then find where you could write it — at a university chair, a company, or both. The questions are as much a part of that as the results: most students finish with a sharper sense of what they want than they started with. How much detail you give is entirely up to you — more detail makes the search more precise, but there's no minimum required. Once the profile is done, I'll ask whether you want to search university chairs, companies, or both."
+> "This skill helps you work out what kind of thesis actually fits you, and then find where you could write it — at a university chair, a company, or both. The questions are as much a part of that as the results. How much detail you give is entirely up to you — more detail makes the search more precise, but there's no minimum required. Once the profile is done, I'll ask whether you want to search university chairs, companies, or both."
 
 ### Step N0 — Capture the starting point (one turn, before any other question)
 
@@ -196,8 +196,8 @@ Only run this step if Step R4 produced a fresh option map (a new `find-universit
 2. Ask exactly: "Want to go deeper on [the recommended option(s)] before reaching out, or keep exploring other options?"
 3. Stop and wait for the student's answer.
 4. If the student wants to go deeper, follow Step N5a exactly. The next assistant message must be headed `## Deeper Look: [selected option]` and must include the required fit, evidence, likely work, feasibility, and first-meeting fields before Step R7.
-6. Proceed to Step R7 once the branch is resolved.
 5. If the student wants to keep exploring, follow Step N5b.
+6. Proceed to Step R7 once the branch is resolved.
 
 ### Step R7 — Close the loop on the starting statement
 
