@@ -340,6 +340,30 @@ architecture-tagged. W optional.
 
 ## Log
 
+- **2026-08-20 (c)** — **Release 2.1.0 prepared: version bumped, changelog cut, every CI step
+  rehearsed locally.** Branch `chore/release-2.1.0`, off `main` after #74 and #75 merged.
+
+  **The blocker was not the dispatch, it was the release text.** `dist/release-notes.md` is
+  gitignored and was hand-written for 2.0.0 — its preamble ("Installing? … you need a capable
+  coding agent") never lived in the repo. CI regenerates that file from the CHANGELOG section
+  for the version, so dispatching as-is would have published bare bullets, and the one piece of
+  prose students actually read would have been lost and, worse, was wrong for two of the three
+  new routes. The preamble now lives *inside* the `## [2.1.0]` section, which is what the
+  workflow reuses.
+
+  **Rehearsed rather than assumed:** reproduced the workflow's release-notes step verbatim
+  (it reuses the section, does not re-cut `[Unreleased]`), then ran every build and validation
+  step locally with the real tag — `build_skill_release.py --tag skills-v2.1.0`, both new
+  builders, all three validation suites. Five artifacts at 2.1.0, and the INSTALL.md travelling
+  inside the archive is the three-route version.
+
+  **MINOR, not MAJOR:** no skill name, trigger, or expected input/output changed; the ten
+  sources are byte-identical to `skills-v2.0.0`. The release notes say so explicitly, so a
+  student already installed on the terminal route knows they can ignore it.
+
+  Full suite green: 64 passed, 10 skipped. Dispatch still pending — it is the one step that
+  cannot be rehearsed.
+
 - **2026-08-20 (b)** — **Portable edition: ChatGPT and Gemini, and continuity that does not
   depend on a good habit at the wrong moment.** Same branch, `feat/claude-app-bundle`.
 
