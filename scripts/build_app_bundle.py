@@ -18,8 +18,14 @@ from __future__ import annotations
 import argparse
 import re
 import shutil
+import sys
 import zipfile
 from pathlib import Path
+
+# Running this as a path (`python scripts/build_app_bundle.py`) puts scripts/ on the
+# import path but not the repo root, so the shared release helpers below would not
+# resolve. Both this and `python -m scripts.build_app_bundle` need to work.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.build_skill_release import (
     ALLOWED_RESOURCE_DIRS,
