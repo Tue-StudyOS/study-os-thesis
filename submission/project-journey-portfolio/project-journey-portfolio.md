@@ -22,7 +22,7 @@ Info-gathering version. Each section mirrors the assignment structure (What / Ev
 
 - Pre-pivot architecture/status snapshot: `docs/thesis-report/00-problem-and-research/2026-06-09-project-context-pre-pivot.md`
 - First entry of the decision log: `docs/thesis-report/decision-log.md`
-- Early plan and outreach documents: `docs/thesis-report/00-problem-and-research/` (contains early .docx plan and mail drafts)
+- Early plan and outreach documents: Various private conversations, please request them if you need them to rate the submission, but since they are private data , we cannot release them publicly.
 
 ### So what (draft)
 
