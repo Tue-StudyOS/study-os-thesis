@@ -1,0 +1,860 @@
+ ▐▛███▜▌   Claude Code v2.1.220
+▝▜█████▛▘  Opus 5 · Claude Pro
+  ▘▘ ▝▝    ~/Documents/Programming/study-os-thesis
+
+
+❯ Hallo ich bin Ayse und studiere empirische Kulturwissenschaften und würde     
+  gern ein Thema für meine Bachelor arbeit finden                               
+
+● Skill(thesis-finder)
+  ⎿  Successfully loaded skill
+
+● I'll check whether you already have a session with me.
+
+  Read 1 file (ctrl+o to expand)
+
+● Hallo Ayse! Kurz vorweg: In meinem gespeicherten Suchverlauf liegt bereits
+  eine Sitzung — die gehört aber zu einem anderen Profil
+  (Kognitionswissenschaft). Ich lasse die unangetastet und fange für dich neu
+  an.
+
+  Wie das hier läuft: Ich helfe dir zu finden, wo du deine Arbeit schreiben
+  kannst — an einem Lehrstuhl der Uni Tübingen, bei einem Unternehmen in
+  Baden-Württemberg, oder beides. Dafür stelle ich dir zuerst ein paar Fragen,
+  um ein Bild von deinen Interessen, Methoden und Rahmenbedingungen zu bekommen.
+  Wie ausführlich du antwortest, ist ganz dir überlassen — mehr Details machen
+  die Suche präziser, aber es gibt kein Minimum. Danach frage ich dich, welche
+  Richtung du erkunden willst.
+
+  Fangen wir vorne an:
+
+  Was hat dein Interesse an einem bestimmten Thema ausgelöst? Gab es ein
+  Seminar, ein Buch, eine Feldforschung, ein Gespräch oder eine
+  Alltagsbeobachtung, bei der du dachtest „darüber will ich mehr wissen"? Auch
+  wenn es noch vage ist — nenn ruhig zwei, drei Sachen, die dich in den letzten
+  Semestern wirklich beschäftigt haben.
+
+✻ Cooked for 25s
+
+❯ Ich finde besonders interessant wie sich die Migrationsgeschichte von Kurden  
+  in deutschland entwickelt hat. Ich bin selbst Kurdin und finde daher das sehr 
+  spannend. aber ich will das auch schon "empirisch" auf die Probe stellen und  
+  so auch mehr über mich selbst lernen. Aber natürlich auch die Kurdische       
+  Commnunity in Deutschland stärken                                             
+
+● Das ist ein starker Ausgangspunkt — und die eigene Position als Kurdin ist in
+  der EKW kein Problem, sondern ein methodisches Thema für sich (Stichwort
+  Positionalität, Insider-Forschung, teils auch Autoethnografie). Dass du das
+  „empirisch auf die Probe stellen" willst, passt genau zum Fach.
+
+  Nächste Frage — zu deiner Methodenerfahrung:
+
+  Welche Methoden hast du im Studium schon tatsächlich selbst gemacht — nicht
+  nur in der Vorlesung gehört? Also z. B.:
+
+  - narrative oder leitfadengestützte Interviews (wie viele, mit wem, hast du
+  selbst transkribiert/ausgewertet?)
+  - teilnehmende Beobachtung / Feldforschung (wo, wie lange, Feldnotizen?)
+  - Archivarbeit oder Quellenanalyse (Vereinsakten, Zeitungen, Behördenakten?)
+  - Diskurs- oder Medienanalyse (Zeitungen, Social Media, Filme)
+  - Sonstiges: Fragebögen, Objektanalyse, Ausstellungsarbeit, Oral History
+
+  Und dazu gleich: Welches Seminar oder welche Übung hat dir am meisten Spaß 
+  gemacht — und welche war zäh? Das sagt mir oft mehr über die passende
+  Arbeitsform als die Methodenliste selbst.
+
+✻ Worked for 12s
+
+※ recap: Wir suchen ein Bachelorarbeits-Thema für dich zur kurdischen Migrationsgeschichte in Deutschland und bauen dafür gerade dein Profil auf. Offen ist noch meine Frage: Welche Methoden hast du selbst schon gemacht, und welches Seminar mochtest du am meisten? (disable recaps in /config)
+
+❯ Ich fand besonders spannend die Kulturtheorie aber auch Interviews spannend.  
+  Ich würde das gerne an der Uni machen                                         
+
+● Gut — Kulturtheorie + Interviews, und Uni-Track ist notiert. Zwei Fragen, die
+  eng zusammenhängen und für die Machbarkeit entscheidend sind:
+
+  1. Wie konkret ist deine Interview-Erfahrung? Hast du in einem Seminar schon
+  mal selbst einen Leitfaden gebaut, ein Interview geführt, transkribiert und
+  ausgewertet (z. B. mit Grounded Theory, Narrationsanalyse, Codieren)? Oder war
+  das eher „drüber gelesen"? Beides ist okay — es ändert nur, wie ambitioniert
+  wir die Fallzahl ansetzen.
+
+  2. Wie ist dein Feldzugang? Sprichst du Kurmancî, Zazakî oder Soranî (und
+  Türkisch)? Und hättest du realistisch Zugang zu Leuten — über Familie,
+  Vereine, Kulturzentren, Jugendgruppen, Community-Medien? Das ist bei genau
+  deinem Thema oft der Unterschied zwischen „schöne Idee" und „läuft".
+
+✻ Worked for 13s
+
+❯ Ich spreche Deutsch, English und Türkisch und kann Kurmanci verstehen. Zugang 
+  habe ich halt zu meiner Familie, aber die kurdische Identität war nicht so    
+  zentral für uns. Ich habe schon während  meines Erasmus in Instanbul ein paar 
+  Interviews geführt, allerdings zum Thema der sozialen Schichten in der        
+  Türkei                                                                        
+
+● Das ist ein wichtiger Punkt — und ich würde ihn nicht als Lücke behandeln,
+  sondern als möglichen Kern deiner Arbeit. „Die kurdische Identität war bei uns
+  nicht so zentral" ist selbst ein Befund: nicht-mobilisierte, ambivalente oder
+  stillgestellte Zugehörigkeit ist in der Diasporaforschung ein eigenes, wenig
+  beackertes Feld — meist wird die laute, vereinsförmige, politisierte Community
+  untersucht. Und deine Istanbul-Interviews zeigen, dass du das methodische
+  Handwerk schon mal wirklich gemacht hast.
+
+  Kurzer Faktencheck nebenbei: Ich gehe davon aus, dass du an der Uni Tübingen 
+  (Ludwig-Uhland-Institut für EKW) bist — sag kurz Bescheid, falls nicht.
+
+  Letzte zwei Fragen, dann suche ich:
+
+  1. Arbeitsstil: Wie soll sich die Arbeit anfühlen — eher theoriegeleitet
+  (starker Kulturtheorie-Rahmen, Empirie als Illustration) oder feldgetrieben
+  (Material zuerst, Theorie zur Deutung)? Und wie viele Interviews klingen für
+  dich machbar, ohne dass du in Panik gerätst — 5–6 tiefe Gespräche oder eher
+  10–15?
+
+  2. No-Gos und Rahmen: Wie viel Zeit hast du für die BA (Monate)? Und gibt es
+  Dinge, die du definitiv nicht willst — z. B. Statistik/Zahlen, Archivarbeit,
+  viel Reisen, Fremde kalt ansprechen, oder Interviews über sehr belastende
+  Themen (Flucht, Gewalt, Verfolgung)?
+
+✻ Worked for 19s
+
+❯ Ich möchte einfach viel erfahren aber habe selbst ein limitiertes Budget, es  
+  muss also auf Bus und Bahn beschränkt sein. Es ist in Tübingne. ich mag       
+  zahlen nicht so also ganz ausaren soll das nicht. Ich kann gut mt fremden.    
+  Ich finde 10-15 klingen oka                                                   
+
+● Alles klar — Profil steht. Kurz gespiegelt, damit wir dieselbe Sache suchen:
+
+  Dimension: Interesse
+  Dein Profil: Kurdische Migrationsgeschichte in Deutschland; besonders
+  spannend:
+  Zugehörigkeit, die nicht zentral gestellt wird — ambivalente, „leise",
+  generationenübergreifend abgeschwächte kurdische Identität. Persönlich
+  motiviert, aber empirisch geprüft.
+  ────────────────────────────────────────
+  Dimension: Methoden
+  Dein Profil: Qualitativ: leitfadengestützte/narrative Interviews, 10–15 Stück.
+
+  Erfahrung: eigene Interviewstudie im Erasmus (Istanbul, soziale Schichten).
+  Gut im Umgang mit Fremden.
+  ────────────────────────────────────────
+  Dimension: Domäne
+  Dein Profil: EKW / Ludwig-Uhland-Institut, Uni Tübingen, Bachelor.
+  ────────────────────────────────────────
+  Dimension: Stil
+  Dein Profil: Kulturtheoretisch gerahmt, aber feldgetrieben — „viel erfahren"
+  wollen.
+  ────────────────────────────────────────
+  Dimension: Sprachen
+  Dein Profil: Deutsch, Englisch, Türkisch; Kurmancî passiv (versteht) — starker
+
+  Feldzugangsvorteil bei erster/zweiter Generation.
+  ────────────────────────────────────────
+  Dimension: No-Gos
+  Dein Profil: Keine Statistik/Quantifizierung. Kein Reisebudget → Feld muss per
+
+  Bus/Bahn erreichbar sein (Tübingen/Reutlingen/Stuttgart-Region).
+
+  Zwei Annahmen, die ich treffe — korrigier mich einfach, falls falsch: 3 Monate
+  Bearbeitungszeit (BA-Standard) und keine Interviews über 
+  Flucht/Gewalt/Verfolgung als Kernthema (du hast dazu nichts gesagt; das ist
+  ethisch und emotional die aufwendigste Variante).
+
+  Und die Pflichtfrage, bevor ich suche:
+
+  ▎ Welche Art von Option willst du erkunden?
+  ▎ (a) Uni-Arbeit in Tübingen
+  ▎ (b) Unternehmens-Arbeit in Baden-Württemberg
+  ▎ (c) Beides
+
+  Ich vermute stark (a) — bestätig es kurz, dann lege ich mit der
+  Lehrstuhl-Suche los.
+
+✻ Crunched for 23s
+
+❯ Und 3 monate                                                                  
+
+● Perfekt — 3 Monate bestätigt, Track (a) Uni Tübingen. Ich starte die
+  Lehrstuhl-Suche.
+
+● Skill(find-university-chairs)
+  ⎿  Successfully loaded skill
+
+  Read 1 file (ctrl+o to expand)
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/)
+  ⎿  Received 100.5KB (200 OK)
+
+● Web Search("Ludwig-Uhland-Institut Empirische Kulturwissenschaft Tübingen
+            Professuren Arbeitsbereiche")  ⎿  Did 1 search in 8s
+
+● Web Search("Ludwig-Uhland-Institut Tübingen Migration Forschung Professur")
+  ⎿  Did 1 search in 5s
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/empirische-kultur
+       wissenschaft/institut/personen/)
+  ⎿  Received 100.4KB (200 OK)
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/empirische-kultur
+       wissenschaft/forschung/migration/)
+  ⎿  Received 98KB (200 OK)
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/soziologie/instit
+       ut/arbeitsbereiche/migration-und-diversitaet/)
+  ⎿  Received 97.3KB (200 OK)
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/empirische-kultur
+       wissenschaft/institut/personen/professorinnen/)
+  ⎿  Received 105.8KB (200 OK)
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/empirische-kultur
+       wissenschaft/institut/personen/wiss-mitarbeiterinnen/)
+  ⎿  Received 113.6KB (200 OK)
+
+● Web Search(""Ludwig-Uhland-Institut" Tübingen Professorin Kulturanalyse des
+            Alltags W3 2024 OR 2025 berufen")
+  ⎿  Did 1 search in 7s
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/empirische-kultur
+       wissenschaft/institut/personen/professorinnen/thomas-thiemeyer/)
+  ⎿  Received 127.5KB (200 OK)
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/empirische-kultur
+       wissenschaft/institut/personen/professorinnen/reinhard-johler/)
+  ⎿  Received 146.6KB (200 OK)
+
+● Web Search("Monique Scheer Tübingen Empirische Kulturwissenschaft Forschung
+            Vielfalt Religion Publikationen 2024 2025")
+  ⎿  Did 1 search in 8s
+
+● Web Search("Universität Tübingen Forschung kurdische Diaspora OR "Kurden in
+            Deutschland" Migration qualitativ")
+  ⎿  Did 1 search in 8s
+
+● Web Search("Boris Nieswand Tübingen Soziologie Migration Publikationen 2025
+            2026")
+  ⎿  Did 1 search in 8s
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/philosophische-fakultaet/fachbereic
+       he/asien-orient-wissenschaften/)
+  ⎿  Received 111.9KB (200 OK)
+
+● Web Search(""Universität Tübingen" Empirische Kulturwissenschaft
+            Bachelorarbeit Abschlussarbeit Betreuung Anmeldung LUI")
+  ⎿  Did 1 search in 7s
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/empirische-kultur
+       wissenschaft/studium/bachelor-hauptfach/bachelorarbeit/)
+  ⎿  Received 99.4KB (200 OK)
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/empirische-kultur
+       wissenschaft/forschung/)
+  ⎿  Received 111KB (200 OK)
+
+● Web Search("Christoph Bareither Tübingen digitale Anthropologie Forschung
+            Projekte 2025")
+  ⎿  Did 1 search in 7s
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/empirische-kultur
+       wissenschaft/forschung/projekte/)
+  ⎿  Received 100KB (200 OK)
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/empirische-kultur
+       wissenschaft/institut/personen/professorinnen/monique-scheer/)
+  ⎿  Received 132.6KB (200 OK)
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/philosophische-fakultaet/fachbereic
+       he/asien-orient-wissenschaften/orient-islamwissenschaft/abteilung/)
+  ⎿  Received 74.6KB (200 OK)
+
+● Web Search("site:uni-tuebingen.de Empirische Kulturwissenschaft
+            "Zugehörigkeit" OR "postmigrantisch" OR "zweite Generation"
+            Studienprojekt")
+  ⎿  Did 1 search in 8s
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/empirische-kultur
+       wissenschaft/institut/personen/professorinnen/christoph-bareither/)
+  ⎿  Received 132.8KB (200 OK)
+
+● Fetch(https://uni-tuebingen.de/en/faculties/faculty-of-humanities/departments/
+       asian-and-oriental-studies/koreanistik/faculty/ha-kien-nghi/)
+  ⎿  Received 376.1KB (200 OK)
+
+● Fetch(https://uni-tuebingen.de/forschung/zentren-und-institute/college-of-fell
+       ows/focus-groups/belonging/)
+  ⎿  Received 117.3KB (200 OK)
+
+● Write(~/.claude/thesis-finder/session-ayse-ekw.md)
+  ⎿  Wrote 41 lines to ../../../.claude/thesis-finder/session-ayse-ekw.md
+      1 # Thesis Search Session — Ayse (EKW)
+      3 > Separate file: `session.md` in this directory belongs to a diff
+        erent student profile
+      5 
+      7 Interests: Kurdische Migrationsgeschichte in Deutschland; speziel
+        l ambivalente, nicht-zentral gestellte, generationell abgeschwäch
+         soll aber empirisch geprüft werden; Wunsch, die kurdische Commun
+        ity zu stärken.
+        –15 angepeilt. Erfahrung: eigene Interviewstudie während Erasmus 
+        g
+     … +78 lines (ctrl+o to expand)
+
+● Ich habe den Backbone der WiSo-Fakultät durchgesucht (FB Sozialwissenschaften
+  → LUI), dazu Soziologie, den Fachbereich Asien-Orient-Wissenschaften und
+  interfakultäre Zentren. Hier ist die Optionskarte.
+
+  Vorweg ein ehrlicher Befund: Es gibt in Tübingen keine Kurdologie, keine 
+  Turkologie und keine Iranistik — der Fachbereich Asien-Orient-Wissenschaften
+  hat nur Orient- & Islamwissenschaft, und die ist philologisch-historisch,
+  nicht ethnografisch. Eine regionalwissenschaftliche Zweitbetreuung „von Fach
+  zu Fach" ist hier also nicht zu haben. Der Fit läuft komplett über die
+  Migrations- und Vielfaltsethnografie — und die ist am LUI stark: Migration ist
+  dort seit den 1950ern ein Forschungsschwerpunkt (LUI Forschung: Migration).
+
+  ---
+  Migration, Vielfalt & Zugehörigkeit — dein Kerninteresse
+
+  1. Prof. Dr. Dr. h.c. Monique Scheer — LUI, Professur für EKW
+
+  Profilseite
+
+  - Relevanz: Ihre Denomination ist explizit „Ethnographie kultureller Vielfalt"
+  — multikulturelle europäische Gesellschaften. Arbeitsschwerpunkte laut
+  eigener Seite: Praktiken und Medien von Religion/Säkularität, Emotionen
+  religiöser und politischer Akteur*innen, und mit Pamela Klassen (Toronto)
+  „Religion and Public Memory in Multicultural Societies" — öffentliche Rituale
+  und Erinnerungsorte. Das ist genau die Ebene, auf der deine Frage liegt: wie
+  Zugehörigkeit praktisch hergestellt oder eben nicht hergestellt wird.
+  Emotions-/Praxistheorie ist zudem der Kulturtheorie-Anschluss, den du magst.
+  - Pro & Schwierigkeiten: International sehr renommiert (Ehrendoktorwürde
+  Kopenhagen, Nov. 2025). Aber: seit 2020 Prorektorin für Internationales und 
+  Diversität mit ausdrücklich reduzierter Lehre am LUI. Betreuungskapazität
+  musst du vorab erfragen — das ist der eine echte Risikofaktor.
+  - Datierte Evidenz: „Making Promises" (2025) aus dem
+  Klassen-Kooperationsprojekt; Ehrendoktorwürde Univ. Kopenhagen, November 2025;
+  Prorektorinnen-Seite.
+  - Gesprächsaufhänger: Dass du eine Zugehörigkeit untersuchen willst, die im
+  Alltag gerade nicht rituell oder öffentlich markiert wird — der Negativfall zu
+  ihrer Arbeit über öffentliche Erinnerungspraktiken.
+  - No-Go-Flags: keine.
+
+  2. Prof. Dr. Reinhard Johler — LUI, Professur für EKW
+
+  Profilseite
+
+  - Relevanz: Arbeitsschwerpunkte laut eigener Seite: Diversität und kulturelle 
+  Differenz, Migration und Flucht, europäische Integration im Alltag,
+  Multikulturalität in Südosteuropa. Thematisch der direkteste Migrations-Match
+  am LUI. Sein Projekt „Chapter Germany: Alltagserfahrungen Tübinger 
+  Studierender aus China" (2022) ist formal fast genau dein Format —
+  interviewbasiertes Studienprojekt über Alltagserfahrung einer Migrationsgruppe
+  vor Ort.
+  - Pro & Schwierigkeiten: ⚠ Affiliation nicht als aktuell bestätigt. Die
+  Institutsseite führt ihn als aktiven Professor (seit 2002) und wiss. Leiter
+  des Instituts für donauschwäbische Geschichte, aber ich habe keine 
+  2025/2026-datierte Evidenz gefunden, die ihn aktuell an Tübingen bindet — und
+  eine W3-Nachfolgeprofessur „EKW/Kulturanalyse des Alltags" wurde bereits 2021 
+  ausgeschrieben. Vor einer Anfrage kurz im Sekretariat prüfen, ob er noch
+  betreut. Zweite Einschränkung: sein regionaler Fokus ist
+  Südosteuropa/Donauschwaben, nicht Türkei/Kurdistan.
+  - Datierte Evidenz: „Chapter Germany" (2022); „50 Jahre EKW"
+  Ausstellungskatalog (2021) — beides ≥2022 bzw. grenzwertig, neuere Evidenz
+  fehlt.
+  - Gesprächsaufhänger: Ob sich das „Chapter Germany"-Format auf eine Gruppe
+  übertragen lässt, die nicht neu zugewandert ist, sondern seit zwei bis drei
+  Generationen hier — mit entsprechend anderer Alltagserfahrung.
+  - No-Go-Flags: keine.
+
+  3. Prof. Dr. Boris Nieswand — Institut für Soziologie, AB Migration und 
+  Diversität
+
+  Arbeitsbereichsseite · Profilseite
+
+  - Relevanz: Theoretisch der präziseste Treffer im ganzen Set. Sein
+  Arbeitsbereich arbeitet ausdrücklich „reflexiv und ethnografisch": untersucht
+  wird nicht, welche Eigenschaften Migrant*innen haben, sondern die 
+  Wissensordnungen, durch die Menschen ihr Wissen über Migration überhaupt 
+  herstellen. Das ist genau der Rahmen, den deine Frage braucht — er erlaubt es,
+  „kurdisch sein" als etwas zu behandeln, das hergestellt, abgeschwächt oder
+  unterlassen wird, statt es als gegebene Eigenschaft vorauszusetzen. Professur
+  seit September 2017.
+  - Pro & Schwierigkeiten: ⚠ Er ist nicht am LUI. Die BA-Arbeit in EKW muss laut
+  Institut von jemandem aus dem Lehrkörper des LUI betreut werden — Nieswand
+  kommt also realistisch als Zweitgutachter, Theoriekontakt oder über den Besuch
+  eines seiner Seminare in Frage, nicht als Erstbetreuer. Prüf das aber mit dem
+  Prüfungsamt, nicht mit mir.
+  - Datierte Evidenz: „The crisis of representation in migration studies and the
+  reflexive turn", in: Reflexivities and Knowledge Production in Migration 
+  Studies (Springer, 2025); Nieswand/Dietrich/Martínez, „How does Moralization
+  work?", International Sociology 40(4), 483–496 (2025).
+  - Gesprächsaufhänger: Seine „reflexive Wende" auf den Fall anwenden, in dem
+  die Selbstethnisierung ausbleibt — was macht die Migrationsforschung mit
+  Fällen, die ihre eigene Kategorie unterlaufen?
+  - No-Go-Flags: keine methodischen; institutionelle Einschränkung siehe oben.
+
+  ---
+  Erinnerung, Identität & Weitergabe — der zweite mögliche Zuschnitt
+
+  4. Prof. Dr. Thomas Thiemeyer — LUI, Professur für EKW
+
+  Profilseite
+
+  - Relevanz: Arbeitsschwerpunkte: Erinnerungskulturen, Identitätskonstruktionen
+  (Heimatvorstellungen, Identitätspolitik), Museen/Archive/Sammlungen. Wenn du
+  deine Arbeit als Frage nach familiärer Weitergabe und Nicht-Weitergabe von 
+  Herkunftserzählungen zuschneidest, ist das seine Achse — Erinnerung ist genau
+  sein Gegenstand.
+  - Pro & Schwierigkeiten: Ehrlich: er ist kein Migrationsforscher. Seine
+  Identitäts- und Heimatarbeiten laufen über NS-, Kolonial- und
+  Museumsgedächtnis, nicht über Diaspora. Der Fit hängt daran, ob du die Arbeit
+  auf „Erinnerung/Weitergabe" drehst statt auf „Migration". Sein Fokus liegt
+  außerdem stark auf Institutionen (Museen), weniger auf Familien.
+  - Datierte Evidenz: „Moralische Anstalt 4.0? Wie das Paradigma der sozialen
+  Gerechtigkeit den Auftrag der Museen neu definiert", Arsprototo 1/25 (2025).
+  - Gesprächsaufhänger: Erinnerungsweitergabe in Familien, deren
+  Herkunftsgeschichte politisch aufgeladen, aber im Alltag dethematisiert ist —
+  die private Entsprechung seiner öffentlichen Erinnerungsorte.
+  - No-Go-Flags: keine.
+
+  ---
+  Theoriekontakt (kein Erstgutachten möglich)
+
+  5. Dr. Kien Nghi Ha — AOI, Koreanistik / Postcolonial Asian German Studies
+
+  Profilseite
+
+  - Relevanz: Arbeitet zu postmigrantischer Gesellschaft, Diaspora in 
+  Deutschland, Rassismus, kultureller Hybridität — die Theoriesprache
+  („postmigrantisch", Hybridität, Rassismuskritik), die du für den ambivalenten
+  Zugehörigkeitsfall brauchst. Sein Feld ist asiatisch-deutsch, aber die
+  Begriffe sind übertragbar.
+  - Pro & Schwierigkeiten: ⚠ Postdoc, kein Professor — kommt als Erstgutachter
+  nicht in Frage, und er ist in einem anderen Fachbereich. Nutze ihn für
+  Literaturhinweise oder ein Gespräch, nicht als Betreuung.
+  - Datierte Evidenz: Asiatische Präsenzen in der Kolonialmetropole Berlin
+  (2024); Reihenherausgeber RASSISMUS/GESELLSCHAFT, Springer VS (2025).
+  - No-Go-Flags: keine.
+
+  6. Prof. Dr. Christoph Bareither — LUI, Direktor, Digitale Anthropologie
+
+  Profilseite — schwacher Fit, nur der Vollständigkeit halber. Digitale
+  Alltagskulturen, Social Media, KI, digitale Erinnerung; Direktor seit 2023.
+  Nur relevant, falls du die Arbeit Richtung kurdische Community-Medien /
+  Diaspora auf Social Media drehen willst — was deiner Interviewpräferenz
+  widerspricht. ⚠ möglicher Konflikt mit deinem No-Go „keine
+  Zahlen/Digitalauswertung".
+
+  ---
+  Zwei formale Dinge, die deinen Plan betreffen
+
+  1. Betreuung muss aus dem LUI-Lehrkörper kommen — steht so auf der
+  Bachelorarbeit-Seite. Das Bachelorkolloquium ist Pflichtbestandteil.
+  2. Umfang: ca. 30 Seiten (60.000–70.000 Zeichen). Und: du bist von 3 Monaten
+  ausgegangen — ein Suchtreffer nennt 4 Monate ab Themenvergabe, die
+  Institutsseite selbst nennt keine Frist. Bitte kläre das über die 
+  Prüfungsordnung oder pa-ekw@wiso.uni-tuebingen.de — bei 10–15 Interviews
+  inklusive Transkription ist der Unterschied zwischen 3 und 4 Monaten
+  erheblich.
+
+  ▎ Diese Karte deckt öffentlich sichtbare Lehrstühle mit Stand 02.08.2026 ab. 
+  ▎ Personen mit schwacher Webpräsenz können fehlen — dagegen hilft: die 
+  ▎ Institutsseiten direkt besuchen, die Fachschaft am LUI fragen und das 
+  ▎ Vorlesungsverzeichnis prüfen.
+
+  ---
+  Meine Empfehlung
+
+  Monique Scheer — ihre Professur ist wörtlich „Ethnographie kultureller
+  Vielfalt", sie arbeitet am LUI (also erstbetreuungsberechtigt) und ihre Arbeit
+  über die Herstellung von Zugehörigkeit durch Praktiken und Emotionen trifft
+  deinen Kern. Einziger Haken: Prorektorin, reduzierte Lehre — Kapazität zuerst
+  erfragen.
+
+  Boris Nieswand — theoretisch der schärfste Treffer, weil seine reflexive
+  Migrationsforschung genau die Falle vermeidet, in die deine Arbeit sonst
+  läuft: Ethnizität als gegeben vorauszusetzen. Nicht als Erstbetreuer, aber als
+  Theoriegrundlage und möglicher Zweitgutachter.
+
+  Ich habe deine Suche unter ~/.claude/thesis-finder/session-ayse-ekw.md
+  gespeichert — als eigene Datei, damit das bestehende Profil einer anderen
+  Person unangetastet bleibt.
+
+  Willst du auf Scheer (und ggf. Nieswand) tiefer eingehen, bevor du jemanden 
+  anschreibst — oder lieber noch weitere Optionen erkunden?
+
+✻ Baked for 5m 0s
+
+※ recap: Wir suchen ein BA-Thema für dich zur kurdischen Migrationsgeschichte und ich habe dir die passenden Tübinger Betreuungsoptionen zusammengestellt, empfohlen sind Monique Scheer und Boris Nieswand. Sag mir jetzt nur, ob du bei Scheer tiefer einsteigen oder weiter suchen willst. (disable recaps in /config)
+
+❯ Lass sie zusammmen näher angehen ?                                            
+
+● Skill(find-recent-papers)
+  ⎿  Successfully loaded skill
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/empirische-kultur
+       wissenschaft/institut/personen/professorinnen/monique-scheer/publikatione
+       n/)
+  ⎿  Received 120.7KB (200 OK)
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/wirtschafts-und-sozialwissenschaftl
+       iche-fakultaet/faecher/fachbereich-sozialwissenschaften/soziologie/instit
+       ut/personen/nieswand-boris/)
+  ⎿  Received 140.7KB (200 OK)
+
+● Update(~/.claude/thesis-finder/session-ayse-ekw.md)
+  ⎿  Added 1 line, removed 1 line
+      14  ## Active Candidates
+      15  | Name | Institution / Company | Track | Status | Last Updated 
+          |
+      16  |------|-----------------------|-------|--------|--------------
+          |
+      17 -| Prof. Dr. Dr. h.c. Monique Scheer | LUI / EKW, Univ. Tübingen
+         - | University | Found (primary candidate) | 2026-08-02 |       
+      17 +| Prof. Dr. Dr. h.c. Monique Scheer | LUI / EKW, Univ. Tübingen
+         + | University | **Recommended** (Erstbetreuung) | 2026-08-02 | 
+      18  | Prof. Dr. Reinhard Johler | LUI / EKW + IdGL, Univ. Tübingen 
+          | University | Found — ⚠ Aktualität der Affiliation prüfen | 20
+          26-08-02 |
+      19  | Prof. Dr. Thomas Thiemeyer | LUI / EKW, Univ. Tübingen | Univ
+          ersity | Found (Erinnerung/Identität-Achse) | 2026-08-02 |
+      20  | Prof. Dr. Boris Nieswand | Institut für Soziologie, Univ. Tüb
+          ingen | University | Found (nur Zweitgutachten/Theorie — nicht 
+          LUI) | 2026-08-02 |
+
+● Update(~/.claude/thesis-finder/session-ayse-ekw.md)
+  ⎿  Added 1 line, removed 1 line
+      17  | Prof. Dr. Dr. h.c. Monique Scheer | LUI / EKW, Univ. Tübingen
+           | University | **Recommended** (Erstbetreuung) | 2026-08-02 |
+      18  | Prof. Dr. Reinhard Johler | LUI / EKW + IdGL, Univ. Tübingen 
+          | University | Found — ⚠ Aktualität der Affiliation prüfen | 20
+          26-08-02 |
+      19  | Prof. Dr. Thomas Thiemeyer | LUI / EKW, Univ. Tübingen | Univ
+          ersity | Found (Erinnerung/Identität-Achse) | 2026-08-02 |
+      20 -| Prof. Dr. Boris Nieswand | Institut für Soziologie, Univ. Tüb
+         -ingen | University | Found (nur Zweitgutachten/Theorie — nicht 
+         -LUI) | 2026-08-02 |                                            
+      20 +| Prof. Dr. Boris Nieswand | Institut für Soziologie, Univ. Tüb
+         +ingen | University | **Recommended** (Zweitgutachten/Theorie — 
+         +nicht LUI) | 2026-08-02 |                                      
+      21  | Dr. Kien Nghi Ha | AOI / Koreanistik, Univ. Tübingen | Univer
+          sity | Found (Theoriekontakt, Postdoc — kein Erstgutachten) | 2
+          026-08-02 |
+      22  | Prof. Dr. Christoph Bareither | LUI / EKW (Direktor), Univ. T
+          übingen | University | Found (schwacher Fit — nur bei Digital-W
+          ende) | 2026-08-02 |
+      23  
+
+● Update(~/.claude/thesis-finder/session-ayse-ekw.md)
+  ⎿  Added 2 lines
+      38  **New candidates:** Scheer, Johler, Thiemeyer, Nieswand, Ha, Ba
+          reither.
+      39  **Dead-ends added:** Orient- & Islamwissenschaft (keine Kurdolo
+          gie/Turkologie).
+      40  **Key finding:** Es gibt in Tübingen keine spezifische Kurdolog
+          ie- oder Kurdistan-Forschung. Der Fit läuft über die allgemeine
+           Migrations-/Vielfalts-Ethnografie des LUI (Migration ist dort 
+          seit den 1950ern Forschungsschwerpunkt) plus Nieswands "reflexi
+          ve Wende" in der Migrationsforschung als Theorierahmen — der ge
+          nau zum Kern passt, Ethnizität nicht als gegeben vorauszusetzen
+          .
+      41 +**Drill-down (Scheer + Nieswand gemeinsam):** Beide haben zusam
+         +men publiziert — "Cultural Diversity!? A Roundtable" (mit Röttg
+         +er-Rössler und Stodulka), *Kulturwissenschaftliche Zeitschrift*
+         +. ⚠ Jahresangaben widersprechen sich: Scheers Publikationsliste
+         + nennt 01/2022, Nieswands Liste 22(2): 7–21 (2023) — vor Zitati
+         +on prüfen. Es besteht also ein realer LUI–Soziologie-Kanal für 
+         +eine Doppelbetreuung.                                          
+      42 +Relevanteste Papers für den Zuschnitt: Scheer, "Kultur ist 'das
+         + Gemeinsame': Kritische Vergemeinschaftungsforschung und das Ve
+         +rstehen von Zusammenhalt in der Vielfalt" (2022, ekw-Verlag); S
+         +cheer/Berger/Klassen (Hg.), *Making Promises* (2025, Univ. of T
+         +oronto Press); Nieswand, "Integrationismus als moralische Recht
+         +fertigungsordnung", in: *Lokale Wissensregime der Migration* (S
+         +pringer, 2024); Nieswand/Dieterich/Martinez, "Re-name the Stree
+         +ts. Toponymic Struggles and Civic Belonging in Murcia and Johan
+         +nesburg", *Ethnography* (2024); Nieswand/Dieterich, "The crisis
+         + of representation in migration studies and the reflexive turn"
+         + (Springer, 2025).                                             
+      43  **Notes:** Stärkstes Asset der Studentin: Türkisch + passives K
+          urmancî + Familienfeldzugang bei gleichzeitig *nicht* zentraler
+           kurdischer Identität in der Familie — das ist selbst der Forsc
+          hungsgegenstand, nicht ein Mangel.
+● Gute Nachricht vorweg — die beiden haben tatsächlich schon zusammen 
+  publiziert:
+
+  ▎ „Cultural Diversity!? A Roundtable" — Birgitt Röttger-Rössler, Boris 
+  ▎ Nieswand, Monique Scheer, Thomas Stodulka, Kulturwissenschaftliche 
+  ▎ Zeitschrift.
+  ▎ ⚠ Die Jahresangaben widersprechen sich: Scheers eigene Publikationsliste 
+  ▎ datiert es auf 01/2022, Nieswands Liste auf 22(2): 7–21 (2023). Vor dem 
+  ▎ Zitieren prüfen.
+
+  Es gibt also einen realen, dokumentierten Kanal zwischen LUI und Soziologie zu
+  genau deinem Thema — Vielfalt. Das ist die beste Grundlage für eine
+  Doppelbetreuung, die man sich wünschen kann. Aber: eine gemeinsame Publikation
+  ist kein Nachweis, dass sie bereit sind, gemeinsam eine BA-Arbeit zu
+  betreuen. Das musst du fragen.
+
+  ---
+  Monique Scheer — die relevantesten Arbeiten
+
+  1. „Kultur ist ‚das Gemeinsame': Kritische Vergemeinschaftungsforschung und 
+  das Verstehen von Zusammenhalt in der Vielfalt" (2022)
+  In: Kultur ist: Beiträge der Empirischen Kulturwissenschaft in Tübingen,
+  Tübingen: ekw-Verlag, S. 47–66.
+  - Warum relevant: Das ist ihr methodisch-programmatischer Text — kritische 
+  Vergemeinschaftungsforschung: Gemeinschaft wird nicht als vorhanden
+  angenommen, sondern als etwas untersucht, das gemacht wird. Genau die
+  Werkzeugkiste für deinen Fall.
+  - Thesis-Angle: „Was passiert mit dem Konzept Vergemeinschaftung, wenn in
+  einer Familie gerade nicht vergemeinschaftet wird?" — dein Negativfall als
+  Test ihres eigenen Ansatzes.
+
+  2. Making Promises: Oaths, Treaties, and Covenants in Multi-jurisdictional and
+  Multi-religious Societies (2025)
+  Hg. mit Benjamin L. Berger und Pamela E. Klassen. University of Toronto Press.
+  - Warum relevant: Ihr aktuellstes Werk; Zugehörigkeit in mehrfach zugehörigen
+  Gesellschaften über Verpflichtungen und Rituale.
+  - Thesis-Angle: Zugehörigkeit als etwas, das versprochen oder eben nicht
+  versprochen wird — was bedeutet es, wenn eine Familie keine
+  Herkunftsverpflichtung weitergibt?
+
+  3. „Culture and Religion: Remarks on an Indeterminate Relationship" (2022) —
+  Religion and Society 13, S. 111–125.
+  - Warum relevant: Nur, falls Religion (Alevitentum, sunnischer Islam,
+  Säkularität) in deinen Interviews auftaucht — bei kurdischen Familien in
+  Deutschland ist das oft eine zentrale, mit Ethnizität verschränkte Achse. Halt
+  den Text in der Hinterhand.
+
+  ---
+  Boris Nieswand — die relevantesten Arbeiten
+
+  1. „Integrationismus als moralische Rechtfertigungsordnung" (2024)
+  In: Lokale Wissensregime der Migration, Springer.
+  - Warum relevant: Das ist möglicherweise dein wichtigster Text. Er behandelt
+  Integration nicht als Zustand, sondern als moralische Rechtfertigungsordnung —
+  als etwas, wonach Menschen sich richten und rechtfertigen müssen. Wenn
+  kurdische Identität in einer Familie dethematisiert wurde, ist das plausibel
+  keine Abwesenheit, sondern eine Antwort auf so eine Ordnung.
+  - Thesis-Angle: „Ist das Zurückstellen der kurdischen Zugehörigkeit eine
+  Reaktion auf integrationistische Rechtfertigungszwänge — und wie beschreiben
+  die Interviewten das selbst?"
+
+  2. Nieswand/Dieterich/Martinez, „Re-name the Streets. Toponymic Struggles and 
+  Civic Belonging in Murcia and Johannesburg" (2024) — Ethnography.
+  - Warum relevant: Zugehörigkeit als Aushandlungskampf über Sichtbarkeit und
+  Benennung, ethnografisch untersucht. Methodisch ein Modell dafür, wie man
+  Zugehörigkeit an konkreten Praktiken festmacht statt sie abzufragen.
+  - Thesis-Angle: Das Benennungs-Motiv nach innen wenden — Namen, Sprache, was
+  zuhause wie genannt (oder nicht genannt) wird.
+
+  3. Nieswand/Dieterich, „The crisis of representation in migration studies and 
+  the reflexive turn" (2025)
+  In: Reflexivities and Knowledge Production in Migration Studies, Springer.
+  - Warum relevant: Der Theorierahmen aus der Optionskarte, ausformuliert.
+  Behandelt ausdrücklich das Problem, dass Migrationsforschung ihre Kategorien
+  mitproduziert. Dazu passend: sein Lexikonartikel „Diversität" in Umkämpfte 
+  Begriffe der Migration (Transcript, 2023) — ein kurzer Einstieg, gut für die
+  BA-Länge.
+  - Thesis-Angle: Deine eigene Position als kurdische Forscherin, die kurdische
+  Familien zu Kurdischsein befragt — Reflexivität nicht als Pflichtabsatz,
+  sondern als analytischer Motor.
+
+  ---
+  Was du bei dieser Kombination konkret machen und lernen würdest
+
+  Die Arbeit selbst: 10–15 leitfadengestützte Interviews mit kurdischstämmigen
+  Menschen in der Region Tübingen/Reutlingen/Stuttgart — plausibel über zwei
+  Generationen hinweg, um die Weitergabe (und ihr Ausbleiben) sichtbar zu
+  machen. Auswertung qualitativ, keine Zahlen. Deine Sprachkombination
+  (Türkisch, passives Kurmancî) heißt: Du kannst Gespräche führen, die andere
+  Forschende nicht führen können — gerade mit der ersten Generation, die oft
+  eher Türkisch oder Kurmancî als Deutsch spricht.
+
+  Der theoretische Bogen — die Arbeitsteilung zwischen beiden ist ziemlich 
+  sauber:
+  - Scheer liefert dir das kulturwissenschaftliche Werkzeug: Zugehörigkeit als
+  Praxis, Vergemeinschaftung als etwas Hergestelltes, Emotion als
+  Analysekategorie. Das ist dein Kulturtheorie-Interesse, ausgezahlt.
+  - Nieswand liefert dir den Schutz vor dem Hauptfehler: dass du „kurdisch sein"
+  als feststehende Eigenschaft voraussetzt und dann nur noch misst, wie viel
+  davon jemand hat. Seine reflexive Wende und die Integrationismus-Arbeit machen
+  aus deinem scheinbaren Nachteil — „bei uns war das nicht zentral" — den
+  eigentlichen Befund.
+
+  Was du dabei lernst: Interviews mit einem Feld führen, zu dem du selbst
+  gehörst, und diese Doppelrolle methodisch kontrolliert nutzen statt zu
+  verstecken. Das ist eine Kompetenz, die dich über die BA hinaus trägt.
+
+  Ehrliche Risiken, die bleiben:
+  1. Scheers Kapazität als Prorektorin — die erste Frage in jeder Mail an sie.
+  2. Ob eine LUI-Soziologie-Doppelbetreuung prüfungsrechtlich geht — kläre das
+  mit pa-ekw@wiso.uni-tuebingen.de, bevor du beide anschreibst. Sonst
+  versprichst du Nieswand eine Rolle, die er formal nicht haben kann.
+  3. 3 vs. 4 Monate Bearbeitungszeit — bei 10–15 Interviews plus Transkription
+  entscheidet das über den Zuschnitt.
+
+  ---
+  Ich kann dir mit draft-thesis-contact jetzt eine erste Kontakt-Mail entwerfen
+  — sinnvollerweise zuerst an Scheer (Erstbetreuung + Kapazitätsfrage), und
+  danach eine an Nieswand, die sich auf ihre gemeinsame Roundtable-Publikation
+  bezieht. Soll ich?
+
+✻ Cooked for 1m 46s
+
+❯ Brauche ich eine Doppelbetreuung ? So hatte ich das nicht verstanden ?        
+
+● Nein — brauchst du nicht. Da war ich unklar, das räume ich gerade aus.
+
+  Was du wirklich brauchst: eine betreuende Person aus dem Lehrkörper des LUI.
+  Das steht so auf der Bachelorarbeit-Seite: „vor Beginn der Arbeit eine*n
+  Betreuer*in aus dem Lehrkörper des Instituts finden". Eine Person. Fertig.
+
+  Was Nieswand in Wirklichkeit ist: Literatur, keine Person. Seine Texte gehören
+  in dein Literaturverzeichnis, weil sie dir den theoretischen Rahmen geben —
+  vor allem „Integrationismus als moralische Rechtfertigungsordnung" (2024) und
+  der Kurzartikel „Diversität" (2023). Dafür musst du ihn nicht kennen, nicht
+  anschreiben und nicht einbinden. Du liest ihn.
+
+  Ich hatte ihn in der Optionskarte als mögliches Zweitgutachten aufgeführt,
+  weil er als einziger in Tübingen genau deine theoretische Frage bearbeitet.
+  Aber das war eine Option, keine Anforderung — und ich habe sie danach so
+  weitergeschrieben, als wäre sie Teil des Plans. Ist sie nicht.
+
+  Zur Klarheit auch, was ich nicht geprüft habe: Ob die Prüfungsordnung eine
+  Zweitprüferin vorsieht, steht auf der Institutsseite nicht, und ich habe die
+  Prüfungsordnung selbst nicht gelesen. Falls es eine gibt, wird sie in aller
+  Regel vom Prüfungsamt bestellt — nichts, was du organisieren musst.
+
+  Damit fällt Risiko Nummer 2 weg. Übrig bleiben zwei Dinge, die du klären
+  solltest:
+
+  1. Hat Scheer Kapazität? Sie ist seit 2020 Prorektorin mit reduzierter Lehre.
+  Das ist die erste Frage in deiner Mail — und falls nein, ist der Plan B jemand
+  anderes am LUI, nicht ein zweiter Betreuer.
+  2. 3 oder 4 Monate Bearbeitungszeit? Über pa-ekw@wiso.uni-tuebingen.de oder
+  die Prüfungsordnung.
+
+  Der Plan ist also einfacher, als er zuletzt klang: eine Mail an Scheer. Soll
+  ich die mit draft-thesis-contact entwerfen?
+
+✻ Cooked for 22s
+
+❯ Ja gerne. Und bitte 4 Monate                                                  
+
+● Update(~/.claude/thesis-finder/session-ayse-ekw.md)
+  ⎿  Added 2 lines, removed 1 line
+       9  Domain: Empirische Kulturwissenschaft, Ludwig-Uhland-Institut, 
+          Univ. Tübingen. Bachelor.
+      10  Thesis style: Kulturtheoretisch gerahmt, feldgetrieben ("viel e
+          rfahren"). Kulturtheorie war das liebste Seminar.
+      11  Skills: Interviewführung, Transkription/Auswertung (Istanbul-Pr
+          ojekt); Sprachen DE/EN/TR, Kurmancî passiv (Verstehen) — starke
+          r Feldzugangsvorteil bei 1./2. Generation.
+      12 -No-gos: Keine Statistik/Quantifizierung. Kein Reisebudget → nur
+         - Bus/Bahn, Region Tübingen/Reutlingen/Stuttgart. 3 Monate angen
+         -ommen (Institut nennt ggf. 4 — zu prüfen). Feldzugang nur über 
+         -Familie; kurdische Identität dort nicht zentral.               
+      12 +No-gos: Keine Statistik/Quantifizierung. Kein Reisebudget → nur
+         + Bus/Bahn, Region Tübingen/Reutlingen/Stuttgart. **Planungsbasi
+         +s: 4 Monate** (auf Wunsch der Studentin, 2026-08-02; muss noch 
+         +über die Prüfungsordnung bestätigt werden). Feldzugang nur über
+         + Familie; kurdische Identität dort nicht zentral.              
+      13 +Klarstellung 2026-08-02: **Keine Doppelbetreuung nötig.** BA EK
+         +W braucht *eine* betreuende Person aus dem LUI-Lehrkörper. Nies
+         +wand ist reine Literatur, kein Kontakt.                        
+      14  
+      15  ## Active Candidates
+      16  | Name | Institution / Company | Track | Status | Last Updated 
+          |
+
+● Skill(draft-thesis-contact)
+  ⎿  Successfully loaded skill
+
+● ▎ ⚠️ Dieser Entwurf ist KI-generiert. Bitte nicht so abschicken.
+  ▎ Schreib mindestens Anfang und Schluss in deinen eigenen Worten um — 
+  ▎ Professor*innen erkennen generische Mails sofort, und der Ton soll nach dir 
+  ▎ klingen. Streich alles, was du nicht verteidigen könntest, wenn sie im 
+  ▎ Gespräch nachfragt (z. B. wenn du den 2022er Text noch nicht gelesen hast, 
+  ▎ nimm ihn raus oder lies ihn vorher). Prüfe jede Faktenangabe selbst — Titel,
+  ▎ Schreibweise, Anrede, deine eigenen Angaben.
+
+  ---
+  Betreff: Anfrage Betreuung Bachelorarbeit — kurdische Zugehörigkeit über
+  Generationen (qualitative Interviewstudie)
+
+  ---
+  Sehr geehrte Frau Prof. Scheer,
+
+  ich studiere Empirische Kulturwissenschaft im Bachelor und möchte meine
+  Abschlussarbeit gern bei Ihnen schreiben — vorausgesetzt, Sie haben derzeit
+  überhaupt Betreuungskapazität. Da Sie als Prorektorin nur eingeschränkt
+  lehren, frage ich das bewusst zuerst.
+
+  Mich interessiert kurdische Zugehörigkeit in Deutschland — allerdings nicht
+  dort, wo sie sichtbar organisiert ist, sondern dort, wo sie im Alltag gerade
+  nicht in den Vordergrund gestellt wird. In meiner eigenen Familie war
+  „kurdisch sein" nie zentral, und mir ist unklar, ob das als Abwesenheit oder
+  als eigene Praxis zu verstehen ist. Genau diese Frage möchte ich empirisch
+  prüfen, statt sie mit meiner eigenen Erfahrung zu beantworten.
+
+  Ihr Ansatz einer kritischen Vergemeinschaftungsforschung — Gemeinschaft nicht
+  vorauszusetzen, sondern als Hergestelltes zu untersuchen — scheint mir dafür
+  der passende Zugang.
+
+  Geplant sind 10–15 leitfadengestützte Interviews im Raum
+  Tübingen/Reutlingen/Stuttgart, qualitativ ausgewertet. Türkisch spreche ich
+  fließend, Kurmancî verstehe ich; erste Interviewerfahrung habe ich in einem
+  Erasmus-Projekt in Istanbul gesammelt. Dass ich selbst Kurdin bin, verstehe
+  ich als methodische Frage, die in die Arbeit gehört.
+
+  Hätten Sie Zeit für ein kurzes Gespräch?
+
+  Mit freundlichen Grüßen
+  Ayse [Nachname]
+  [Matrikelnummer] · [deine @student.uni-tuebingen.de-Adresse]
+
+  ---
+  Warum diese Mail spezifisch ist: Sie nennt einen konkreten, ungewöhnlichen
+  Fallzuschnitt (Zugehörigkeit im Modus der Nicht-Betonung), knüpft an einen
+  benannten Ansatz von Scheer an statt an ihr Fachgebiet allgemein — und stellt
+  die Kapazitätsfrage offen an den Anfang, statt sie zu umgehen.
+
+  Vorher überfliegen (wichtig):
+
+  1. „Kultur ist ‚das Gemeinsame': Kritische Vergemeinschaftungsforschung und 
+  das Verstehen von Zusammenhalt in der Vielfalt" (2022), in: Kultur ist: 
+  Beiträge der Empirischen Kulturwissenschaft in Tübingen, ekw-Verlag, S. 47–66.
+  — Den unbedingt, weil du ihn in der Mail namentlich ansprichst.
+  2. Making Promises: Oaths, Treaties, and Covenants in Multi-jurisdictional and
+  Multi-religious Societies (2025), hg. mit Berger und Klassen, University of
+  Toronto Press. — Aktuellster Stand ihrer Arbeit; Einleitung genügt.
+
+  Checkliste vor dem Absenden:
+
+  - [ ] Anrede und Titel auf ihrer Institutsseite gegenprüfen
+  - [ ] 4 Monate Bearbeitungszeit über pa-ekw@wiso.uni-tuebingen.de oder die
+  Prüfungsordnung bestätigen — du planst darauf
+  - [ ] Von deiner Uni-Adresse senden, nicht privat
+  - [ ] Den 2022er Text tatsächlich gelesen haben — sonst raus damit
+  - [ ] Sprechstunden-/Kontaktweg prüfen: manche Professor*innen wollen solche
+  Anfragen über das Sekretariat
+
+  ---
+  Sag Bescheid, wenn du eine kürzere Variante willst (ca. 120 Wörter, nur Frage
+  + Kapazität) — oder eine, die stärker auf den Erinnerungs-/Weitergabe-Aspekt
+  zugeschnitten ist, falls du dich doch Richtung Thiemeyer orientieren willst.
+
+✻ Worked for 1m 4s

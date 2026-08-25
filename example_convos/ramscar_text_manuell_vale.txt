@@ -1,0 +1,807 @@
+ ▐▛███▜▌   Claude Code v2.1.220
+▝▜█████▛▘  Opus 5 · Claude Pro
+  ▘▘ ▝▝    ~/Documents/Programming/study-os-thesis/dist
+
+
+❯ Hey, there are some skills here in this repo. I would like to test them       
+  please install them                                                           
+
+● I'll look at what skills exist in the repo and how they're set up.
+
+  Listed 2 directories, ran 1 shell command (ctrl+o to expand)
+
+● Interesting — the repo has 11 skills in .claude/skills/, but only 2
+  (create-thesis-sim-student, run-thesis-simulations) actually loaded into this
+  session. Let me find out why.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Nine of them have only a references/ folder and no SKILL.md — that's why they
+  don't load. Let me check the top-level skills/ directory.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● The source-of-truth skills live in skills/; .claude/skills/ looks like a
+  partially-populated install output. Let me check for an installer script.
+
+  Ran 6 shell commands (ctrl+o to expand)
+
+● .claude/skills/ is stale — it's from an older repo layout. Let me confirm how
+  it diverges from the current source in skills/.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● All eight non-sim dirs in .claude/skills/ are completely empty skeletons
+  (empty references/, no SKILL.md), including two for skills that no longer
+  exist. Let me confirm before removing anything.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Zero files in all eight — nothing to lose. Now I'll remove the skeletons and
+  install the 8 real skills as symlinks (avoids duplicating the source of truth,
+  since skills/ is the product).
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Two had nested subdirectories. Let me check them before removing.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● All empty directory trees, zero files.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Now let me verify the links resolve, the frontmatter is valid for discovery,
+  and git stays clean.
+
+  Ran 2 shell commands (ctrl+o to expand)
+  ⎿  8 skills available
+
+● The skills loaded immediately — no restart needed, and all 8 now appear in my
+  skill list alongside the 2 sim skills. Let me run the repo's own validation to
+  confirm they're structurally sound.
+
+  Ran 4 shell commands (ctrl+o to expand)
+● Installed and verified. All 10 skills are live in this session right now.
+
+  What was wrong
+
+  .claude/skills/ was stale from an older repo layout. It contained 8
+  directories that were completely empty — empty references/ trees, no SKILL.md
+  anywhere — so Claude Code silently skipped all of them. Only the 2 simulation
+  skills (the ones actually committed to git) were loading.
+
+  Two of the empty dirs (match-thesis-advisors, update-openalex-paper-index)
+  were for skills that no longer exist in the codebase, and two current skills
+  (thesis-finder, find-company-thesis-options) had no entry at all. I confirmed
+  zero files in every one before deleting.
+
+  What I did
+
+  Removed the 8 empty skeletons and symlinked the real skills from skills/ (the
+  source of truth) into .claude/skills/:
+
+  .claude/skills/thesis-finder -> ../../skills/thesis-finder   (×8)
+
+  Symlinks rather than copies, deliberately: skills/ is the product here, so
+  copying would create a second copy that drifts from the thing you're shipping.
+  Editing skills/find-university-chairs/SKILL.md now takes effect directly.
+
+  Verification
+
+  - All 10 SKILL.md files resolve and parse through the links
+  - The 8 skills appeared in my active skill list mid-session — no restart
+  needed
+  - pytest -q → 29 passed, 8 skipped
+  - build_skill_release.py → builds clean (I deleted the artifacts it produced,
+  leaving dist/ as found)
+
+  Skills available now: thesis-finder (entry point), build-student-profile,
+  find-university-chairs, find-company-thesis-options,
+  generate-thesis-directions, draft-thesis-contact, find-recent-papers,
+  design-agent-skill.
+
+  Two things worth your call
+
+  The symlinks show as untracked in git status. I left them uncommitted since
+  you asked for a test install. Committing them would be reasonable and matches
+  the README's "open this repo in any coding agent and type thesis-finder"
+  promise — anyone cloning gets a working install for free. The tradeoff is
+  Windows clones without symlink support get plain text files instead.
+  Alternatively I can gitignore them as a local artifact. Your preference?
+
+  .codex/skills/ has the same gap — only the 2 sim skills, none of the 8. Same
+  fix applies if you want to test under Codex too.
+
+  Want me to kick off a real run of thesis-finder to test behavior, or run the
+  simulation suite (run-thesis-simulations) against the Jan/Maja/Simon/Tina
+  personas?
+
+✻ Crunched for 4m 22s
+
+❯ Res, now I want to find my bachelors thesis                                   
+
+● Skill(thesis-finder)
+  ⎿  Successfully loaded skill
+
+  Listed 1 directory (ctrl+o to expand)
+
+● No prior session — new search. Let me load the interview guide.
+
+  Read 1 file (ctrl+o to expand)
+
+● Starting a fresh search.
+
+  ---
+  This skill helps you find where to write your thesis — at a university chair,
+  a company, or both. I'll first ask a few questions to build a profile of your
+  interests, skills, and preferences; how much detail you give is entirely up to
+  you — more detail helps the search be more precise, but there's no minimum
+  required. Once the profile is done, I'll ask whether you want to search
+  university chairs, companies, or both.
+
+  Two notes before we start:
+
+  - Coverage is Tübingen + Baden-Württemberg. The university track searches
+  University of Tübingen chairs across all faculties; the company track covers
+  ~107 BW companies. If you're studying somewhere else, say so now and I'll tell
+  you what still transfers.
+  - Bachelor's works fine here, but it changes emphasis — shorter timeline,
+  usually a more scoped question, and at companies a Bachelorarbeit is often a
+  different program than the Masterarbeit track. I'll factor that into the
+  search rather than treating it as a master's.
+
+  Nothing you tell me is stored anywhere outside this conversation and a local
+  session file on your own machine.
+
+  ---
+  Question 1 of roughly 6:
+
+  What are you studying, and what pulled you toward the topics you're now
+  considering for your thesis?
+
+  Concretely: is there a course, lecture, project, paper, or even something
+  outside university that made you think "I'd happily spend a few months on 
+  this"? Tell me what it was and what specifically grabbed you — the subject
+  matter itself, the way of working on it, or the kind of problem it posed.
+
+✻ Crunched for 43s
+
+❯ I am studying Cognitive Science and I really like linguistics especially      
+  Michael Ramscars lecture about information theory                             
+
+● Good, that's a strong starting signal — and conveniently Ramscar is at
+  Tübingen, so that's a live lead rather than a hypothetical.
+
+  Information theory applied to language pulls in several quite different
+  directions, though, and which one grabbed you changes the search a lot.
+  Ramscar's own work spans formal learning theory (Rescorla-Wagner,
+  discriminative learning), corpus-scale analyses of morphology and the lexicon,
+  and claims about cognition and aging — a thesis in each of those looks very
+  different day to day.
+
+  Question 2 of roughly 6:
+
+  What specifically hooked you in that lecture — and have you done anything
+  hands-on with it yet?
+
+  To make the first part concrete, which of these is closest:
+
+  - The formalism itself — entropy, surprisal, information content as clean
+  mathematical tools, and you enjoyed the derivations
+  - The empirical payoff — that you can measure something real about language
+  from actual data (corpora, reaction times, word frequencies) and test a claim
+  - The cognitive claim — what it says about how minds actually learn and
+  process language, i.e. the theory of the learner
+  - The critical/foundational angle — the way it reframes or undercuts standard
+  assumptions in linguistics
+
+  And on the second part: any seminar paper, assignment, or side project where
+  you actually computed or modeled something, however small? That tells me more
+  about what you can hit the ground running with than a grade would.
+
+✻ Crunched for 17s
+
+❯ I actually just wrote a paper about " der, die und das Spezi" and how gender  
+  might relate to information theory                                            
+
+● That's a genuinely good lead — and it puts you closer to a thesis than you may
+  realize. German grammatical gender as an information-theoretic system is
+  squarely inside Ramscar's own research program (there's published work from
+  that group arguing gender marking smooths uncertainty over upcoming nouns —
+  I'll pull the exact references during the search rather than misquote them
+  from memory).
+
+  "Der/die/das Spezi" is also a nicely chosen case, because it's a real instance
+  of gender assignment being genuinely unsettled for a novel/regional noun —
+  which is exactly where a predictive account makes testable claims.
+
+  Worth flagging now: a bachelor's thesis that extends a paper you've already 
+  written is usually a much stronger position than starting cold. You'd already
+  have the background, and a supervisor can see you've done the reading.
+
+  Question 3 of roughly 6:
+
+  In that paper, what did you actually do — and how much of it was hands-on
+  versus argued from literature?
+
+  Specifically:
+
+  - Was it a literature/theory paper (reading the accounts, building an
+  argument), or did you touch data — corpus counts, frequency data, a survey of
+  speakers, any statistics?
+  - If you touched data: what did you use to do it — R, Python, spreadsheets,
+  something else? Did you compute anything like entropy/surprisal yourself, or
+  use existing numbers?
+  - Roughly how long was it, and was it for a seminar with Ramscar himself or
+  someone else?
+
+  That last detail matters practically: if you already have a supervisor who has
+  seen your work and liked it, that's the single highest-value lead in the
+  whole search, and it changes what I go looking for.
+
+✻ Cogitated for 22s
+
+❯ Ramscar was my supersivor and he gave it a good grade although I believe he   
+  is very liberal with that. The seminar was a 3 ECTS course, it was just a     
+  literature theory paper. I am not a great programmer but extending to         
+  something more pratical would be okay for me. I have a 2 in statistics and a  
+  3 in our R course. For my team project I have touched psychoPy but it was not 
+  too complicated there                                                         
+
+● That's a useful and honest picture. Reading it back: stats is your relative 
+  strength (a 2), R is workable but not where you're fastest (a 3), and — the
+  detail you undersold — you've built experiments in PsychoPy. That last one
+  matters more than you'd think. A lot of cognitive science bachelor's theses
+  are "run a behavioral experiment and analyze it," and you've already done the
+  hard part of that toolchain once.
+
+  Also, don't discount the Ramscar connection because he grades generously. The
+  value isn't the grade — it's that he already knows your name, has read your
+  writing on his own topic, and you wouldn't be a cold email. That's the single
+  strongest asset in this profile.
+
+  On going more practical: realistic for you, given a 3 ECTS theory paper is a
+  very different beast from a thesis. Three shapes this could take, roughly
+  ordered by technical demand:
+
+  Shape: Rating / elicitation study
+  What you'd do: Get speakers to assign gender to novel, loan, or regional nouns
+
+  (the Spezi case, scaled up); test information-theoretic predictions
+  Programming load: Low — survey tooling + R analysis
+  Plays to: Your stats (2), directly extends your paper
+  ────────────────────────────────────────
+  Shape: Behavioral experiment
+  What you'd do: PsychoPy study — e.g. does a gender-marked article speed up
+  recognition of the upcoming noun?
+  Programming load: Medium — you've done PsychoPy once
+  Plays to: PsychoPy + stats
+  ────────────────────────────────────────
+  Shape: Corpus analysis
+  What you'd do: Compute entropy/surprisal over German corpora, test
+  distributional predictions
+  Programming load: Higher — R/Python heavy
+  Plays to: Weakest fit right now
+
+  Question 4 of roughly 6:
+
+  Which of those three feels like something you'd want to spend a few months on
+  — and what would make you feel the thesis was actually worth doing at the end?
+
+  By that second part I mean: is it having produced a real empirical finding,
+  having learned a concrete skill you didn't have before (experiment design,
+  stats, programming), having something that could plausibly turn into a
+  publication or a master's, or simply getting a good grade without the thing
+  consuming your life? All of those are legitimate answers, and they point at
+  genuinely different theses — please be honest rather than aspirational.
+
+✻ Churned for 28s
+
+❯ The rating thing seems cool but since it is a study with people maybe we need 
+  a fallback object. I think something with people always is nice, even if the  
+  n is 20 or so                                                                 
+
+● That's exactly the right instinct, and it suggests a thesis structure rather
+  than just a topic:
+
+  Two-part design with a built-in safety net. Part 1 derives the
+  information-theoretic predictions from existing corpus data — which gender the
+  distributional account says a novel noun like Spezi should attract, and how
+  confident that prediction is. Part 2 tests those predictions against real
+  speakers in a rating study. Part 1 requires no participants at all, so if
+  recruitment goes badly, ethics drags, or you get n=8 instead of n=30, you 
+  still have a complete, defensible thesis — the empirical study becomes a
+  smaller confirmatory chapter instead of the whole load-bearing wall. If
+  recruitment goes well, you have a genuinely nice result.
+
+  Supervisors tend to like this structure precisely because it de-risks the
+  thing they'd otherwise worry about. And n≈20–40 is entirely normal for a
+  bachelor's rating study — you're not underpowered for a within-items design
+  where each participant rates many nouns, since your statistical power comes
+  largely from the item count, not just the participant count.
+
+  Question 5 of roughly 6 — constraints and no-gos:
+
+  What are the hard boundaries on this? Specifically:
+
+  - Timeline — when do you need to start and submit? (This drives everything:
+  ethics approval at Tübingen takes weeks, and it decides whether an in-person
+  study is even feasible.)
+  - Language — thesis in German or English?
+  - Scope — roughly how much of your life is this allowed to eat? A bachelor's
+  thesis you finish on time beats an ambitious one you don't.
+  - Actual no-gos — anything you'd refuse outright? Common ones: no heavy
+  programming, won't do neuro/EEG, don't want a supervisor who's absent for
+  months, don't want a purely theoretical topic, won't relocate.
+
+  And one I should ask directly: do you want to stay with Ramscar / the 
+  linguistics side, or should I also look at other Tübingen chairs that do
+  information-theoretic or psycholinguistic work? I can search either way — but
+  if you already know you want him, the search becomes much narrower and I'd
+  spend the effort on alternatives in case he's unavailable rather than on a
+  broad map.
+
+✻ Sautéed for 23s
+
+❯ I don't want to turn it into a publication                                    
+
+● Noted — and that's a useful constraint, not a lack of ambition. It means we
+  optimize for finish it cleanly and learn something, not for novelty. It also
+  justifies keeping the design modest: the safe corpus-based Part 1 plus a small
+  rating study is exactly right if nobody needs to publish it.
+
+  Your answers are getting shorter, so I'll stop with the big blocks. Two short
+  questions, then I search.
+
+  Question 5 — timeline:
+
+  Roughly when do you want to submit? Even a vague answer works ("this winter",
+  "in about six months", "no idea yet"). This is the one constraint that
+  genuinely changes the recommendation, because an in-person study needs ethics
+  clearance and recruitment time — if you're tight, we'd shift to an online
+  rating study or lean harder on the corpus part.
+
+  Question 6 — how wide should I search?
+
+  - (a) Ramscar only — you're fairly sure, and I just confirm he's taking
+  students and find you a fallback or two
+  - (b) Ramscar plus alternatives — I map other Tübingen chairs doing
+  psycholinguistics / information-theoretic language work, in case he's
+  unavailable or you want to compare
+  - (c) Wider still — anything at Tübingen that fits the profile, linguistics or
+  not
+
+  My recommendation is (b). You have a real advantage with Ramscar and it would
+  be odd not to use it, but bachelor's supervision slots fill up and people go
+  on sabbatical — walking in with one option and no plan B is the main avoidable
+  way this goes wrong.
+
+✻ Worked for 17s
+
+❯ I want to do it in 3 months like you have to. I want ramscar plus             
+  alternatives                                                                  
+
+● Three months is the standard Bachelorarbeit window — and it's the single most
+  important thing you've told me, because it makes one thing urgent that
+  students routinely discover too late. I'll come back to that after the search.
+
+  Let me load the discovery skill and search tools.
+
+  Read 1 file (ctrl+o to expand)
+
+● All six dimensions are covered. Searching now — starting with the one that
+  matters most: whether Ramscar is actually still there and available.
+● Web Search("Michael Ramscar Universität Tübingen Seminar für
+            Sprachwissenschaft 2026")
+  ⎿  Did 1 search in 6s
+
+● Web Search("Seminar für Sprachwissenschaft Tübingen Quantitative Linguistik
+            Professoren Mitarbeiter")
+  ⎿  Did 1 search in 9s
+
+● The staff list for Quantitative Linguistics came back without Ramscar on it.
+  That needs direct verification before I tell the student anything.
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/philosophische-fakultaet/fachbereic
+       he/neuphilologie/seminar-fuer-sprachwissenschaft/arbeitsbereiche/quantita
+       tive-linguistik/mitarbeitende/)
+  ⎿  Received 112.6KB (200 OK)
+
+● Fetch(http://www.sfs.uni-tuebingen.de/~mramscar/de.html)
+  ⎿  Received 0 bytes (404 Not Found)
+
+● Important find. Ramscar is listed under "Ehemalige Mitarbeiter" (former staff)
+  at Quantitative Linguistics — he's moved to the Psychology department. His
+  old SfS page 404s. Let me find where he actually is now.
+
+● Web Search("Michael Ramscar Psychologie Universität Tübingen Fachbereich
+            Psychologie")
+  ⎿  Did 1 search in 5s
+
+● Fetch(https://fit.uni-tuebingen.de/InternPerson/Details?id=5137)
+  ⎿  Received 9KB (200 OK)
+
+● Confirmed and important: PD Dr. Michael Ramscar, Fachbereich Psychologie
+  (Math.-Nat. Faculty), also at the Cognitive Science Center — he was in
+  Linguistics 2011–22 and moved. Now let me check he's currently active, and
+  build the alternatives list.
+
+● Fetch(https://michaelramscar.wordpress.com/about/)
+  ⎿  Received 83KB (200 OK)
+
+● Web Search("Ramscar German grammatical gender information theory Dye Milin
+            Futrell functional theory gender paradigms")
+  ⎿  Did 1 search in 7s
+
+● Verified the literature base — including the exact papers (Dye, Milin, Futrell
+  & Ramscar) and an Entropy 2022 paper on gender disambiguating similar nouns.
+  Ramscar is publishing through 2026, so he's active. Now the alternatives.
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/philosophische-fakultaet/fachbereic
+       he/neuphilologie/seminar-fuer-sprachwissenschaft/arbeitsbereiche/quantita
+       tive-linguistik/)
+  ⎿  Received 86.2KB (200 OK)
+
+● Web Search("Barbara Kaup Kognitive Psychologie Tübingen Sprachverarbeitung
+            Abschlussarbeiten")
+  ⎿  Did 1 search in 10s
+
+● Kaup is a full professor in the same department Ramscar is now in — that's
+  practically significant. Let me confirm her group's activity and check the one
+  rule that could derail everything.
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche
+       -fakultaet/fachbereiche/psychologie/arbeitsbereiche/kognition-und-sprache
+       /arbeitsbereich/)
+  ⎿  Received 81.1KB (200 OK)
+
+● Web Search("Tübingen Bachelorarbeit Kognitionswissenschaft Prüfungsordnung
+            Betreuer Privatdozent prüfungsberechtigt")
+  ⎿  Did 1 search in 6s
+
+● Critical question answered: Privatdozenten are prüfungsberechtigt at
+  Tübingen's Math.-Nat. faculty — so Ramscar can formally supervise your thesis.
+  Two last checks, then the map.
+
+● Fetch(https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche
+       -fakultaet/fachbereiche/informatik/studium/studierende/lehre-studienorgan
+       isation/studiengaenge/kognitionswissenschaft/faq/)
+  ⎿  Received 209.7KB (200 OK)
+
+● Web Search("Ethikkommission Universität Tübingen Psychologie Antrag
+            Bearbeitungsdauer Studie Verhaltensexperiment")
+  ⎿  Did 1 search in 7s
+● Search complete. Writing your session file, then the results.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Write(~/.claude/thesis-finder/session.md)
+  ⎿  Wrote 32 lines to ../../../../.claude/thesis-finder/session.md
+      1 # Thesis Search Session
+      3 ## Student Profile (updated: 2026-08-02)
+      4 Interests: Information theory applied to language; grammatical ge
+        language learning. Entry point was Ramscar's information-theory l
+        ecture.
+        -40 acceptable); corpus-derived predictions as a non-participant 
+        fallback. Stats-forward, light programming.
+        ngen. Bachelor's level.
+      7 Thesis style: Empirical, wants people involved. Two-part de-riske
+        . Explicitly NOT aiming at p
+     … +54 lines (ctrl+o to expand)
+
+● Session saved to ~/.claude/thesis-finder/session.md. Two findings change your
+  plan before we even get to the map.
+
+  ⚠️ Two things you need to know first
+
+  1. Ramscar has moved departments. He was in Linguistics (SfS) from 2011–22 —
+  he is now in the Fachbereich Psychologie, Math.-Nat. Faculty, plus the
+  Cognitive Science Center. The Quantitative Linguistics page lists him under
+  "Ehemalige Mitarbeiter", and his old SfS homepage
+  (sfs.uni-tuebingen.de/~mramscar) is dead — 404. If you had a bookmarked
+  address or an old email for him, check it. Current address:
+  michael.ramscar@uni-tuebingen.de.
+
+  The good news: this probably helps you. Your CogSci BSc sits in Math.-Nat.,
+  which is now his faculty too.
+
+  2. Your three months are shorter than you think. The Kommission für Ethik in
+  der psychologischen Forschung takes roughly 6 weeks to process an application.
+  That's half your thesis. Ethics approval must be applied for before the clock
+  starts — not in week one. This is the single most common way a study-based
+  Bachelorarbeit goes wrong, and it's why the corpus-fallback design matters.
+  More on the fix below the map.
+
+  ---
+  Thesis Option Map — University of Tübingen
+
+  Interest dimension: Information theory & grammatical gender
+
+  ▎ PD Dr. Michael Ramscar — Fachbereich Psychologie / Cognitive Science Center
+  ▎
+  ▎ (FIT profile · personal site)
+  ▎
+  ▎ - Relevant person: PD Dr. Michael Ramscar — michael.ramscar@uni-tuebingen.de
+  ▎ - Relevance rationale: Exact match on all of interests, methods, and domain.
+  ▎ His own stated work uses "empirical, computational and information 
+  ▎ theoretic methods" on human learning and communication. He is co-author of A
+  ▎ Functional Theory of Gender Paradigms (Dye, Milin, Futrell & Ramscar) and 
+  ▎ Alternative solutions to a language design problem: the role of adjectives 
+  ▎ and gender marking in efficient communication — i.e. your seminar paper's 
+  ▎ topic is literally his published research program. He already supervised 
+  ▎ that paper and graded it well.
+  ▎ - Pros & likely difficulties: Unbeatable warm start — he knows your writing 
+  ▎ on his own topic. Only one examiner is required for a CogSci BSc, so he 
+  ▎ alone suffices. Difficulty: he is a PD, not a full professor. Privatdozenten
+  ▎ are prüfungsberechtigt at Math.-Nat., but the CogSci FAQ is strict: the 
+  ▎ supervisor "muss zwingend im Studiengang Kognitionswissenschaft 
+  ▎ prüfungsberechtigt sein" — program-specific. Verify he's on that list before
+  ▎ committing. Also: capacity is unknown, and his recent output leans toward 
+  ▎ child language and naming rather than gender.
+  ▎ - Dated evidence: Publications listed 2024, 2025 and 2026 ("Cross cultural 
+  ▎ structures of personal name", 2026) — active. Departmental affiliation 
+  ▎ confirmed via FIT (accessed 2026-08-02).
+  ▎ - Conversation starter: Ask whether the Spezi paper could be extended 
+  ▎ empirically — using corpus-derived predictability to generate 
+  ▎ gender-assignment predictions for novel/regional nouns, then testing them on
+  ▎ speakers.
+  ▎ - No-go flags: None. Design can be kept low-programming.
+
+  Interest dimension: Quantitative & discriminative approaches to the lexicon
+
+  ▎ Prof. Dr. R. Harald Baayen — Quantitative Linguistics, Seminar für 
+  ▎ Sprachwissenschaft
+  ▎
+  ▎ (group page · staff)
+  ▎
+  ▎ - Relevant person: Prof. Dr. R. Harald Baayen (group lead)
+  ▎ - Relevance rationale: The intellectual home of the discriminative-learning 
+  ▎ tradition your interest comes out of — Ramscar's former group. Stated focus 
+  ▎ is "quantitative and probabilistic aspects of language and language 
+  ▎ processing," combining experimental psychology, corpus linguistics, 
+  ▎ morphology and statistics. Methodologically this is the closest match to 
+  ▎ your corpus-plus-experiment design.
+  ▎ - Pros & likely difficulties: Deep methodological expertise and a large 
+  ▎ group (10+ postdocs and doctoral students) who could co-supervise the 
+  ▎ technical side. Difficulties are real: this is the Philosophische Fakultät, 
+  ▎ not Math.-Nat. — a CogSci BSc thesis needs an examiner prüfungsberechtigt in
+  ▎ your program, so cross-faculty supervision may be administratively awkward.
+  ▎ The group is also strongly computational; with R at a 3 and no Python, 
+  ▎ you'd be at the shallow end. No Bachelorarbeit openings are advertised.
+  ▎ - Dated evidence: Staff page live and carrying a 2026 copyright, listing 
+  ▎ current postdocs and doctoral students (accessed 2026-08-02). ⚠ No dated 
+  ▎ news or publication item from 2024+ was visible on the group's own landing 
+  ▎ page — activity inferred from current staffing, not from dated output.
+  ▎ - Conversation starter: Ask whether a Bachelor-scale study could test 
+  ▎ gender-based predictability on novel nouns using their corpus 
+  ▎ infrastructure.
+  ▎ - No-go flags: ⚠ Possible conflict with "not a strong programmer."
+
+  Interest dimension: Experimental psycholinguistics / language comprehension
+
+  ▎ Prof. Dr. Barbara Kaup — Kognition und Sprache, Fachbereich Psychologie
+  ▎
+  ▎ (group page)
+  ▎
+  ▎ - Relevant person: Prof. Dr. Barbara Kaup
+  ▎ - Relevance rationale: Full professor of cognitive psychology working on 
+  ▎ language comprehension — what happens in the mind when people process words 
+  ▎ and sentences. Runs exactly the kind of behavioural/rating experiment 
+  ▎ infrastructure your thesis needs, in the same department Ramscar now sits 
+  ▎ in. This is your structural backup: if Ramscar can't take you, she is the 
+  ▎ nearest full professor who can.
+  ▎ - Pros & likely difficulties: Full professorship removes any 
+  ▎ prüfungsberechtigt ambiguity; ~11 scientific staff and ~11 student 
+  ▎ assistants means real supervision capacity and an existing participant 
+  ▎ pipeline. Involved in SFB 1718 "Common Ground" and SFB 1629 "Negation in 
+  ▎ Language and Beyond." Difficulty: her focus is embodied cognition and 
+  ▎ negation, not information theory or gender — you'd be pitching slightly 
+  ▎ across her interests, and Ramscar is not listed in her group.
+  ▎ - Dated evidence: Group photos dated 2025–2026 on the group's own page 
+  ▎ (accessed 2026-08-02); active SFB participation.
+  ▎ - Conversation starter: Frame the gender-prediction study as a 
+  ▎ language-comprehension question — does a gender-marked article measurably 
+  ▎ constrain what noun listeners expect?
+  ▎ - No-go flags: None — her methods fit your PsychoPy/stats profile well.
+
+  ---
+
+  ▎ Coverage caveat: This map covers publicly visible chairs as of 2026-08-02. 
+  ▎ Chairs with a weak web presence may be missing. To catch them: visit the 
+  ▎ faculty backbone URLs directly, ask the Fachschaft, and check the official 
+  ▎ Vorlesungsverzeichnis.
+
+  Two caveats on my own sourcing: the Entropy (2022) paper "Grammatical Gender
+  Disambiguates Syntactically Similar Nouns" and the Dye et al. papers came from
+  search results I did not open individually — confirm the exact citations
+  before quoting them. Same for the ~6-week ethics figure, which came from a
+  search summary rather than a page I opened; treat it as an order-of-magnitude
+  warning, not a promise.
+
+  ---
+  Recommendation
+
+  Ramscar, clearly. Not because he's the most senior option — he isn't, he's a
+  PD, and Kaup and Baayen are full professors. It's that you have a supervised,
+  well-graded paper with him on a topic that is his own published research area,
+  which converts a cold pitch into a follow-up conversation. Nothing else in
+  this profile comes close to that.
+
+  Kaup as the structural fallback — same department, full professor, right
+  methods, real experiment infrastructure.
+
+  The sequencing problem you should solve this week
+
+  Your 3-month clock and the ~6-week ethics queue don't fit unless you overlap
+  them. Practical version:
+
+  1. Email Ramscar now, before you formally register the thesis. Registration
+  starts the clock; the conversation doesn't.
+  2. Ask him in that first email whether ethics approval is even needed. A
+  low-risk anonymous gender-rating study of adults may fall under an exemption
+  or a fast-track route — he'll know, and it changes your whole timeline.
+  3. Confirm he's prüfungsberechtigt in Kognitionswissenschaft — ask the
+  Prüfungssekretariat, not him, so you're not implying doubt about his standing.
+  4. Only then register, with ethics already submitted or ruled out.
+
+  ---
+  Want to go deeper on Ramscar before reaching out — I can pull his 1–2 most
+  recent papers to ground a specific thesis angle — or keep exploring other
+  options?
+
+  When you're ready, draft-thesis-contact can draft the first-contact email for
+  whichever option you choose.
+
+✻ Worked for 4m 31s
+
+❯ Okay please draft-thesis-contact and mention all these special provisions :)  
+
+  Read 1 file (ctrl+o to expand)
+
+● The skill requires verified recent papers before drafting. Let me confirm two
+  properly rather than cite from memory.
+
+● Fetch(https://www.mdpi.com/1099-4300/24/4/520)
+  ⎿  Received 0 bytes (403 Forbidden)
+
+● Web Search("Ramscar 2025 2026 "sequence structure" children's speech OR
+            "linear order" publication")
+  ⎿  Did 1 search in 5s
+
+● Excellent — that recent paper is more useful than expected. Let me pin down
+  the gender citation.
+
+● Fetch(https://eprints.whiterose.ac.uk/109275/)
+  ⎿  Received 33.8KB (200 OK)
+
+● Both papers verified. One note before the draft: I've written this in English
+  — Ramscar is an anglophone and Tübingen CogSci runs largely in English. Say
+  the word and I'll produce a German version.
+
+  ---
+  Subject
+
+  Bachelorarbeit — extending my "der/die/das Spezi" seminar paper into an 
+  empirical study
+
+  Email draft
+
+  ▎ Dear Dr. Ramscar,
+  ▎
+  ▎ I took your lecture on information theory and last semester wrote the 
+  ▎ seminar paper you supervised on gender assignment in "der/die/das Spezi" (3 
+  ▎ ECTS). I would like to ask whether you would consider supervising my 
+  ▎ Bachelor's thesis, extending that paper from a purely theoretical one into 
+  ▎ an empirical study.
+  ▎
+  ▎ The question I would like to pursue: for nouns whose gender is genuinely 
+  ▎ unsettled among speakers — loanwords, regionalisms, novel compounds — do the
+  ▎ gender assignments speakers actually produce track the predictions of a 
+  ▎ discriminative account? That is, do speakers converge on the article that 
+  ▎ does the most work in narrowing down the upcoming noun?
+  ▎
+  ▎ I have a two-part design in mind, deliberately built so the second part is 
+  ▎ not load-bearing:
+  ▎
+  ▎ 1. Corpus-derived predictions — derive, for a set of unsettled-gender nouns,
+  ▎ which gender an information-theoretic account predicts. This requires no 
+  ▎ participants and would stand on its own if the second part were delayed.
+  ▎ 2. A rating/elicitation study (n ≈ 20–40) testing those predictions against 
+  ▎ real speakers.
+  ▎
+  ▎ On my background, honestly: statistics is my stronger side, I can work in R 
+  ▎ without being fast at it, and I have built one experiment in PsychoPy for a 
+  ▎ team project. I am not a strong programmer, which is partly why I have 
+  ▎ scoped the study this way.
+  ▎
+  ▎ Three practical questions, since the thesis period is three months:
+  ▎
+  ▎ - Would a study of this kind need approval from the Kommission für Ethik in 
+  ▎ der psychologischen Forschung, or would an anonymous adult rating study fall
+  ▎ outside that? I would like to submit any application before registering the
+  ▎ thesis rather than lose weeks to it afterwards.
+  ▎ - Are you registered as a Gutachter for Bachelor's theses in the 
+  ▎ Kognitionswissenschaft programme? I want to make sure the registration side 
+  ▎ is clean before I plan around it.
+  ▎ - Are you taking Bachelor's students at all this cycle?
+  ▎
+  ▎ Would you have 20 minutes in your office hours in the coming weeks? I am 
+  ▎ happy to send a one-page sketch beforehand.
+  ▎
+  ▎ Best regards,
+  ▎ [Your name]
+  ▎ B.Sc. Kognitionswissenschaft, Matrikelnummer [xxx]
+
+  ---
+  Shorter variant
+
+  If the above feels too heavy for a first contact, cut everything after the
+  design and close with:
+
+  ▎ Since the thesis period is only three months, I would also like to ask early
+  ▎ whether a study like this needs ethics approval — I would rather submit it 
+  ▎ before registering than lose weeks afterwards.
+  ▎
+  ▎ Would you have 20 minutes in your office hours?
+
+  That keeps the timeline signal and drops the two administrative questions,
+  which you can raise once he's said yes in principle.
+
+  ---
+  Why this email is specific
+
+  It reconnects on a paper he personally supervised, poses a testable question
+  inside his own published research programme rather than a vague interest, and
+  pre-empts the two things a supervisor would otherwise worry about —
+  recruitment risk and your technical ceiling — by naming them first.
+
+  Read these two before sending
+
+  Arriving without a sense of what he currently works on is what makes contact
+  emails read as generic:
+
+  1. Dye, M., Milin, P., Futrell, R. & Ramscar, M. (2017). A functional theory 
+  of gender paradigms. In Perspectives on Morphological Structure: Data and 
+  Analyses, Brill, Leiden. — White Rose eprint. His own gender work; the direct
+  ancestor of your thesis.
+  2. Linke, M. & Ramscar, M. (2026). Sequence structure in children's speech 
+  reveals non-linear development of relations between word categories.
+  Communications Psychology 4, Art. 12 (online 26 Dec 2025). — Nature · PMC, 
+  free
+
+  Worth noticing the through-line: the 2026 paper argues children's utterances
+  are structured by grammars that "optimize the distribution of information in 
+  sequences" — the same information-smoothing logic the gender work applies to
+  der/die/das. If you can name that connection in the meeting, you'll sound like
+  someone who has read him rather than cited him.
+
+  Verify before sending
+
+  - [ ] His current email — michael.ramscar@uni-tuebingen.de (from the
+  university FIT profile). His old SfS page is dead; don't reuse an old address.
+  - [ ] Address him correctly — "PD Dr." per the FIT record. "Dr. Ramscar" is
+  safe; "Prof. Ramscar" would be wrong.
+  - [ ] Confirm the ethics body and its actual timeline — my ~6-week figure came
+  from a search summary I didn't open. Check the commission's own page.
+  - [ ] Check your own Prüfungsordnung for the exact thesis duration and
+  registration mechanics — I confirmed CogSci requires only one examiner and
+  that the supervisor must be prüfungsberechtigt in the programme, but not the
+  month count.
+  - [ ] Correct the paper details — I've described the Spezi paper from your
+  summary; fix the semester and title if I've got them wrong.
+  - [ ] Consider cc'ing nobody and keeping it plain text — no attachment on
+  first contact.
+
+  ---
+  One judgment call worth flagging: I put the "are you registered as a
+  Gutachter" question in the email because you asked for all the provisions, and
+  it's a legitimate administrative question rather than a slight. But it can
+  read as slightly checking-up-on-him. If you'd rather not risk it, ask the
+  Prüfungssekretariat instead — they hold the list, and it costs you nothing.
+  The shorter variant above already drops it.
+
+  Want me to produce the German version, or a one-page sketch to attach once he
+  replies?
+
+✻ Worked for 1m 33s
