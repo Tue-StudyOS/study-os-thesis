@@ -168,7 +168,6 @@ def test_linkedin_company_theses_skill_requires_profile_grounded_ranking() -> No
     assert "site:stepstone.de/jobs Masterarbeit <skill> <city>" in skill_text
     assert "site:stepstone.de/jobs Abschlussarbeit <skill> <city>" in skill_text
     assert "Exclude ordinary jobs, internships, traineeships, Werkstudent roles, working-student roles" in skill_text
-    assert "Exclude ordinary jobs, internships, traineeships, Werkstudent roles, working-student roles" in skill_text
     assert "eligible ranked shortlist and an excluded or not-recommended list" in skill_text
     assert "Do not let a strong technology match override hard mismatches" in skill_text
     assert "topic mismatch" in skill_text
