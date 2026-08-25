@@ -315,13 +315,13 @@ and keep that change as narrow as possible.
 Mirror the existing schemas; do not reinvent them:
 
 - professor seed index — keep the default ML/CS faculty at
-  `references/professors/INDEX.md`; put each additional faculty at
-  `references/<faculty>/professors/INDEX.md` (e.g.
-  `references/sociology/professors/INDEX.md`). Use `name | uri` columns only (no
+  `skills/find-university-chairs/references/professors/INDEX.md`; put each additional faculty at
+  `skills/find-university-chairs/references/<faculty>/professors/INDEX.md` (e.g.
+  `skills/find-university-chairs/references/sociology/professors/INDEX.md`). Use `name | uri` columns only (no
   emails or extra metadata)
-- chairs and labs — `references/chairs/INDEX.md` plus per-chair files following
+- chairs and labs — `skills/find-university-chairs/references/chairs/INDEX.md` plus per-chair files following
   `skills/find-university-chairs/references/chair-profile-schema.md`
-- researchers — `references/researchers/INDEX.md` plus per-person files following
+- researchers — `skills/find-university-chairs/references/researchers/INDEX.md` plus per-person files following
   `skills/update-openalex-paper-index/references/openalex-index-schema.md`
 - program or degree reference, when the faculty needs one — model it on
   `skills/build-student-profile/references/tuebingen-degree-programs.md`
