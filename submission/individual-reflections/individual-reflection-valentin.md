@@ -1,0 +1,17 @@
+# Individual Reflection - Valentin
+
+## 1. Initial expectation
+
+I came to this project with very open expectations. I wanted to do more applied work since  I think a practical course offers unique learning opportunities. This is useful to me especially since I am completing my masters soon and I want to gain skills that I can also use in the workforce. Further having an interesting project that is more then just coding also seems like a nice addition to my portfolio. I just wanted to see what would be possible with vibecoding and ideally I would have liked to develop a project with actual impact.
+
+## 2. Main Learning
+
+The most important learning for me was how to communicate with both people and also agents. It can be quite hard to convey your ideas to others especially if they come with their own ideas or directions that they don't want to give up. Striking a balance here is difficult and you not only need to be able to communicate what you want to do but also how so that people and agents understand you precisely. Part of this is for agents that you also have to tell them exactly what to report, otherwise they often try to obfuscate what they are doing exactly and try to hide information. I think this hurts product quality a lot. Another benefit of thinking carefully about what you think is that you also develop your own ideas better and realize flaws or details where you yourself were unclear. Of course this is also a process of iteration.
+
+## 3. Role and contribution for the group
+
+I think our group worked pretty equally, whenever we had a dry phase someone else picked up the baton. Max was more deeply into developing and technical parts and Domenique focused more on testing, stepping back. I was less on the developing end but more interested in the marketing and user contribution part. I for example tried to offer the product to my circle and also created a survey to evaluate our final product. Also I analyzed the feedback of professors. Of course I also contributed code ( like improving the skill or adding deepseek to the app), but personally I have lost interest in the technical part of coding, since this has substantially changed with LLMs and if you are not as familiar with the app development topic (as I was at the time) then you are often in this weird place between kind of knowing and not really knowing what is going on. Therefore I found evaluating and testing the product much more interesting. Overall I think the collaboration worked well and I think this was also part of an interesting learning journey.
+
+## 4. Future learning
+
+What I would be interested further would be more about testing products with customers and how to really get accurate data about this. Also I want to learn how to solve this problem of guiding agents and also not losing control and still knowing what is going on. I think the trust in coding agents, at least for something you care about (like a product or a scientific publication) is for me low. Yes, they are very capable (and I don't have the means for the best of the best models (perhaps)) but they often make a lot of weird mistakes a human would not do and this at least for me makes this problem unsolved. For frontend this is easy to iterate, but for bugfixes and logic I think it is still good to retain some knowledge about your own code. If you think this further there are parallels to alignment of agents too, a topic I think is also very interesting.
