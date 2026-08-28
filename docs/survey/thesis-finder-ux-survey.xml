@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE surveyContent SYSTEM "https://www.soscisurvey.de/templates/doctype.survey.dtd">
+<surveyContent version="2.4">
+<program>oFb</program>
+<version>3.2.16</version>
+<timestamp>2026-08-26 12:00:00</timestamp>
+<title>Thesis-Finder feedback</title>
+<description>Short post-use survey for the thesis-option finder skill.</description>
+<language>eng</language>
+<attributes.specific program="ofb">
+<attr id="language">eng</attr>
+</attributes.specific>
+<section>
+<title>Thesis-Finder feedback</title>
+<attributes.specific program="ofb">
+<attr id="id">UX</attr>
+</attributes.specific>
+<question>
+<description>Informed consent</description>
+<class>select</class>
+<title>Before you start</title>
+<explanation />
+<inputPosition>right</inputPosition>
+<lead><![CDATA[<p>This study looks at whether an AI assistant can help a student find a Master's thesis topic and a supervisor. We built a free, open-source tool — the Thesis-Option Finder — that interviews you about your interests and then suggests chairs, research groups or companies where you could write your thesis. What we want to find out is whether using it actually changed how clearly you see your own thesis, not just whether the list of suggestions looked good.</p>
+
+<p>If you agree to take part, you will fill in a short online questionnaire about the session you just had with the tool: how it affected your thinking about your thesis, whether the suggestions fit you, how long the session took, and two free-text questions about what helped and what did not. Nothing in it asks about health, or about any sensitive matter beyond your own experience with the tool and your thesis plans. It takes you approximately four minutes to complete.</p>
+
+<p>You may not directly benefit from this research. We hope the results let us improve the tool for the students who use it after you, and add to what is known about where AI assistants do and do not help with academic decisions. The tool is free and open source, so anything we learn goes back to everyone who uses it.</p>
+
+<p>We believe there are no known risks associated with this research study; however, as with any online related activity the risk of a breach of confidentiality is always possible. Your answers are collected without your name, e-mail address or student number, the survey is configured not to store IP addresses, and we have no way of linking a response back to you. It runs on SoSci Survey, on servers in Germany, under the GDPR. Results are reported in aggregate, and free-text answers are quoted only where they contain nothing that could identify anyone. Please do not type your own name, or the name of an individual person, into the free-text fields. The raw data is kept access-restricted and deleted once the project is completed.</p>
+
+<p>Your participation in this study is completely voluntary and you can withdraw at any time by closing the browser window; answers from an unfinished questionnaire are excluded from the analysis. You are free to skip any question that you choose. Because the responses carry nothing that identifies you, we cannot find and delete your answers once you have submitted them.</p>
+
+<p>If you have questions about this project or if you have a research-related problem, you may contact Valentin Schmidt at valentin.schmidt@student.uni-tuebingen.de.</p>
+
+<p style="margin-top: 2em">By selecting &quot;I agree&quot; below you are indicating that you are at least 18 years old, have read and understood this consent form and agree to participate in this research study. You can print or save this page for your records.</p>]]></lead>
+<order>default</order>
+<attributes.specific program="ofb">
+<attr id="id">1</attr>
+<attr id="pos">1</attr>
+<attr id="restrictions.answered">yes</attr>
+</attributes.specific>
+<item>
+<text>I agree to take part in this study.</text>
+<attributes.specific program="ofb">
+<attr id="id">1</attr>
+<attr id="pos">1</attr>
+</attributes.specific>
+</item>
+<item>
+<text>I do not agree to take part.</text>
+<attributes.specific program="ofb">
+<attr id="id">2</attr>
+<attr id="pos">2</attr>
+</attributes.specific>
+</item>
+</question>
+<question>
+<description>Framing and prerequisites</description>
+<class>TextContent</class>
+<title>Before you begin</title>
+<explanation />
+<inputPosition>right</inputPosition>
+<lead><![CDATA[<p><strong>This questionnaire is about a thesis search you have already run.</strong> It asks you to compare how you thought about your thesis before that session with how you think about it now, so the questions only work once you have been through a full run of the tool — the interview, and the search it produces at the end.</p>
+
+<p>If you have not done that yet, please do it first and come back to this link afterwards. Setup takes a few minutes for any of the routes — Claude, ChatGPT, Gemini, or a terminal agent — and is described in <a href="https://github.com/Tue-StudyOS/study-os-thesis/blob/main/INSTALL.md" target="_blank">INSTALL.md</a>; the files themselves are on the <a href="https://github.com/Tue-StudyOS/study-os-thesis/releases/latest" target="_blank">releases page</a>. Once it is installed, open a chat and type <strong>thesis-finder</strong>. Web search has to be switched on, and a full run takes roughly 20 to 40 minutes.</p>
+
+<p>If your run stopped partway — you did the interview but never got a search, or you abandoned it halfway — answer anyway and tell us in the last question where it broke off. A run that did not finish is as informative to us as one that did.</p>
+
+<p>Everything from here on refers to that one session.</p>]]></lead>
+<attributes.specific program="ofb">
+<attr id="id">2</attr>
+<attr id="pos">2</attr>
+<attr id="alignment">default</attr>
+</attributes.specific>
+</question>
+<question>
+<description>Effect on thesis thinking</description>
+<class>scale</class>
+<title>Think back to how you thought about your thesis before this session. How much do you agree with the following statements?</title>
+<explanation />
+<inputPosition>right</inputPosition>
+<labels>
+<li i="1">strongly disagree</li>
+<li i="2">disagree</li>
+<li i="3">neither agree nor disagree</li>
+<li i="4">agree</li>
+<li i="5">strongly agree</li>
+</labels>
+<order>random</order>
+<attributes.specific program="ofb">
+<attr id="id">3</attr>
+<attr id="pos">3</attr>
+<attr id="scale.display">complete</attr>
+</attributes.specific>
+<item>
+<text>Since the session I have thought about my thesis more concretely than before.</text>
+<attributes.specific program="ofb">
+<attr id="id">1</attr>
+<attr id="pos">1</attr>
+</attributes.specific>
+</item>
+<item>
+<text>I have a clearer idea of what kind of thesis would fit me.</text>
+<attributes.specific program="ofb">
+<attr id="id">2</attr>
+<attr id="pos">2</attr>
+</attributes.specific>
+</item>
+<item>
+<text>The session made me reconsider something I thought I wanted.</text>
+<attributes.specific program="ofb">
+<attr id="id">3</attr>
+<attr id="pos">3</attr>
+</attributes.specific>
+</item>
+<item>
+<text>My idea of my thesis is just as vague now as it was before.</text>
+<attributes.specific program="ofb">
+<attr id="id">4</attr>
+<attr id="pos">4</attr>
+</attributes.specific>
+</item>
+<item>
+<text>I came across directions or research groups I would not have found on my own.</text>
+<attributes.specific program="ofb">
+<attr id="id">5</attr>
+<attr id="pos">5</attr>
+</attributes.specific>
+</item>
+<item>
+<text>Everything it showed me I already knew about.</text>
+<attributes.specific program="ofb">
+<attr id="id">6</attr>
+<attr id="pos">6</attr>
+</attributes.specific>
+</item>
+</question>
+<question>
+<description>Quality of the results</description>
+<class>scale</class>
+<title>Now about the chairs, groups or companies you were shown.</title>
+<explanation />
+<inputPosition>right</inputPosition>
+<labels>
+<li i="1">strongly disagree</li>
+<li i="2">disagree</li>
+<li i="3">neither agree nor disagree</li>
+<li i="4">agree</li>
+<li i="5">strongly agree</li>
+</labels>
+<order>random</order>
+<residualOptions>
+<li i="0">I cannot judge this</li>
+</residualOptions>
+<attributes.specific program="ofb">
+<attr id="id">4</attr>
+<attr id="pos">4</attr>
+<attr id="scale.display">complete</attr>
+</attributes.specific>
+<item>
+<text>The suggestions fit what I am actually interested in.</text>
+<attributes.specific program="ofb">
+<attr id="id">1</attr>
+<attr id="pos">1</attr>
+</attributes.specific>
+</item>
+<item>
+<text>The suggestions were concrete enough to act on.</text>
+<attributes.specific program="ofb">
+<attr id="id">2</attr>
+<attr id="pos">2</attr>
+</attributes.specific>
+</item>
+<item>
+<text>Most of the suggestions felt generic — they could have gone to any student.</text>
+<attributes.specific program="ofb">
+<attr id="id">3</attr>
+<attr id="pos">3</attr>
+</attributes.specific>
+</item>
+<item>
+<text>I would trust the information enough to write to one of them.</text>
+<attributes.specific program="ofb">
+<attr id="id">4</attr>
+<attr id="pos">4</attr>
+</attributes.specific>
+</item>
+<item>
+<text>Please select “disagree” here so we can tell careful answers apart from clicked-through ones.</text>
+<attributes.specific program="ofb">
+<attr id="id">5</attr>
+<attr id="pos">5</attr>
+</attributes.specific>
+</item>
+<item>
+<text>I intend to contact at least one of the people or places suggested.</text>
+<attributes.specific program="ofb">
+<attr id="id">6</attr>
+<attr id="pos">6</attr>
+</attributes.specific>
+</item>
+</question>
+<question>
+<description>Experience of the process</description>
+<class>scale</class>
+<title>And about the process itself.</title>
+<explanation />
+<inputPosition>right</inputPosition>
+<labels>
+<li i="1">strongly disagree</li>
+<li i="2">disagree</li>
+<li i="3">neither agree nor disagree</li>
+<li i="4">agree</li>
+<li i="5">strongly agree</li>
+</labels>
+<order>random</order>
+<attributes.specific program="ofb">
+<attr id="id">5</attr>
+<attr id="pos">5</attr>
+<attr id="scale.display">complete</attr>
+</attributes.specific>
+<item>
+<text>The questions I was asked were relevant to me.</text>
+<attributes.specific program="ofb">
+<attr id="id">1</attr>
+<attr id="pos">1</attr>
+</attributes.specific>
+</item>
+<item>
+<text>It felt like it understood what I actually care about, not just my keywords.</text>
+<attributes.specific program="ofb">
+<attr id="id">2</attr>
+<attr id="pos">2</attr>
+</attributes.specific>
+</item>
+<item>
+<text>Answering all the questions felt tedious.</text>
+<attributes.specific program="ofb">
+<attr id="id">3</attr>
+<attr id="pos">3</attr>
+</attributes.specific>
+</item>
+<item>
+<text>The time it took was worth what I got out of it.</text>
+<attributes.specific program="ofb">
+<attr id="id">4</attr>
+<attr id="pos">4</attr>
+</attributes.specific>
+</item>
+<item>
+<text>I would recommend it to a friend who is looking for a thesis topic.</text>
+<attributes.specific program="ofb">
+<attr id="id">5</attr>
+<attr id="pos">5</attr>
+</attributes.specific>
+</item>
+</question>
+<question>
+<description>Time spent</description>
+<class>scale</class>
+<title>Roughly how long did the whole thing take, from the first question it asked you to the final list?</title>
+<explanation />
+<inputPosition>right</inputPosition>
+<labels>
+<li i="1">less than 15 minutes</li>
+<li i="2">15 to 30 minutes</li>
+<li i="3">30 to 45 minutes</li>
+<li i="4">45 to 60 minutes</li>
+<li i="5">more than an hour</li>
+</labels>
+<order>default</order>
+<attributes.specific program="ofb">
+<attr id="id">6</attr>
+<attr id="pos">6</attr>
+<attr id="scale.display">complete</attr>
+</attributes.specific>
+<item>
+<text>Total time</text>
+<attributes.specific program="ofb">
+<attr id="id">1</attr>
+<attr id="pos">1</attr>
+</attributes.specific>
+</item>
+</question>
+<question>
+<description>Most useful thing</description>
+<class>text</class>
+<title>What was the single most useful thing about it? One sentence is enough.</title>
+<explanation />
+<inputPosition>right</inputPosition>
+<order>default</order>
+<attributes.specific program="ofb">
+<attr id="id">7</attr>
+<attr id="pos">7</attr>
+</attributes.specific>
+<item>
+<text />
+<attributes.specific program="ofb">
+<attr id="id">1</attr>
+<attr id="pos">1</attr>
+</attributes.specific>
+</item>
+</question>
+<question>
+<description>What went wrong</description>
+<class>text</class>
+<title>What annoyed you, or what did it get wrong?</title>
+<explanation />
+<inputPosition>right</inputPosition>
+<order>default</order>
+<attributes.specific program="ofb">
+<attr id="id">8</attr>
+<attr id="pos">8</attr>
+</attributes.specific>
+<item>
+<text />
+<attributes.specific program="ofb">
+<attr id="id">1</attr>
+<attr id="pos">1</attr>
+</attributes.specific>
+</item>
+</question>
+</section>
+</surveyContent>
