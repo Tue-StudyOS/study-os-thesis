@@ -249,7 +249,17 @@ single step is the difference between continuing and starting over.
 
 ---
 
-## Feedback
+## Tell us how it went
 
-This is a non-commercial student course project. If you try it, we want to hear what broke:
-open an issue at <https://github.com/Tue-StudyOS/study-os-thesis/issues>.
+This is a non-commercial student course project, and the only way we find out whether it
+actually helps anyone is if the people who run it say so. When your session is over, please
+fill in our short feedback survey — about four minutes:
+
+**<https://www.soscisurvey.de/thesis-skill/>**
+
+**Answer it even if the run went badly**, or you broke it off halfway, or the suggestions
+were useless. A failed run is a result too, and those are the answers that change the tool.
+The survey is anonymous and you can stop at any point.
+
+If something is broken in a way that needs fixing rather than measuring, open an issue at
+<https://github.com/Tue-StudyOS/study-os-thesis/issues>.
