@@ -1,6 +1,6 @@
 ---
 name: thesis-finder
-description: Single entry point for thesis discovery. Helps a student sharpen what kind of thesis fits them and then find where to write it. Builds the student profile through an inline interview if not yet present, then routes to university chair discovery (find-university-chairs), company thesis discovery (find-company-thesis-options), or both, based on student choice. Records the student's own thesis self-understanding before and after the search. Supports multi-session continuity: detects prior searches and resumes without re-interviewing. Use when a student wants to find where to write their thesis — no prior skill invocation needed.
+description: Single entry point for thesis discovery. Helps a student sharpen what kind of thesis fits them and then find where to write it. Builds the student profile through an inline interview if not yet present, then routes to university chair discovery (find-university-chairs), company thesis discovery (find-company-thesis-options), or both, based on student choice. Records the student's own thesis self-understanding before and after the search. Supports multi-session continuity — detects prior searches and resumes without re-interviewing. Use when a student wants to find where to write their thesis — no prior skill invocation needed.
 ---
 
 # Thesis Finder

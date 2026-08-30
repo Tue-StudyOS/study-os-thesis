@@ -13,7 +13,12 @@ This project follows Semantic Versioning for the released skill package:
 
 ### Added
 
-- ...
+- One-command install for skills-directory clients: `npx skills add
+  Tue-StudyOS/study-os-thesis --skill '*'` (third-party Vercel `skills` CLI), documented as
+  Route C Step 0 in INSTALL.md. The release archives and the manual copy route are unchanged.
+  Pinning a release requires the tag as a URL path (`/tree/skills-vX.Y.Z`); the `repo@tag`
+  shorthand is accepted but ignored.
+- Test: every shipped `SKILL.md` frontmatter must parse under a strict YAML reader.
 
 ### Changed
 
@@ -21,15 +26,15 @@ This project follows Semantic Versioning for the released skill package:
 
 ### Fixed
 
-- ...
+- `thesis-finder`'s frontmatter description contained an unquoted `: `, which made it
+  invalid YAML. Strict parsers — including the `skills` CLI — skipped the entry-point skill
+  silently, leaving an install that dangles at the first hand-off.
+- Repo-local maintainer skills (`create-thesis-sim-student`, `run-thesis-simulations`) are
+  marked `metadata.internal`, so external installers no longer offer them to students.
 
 ### Removed
 
 - ...
-
-### Breaking Changes
-
-- None.
 
 ## [2.1.0] - 2026-08-20
 

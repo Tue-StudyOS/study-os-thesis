@@ -28,7 +28,7 @@ outside the skills folder.
 | | Route A — Claude app | Route B — ChatGPT, Gemini, or any chat | Route C — Claude Code, Codex, Gemini CLI |
 |---|---|---|---|
 | For | Claude Pro/Max users | Anyone else, including free ChatGPT and Gemini | People already working in a terminal agent |
-| Install | Upload **one zip** | Attach **one file**, paste one text block | Copy **ten folders** into a directory |
+| Install | Upload **one zip** | Attach **one file**, paste one text block | One command, or copy **ten folders** into a directory |
 | Terminal needed | No | No | Yes |
 
 All three run the same searches and produce the same output. Whichever you pick,
@@ -92,6 +92,40 @@ works, but nothing is remembered once that chat ends.
 **Install all ten skills, not a subset.** `thesis-finder` calls the other skills by name and
 they call each other. A partial install fails at the first hand-off. (Routes A and B have no
 such trap — everything travels in one artifact.)
+
+## Step 0 — The one-command shortcut (optional)
+
+If you have **Node 22.20 or newer**, one command installs all ten skills into the client you
+use — Claude Code, Codex, Cursor, OpenCode and some seventy others:
+
+```bash
+npx skills@latest add Tue-StudyOS/study-os-thesis --skill '*' --agent claude-code -g
+```
+
+- `--skill '*'` is **not optional**. Without it you are asked to pick from a list, and any
+  pick short of all ten hits the hand-off trap above.
+- `--agent` names your client — `claude-code`, `codex`, `cursor`, … Leave the flag out and it
+  asks you.
+- `-g` installs for your whole account (`~/.claude/skills/`). Drop it and the skills land in
+  the current folder only (`./.claude/skills/`), which is what you want if you keep one
+  directory per thesis search.
+- The command tracks `main`. To pin a release instead, give the full URL with the tag in it:
+
+  ```bash
+  npx skills@latest add https://github.com/Tue-StudyOS/study-os-thesis/tree/skills-v2.1.0 --skill '*' --agent claude-code -g
+  ```
+
+  The shorter `repo@tag` form is accepted but the tag is ignored, so you silently get `main`.
+
+Restart your client afterwards and continue at **Run it**.
+
+`skills` is a third-party installer made by Vercel, not part of this project. It downloads
+this repository and copies the ten folders from `skills/` into your client's skills
+directory — by hand, that is exactly Steps 1 and 2 below, and the result is the same files.
+If you would rather not run an unfamiliar installer, or you have no Node, just start at
+Step 1.
+
+---
 
 ## Step 1 — Get the files
 
@@ -232,6 +266,7 @@ single step is the difference between continuing and starting over.
 | **Routes A/B:** it asks the full interview again on a later visit | The chat was not started inside the project/GPT/Gem, or the session file was never added to it | Open a chat inside the container holding your session file and type `thesis-finder` again. If no session file was ever saved, the interview has to be redone. |
 | **Route B:** it answers from general knowledge instead of following the instructions | The document was attached but the instructions block was never pasted in | Paste the block from `-----BEGIN INSTRUCTIONS-----` into the container's instructions field. Without it the assistant has no reason to open the document. |
 | **Route C:** agent finds *some* skills but breaks partway ("I don't have a skill called `discover-university-candidates`"), or the folder listing looks wrong | Wrong folder level, or a partial install | The path must be `<skills-dir>/thesis-finder/SKILL.md`, **not** `<skills-dir>/study-os-thesis-skills-vX.Y.Z/thesis-finder/SKILL.md`. Move the contents up one level and make sure **all** skill folders are there. |
+| **Route C:** `npx skills` refuses to start, or warns `EBADENGINE` | Node is older than 22.20, or missing entirely | Skip Step 0 and install by hand from Step 1 — same files, no Node needed. |
 | Results are thin, generic, or the agent says it cannot verify anything | No web access, or search quota exhausted | Confirm web search is enabled in your client and that you have quota left. These skills cannot work offline — everything they output is verified live, by design. |
 
 ---

@@ -370,6 +370,30 @@ architecture-tagged. W optional.
 
 ## Log
 
+- **2026-08-30** — **One-command install via the Vercel `skills` CLI — and the frontmatter bug
+  it exposed.** Branch `feat/skills-cli-install`. `npx skills add Tue-StudyOS/study-os-thesis`
+  already worked against our layout without any change: the CLI scans `skills/<name>/SKILL.md`,
+  which is what we ship. Running it revealed that it found **11 skills and skipped
+  `thesis-finder`** — the entry point — with a YAML parse error. Cause: `Supports multi-session
+  continuity: detects prior searches` in the frontmatter description. An unquoted `: ` inside a
+  plain scalar is a nested mapping to a strict YAML reader. Claude Code's lenient parser and our
+  own regex-based bundlers never noticed; `yaml.safe_load` fails on it too. Every external
+  installer would therefore have handed students exactly the partial install INSTALL.md warns
+  about. Fixed with an em dash (no quoting, so the bundler regexes are untouched), guarded by a
+  new strict-YAML test over `skills/`, `.claude/skills/`, and `.codex/skills/` — verified to
+  fail when the colon is put back. `pyyaml` added to the `dev` extra for it, and the README's
+  "dependency-free (`pytest` only)" claim corrected. Also marked the two maintainer-only skills
+  (`create-thesis-sim-student`, `run-thesis-simulations`) `metadata.internal`, which the CLI
+  honours: the public listing went 12 → 10, and Claude Code still loads them locally. Documented
+  as Route C **Step 0** in INSTALL.md plus a README paragraph, with the two caveats that matter:
+  `--skill '*'` is mandatory (partial picks break the hand-offs) and the CLI installs the
+  **default branch**. The `repo@tag` shorthand parses but silently ignores the tag — caught
+  by testing the published branch rather than only the local tree; pinning needs the tag as
+  a URL path (`/tree/skills-v2.1.0`), and refs containing `/` are misparsed there. Verified
+  end-to-end over the network against the fixed tree: 10 skills, `thesis-finder` present,
+  no skip warning. Routes A, B, and the manual Route C copy are
+  untouched — no files moved, no frontmatter quoted, no build script changed.
+
 - **2026-08-20 (d)** — **Task AP: degree programs resolved by rule, not by lookup. The
   catalog was already lying.** Branch `feat/degree-program-discovery`, off `main`.
 
