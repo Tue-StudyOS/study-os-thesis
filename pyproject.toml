@@ -9,6 +9,7 @@ license = "MIT"
 [project.optional-dependencies]
 dev = [
   "pytest>=8",
+  "pyyaml>=6",
 ]
 eval = [
   "deepeval",

@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+import pytest
+
 
 SKILLS_DIR = Path(__file__).resolve().parents[1]
 REPO_ROOT = SKILLS_DIR.parent
@@ -83,6 +85,27 @@ def test_skill_frontmatter_is_portable_and_trigger_rich() -> None:
         assert len(fields["description"]) <= 1024
         assert "Use when" in fields["description"]
         assert set(fields) == {"name", "description"}
+
+
+def test_every_shipped_skill_frontmatter_parses_as_strict_yaml() -> None:
+    """External installers (e.g. `npx skills add`) parse frontmatter with a strict YAML
+    reader and silently skip a skill whose frontmatter fails. An unquoted `: ` inside a
+    description is enough to drop the entry point from an install."""
+    yaml = pytest.importorskip("yaml")
+
+    skill_files = [skill_dir / "SKILL.md" for skill_dir in _skill_dirs()]
+    for agent_dir in (REPO_ROOT / ".claude" / "skills", REPO_ROOT / ".codex" / "skills"):
+        skill_files.extend(sorted(path for path in agent_dir.glob("*/SKILL.md") if not path.parent.is_symlink()))
+
+    for skill_md in skill_files:
+        _, _, rest = skill_md.read_text(encoding="utf-8").partition("---\n")
+        frontmatter, separator, _ = rest.partition("\n---")
+        assert separator, f"{skill_md} has no closing frontmatter delimiter"
+        try:
+            parsed = yaml.safe_load(frontmatter)
+        except yaml.YAMLError as error:
+            raise AssertionError(f"{skill_md} frontmatter is not valid YAML: {error}") from error
+        assert parsed["name"] and parsed["description"]
 
 
 def test_referenced_skill_resources_exist() -> None:
