@@ -109,10 +109,13 @@ npx skills@latest add Tue-StudyOS/study-os-thesis --skill '*' --agent claude-cod
 - `-g` installs for your whole account (`~/.claude/skills/`). Drop it and the skills land in
   the current folder only (`./.claude/skills/`), which is what you want if you keep one
   directory per thesis search.
-- The command tracks `main`. To pin a release instead, give the full URL with the tag in it —
-  `npx skills@latest add https://github.com/Tue-StudyOS/study-os-thesis/tree/skills-v2.1.0
-  --skill '*' --agent claude-code -g`. The shorter `repo@tag` form is accepted but the tag is
-  ignored, so you silently get `main`.
+- The command tracks `main`. To pin a release instead, give the full URL with the tag in it:
+
+  ```bash
+  npx skills@latest add https://github.com/Tue-StudyOS/study-os-thesis/tree/skills-v2.1.0 --skill '*' --agent claude-code -g
+  ```
+
+  The shorter `repo@tag` form is accepted but the tag is ignored, so you silently get `main`.
 
 Restart your client afterwards and continue at **Run it**.
 

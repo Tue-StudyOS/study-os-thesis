@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 
 import pytest
+import yaml
 
 
 SKILLS_DIR = Path(__file__).resolve().parents[1]
@@ -91,8 +92,6 @@ def test_every_shipped_skill_frontmatter_parses_as_strict_yaml() -> None:
     """External installers (e.g. `npx skills add`) parse frontmatter with a strict YAML
     reader and silently skip a skill whose frontmatter fails. An unquoted `: ` inside a
     description is enough to drop the entry point from an install."""
-    yaml = pytest.importorskip("yaml")
-
     skill_files = [skill_dir / "SKILL.md" for skill_dir in _skill_dirs()]
     for agent_dir in (REPO_ROOT / ".claude" / "skills", REPO_ROOT / ".codex" / "skills"):
         skill_files.extend(sorted(path for path in agent_dir.glob("*/SKILL.md") if not path.parent.is_symlink()))
