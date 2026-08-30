@@ -50,9 +50,11 @@ npx skills@latest add Tue-StudyOS/study-os-thesis --skill '*' --agent claude-cod
 ```
 
 It copies the same ten folders into that client's skills directory — the archive route by
-other means. Two consequences: it tracks `main` unless a release tag is appended
-(`…/study-os-thesis@skills-v2.1.0`), and `--skill '*'` is required, because a partial pick
-breaks the name-based hand-offs. The CLI parses frontmatter with a strict YAML reader and
+other means. Two consequences: `--skill '*'` is required, because a partial pick breaks the
+name-based hand-offs, and the CLI installs the **default branch** — pinning a release needs
+the tag spelled out as a URL path
+(`add https://github.com/Tue-StudyOS/study-os-thesis/tree/skills-v2.1.0`), since the shorter
+`repo@tag` form parses but ignores the tag. The CLI parses frontmatter with a strict YAML reader and
 silently drops any skill that fails it, so `skills/*/SKILL.md` frontmatter is
 `yaml.safe_load`-clean and tested as such.
 

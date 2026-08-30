@@ -386,8 +386,12 @@ architecture-tagged. W optional.
   (`create-thesis-sim-student`, `run-thesis-simulations`) `metadata.internal`, which the CLI
   honours: the public listing went 12 → 10, and Claude Code still loads them locally. Documented
   as Route C **Step 0** in INSTALL.md plus a README paragraph, with the two caveats that matter:
-  `--skill '*'` is mandatory (partial picks break the hand-offs) and the CLI tracks `main`
-  unless a `@skills-vX.Y.Z` tag is appended. Routes A, B, and the manual Route C copy are
+  `--skill '*'` is mandatory (partial picks break the hand-offs) and the CLI installs the
+  **default branch**. The `repo@tag` shorthand parses but silently ignores the tag — caught
+  by testing the published branch rather than only the local tree; pinning needs the tag as
+  a URL path (`/tree/skills-v2.1.0`), and refs containing `/` are misparsed there. Verified
+  end-to-end over the network against the fixed tree: 10 skills, `thesis-finder` present,
+  no skip warning. Routes A, B, and the manual Route C copy are
   untouched — no files moved, no frontmatter quoted, no build script changed.
 
 - **2026-08-20 (d)** — **Task AP: degree programs resolved by rule, not by lookup. The
