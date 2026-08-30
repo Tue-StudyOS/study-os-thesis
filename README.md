@@ -41,6 +41,21 @@ what the target client can load, not by preference.
 | **ChatGPT, Gemini** — Projects, Custom GPTs, Gems | `thesis-finder-portable-vX.Y.Z.md` + `-instructions-vX.Y.Z.txt` | One document, named sections | Neither loads Agent Skills at all. Their containers hold an instructions box and a handful of files. |
 | **Any chat, nothing installed** | the same portable `.md` | Attach and type `thesis-finder` | Works, but nothing is remembered after the chat ends. |
 
+**Or install straight from this repo.** Any client that reads a skills directory can also
+skip the release archive and pull `skills/` directly with the third-party
+[`skills`](https://github.com/vercel-labs/skills) CLI:
+
+```bash
+npx skills@latest add Tue-StudyOS/study-os-thesis --skill '*' --agent claude-code -g
+```
+
+It copies the same ten folders into that client's skills directory — the archive route by
+other means. Two consequences: it tracks `main` unless a release tag is appended
+(`…/study-os-thesis@skills-v2.1.0`), and `--skill '*'` is required, because a partial pick
+breaks the name-based hand-offs. The CLI parses frontmatter with a strict YAML reader and
+silently drops any skill that fails it, so `skills/*/SKILL.md` frontmatter is
+`yaml.safe_load`-clean and tested as such.
+
 ### Why three and not one
 
 Each client breaks the previous form in a specific way:
@@ -184,7 +199,7 @@ independent reference list at all and says so to the student at run time.
 
 ## Quality gates
 
-Tests are dependency-free (`pytest` only) and run from the repo root:
+Tests need only `pytest` and `pyyaml`, and run from the repo root:
 
 ```bash
 python -m pip install -e ".[dev]"
