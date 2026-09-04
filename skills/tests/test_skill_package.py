@@ -121,7 +121,8 @@ def test_thesis_finder_always_starts_fresh_without_session_resume() -> None:
 
     assert "Do **not** search for, read, write, summarize, or resume old thesis-finder sessions" in thesis_finder
     assert "Do not persist session files" in thesis_finder
-    assert all(phrase not in thesis_finder for phrase in forbidden_phrases)
+    for phrase in forbidden_phrases:
+        assert phrase not in thesis_finder, f"Unexpected session-resume phrase present in thesis-finder SKILL.md: {phrase!r}"
     assert "dead-end exclusions from the session" not in university_skill
     assert "dead-end exclusions from the session" not in company_skill
     assert "current conversation" in university_skill
