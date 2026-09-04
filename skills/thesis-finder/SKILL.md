@@ -1,47 +1,48 @@
 ---
 name: thesis-finder
-description: Single entry point for thesis discovery. Builds the student profile through an inline interview if not yet present, then routes to university chair discovery (find-university-chairs), company thesis discovery (find-company-thesis-options), or both, based on student choice. Supports multi-session continuity: detects prior searches and resumes without re-interviewing. Use when a student wants to find where to write their thesis — no prior skill invocation needed.
+description: Single entry point for thesis discovery. Builds a fresh in-session student profile through a detailed inline interview, then routes to university chair discovery (find-university-chairs), company thesis discovery (find-company-thesis-options), or both, based on student choice. Use when a student wants to find where to write a bachelor or master thesis — no prior skill invocation needed.
 ---
 
 # Thesis Finder
 
-Single entry point for thesis-option discovery. Routes to the appropriate discovery skill(s) and maintains a persistent session log at `~/.claude/thesis-finder/session.md` so searches can resume across weeks without starting over.
+Single entry point for thesis-option discovery. Routes to the appropriate discovery skill(s) from a fresh profile built in the current conversation.
 
 ---
 
-## Step 0 — Detect session state (do this before anything else)
+## Ground Rules
 
-Attempt to read `~/.claude/thesis-finder/session.md`.
-
-- **File not found** → new user. Follow the **New User Flow** below.
-- **File found** → returning user. Follow the **Returning User Flow** below.
-
----
-
-## New User Flow
+- Do **not** search for, read, write, summarize, or resume old thesis-finder sessions or conversation logs.
+- Treat every thesis-finder invocation as a fresh advising session unless the student explicitly includes prior profile details in the current conversation.
+- Keep private student data in the active conversation only. Do not persist session files such as `~/.claude/thesis-finder/session.md` or local fallback files.
+- If the student says they already have a profile or previous result, ask them to paste the relevant parts they want reused.
 
 Before starting the interview, give the student a short one-time framing message:
 
-> "This skill helps you find where to write your thesis — at a university chair, a company, or both. I'll first ask a few questions to build a profile of your interests, skills, and preferences; how much detail you give is entirely up to you — more detail helps the search be more precise, but there's no minimum required. Once the profile is done, I'll ask whether you want to search university chairs, companies, or both."
+> "This skill helps you find where to write your thesis — at a university chair, a company, or both. I'll first ask a few questions to build a profile of your interests, skills, and preferences; how much detail you give is up to you, but precise course, project, skill, and no-go details make the search useful. Once the profile is complete, I'll ask whether you want to search university chairs, companies, or both."
 
-### Step N1 — Build student profile
+## Workflow
+
+### Step 1 — Build student profile
 
 Check whether the current conversation already contains a complete 6-dimension student profile:
 
 1. Interests, 2. Methods, 3. Domain, 4. Thesis style, 5. Skills, 6. No-gos
 
-**If the profile is already complete:** proceed to Step N2.
+**If the profile is already complete in the current conversation:** proceed to Step 2.
 
 **If the profile is missing or any dimension is shallow:** build it now through a short interview.
-- Ask **one question per turn** (at most two when tightly coupled).
+- Ask **one primary question per turn**, but make it rich: include concrete prompts or examples when they help the student answer with useful detail. Use at most three tightly related subquestions when a single broad answer would otherwise stay too vague.
 - Use `../build-student-profile/references/deep-advising-interview.md` to guide the conversation.
 - Ask for optional evidence sources (transcript, CV, GitHub) once, naturally.
-- **Tools and libraries are not a standalone question.** Infer them from courses, projects, and experience mentioned; note explicitly only if the student volunteers them.
-- Continue until all six dimensions are covered.
+- Ask specifically about course content, not only course names: lectures, seminars, labs, assignments, papers, or exercises the student liked or disliked, and which topics felt exciting, painful, too theoretical, too shallow, or worth spending months on.
+- Ask specifically about negative course/topic signals: no-go domains, methods, tools, thesis formats, supervision styles, and course topics the student wants to avoid.
+- Ask about practical execution through projects, work experience, tools, frameworks, data/simulation/hardware exposure, debugging, evaluation, and writing.
+- Continue until all six dimensions are covered with concrete evidence.
+- If the student refuses more profiling before all six dimensions are present, do **not** route to `find-university-chairs` or `find-company-thesis-options`. Offer only a generic, clearly non-personalized pointer and explain that tailored discovery requires the complete profile.
 
-Do not proceed to Step N2 until all six dimensions are present.
+Do not proceed to Step 2 until all six dimensions are present.
 
-### Step N2 — Ask which track
+### Step 2 — Ask which track
 
 Once the profile is confirmed complete, ask exactly this:
 
@@ -52,7 +53,7 @@ Once the profile is confirmed complete, ask exactly this:
 
 Wait for the student's answer before continuing.
 
-### Step N3 — Route
+### Step 3 — Route
 
 | Choice | Action |
 |--------|--------|
@@ -60,24 +61,16 @@ Wait for the student's answer before continuing.
 | **(b)** | Invoke `find-company-thesis-options`, then deliver its option map. |
 | **(c)** | Invoke `find-university-chairs` **and** `find-company-thesis-options` — complete **both** searches before delivering any output. Deliver both maps together: university first, `---` separator, then company under `## Company Thesis Options (Baden-Württemberg)`. No cross-ranking. |
 
-### Step N4 — Write session file
-
-After delivering results, create `~/.claude/thesis-finder/session.md` (create the `~/.claude/thesis-finder/` directory if it does not exist). Use the session file format defined at the end of this skill.
-
-Populate:
-- **Student Profile section**: compact 6D snapshot from the interview
-- **Active Candidates table**: all options surfaced (status: "Found")
-- **Search Log — Session 1**: track chosen, key directions, candidates found, any dead-ends noted during discovery
-
-### Step N5 — Recommend, then obey the student's branch choice
+### Step 4 — Recommend, then obey the student's branch choice
 
 This is a two-turn gate. Do not treat the question as rhetorical.
 
-1. From the delivered option map(s), pick 1-2 top options and give a short "why this one" line for each — grounded only in the relevance rationale already present in the map. Do not invent facts not already in the map.
-2. Ask exactly: "Want to go deeper on [the recommended option(s)] before reaching out, or keep exploring other options?"
-3. Stop and wait for the student's answer.
+1. From the delivered option map(s), pick 2-3 top options when enough viable options exist. Give a short "why this one" line for each, grounded only in the relevance rationale already present in the map.
+2. Under each recommended option, include a **topic menu** with 2-4 distinct possible thesis directions or conversation starters. These are tentative proposal sketches, not official openings. Vary them by method, data/evidence, and risk profile so the student can choose a direction rather than only a single topic.
+3. Ask exactly: "Want to go deeper on one of these options/topics before reaching out, or keep exploring other options?"
+4. Stop and wait for the student's answer.
 
-#### Step N5a — If the student wants to go deeper
+#### Step 4a — If the student wants to go deeper
 
 The next assistant message must be the drill-down, not a contact-email offer and not only a generic outreach angle. Skipping directly to `draft-thesis-contact` after "go deeper" is a workflow failure.
 
@@ -87,120 +80,14 @@ The next assistant message must be the drill-down, not a contact-email offer and
    - **Evidence anchors** — 1-2 papers, projects, official pages, collections, or job/thesis pages used for the drill-down, with dates or "not found" where appropriate.
    - **What you'd likely work on / learn** — concrete thesis work derived only from the option map and evidence anchors.
    - **Feasibility checks** — data/material access, method scope, language, prerequisites, supervision/thesis availability, and any no-go risks to verify.
+   - **Topic variants** — 2-4 concrete thesis directions for that same option, each with a working title, research question, likely method/evidence, and main risk to validate.
    - **First meeting question** — one precise question the student can ask before drafting an email.
-3. Update that option's Status to "Recommended" in the Active Candidates table in `session.md`.
-4. Only after this drill-down is complete, proceed to Step N6.
+3. Only after this drill-down is complete, proceed to Step 5.
 
-#### Step N5b — If the student wants to keep exploring
+#### Step 4b — If the student wants to keep exploring
 
 Skip the drill-down and ask what adjacent direction, constraint, or track they want to explore next before running another search.
 
-### Step N6 — Offer next step
+### Step 5 — Offer next step
 
 > "`draft-thesis-contact` can draft a first-contact email for any option you choose."
-
----
-
-## Returning User Flow
-
-### Step R1 — Load session state
-
-Read `~/.claude/thesis-finder/session.md` in full. Extract:
-- Student profile (6D snapshot)
-- Active candidates and their statuses
-- Dead-ends list
-- Date and track of the last session
-
-### Step R2 — Show summary and ask for brief update
-
-Display a one-line summary:
-
-> "Last searched [date] ([track]). [N] active candidate(s) found so far."
-
-Then ask exactly this — nothing more:
-
-> "In 1–2 sentences: what's your current status? Any change in direction?"
-
-Wait for the answer. **Do not re-run the full interview.** Do not ask follow-up questions about dimensions already in the profile. A wrong re-interview produces wrong search directions.
-
-### Step R3 — Assess direction
-
-Based on the student's update, decide which path to take:
-
-| Situation | Action |
-|-----------|--------|
-| Good candidates exist, student wants to reach out | Recommend `draft-thesis-contact`; still offer to search more if wanted |
-| Profile too narrow — all directions exhausted, no good fit | Ask **1–2 targeted questions** to uncover adjacent interests; update the profile section in session.md before continuing |
-| Student wants a different track (e.g., now wants companies) | Note the shift; ask which track; proceed to Step R4 |
-| Student wants to continue in the same direction | Proceed to Step R4 directly |
-
-### Step R4 — Route with dead-end exclusions
-
-Ask which track if not already clear (same options a/b/c).
-
-Pass the dead-ends from the session file as explicit exclusions to the discovery skill:
-
-> "Skip the following — already ruled out: [dead-ends list from session file]."
-
-| Choice | Action |
-|--------|--------|
-| **(a)** | Invoke `find-university-chairs` with exclusions, deliver option map. |
-| **(b)** | Invoke `find-company-thesis-options` with exclusions, deliver option map. |
-| **(c)** | Invoke both with exclusions, deliver combined map (university first, then company). |
-
-### Step R5 — Update session file
-
-Append a new session block to `~/.claude/thesis-finder/session.md`:
-- New entry in the Search Log (date, track, directions, new candidates, new dead-ends)
-- Refresh the Active Candidates table: add new finds; update statuses the student mentioned
-- Add newly ruled-out items to the Dead-Ends list
-- Update the Student Profile section only if interests changed in Step R3
-
-### Step R6 — Recommend, then obey the student's branch choice
-
-Only run this step if Step R4 produced a fresh option map (a new `find-university-chairs` and/or `find-company-thesis-options` run). If the student went straight to `draft-thesis-contact` on an existing candidate in Step R3, skip to Step R7.
-
-1. From the fresh option map, pick 1-2 top options and give a short "why this one" line for each — grounded only in the relevance rationale already present in the map. Do not invent facts not already in the map.
-2. Ask exactly: "Want to go deeper on [the recommended option(s)] before reaching out, or keep exploring other options?"
-3. Stop and wait for the student's answer.
-4. If the student wants to go deeper, follow Step N5a exactly. The next assistant message must be headed `## Deeper Look: [selected option]` and must include the required fit, evidence, likely work, feasibility, and first-meeting fields before Step R7.
-5. If the student wants to keep exploring, follow Step N5b.
-
-### Step R7 — Offer next step
-
-> "`draft-thesis-contact` can draft a first-contact email for any option you choose."
-
----
-
-## Session File Format
-
-**Location:** `~/.claude/thesis-finder/session.md`
-
-This file is runtime state — it is never bundled in skill releases. The path is the convention; the file is owned by the user.
-
-```markdown
-# Thesis Search Session
-
-## Student Profile (updated: YYYY-MM-DD)
-Interests: ...
-Methods: ...
-Domain: ...
-Thesis style: ...
-Skills: ...
-No-gos: ...
-
-## Active Candidates
-| Name | Institution / Company | Track | Status | Last Updated |
-|------|-----------------------|-------|--------|--------------|
-
-## Dead-Ends (skip in future searches)
-- [Name / Department / Company]: [reason — why not a fit]
-
-## Search Log
-
-### Session N — YYYY-MM-DD — [university | company | both]
-**Searched:** [key directions / queries]
-**New candidates:** [names]
-**Dead-ends added:** [what failed and why]
-**Notes:** [interest shifts or decisions]
-```

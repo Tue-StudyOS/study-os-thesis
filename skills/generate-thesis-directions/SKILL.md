@@ -5,14 +5,14 @@ description: Generate precise research-proposal sketches, thesis questions, and 
 
 # Generate Thesis Directions
 
-Turn evidence from a deep student profile, papers, and chair matches into precise research-proposal sketches that a student can discuss with a supervisor.
+Turn evidence from a deep student profile, papers, chair/group matches, and company/team leads into precise research-proposal sketches that a student can discuss with a supervisor or industry contact.
 
 ## Workflow
 
-1. Start from an in-session student profile and a small set of chair/researcher matches. If the profile is shallow, ask targeted follow-up questions before generating final proposals.
-2. Use recent papers and official chair/lab pages gathered by `find-recent-papers` and `find-university-chairs` as grounding evidence.
+1. Start from an in-session student profile and a small set of chair/researcher/group matches or company/team leads. If the profile is shallow, ask targeted follow-up questions before generating final proposals.
+2. Use recent papers, official chair/lab pages gathered by `find-recent-papers` and `find-university-chairs`, and verified company-owned R&D, careers, thesis, product, or project evidence gathered by `find-company-thesis-options` as grounding evidence.
 3. Read `references/research-proposal-rubric.md` before finalizing proposals.
-4. Generate 2-4 proposal sketches, each narrow enough to become a first supervisor conversation.
+4. Generate 2-4 proposal sketches per selected advisor, group, or company option, each narrow enough to become a first supervisor conversation. If the student asks for topics for multiple options, give multiple sketches for each option instead of choosing one overall favorite.
 5. For each proposal, state the research question, motivation, method, expected evidence, feasibility assumptions, required background, advisor fit, and first validation step.
 6. Label uncertainty and avoid presenting proposals as official open topics.
 
@@ -24,7 +24,7 @@ For each proposal include:
 - research question
 - motivation from cited evidence
 - possible methods/data/evaluation
-- fit to chair/person
+- fit to advisor, group, company, or team
 - prerequisites
 - feasibility risks and how to de-risk them
 - first question to ask in a meeting
@@ -34,6 +34,7 @@ For each proposal include:
 - Say "proposal sketch", "possible direction", or "conversation starter", not "available thesis topic".
 - Do not invent datasets, hardware access, supervision capacity, or chair approval.
 - Prefer fewer, sharper proposals over many generic ideas.
+- For a recommendation or drill-down, "fewer" still means a small menu: normally 2-4 distinct directions for the chosen option, not one topic unless the student explicitly asks for one.
 - Make the student's personal fit visible: why this proposal fits their skills, curiosity, and preferred working style.
 - Do not treat old bundled chair, researcher, or paper profiles as the primary source.
 - Do not depend on the old UI, backend API, database, Docker, Celery, or FastAPI app.

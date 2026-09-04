@@ -94,7 +94,7 @@ def test_skill_privacy_and_evidence_rules_are_explicit() -> None:
     assert "Keep student-private data out of shared resources." in design_skill
     assert "Do not store transcripts, grades, GPA, or private profile data" in profile_skill
     assert "Accept raw student input in any form" in profile_skill
-    assert "Interview the student **one question per turn**" in profile_skill
+    assert "Interview the student **one primary question per turn**" in profile_skill
     assert "programming languages, ML frameworks, robotics/simulation tools" in profile_skill
     assert "One question is not enough for a complete profile." in profile_skill
     assert "Explicitly infer and summarize research skills" in profile_skill
@@ -103,6 +103,57 @@ def test_skill_privacy_and_evidence_rules_are_explicit() -> None:
     assert "Do not fabricate citation counts" in paper_skill
     assert "Do not invent thesis openings, team sizes, citation counts, or willingness to supervise." in chair_skill
     assert "Do not produce a chair shortlist on a partial profile." in chair_skill
+
+
+def test_thesis_finder_always_starts_fresh_without_session_resume() -> None:
+    thesis_finder = (SKILLS_DIR / "thesis-finder" / "SKILL.md").read_text(encoding="utf-8")
+    university_skill = (SKILLS_DIR / "find-university-chairs" / "SKILL.md").read_text(encoding="utf-8")
+    company_skill = (SKILLS_DIR / "find-company-thesis-options" / "SKILL.md").read_text(encoding="utf-8")
+
+    forbidden_phrases = (
+        "Returning User Flow",
+        "Detect session state",
+        "Attempt to read",
+        "Last searched",
+        "Active Candidates table",
+        "Search Log",
+    )
+
+    assert "Do **not** search for, read, write, summarize, or resume old thesis-finder sessions" in thesis_finder
+    assert "Do not persist session files" in thesis_finder
+    assert all(phrase not in thesis_finder for phrase in forbidden_phrases)
+    assert "dead-end exclusions from the session" not in university_skill
+    assert "dead-end exclusions from the session" not in company_skill
+    assert "current conversation" in university_skill
+    assert "current conversation" in company_skill
+
+
+def test_profile_gate_requires_course_content_and_negative_signals() -> None:
+    profile_skill = (SKILLS_DIR / "build-student-profile" / "SKILL.md").read_text(encoding="utf-8")
+    interview_reference = (
+        SKILLS_DIR / "build-student-profile" / "references" / "deep-advising-interview.md"
+    ).read_text(encoding="utf-8")
+
+    assert "Ask about course content in detail before discovery" in profile_skill
+    assert "which course topics are explicit no-gos" in profile_skill
+    assert "at least one liked course topic" in profile_skill
+    assert "one disliked or avoided course/topic/work-style signal" in profile_skill
+    assert "course-specific no-gos" in interview_reference
+    assert "liked university course/topic with the reason it mattered" in interview_reference
+    assert "disliked or avoided course topic, method, domain, or work style" in interview_reference
+
+
+def test_recommendations_offer_multiple_topic_angles() -> None:
+    thesis_finder = (SKILLS_DIR / "thesis-finder" / "SKILL.md").read_text(encoding="utf-8")
+    chair_skill = (SKILLS_DIR / "find-university-chairs" / "SKILL.md").read_text(encoding="utf-8")
+    company_skill = (SKILLS_DIR / "find-company-thesis-options" / "SKILL.md").read_text(encoding="utf-8")
+    directions_skill = (SKILLS_DIR / "generate-thesis-directions" / "SKILL.md").read_text(encoding="utf-8")
+
+    assert "include a **topic menu** with 2-4 distinct possible thesis directions" in thesis_finder
+    assert "**Topic variants** — 2-4 concrete thesis directions" in thesis_finder
+    assert "**Possible thesis angles** - 2-4 tentative topic directions" in chair_skill
+    assert "**Possible thesis angles** - 2-4 tentative topic directions" in company_skill
+    assert "Generate 2-4 proposal sketches per selected advisor, group, or company option" in directions_skill
 
 
 def test_student_facing_skills_reject_old_runtime_dependencies() -> None:

@@ -44,6 +44,8 @@ MISROUTING_GUARDRAIL_COMMANDS = {
     "thesis-sim-maja",
 }
 TINAS_REQUIRED_GUARDRAIL = "both tracks or structural company limit"
+TOPIC_MENU_GUARDRAIL = "Topic menus / possible thesis angles present"
+SESSION_PERSISTENCE_GUARDRAIL = "Session persistence avoided"
 RUBRIC_DIMENSIONS = {
     "workflow compliance",
     "profile depth",
@@ -82,6 +84,8 @@ class Rating:
     verified_urls: int | None
     unconfirmed_claims: int | None
     wall_clock_seconds: float | None
+    topic_menus_present: bool | None
+    session_persistence_avoided: bool | None
     guardrail_failures: list[str]
 
 
@@ -143,6 +147,18 @@ def _extract_yes_no(label: str, text: str) -> bool | None:
 
 def evaluate_guardrails(command_slug_value: str, text: str) -> list[str]:
     failures: list[str] = []
+    topic_menus_present = _extract_yes_no(TOPIC_MENU_GUARDRAIL, text)
+    if topic_menus_present is None:
+        failures.append("missing_topic_menus")
+    elif not topic_menus_present:
+        failures.append("topic_menus_missing")
+
+    session_persistence_avoided = _extract_yes_no(SESSION_PERSISTENCE_GUARDRAIL, text)
+    if session_persistence_avoided is None:
+        failures.append("missing_session_persistence_check")
+    elif not session_persistence_avoided:
+        failures.append("session_persistence_used")
+
     if command_slug_value in MISROUTING_GUARDRAIL_COMMANDS:
         misrouting = _extract_yes_no("Company/CS misrouting", text)
         if misrouting is None:
@@ -184,6 +200,8 @@ def parse_rating(path: Path) -> Rating:
         verified_urls=_extract_int(r"verified urls?:\s*(\d+)", text),
         unconfirmed_claims=_extract_int(r"unconfirmed claims?:\s*(\d+)", text),
         wall_clock_seconds=_extract_float(r"wall[-_ ]clock seconds?:\s*([0-9]+(?:\.[0-9]+)?)", text),
+        topic_menus_present=_extract_yes_no(TOPIC_MENU_GUARDRAIL, text),
+        session_persistence_avoided=_extract_yes_no(SESSION_PERSISTENCE_GUARDRAIL, text),
         guardrail_failures=evaluate_guardrails(command_slug_value, text),
     )
 
@@ -250,6 +268,8 @@ def compare_runs(baseline_dir: Path, candidate_dir: Path) -> dict[str, object]:
                 "wall_clock_seconds_delta": None
                 if before is None or before.wall_clock_seconds is None or after.wall_clock_seconds is None
                 else round(after.wall_clock_seconds - before.wall_clock_seconds, 3),
+                "topic_menus_present": after.topic_menus_present,
+                "session_persistence_avoided": after.session_persistence_avoided,
                 "guardrail_failures": after.guardrail_failures,
             }
         )

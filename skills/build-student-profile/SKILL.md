@@ -11,17 +11,18 @@ Create a private, in-session profile that downstream thesis-finder skills can us
 
 1. Accept raw student input in any form, even a single sentence such as "I like deep learning and computer vision and want to work with robots."
 2. Start with what the student already said, then identify what is still unknown about their research taste, skills, prior experience, frameworks, motivation, constraints, and working style.
-3. Interview the student **one question per turn**. Ask at most two questions per turn only when they are tightly coupled (e.g. "which courses did you like, and what specifically did you like about them?"). Never send a survey batch. Prefer questions that reveal tradeoffs, not checklists. At the start of the interview, ask the student to answer **precisely and concisely** — focused, specific answers move the profile forward faster.
-4. Do not start any search or discovery until the profile covers all six dimensions: **Interests, Methods, Domain, Thesis style, Skills, No-gos** (see `references/student-profile-schema.md`). Courses, projects, and experience are not separate dimensions — they are the evidence you elicit to fill Methods, Domain, and Skills. If any dimension is still shallow, keep interviewing.
+3. Interview the student **one primary question per turn**. Make questions specific and evidence-seeking; include examples or up to three tightly related subquestions when that helps the student answer with concrete detail. Never send a generic survey batch. Prefer questions that reveal tradeoffs, not checklists. At the start of the interview, ask the student to answer **precisely and concisely** — focused, specific answers move the profile forward faster.
+4. Do not start any search or discovery until the profile covers all six dimensions: **Interests, Methods, Domain, Thesis style, Skills, No-gos** (see `references/student-profile-schema.md`). Courses, projects, and experience are not separate dimensions — they are the evidence you elicit to fill Methods, Domain, Skills, and No-gos. If any dimension is still shallow, keep interviewing.
 5. Use `references/deep-advising-interview.md` to guide a multi-round advising conversation when the profile is still shallow.
 6. Ask whether the student wants to provide optional evidence sources such as a Transcript of Records, CV, project portfolio, GitHub profile, LinkedIn profile, module handbook excerpts, thesis/exam regulations, or job descriptions. Continue without them if the student prefers.
 7. Probe for concrete evidence: favorite lectures, seminars, exercises, papers, projects, internships, work experience, frustrating topics, tools they enjoy, methods they want to learn, and what kind of result would make the thesis feel successful.
-8. Explicitly infer and summarize research skills, not only interests: technical execution, experimental design, literature reading, mathematical comfort, data handling, engineering maturity, communication, and domain knowledge.
-9. Continue until the profile is strong enough to generate proposals, or explicitly label the remaining uncertainty.
-10. Capture the student's degree program and thesis level. Use `references/tuebingen-degree-programs.md` to recognize University of Tübingen programs and the level each implies (for example, Machine Learning is Master only).
-11. Normalize the profile into concise sections using `references/student-profile-schema.md`.
-12. Mark confidence levels when information is inferred rather than explicitly stated.
-13. Keep the profile in the current conversation only. Do not write it to shared skill files.
+8. Ask about course content in detail before discovery: course names, memorable topics, assignments, papers, lab work, project responsibilities, what felt too theoretical or too shallow, and which course topics are explicit no-gos.
+9. Explicitly infer and summarize research skills, not only interests: technical execution, experimental design, literature reading, mathematical comfort, data handling, engineering maturity, communication, and domain knowledge.
+10. Continue until the profile is strong enough to generate proposals, or explicitly label the remaining uncertainty.
+11. Capture the student's degree program and thesis level. Use `references/tuebingen-degree-programs.md` to recognize University of Tübingen programs and the level each implies (for example, Machine Learning is Master only).
+12. Normalize the profile into concise sections using `references/student-profile-schema.md`.
+13. Mark confidence levels when information is inferred rather than explicitly stated.
+14. Keep the profile in the current conversation only. Do not write it to shared skill files.
 
 ## Output
 
@@ -60,6 +61,7 @@ Return a compact profile with:
 - If open-ended questions repeatedly produce refusals or non-answers ("idk", "no preference", "just recommend something"), switch to forced-choice questions (two or three concrete options to pick from) — a resistant student who won't elaborate freely will often still pick from a short list.
 - If a student remains resistant across several forced-choice attempts and a dimension still has no real content, stop pushing further. Say plainly which dimension(s) are still missing, and offer the student an explicit choice: continue the interview, or receive a generic, non-personalized pointer instead of a tailored shortlist. Do not silently hand a thin profile to `find-university-chairs` — the six-dimension bar applies regardless of how much patience the interview has used up.
 - After a longer interview, summarize the "research core" in 3-6 bullets before using downstream skills.
+- Before routing to discovery, explicitly check that at least one liked course topic, one disliked or avoided course/topic/work-style signal, one practical project or work-experience signal, and one thesis-style preference are present.
 
 ## First Question
 
@@ -67,6 +69,7 @@ When the student starts with a short statement, ask exactly **one** opening ques
 
 - What concrete project, course, paper, or demo made this area interesting to you?
 - Which university lectures, seminars, labs, or assignments did you like most, and what exactly did you like about them?
+- Which course topics or assignments did you dislike or definitely not want as a thesis focus?
 - Which skills can you already use confidently, including programming languages, frameworks, libraries, robotics tools, or hardware?
 - Have you done internships, research assistant work, industry projects, open-source work, or substantial course projects?
 - Do you want the thesis to be more empirical ML, systems/engineering, robotics experimentation, theory, or scientific analysis?

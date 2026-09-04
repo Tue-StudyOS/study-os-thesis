@@ -78,9 +78,11 @@ university or company options make more sense.
 - Use live web/source checks when the skill requires current evidence.
 - Do not invent chairs, thesis openings, datasets, field-site access, advisor
   capacity, or company options.
-- Do not write fictional student data into repository files or the real runtime
-  session file. If the skill would normally write a session file, include a
-  "Would-be Session File" section in the report instead.
+- Do not write fictional student data into repository files or any real runtime
+  session file. The current thesis-finder is fresh-session only: do not read,
+  write, summarize, or resume runtime session files. Include a "Session
+  Persistence Check" section in the report stating whether session persistence
+  was avoided.
 
 ## Required Final Markdown Report
 
@@ -98,4 +100,4 @@ Return a standalone Markdown report with:
 10. Skill completion assessment
 11. Where the skill struggled
 12. Suggested improvements to the skill
-
+13. Session persistence check

@@ -34,7 +34,7 @@ say so and do not guess from model memory.
 1. Verify the six-dimension profile.
 2. Extract German and English query terms using `references/search-strategy.md`.
 3. Invoke `discover-university-candidates` with the full profile and any explicit
-   dead-end exclusions from the session.
+   exclusions the student provided in the current conversation.
 4. Require the exact temporary candidate table schema from
    `discover-university-candidates`: `entity_type`, `name`, `institution`,
    `affiliation_status`, `official_domain`, `relevant_uri`, `unit_type`,
@@ -70,6 +70,7 @@ For each option include:
 - **Relevant person** - professor, PI, group lead, or `unknown`
 - **Unit type** - chair, institute, clinic, lab, center, or research group
 - **Relevance rationale** - tied to interests, methods, domain, and thesis style
+- **Possible thesis angles** - 2-4 tentative topic directions or conversation starters for strong options, each grounded in the option's verified evidence and clearly labeled as not an official opening
 - **Pros & likely difficulties** - supervision uncertainty, language, workload,
   access constraints, competitive groups, or weak thesis-signal visibility
 - **Dated evidence** - source URL and date
@@ -93,6 +94,7 @@ End with this caveat:
 - Every URL in the output must have been opened or verified during this run.
 - Mark evidence older than three years as stale.
 - Distinguish active research areas from advertised thesis openings.
+- Do not collapse a strong match to a single thesis topic. Offer multiple evidence-grounded angles so the student can choose which direction to drill into.
 - Keep student-private data in the active session only.
 
 ## Self-Check

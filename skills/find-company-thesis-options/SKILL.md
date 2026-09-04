@@ -1,11 +1,11 @@
 ---
 name: find-company-thesis-options
-description: Discover Masterarbeit options at Baden-Württemberg companies from a complete student profile by delegating live candidate discovery to discover-company-candidates, then enriching and ranking verified companies. Use when a student asks which BW company, R&D lab, or industry team fits their interests, methods, domain, or thesis style for a company-supervised thesis.
+description: Discover Bachelorarbeit or Masterarbeit options at Baden-Württemberg companies from a complete student profile by delegating live candidate discovery to discover-company-candidates, then enriching and ranking verified companies. Use when a student asks which BW company, R&D lab, or industry team fits their interests, methods, domain, or thesis style for a company-supervised thesis.
 ---
 
 # Discover Company Thesis Options
 
-Map a student's research interests to Master's thesis opportunities at
+Map a student's research interests to bachelor or master thesis opportunities at
 Baden-Württemberg companies. This skill does not carry a static company or URI backbone.
 It first obtains a temporary, profile-specific candidate table from
 `discover-company-candidates`, then enriches those candidates with live evidence.
@@ -33,7 +33,7 @@ say so and do not guess from model memory.
 2. Extract German and English query terms using
    `references/company-search-strategy.md`.
 3. Invoke `discover-company-candidates` with the full profile and any explicit
-   dead-end exclusions from the session.
+   exclusions the student provided in the current conversation.
 4. Require the exact temporary candidate table schema from
    `discover-company-candidates`: `entity_type`, `name`, `official_domain`,
    `relevant_uri`, `location`, `bw_scope`, `sector_tags`, `size`,
@@ -59,7 +59,7 @@ Append this map-level caveat once at the top:
 
 > This map covers BW companies surfaced through live discovery across multiple
 > public source axes and verified during this run. Most companies do not
-> publicize open Masterarbeit positions, so `thesis signal: unclear` does not
+> publicize open Bachelorarbeit/Masterarbeit positions, so `thesis signal: unclear` does not
 > mean there is no opening. For unclear entries: use the careers portal for
 > large companies and follow up, or contact the R&D/product team directly at
 > startups and SMEs. Live discovery is not exhaustive; companies with weak web
@@ -74,6 +74,7 @@ For each entry include:
 - **Size** - `startup`, `SME`, `corporate`, or `unknown`
 - **Location** - city/region with confirmed BW-scope evidence
 - **Relevance rationale** - tied to interests, domain, methods, and thesis style
+- **Possible thesis angles** - 2-4 tentative topic directions or conversation starters for strong entries, grounded in verified company/research/thesis-signal evidence and clearly labeled as not official openings unless an opening says so
 - **Pros & likely difficulties** - structure, supervision uncertainty,
   confidentiality/IP, language, or application lead time
 - **Contact path** - verified URL or "direct R&D team inquiry - no portal found"
@@ -92,6 +93,7 @@ For each entry include:
 - Every URL in the output must have been opened or verified during this run.
 - Mark evidence older than three years as stale.
 - `thesis signal: unclear` is valid output, not a skill failure.
+- Do not collapse a strong company lead to a single thesis topic. Offer multiple evidence-grounded angles so the student can choose which direction to drill into.
 - Do not submit applications, register accounts, or post to external services.
 - Keep student-private data in the active session only.
 

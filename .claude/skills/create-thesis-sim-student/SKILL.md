@@ -78,7 +78,8 @@ Each generated command must instruct the agent to:
 - avoid assuming CS/ML/company fit
 - avoid inventing chairs, openings, datasets, contacts, or advisor capacity
 - avoid writing fictional student data into real runtime session files
-- include would-be session file content in the report if needed
+- assert that no old thesis-finder session was read, resumed, or written
+- include a session-persistence check in the report
 - return a standalone Markdown report
 
 ## Safety Rules
@@ -90,4 +91,3 @@ Each generated command must instruct the agent to:
 - Keep commands department-universal: humanities, law, theology, medicine,
   natural sciences, social sciences, economics, and computer science should all
   be representable.
-

@@ -48,11 +48,11 @@ central evaluation summary.
      - Generate student turns separately from the harness-private persona.
    - Use the repository's actual thesis skills in the assistant-under-test
      context when the visible student conversation triggers them.
-   - Do not write fictional student data to real runtime state such as
-     `~/.claude/thesis-finder/session.md`. When tool isolation is available,
-     run the assistant-under-test with a temporary home/session path. Otherwise
-     intercept or omit the write in the harness and record the would-be session
-     content only in the artifact, without telling the assistant under test.
+   - Do not write fictional student data to real runtime state. The current
+     `thesis-finder` skill is fresh-session only: the assistant under test
+     should not read, write, summarize, or resume `~/.claude/thesis-finder/session.md`
+     or local fallback session files. Record a session-persistence check in the
+     artifact instead of would-be session content.
 4. Save the complete conversation.
    - Directory: `{artifact-root}/convo`
    - Filename format: `{student-slug}_conversation_dd.MM.YYYY-HH-mm-ss.md`
@@ -107,7 +107,7 @@ turn-based report format as the default:
 - `## Outreach Angle`
 - `## Validation`
 - `## Sources Used`
-- `## Would-be Session File`
+- `## Session Persistence Check`
 
 The `## Validation` section must make artifact checks explicit:
 
@@ -115,18 +115,25 @@ The `## Validation` section must make artifact checks explicit:
 - `Evidence visible in student-facing transcript: yes|no`
 - `Verified URLs counted from Assistant turns: N`
 - `Option-map fields present: yes|no`
+- `Topic menus / possible thesis angles present: yes|no`
 - `Drill-down branch followed after go-deeper: yes|no|not requested`
+- `Session persistence avoided: yes|no`
 - `Harness mode: black-box subagent | in-process fallback | other`
 - concise validation errors if any
 
 When live discovery produces a university option map, the student-facing
 Assistant turn must visibly include official URL, relevant person, unit type,
 relevance rationale, pros/likely difficulties, method fit, dated evidence,
-conversation starter, and no-go flags for each included option. When live
+conversation starter, and no-go flags for each included option. Strong or
+recommended options must also include possible thesis angles/topic menu; thin
+options must say that evidence is insufficient for concrete angles. When live
 discovery produces a company map, the Assistant turn must visibly include
 company, division/team when known, sector tags, size, confirmed BW location or
 scope, relevance rationale, pros/likely difficulties, method fit, contact path
 or official URL, research focus or `not found`, thesis signal, and no-go flags.
+Strong or recommended company options must also include possible thesis
+angles/topic menu; thin options must say that evidence is insufficient for
+concrete angles.
 Sources listed only in `## Sources Used` do not count for evidence discipline.
 
 If any user turn after the recommendation says they want to "go deeper",
@@ -134,8 +141,8 @@ If any user turn after the recommendation says they want to "go deeper",
 turn must visibly perform the drill-down before offering `draft-thesis-contact`.
 A valid drill-down includes a heading or clearly labeled section such as
 `## Deeper Look: ...`, evidence anchors or an explicit "not found" statement,
-what the student would likely work on or learn, feasibility checks, and one
-first-meeting question. A generic outreach angle or immediate
+what the student would likely work on or learn, feasibility checks, 2-4 topic
+variants, and one first-meeting question. A generic outreach angle or immediate
 `draft-thesis-contact` offer does not count and must make pre-write validation
 fail.
 
@@ -150,6 +157,11 @@ Each individual rating file must include:
 - evidence-grounded notes for each score
 - issues, failure modes, or missing evidence
 - concrete skill/package improvement suggestions
+
+If any assistant turn or artifact checks old thesis-finder sessions, reads a
+runtime session file, resumes old candidates, writes session state, or records
+would-be session content, mark pre-write validation failed and score
+**Workflow compliance** no higher than 1.
 
 When the transcript skips the go-deeper branch after the student requested it,
 score **Workflow compliance** no higher than 1 and **Conversation usefulness**

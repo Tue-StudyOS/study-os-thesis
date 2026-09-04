@@ -3,13 +3,18 @@
 A strong proposal sketch should include:
 
 - one precise research question
-- a short motivation grounded in paper or chair evidence
+- a short motivation grounded in paper, chair/group, or verified company/team evidence
 - a feasible method the student can plausibly execute or learn
 - a clear evaluation plan or expected evidence
 - why the topic fits the student's interests, skills, and working style
-- why the suggested advisor or lab is relevant
+- why the suggested advisor, lab, company, or team is relevant
 - assumptions that must be verified with the advisor
 - a first small experiment, literature check, or scoping question
+
+When proposals are part of a thesis-finder recommendation or drill-down, provide a
+small menu of 2-4 sketches for each selected option. The sketches should differ
+meaningfully by method, data/evidence source, contribution type, or risk profile;
+do not present the same idea with minor title changes.
 
 Prefer proposals that are:
 
