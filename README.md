@@ -3,6 +3,11 @@
 Portable AI-agent skills that take a Tübingen student from vague research interests to a
 prepared first contact with a fitting thesis supervisor — no login, no database, no backend.
 
+## Project status
+
+**Ended / submission-ready.** The implementation is finalized as a skill-only package in this
+repository. The former web-app backend/frontend stack is retired and kept only in git history.
+
 ## Quickstart
 
 Open this repository in any capable coding agent (Claude Code, Codex, Gemini CLI) and type:
@@ -180,8 +185,8 @@ That stack is archived on the [`legacy/web-app`](../../tree/legacy/web-app) bran
 The pivot to a skill-only architecture is documented in
 [skill_architecture_summary.md](docs/thesis-report/00-problem-and-research/2026-06-12-professor-research-package/skill_architecture_summary.md).
 
-The full genesis story — pre-pivot research, the pivot decision, how the skill was built
-and hardened, and what's still open — is curated in
+The full genesis story — pre-pivot research, the pivot decision, and how the skill was built
+and hardened — is curated in
 [docs/thesis-report/](docs/thesis-report/README.md), written for the thesis submission.
 
 The core argument: a web app with a curated professor database requires a person
