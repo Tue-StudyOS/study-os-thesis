@@ -187,7 +187,7 @@ The pivot to a skill-only architecture is documented in
 
 The full genesis story — pre-pivot research, the pivot decision, and how the skill was built
 and hardened — is curated in
-[docs/thesis-report/](docs/thesis-report/README.md), written for the thesis submission.
+[a different repo](https://github.com/ValentinJSchmidt/study-os-presentation), written for the thesis submission.
 
 The core argument: a web app with a curated professor database requires a person
 to keep the data fresh. A skill with live candidate discovery, explicit source
