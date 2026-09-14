@@ -4,25 +4,17 @@
 >
 > **Convention:** When working on a task, change its status here, note difficulties, and add a dated line to the log below. Do not edit the Masterplan.
 
-**Last update:** 2026-07-05 — Independent 1.0-readiness review completed and actioned:
-Phase 5 is now fully **scoped** (Tasks V–AA, MASTERPLAN.md §9), the Phase 4 GO verdict is
-flagged **provisional** (hard-faculty blindness gap, see below), and `docs/thesis-report/03`
-and `04` were corrected to match the current state instead of a stale 2026-07-03 snapshot.
-Before that: Task M2 done and committed, closing out the Task M (Gehler feedback) plan
-(M1, M2, M3 all done); Task L merged (BW company backbone extended to all 7 Tübingen
-faculties + ZITh via a 13-field employment taxonomy). Working tree clean. **Next up when
-work resumes:** Task V (blind Theology run, ~20 min, repairs the Phase 4 evidentiary gap),
-then Task W (scope-erosion experiment — the single highest-value remaining task). See
-"Current phase" below for the full, exact re-entry summary.
+**Last update:** 2026-09-14 — Project finalized for thesis submission.
+The repository now serves as the final, skill-only submission artifact. The former backend/
+frontend product is retired (historical context remains in thesis-report docs), and no further
+implementation work is planned for this branch.
 
 ---
 
 ## Current phase
 
-> ⏸ **Project paused here as of 2026-07-05, after the independent 1.0-readiness review.**
-> No further work is planned on this branch until further notice. This section is written
-> to be a precise, self-contained re-entry point — read it first when work resumes, before
-> touching anything else.
+> ✅ **Project ended and finalized as of 2026-09-14 for thesis submission.**
+> No further implementation work is planned on this branch.
 >
 > **Exact state:** `feat/no-db-universal-skill`, working tree clean, ahead of
 > `origin/feat/no-db-universal-skill` (not yet pushed to the remote). `pytest -q` → 29

@@ -10,6 +10,11 @@ This project follows Semantic Versioning for the released skill package:
 
 ## [Unreleased]
 
+### Finalization
+
+- Marked the repository as ended/submission-ready in top-level documentation.
+- Clarified that backend/frontend implementation is retired and preserved only as history.
+
 ### No-DB Universal Skill Rewrite (this branch)
 
 - `thesis-finder` rebuilt as a single, database-less, university-wide entry-point skill covering all faculties, with inline student-profile building (no separate pre-skill call needed).
