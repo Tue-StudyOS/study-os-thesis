@@ -10,6 +10,28 @@ This project follows Semantic Versioning for the released skill package:
 
 ## [Unreleased]
 
+### Added
+
+- ...
+
+### Changed
+
+- ...
+
+### Fixed
+
+- ...
+
+### Removed
+
+- ...
+
+### Breaking Changes
+
+- None.
+
+## [3.0.0] - 2026-09-15
+
 ### Finalization
 
 - Marked the repository as ended/submission-ready in top-level documentation.
